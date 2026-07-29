@@ -2,6 +2,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#0B0F14;--bg2:#0F151C;--card:#141B23;--card2:#1A222C;--line:#232C36;--line2:#2C3742;--ink:#EAF0F5;--soft:#9AA7B2;--mut:#66727D;
     --mint:#2FE0C4;--mint2:#25B6A0;--teal:#3FB6C4;--blue:#5B9DF9;--green:#34D399;--amber:#F5B841;--red:#F0736A;--purple:#A78BFA;
@@ -12,10 +14,22 @@
   .wordmark{font-family:var(--fd);font-weight:700;letter-spacing:.5px}
   .wordmark .n{color:var(--ink)} .wordmark .x{color:var(--mint)}
   .brandtag{font-family:var(--fm);font-size:9px;letter-spacing:.28em;color:var(--mut);text-transform:uppercase}
+  /* logo 3D Nexora */
+  .logohero{text-align:center;margin:0 0 18px}
+  .brand3d{perspective:900px;display:inline-block}
+  .brand3d .inner{transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:.42em;filter:drop-shadow(0 6px 22px rgba(84,87,255,.42))}
+  .nexora{font-family:'Michroma',var(--f);font-weight:400;line-height:1;letter-spacing:.24em;padding-left:.24em;
+    background:linear-gradient(170deg,#A8B7FF 0%,#5457FF 55%,#3B2AE6 100%);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+  .nexagency{font-family:'Michroma',var(--f);font-weight:400;color:var(--soft);letter-spacing:.64em;padding-left:.64em;white-space:nowrap}
+  .brand3d.big .nexora{font-size:38px}
+  .brand3d.big .nexagency{font-size:10.5px}
+  .brand3d.sm{perspective:600px}
+  .brand3d.sm .nexora{font-size:17px;letter-spacing:.2em;padding-left:.2em}
+  .brand3d.sm .inner{filter:drop-shadow(0 3px 12px rgba(84,87,255,.4))}
   /* login */
   #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(1200px 600px at 50% -10%,rgba(47,224,196,.10),transparent 60%),var(--bg)}
   .lcard{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh);padding:34px 30px;max-width:400px;width:100%}
-  .lcard .logo{font-family:var(--fd);font-size:34px;font-weight:700;margin:2px 0 2px}
+  .lcard .logo{font-family:var(--fd);font-size:23px;font-weight:700;margin:6px 0 2px}
   .lcard .logo .x{color:var(--mint)} .lcard p{color:var(--soft);font-size:13.5px;margin:2px 0 20px}
   .lcard label{display:block;font-size:12px;font-weight:600;color:var(--soft);margin:14px 0 6px}
   .lcard input{width:100%;padding:13px 14px;border:1px solid var(--line2);border-radius:12px;background:var(--bg2);color:var(--ink);font-size:16px}
@@ -141,7 +155,8 @@
 <body>
 <div id="login">
   <div class="lcard">
-    <div class="brandtag">Nexora · CRM SFS</div>
+    <div class="logohero"><div class="brand3d big"><div class="inner"><div class="nexora">NEXORA</div><div class="nexagency">AGENCY</div></div></div></div>
+    <div class="brandtag">CRM SFS · Suivi partagé</div>
     <div class="logo">Tracker <span class="x">SFS</span></div>
     <p>Connecte-toi pour accéder au suivi partagé.</p>
     <label>Email</label><input type="email" id="l_email" autocomplete="username">
@@ -153,7 +168,7 @@
 
 <div id="app">
   <div class="head">
-    <div class="brand"><div class="brandtag">Nexora</div><div class="t">Tracker <span class="x">SFS</span></div></div>
+    <div class="brand"><div class="brand3d sm"><div class="inner"><span class="nexora">NEXORA</span></div></div><div class="t">Tracker <span class="x">SFS</span></div></div>
     <div class="sp"></div>
     <div class="actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button class="btn primary" id="newBtn">＋ Nouveau SFS</button>
@@ -410,5 +425,46 @@ function closeModal(){$('overlay').classList.remove('open')}
 window.exportCsv=function(){if(!data.length){toast('Rien à exporter.');return}var h=['Date','Modele','Partenaire','Contact','Statut','Lien','Clicks','Subs','Earnings','Fans','CVR','Note'];var L=[h.join(',')];data.forEach(r=>{var cvr=cvrOf(r),sc=scoreOf(r);L.push([r.date,r.model,'"'+(r.partner||'').replace(/"/g,'""')+'"','"'+(r.contact||'').replace(/"/g,'""')+'"',STL[r.status]||'','"'+(r.link_name||'').replace(/"/g,'""')+'"',r.clicks,r.subs,r.earnings,r.fans,cvr==null?'':cvr.toFixed(1),sc||''].join(','))});var s=L.join('\n');if(window.claude&&window.claude.downloads){window.claude.downloads.save({filename:'sfs.csv',data:s}).catch(()=>{})}else{var bl=new Blob([s],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='sfs.csv';a.click()}};
 
 sb.auth.getSession().then(s=>{if(s.data.session)showApp()});
+</script>
+<script>
+/* logo 3D interactif — parallaxe souris + grossissement + scroll (style Apple/Porsche) */
+(function(){
+  var logos=[];
+  document.querySelectorAll('.brand3d').forEach(function(el){
+    var inner=el.querySelector('.inner');if(!inner)return;
+    logos.push({el:el,inner:inner,big:el.classList.contains('big'),cur:{rx:0,ry:0,s:1,ty:0},tgt:{rx:0,ry:0,s:1,ty:0}});
+  });
+  if(!logos.length)return;
+  var ptr={x:-99999,y:-99999,on:false},scy=0;
+  window.addEventListener('pointermove',function(e){ptr.x=e.clientX;ptr.y=e.clientY;ptr.on=true;},{passive:true});
+  window.addEventListener('pointerout',function(e){if(!e.relatedTarget){ptr.on=false;}},{passive:true});
+  window.addEventListener('scroll',function(){scy=window.scrollY||window.pageYOffset||0;},{passive:true});
+  var t=0;
+  function frame(){
+    t+=0.016;
+    for(var i=0;i<logos.length;i++){
+      var L=logos[i],r=L.el.getBoundingClientRect();
+      if(r.width<1){L.tgt.rx=0;L.tgt.ry=0;L.tgt.s=1;L.tgt.ty=0;}
+      else{
+        var cx=r.left+r.width/2,cy=r.top+r.height/2,dx=ptr.x-cx,dy=ptr.y-cy;
+        var R=Math.max(280,r.width*1.5),dist=Math.sqrt(dx*dx+dy*dy);
+        var prox=ptr.on?Math.max(0,1-dist/R):0;                 // 1 près, 0 loin
+        var maxDeg=L.big?20:14;
+        L.tgt.ry=(dx/R)*maxDeg*(0.55+0.45*prox);
+        L.tgt.rx=(-dy/R)*maxDeg*(0.55+0.45*prox);
+        var base=1,ty=0;
+        if(!L.big){var sc=Math.min(0.16,scy/700*0.16);base=1-sc;ty=Math.min(6,scy*0.012);} // header: rétrécit au scroll
+        L.tgt.s=base+prox*(L.big?0.26:0.18);                    // grossit à l'approche
+        L.tgt.ty=ty;
+      }
+      var wob=Math.sin(t*0.7+i*1.7)*(L.big?3.2:2.2);            // légère rotation vivante
+      var c=L.cur,g=L.tgt,k=0.11;
+      c.rx+=(g.rx-c.rx)*k;c.ry+=((g.ry+wob)-c.ry)*k;c.s+=(g.s-c.s)*k;c.ty+=(g.ty-c.ty)*k;
+      L.inner.style.transform='translateY('+c.ty.toFixed(2)+'px) rotateX('+c.rx.toFixed(2)+'deg) rotateY('+c.ry.toFixed(2)+'deg) scale('+c.s.toFixed(3)+')';
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
 </script>
 </body></html>
