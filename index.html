@@ -450,8 +450,9 @@ sb.auth.getSession().then(s=>{if(s.data.session)showApp()});
         var R=Math.max(280,r.width*1.5),dist=Math.sqrt(dx*dx+dy*dy);
         var prox=ptr.on?Math.max(0,1-dist/R):0;                 // 1 près, 0 loin
         var maxDeg=L.big?20:14;
-        L.tgt.ry=(dx/R)*maxDeg*(0.55+0.45*prox);
-        L.tgt.rx=(-dy/R)*maxDeg*(0.55+0.45*prox);
+        var rX=Math.max(-1,Math.min(1,dx/R)),rY=Math.max(-1,Math.min(1,dy/R)); // bornés [-1,1]
+        L.tgt.ry=rX*maxDeg*prox;                                // tilt vers le curseur, nul si loin
+        L.tgt.rx=-rY*maxDeg*prox;
         var base=1,ty=0;
         if(!L.big){var sc=Math.min(0.16,scy/700*0.16);base=1-sc;ty=Math.min(6,scy*0.012);} // header: rétrécit au scroll
         L.tgt.s=base+prox*(L.big?0.26:0.18);                    // grossit à l'approche
