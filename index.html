@@ -500,10 +500,10 @@ const SUPABASE_URL='https://bvcnbtbdfkoiefuedxem.supabase.co';
 const SUPABASE_KEY='sb_publishable__X2Z5ELAvPpQ2CK7CKoXpQ_J2F2ZxEP';
 const MOISE_EMAILS=[]; // emails en minuscule qui voient la version simplifiée (sans Dashboard ni Import)
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Marion:{cvr:50,spend:13},'Bethy OF':{cvr:60,spend:13},'Bethy MYM':{cvr:60,spend:13},Milla:{cvr:60,spend:15}};
+const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Marion:{cvr:50,spend:13},'Bethy OF':{cvr:60,spend:13},'Bethy MYM':{cvr:60,spend:13},'Milla MYM':{cvr:60,spend:15}};
 const MODELS=Object.keys(CIBLES);
-const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF','Bethy OF':'OF','Bethy MYM':'MYM',Milla:'MYM'};
-const WK_TARGET={Alice:4,Louise:4,Amandine:4,Margot:4,Marion:4,'Bethy OF':4,'Bethy MYM':1,Milla:1};
+const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF','Bethy OF':'OF','Bethy MYM':'MYM','Milla MYM':'MYM'};
+const WK_TARGET={Alice:4,Louise:4,Amandine:4,Margot:4,Marion:4,'Bethy OF':4,'Bethy MYM':1,'Milla MYM':1};
 /* gamification / dopamine Moïse */
 const PAY_PER_SFS=2,PRIME_MIN_SFS=45;
 const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.round(WEEK_GOAL/7));
