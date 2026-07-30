@@ -261,6 +261,13 @@
   .ckwin .medal svg{width:58px;height:58px;color:var(--cash)}
   .ckwin h2{font-size:clamp(30px,6vw,52px);font-weight:800;letter-spacing:-.02em;margin-bottom:10px;background:linear-gradient(100deg,#DFA01F,#F3C24B 40%,#FFF3CE 55%,#F3C24B 70%,#DFA01F);-webkit-background-clip:text;background-clip:text;color:transparent}
   .ckwin p{color:var(--soft);font-size:15px}
+  .ckwin .recap .rk{font-family:var(--fm);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);margin-bottom:8px}
+  .ckwin .recap .rbig{font-size:clamp(48px,9vw,84px);font-weight:800;letter-spacing:-.04em;line-height:1;background:linear-gradient(100deg,#DFA01F,#F3C24B 40%,#FFF3CE 55%,#F3C24B 70%,#DFA01F);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ckwin .recap .rsub{color:var(--soft);font-size:14px;margin:6px 0 22px}
+  .ckwin .recap .rstats{display:flex;gap:30px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+  .ckwin .recap .rstats>div{display:flex;flex-direction:column;gap:3px}
+  .ckwin .recap .rv{font-size:26px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+  .ckwin .recap .rl{font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--mut)}
   .ck-rings-panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;animation:cardIn .6s var(--ease-out) both}
   .ck-ringwrap{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center}
   @media(max-width:760px){.ck-ringwrap{grid-template-columns:1fr;justify-items:center}}
@@ -445,7 +452,7 @@ async function showApp(){
   if(!isAdmin){var bt=document.querySelector('.tab[data-tab="board"]');bt.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$('p-board').classList.add('active');}
   $('login').style.display='none';$('app').style.display='block';
   $('who').textContent=u?u.email:'';
-  await loadParts();await loadData();initUI();subscribe();
+  await loadParts();await loadData();initUI();subscribe();monthlyRecap();
 }
 /* data */
 async function loadData(){var r=await sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
@@ -547,6 +554,8 @@ function confettiBurst(power){var c=document.getElementById('cfx');if(!c){c=docu
 function sfxSuccess(big){try{if(localStorage.getItem('sfx')==='0')return;__ac=__ac||new(window.AudioContext||window.webkitAudioContext)();if(__ac.state==='suspended')__ac.resume();var t0=__ac.currentTime,notes=big?[523,659,784,1047]:[523,659,784];notes.forEach(function(f,i){var o=__ac.createOscillator(),g=__ac.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(__ac.destination);var st=t0+(big?i*0.08:0);g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.14,st+0.02);g.gain.exponentialRampToValueAtTime(0.0001,st+0.5);o.start(st);o.stop(st+0.52)})}catch(e){}}
 function celebrate(msg,big){confettiBurst(big?190:95);sfxSuccess(big);try{if(navigator.vibrate)navigator.vibrate(big?[30,50,30]:22)}catch(e){}if(msg)toast(msg)}
 function bigWin(title,sub){var w=$('ckWin');if(!w)return;w.innerHTML='<div class="box"><div class="medal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.6h10V8a5 5 0 0 1-10 0V4.6z"/><path d="M7 6.1H4.6v1.1A2.7 2.7 0 0 0 7 9.9"/><path d="M17 6.1h2.4v1.1A2.7 2.7 0 0 1 17 9.9"/><path d="M12 13v3.2"/><path d="M8.7 19.6h6.6"/><path d="M9.6 16.4h4.8l.8 3.2H8.8l.8-3.2z"/></svg></div><h2>'+esc(title)+'</h2><p>'+esc(sub)+'</p></div>';w.classList.add('show');confettiBurst(220);sfxSuccess(true);try{if(navigator.vibrate)navigator.vibrate([40,60,40,60,140])}catch(e){}clearTimeout(window.__winT);window.__winT=setTimeout(function(){w.classList.remove('show')},2900);w.onclick=function(){w.classList.remove('show')}}
+function showRecap(mLabel,created,avg,prime,pay){var w=$('ckWin');if(!w)return;w.innerHTML='<div class="box recap"><div class="rk">Bilan · '+esc(mLabel)+'</div><div class="rbig">'+pay+' €</div><div class="rsub">gagné le mois dernier</div><div class="rstats"><div><span class="rv">'+created+'</span><span class="rl">SFS</span></div><div><span class="rv">'+(avg!=null?avg.toFixed(1).replace('.',','):'—')+'</span><span class="rl">note moy</span></div><div><span class="rv">'+prime+' €</span><span class="rl">prime</span></div></div><button class="btn primary" id="recapClose">Nouveau mois, on remet ça</button></div>';w.classList.add('show');confettiBurst(180);sfxSuccess(true);var b=$('recapClose');if(b)b.onclick=function(e){e.stopPropagation();w.classList.remove('show')};w.onclick=function(){w.classList.remove('show')}}
+function monthlyRecap(){try{var cm=new Date().toISOString().slice(0,7),last=localStorage.getItem('ckLastMonth');localStorage.setItem('ckLastMonth',cm);if(!last||last===cm)return;var mine=data.filter(r=>r.src==='manual'&&ym(r.date)===last),created=mine.length;if(!created)return;var meas=data.filter(r=>r.measured&&ym(r.date)===last),notes=meas.map(scoreOf).filter(x=>x),avg=notes.length?notes.reduce((a,b)=>a+b,0)/notes.length:null;var prime=0;if(avg!=null)prime=avg>=9?200:avg>=8?100:avg>=7?50:avg>=6?25:0;if(created>=PRIME_MIN_SFS&&prime<25)prime=25;var pay=created*PAY_PER_SFS+prime,mLabel=MO_FR[parseInt(last.slice(5),10)-1]+' '+last.slice(0,4);showRecap(mLabel,created,avg,prime,pay)}catch(e){}}
 /* ---- cockpit dopamine ---- */
 function gradeOf(n){if(n>=9.5)return'LÉGENDE';if(n>=9)return'ÉLITE';if(n>=8)return'A';if(n>=7)return'B';if(n>=6)return'C';return'—'}
 function streakBonus(s){return s>=30?0.5:s>=21?0.3:s>=14?0.2:0}
