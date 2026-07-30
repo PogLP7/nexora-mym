@@ -407,7 +407,8 @@
     <div class="sp"></div>
     <div class="actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button class="btn primary" id="newBtn">＋ Nouveau SFS</button>
-      <label class="btn adminonly" style="cursor:pointer" id="impLabel"><svg class="btnic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>Importer Infloww<input type="file" id="impFile" accept=".xlsx" hidden></label>
+      <button class="btn adminonly" id="syncBtn"><svg class="btnic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.7 5.6L4 16"/><path d="M4 20v-4h4"/></svg>Sync Infloww</button>
+      <label class="btn ghost adminonly" style="cursor:pointer" id="impLabel"><svg class="btnic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>Import manuel<input type="file" id="impFile" accept=".xlsx" hidden></label>
       <select class="btn ghost" id="themeSel" title="Thème" style="cursor:pointer"><option value="">Thème · Gris</option><option value="blanc">Thème · Blanc</option><option value="oled">Thème · OLED</option></select>
       <span class="who" id="who"></span>
       <button class="btn ghost" id="logout">Quitter</button>
@@ -537,6 +538,7 @@ async function showApp(){
 /* data */
 async function loadData(){var r=await sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
 async function loadParts(){var r=await sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
+async function syncInfloww(){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b){b.disabled=true;b.textContent='Sync…'}toast('Synchronisation Infloww…');try{var r=await sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){celebrate((d.updated||0)+' SFS synchronisés ✓',(d.updated||0)>0);loadData()}else{toast('Erreur sync : '+(d.error||'?'))}}catch(e){toast('Erreur sync : '+(e.message||e))}if(b){b.disabled=false;b.innerHTML=o}}
 function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(renderContenu)}).subscribe()}
 
 /* xlsx */
@@ -566,6 +568,7 @@ function initUI(){
   $('allMonths').onclick=()=>{showAll=!showAll;$('allMonths').textContent=showAll?'Ce mois':'Historique';render()};
   $('q').oninput=render;$('fModel').onchange=render;$('fStatus').onchange=render;$('pq').oninput=render;
   $('impFile').onchange=onImport;
+  var syb=$('syncBtn');if(syb)syb.onclick=syncInfloww;
   var ts=$('themeSel');if(ts){ts.value=localStorage.getItem('theme')||'';ts.onchange=function(){var v=ts.value;if(v)document.documentElement.setAttribute('data-theme',v);else document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme',v)}}
   var cf=$('cModelFilter');if(cf&&cf.options.length<2){MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;cf.appendChild(o)});cf.onchange=renderContenu}
   $('chSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{chMode=b.dataset.m;$('chSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawChart()});
