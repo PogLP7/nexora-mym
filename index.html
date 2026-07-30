@@ -808,7 +808,7 @@ async function loadContenu(){try{var r=await sb.from('contenu').select('*');if(!
 function copyText(id,btn,orig){var c=contenu.find(x=>String(x.id)===String(id));if(!c)return;var t=c.body||'';function ok(){toast('Texte copié ✓');if(btn){btn.textContent='Copié ✓';setTimeout(function(){btn.innerHTML=orig||'Copier le texte'},1200)}}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fallbackCopy(t,ok)})}else fallbackCopy(t,ok)}
 function fallbackCopy(t,ok){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){}ta.remove()}
-function modelBundle(m){var rows=contenu.filter(c=>c.model===m);return {text:rows.find(r=>r.kind==='texte')||null,video:rows.find(r=>r.kind==='video')||null,photos:rows.filter(r=>r.kind==='photo').sort((a,b)=>(a.created_at||'').localeCompare(b.created_at||''))}}
+function modelBundle(m){var rows=contenu.filter(c=>c.model===m);return {text:rows.find(r=>r.kind==='texte')||null,video:rows.find(r=>r.kind==='video')||null,cover:rows.find(r=>r.kind==='cover')||null,photos:rows.filter(r=>r.kind==='photo').sort((a,b)=>(a.created_at||'').localeCompare(b.created_at||''))}}
 var CGRADS=[['#6172FF','#B197FC'],['#FF6B9D','#FFC24B'],['#25E8C3','#5B8CFF'],['#F3C24B','#FF784A'],['#B197FC','#6172FF'],['#39D9A0','#3FC8DE'],['#FF4D9D','#B197FC'],['#3FC8DE','#25E8C3']];
 var IC_TXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5h14M5 10h14M5 15h9"/></svg>';
 var IC_VID='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M10.5 9.5v5l4-2.5z" fill="currentColor"/></svg>';
@@ -819,7 +819,7 @@ function renderContenu(){
   var cards=MODELS.filter(m=>!fm||m===fm).map(function(m){
     var b=modelBundle(m),has=!!(b.text||b.video||b.photos.length);
     if(!has&&!isAdmin)return '';
-    var cover=b.photos.length?b.photos[0].media_url:'',g=CGRADS[MODELS.indexOf(m)%CGRADS.length];
+    var cover=b.cover?b.cover.media_url:(b.photos.length?b.photos[0].media_url:''),g=CGRADS[MODELS.indexOf(m)%CGRADS.length];
     var bg=cover?'<div class="mcover" style="background-image:url(\''+esc(cover)+'\')"></div>':'<div class="mcover grad" style="background:linear-gradient(150deg,'+g[0]+','+g[1]+')"><span class="mmono">'+esc(m.slice(0,2).toUpperCase())+'</span></div>';
     var chips=has?((b.text?'<span class="mchip">'+IC_TXT+'Texte</span>':'')+(b.video?'<span class="mchip">'+IC_VID+'Vidéo</span>':'')+(b.photos.length?'<span class="mchip">'+IC_IMG+b.photos.length+'</span>':'')):'<span class="mchip empty">'+(isAdmin?'＋ Remplir':'Vide')+'</span>';
     var pf=(PLAT[m]||''),pc=pf==='MYM'?'mym':'of';
@@ -844,6 +844,7 @@ function openModelEditor(m){
   if(!isAdmin)return;var b=modelBundle(m);
   var photos=b.photos.map(p=>'<div class="pedit"><img src="'+esc(p.media_url)+'" alt=""><button class="pdel" data-pid="'+p.id+'">✕</button></div>').join('');
   $('modal').innerHTML='<div class="mh"><div><div class="label">Éditer le kit</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">✕</button></div>'+
+    '<div class="fld" style="margin-bottom:12px"><label>Photo de couverture — le visage affiché sur la carte</label><input type="file" id="ce_cover" accept="image/*">'+(b.cover?' <a href="'+esc(b.cover.media_url)+'" target="_blank" style="font-size:12px;color:var(--acc)">couverture actuelle</a>':'')+'</div>'+
     '<div class="fld" style="margin-bottom:12px"><label>Texte SFS (copiable en 1 clic)</label><textarea id="ce_body" rows="5" placeholder="Le texte que Moïse copiera…">'+esc(b.text?b.text.body:'')+'</textarea></div>'+
     '<div class="fld" style="margin-bottom:12px"><label>Vidéo de présentation '+(b.video?'(en choisir une remplace l\'actuelle)':'')+'</label><input type="file" id="ce_video" accept="video/*">'+(b.video?' <a href="'+esc(b.video.media_url)+'" target="_blank" style="font-size:12px;color:var(--acc)">vidéo actuelle</a>':'')+'</div>'+
     '<div class="fld" style="margin-bottom:8px"><label>Photos — ajoute-en (plusieurs à la fois possible)</label><input type="file" id="ce_photos" accept="image/*" multiple></div>'+
@@ -858,8 +859,9 @@ async function uploadMedia(model,file){var path=norm(model).replace(/\s+/g,'_')+
 async function saveModelContent(m){
   var err=$('ce_err');err.textContent='';
   try{
-    var text=$('ce_body').value,vfile=$('ce_video').files[0],pfiles=$('ce_photos').files,b=modelBundle(m);
+    var text=$('ce_body').value,cfile=$('ce_cover').files[0],vfile=$('ce_video').files[0],pfiles=$('ce_photos').files,b=modelBundle(m);
     if(b.text){await sb.from('contenu').update({body:text}).eq('id',b.text.id)}else if(text.trim()){await sb.from('contenu').insert({model:m,kind:'texte',body:text})}
+    if(cfile){err.textContent='Upload de la couverture…';var curl=await uploadMedia(m,cfile);if(b.cover)await sb.from('contenu').update({media_url:curl}).eq('id',b.cover.id);else await sb.from('contenu').insert({model:m,kind:'cover',media_url:curl})}
     if(vfile){err.textContent='Upload de la vidéo…';var vurl=await uploadMedia(m,vfile);if(b.video)await sb.from('contenu').update({media_url:vurl}).eq('id',b.video.id);else await sb.from('contenu').insert({model:m,kind:'video',media_url:vurl})}
     if(pfiles&&pfiles.length){for(var i=0;i<pfiles.length;i++){err.textContent='Upload photo '+(i+1)+'/'+pfiles.length+'…';var purl=await uploadMedia(m,pfiles[i]);await sb.from('contenu').insert({model:m,kind:'photo',media_url:purl})}}
     toast('Kit '+m+' enregistré ✓');await loadContenu();closeModal();renderContenu();
