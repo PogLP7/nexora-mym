@@ -208,6 +208,27 @@
   /* skeleton chargement */
   .sk{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:12px;height:74px;margin-bottom:10px}
   .sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:shimmer 1.25s infinite}
+  /* ===== COCKPIT DOPAMINE (Moïse) ===== */
+  .cockpit{display:grid;grid-template-columns:minmax(250px,1fr) 1.6fr;gap:14px;margin-bottom:18px}
+  @media(max-width:820px){.cockpit{grid-template-columns:1fr}}
+  .pay{position:relative;overflow:hidden;background:linear-gradient(150deg,#211d0d,#141b23 62%);border:1px solid rgba(243,194,75,.34);border-radius:18px;padding:18px 20px;animation:cardIn .55s var(--ease-out) both}
+  .pay::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(243,194,75,.18),transparent 70%);pointer-events:none}
+  .pay .k{font-family:var(--fm);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+  .pay .big{font-size:42px;font-weight:800;color:var(--cash);letter-spacing:-1px;margin:6px 0 2px;font-variant-numeric:tabular-nums;text-shadow:0 4px 24px rgba(243,194,75,.25)}
+  .pay .brk{font-family:var(--fm);font-size:11.5px;color:var(--soft)}.pay .brk span{color:var(--mut)}
+  .pay .nudge{margin-top:10px;font-size:12.5px;color:var(--ink);background:var(--accSoft);border:1px solid rgba(97,114,255,.3);border-radius:10px;padding:8px 11px}
+  .pay .sfx{position:absolute;top:10px;right:11px;background:none;border:none;cursor:pointer;font-size:15px;opacity:.65;line-height:1}.pay .sfx:hover{opacity:1}
+  .gpanel{display:flex;flex-direction:column;gap:12px;justify-content:center}
+  .gbar .gtop{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--soft);margin-bottom:6px}.gbar .gtop b{color:var(--ink);font-family:var(--fm)}
+  .track{height:12px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);overflow:hidden}
+  .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--acc),#8EA0FF);box-shadow:0 0 12px rgba(97,114,255,.5);transition:width .9s var(--ease-out)}
+  .fill.week{background:linear-gradient(90deg,var(--cvr),#7de);box-shadow:0 0 12px rgba(63,200,222,.45)}
+  .gmsg{font-size:11.5px;color:var(--mut);margin-top:5px}
+  .mods{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .mod{font-family:var(--fm);font-size:10px;padding:3px 7px;border-radius:7px;background:var(--card2);color:var(--soft);border:1px solid var(--line)}
+  .mod.ok{background:rgba(57,217,160,.14);color:var(--green);border-color:rgba(57,217,160,.4)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-size:12px;color:var(--soft);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 11px}.chip b{color:var(--ink)}.chip .em{margin-right:3px}
 </style></head>
 <body>
 <div id="login">
@@ -255,6 +276,7 @@
   </div>
 
   <div class="panel active" id="p-board">
+    <div class="cockpit" id="cockpit"></div>
     <div class="addform" id="addForm">
       <div class="fld"><label>Modèle</label><select id="f_model"></select></div>
       <div class="fld"><label>Partenaire</label><input type="text" id="f_partner" placeholder="ex. MAX DA"></div>
@@ -302,6 +324,9 @@ const MOISE_EMAILS=[]; // emails en minuscule qui voient la version simplifiée 
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Betty:{cvr:60,spend:13},Marion:{cvr:50,spend:13}};
 const MODELS=Object.keys(CIBLES);
+/* gamification / dopamine Moïse */
+const PAY_PER_SFS=2,MONTH_GOAL=90,WEEK_PER_MODEL=4,PRIME_MIN_SFS=45;
+const MO_FR=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 let data=[],parts={},showAll=false,isAdmin=true,chart=null,chMode='subs';
 const $=id=>document.getElementById(id);
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -365,8 +390,8 @@ function initUI(){
   upLn();
 }
 function upLn(){var m=$('f_model').value,p=$('f_partner').value,d=$('f_date').value,t=$('f_time').value;$('lnPreview').innerHTML=p?('<span class="lnlabel">Nom à donner au lien Infloww · identique des 2 côtés</span><b>'+esc(linkName(m,p,d,t))+'</b>'):'<span class="lnlabel">Nom du lien Infloww</span>Renseigne le partenaire → le nom exact apparaît ici.'}
-async function addSfs(){var p=$('f_partner').value.trim();if(!p){toast('Mets le partenaire.');return}var m=$('f_model').value,d=$('f_date').value||new Date().toISOString().slice(0,10),t=$('f_time').value,ct=$('f_contact').value.trim();var row={src:'manual',model:m,partner:p,contact:ct,link_name:linkName(m,p,d,t),date:d,status:'prog',measured:false,clicks:0,subs:0,earnings:0,fans:0};var r=await sb.from('sfs').insert(row);if(r.error){toast('Erreur : '+r.error.message);return}if(ct){var k=norm(p);parts[k]={partner_key:k,partner:p,contact:ct};sb.from('partner_contacts').upsert({partner_key:k,partner:p,contact:ct})}$('f_partner').value='';$('f_contact').value='';upLn();toast('SFS ajouté ✓');loadData()}
-async function setStatus(id,cur){var next={prog:'sent',sent:'done',done:'prog'}[cur],patch={status:next};if(next==='done')patch.measured=true;await sb.from('sfs').update(patch).eq('id',id);loadData()}
+async function addSfs(){var p=$('f_partner').value.trim();if(!p){toast('Mets le partenaire.');return}var m=$('f_model').value,d=$('f_date').value||new Date().toISOString().slice(0,10),t=$('f_time').value,ct=$('f_contact').value.trim();var row={src:'manual',model:m,partner:p,contact:ct,link_name:linkName(m,p,d,t),date:d,status:'prog',measured:false,clicks:0,subs:0,earnings:0,fans:0};var r=await sb.from('sfs').insert(row);if(r.error){toast('Erreur : '+r.error.message);return}if(ct){var k=norm(p);parts[k]={partner_key:k,partner:p,contact:ct};sb.from('partner_contacts').upsert({partner_key:k,partner:p,contact:ct})}$('f_partner').value='';$('f_contact').value='';upLn();var cc=data.filter(x=>x.src==='manual'&&ym(x.date)===ym(d)).length+1;if(cc===30||cc===60||cc===MONTH_GOAL){var med=cc===MONTH_GOAL?'🥇 OR':cc===60?'🥈 ARGENT':'🥉 BRONZE';celebrate('PALIER '+med+' · '+cc+' SFS ce mois ! 🎉',true)}else{celebrate('SFS ajouté · +'+PAY_PER_SFS+'€ 💥')}loadData()}
+async function setStatus(id,cur){var next={prog:'sent',sent:'done',done:'prog'}[cur],patch={status:next};if(next==='done')patch.measured=true;await sb.from('sfs').update(patch).eq('id',id);ding(next==='sent'?[587,880]:next==='done'?[659,988,1319]:[440,660]);loadData()}
 async function delSfs(id){if(!confirm('Supprimer cette carte ?'))return;await sb.from('sfs').delete().eq('id',id);loadData()}
 async function onImport(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=async()=>{try{var imp=parseXlsx(rd.result);if(!imp.length){toast('Aucun SFS trouvé.');return}var mt=0,ins=[];for(var i=0;i<imp.length;i++){var row=imp[i],nm=norm(row.name);var card=data.find(d=>d.model===row.model&&norm(d.link_name)===nm)||data.find(d=>d.model===row.model&&d.src==='manual'&&norm(d.link_name)&&nm.indexOf(norm(d.link_name))>=0);if(card){await sb.from('sfs').update({clicks:row.clicks,subs:row.subs,earnings:row.earnings,fans:row.fans,measured:true,status:'done',date:card.date||row.date}).eq('id',card.id);mt++}else{ins.push({src:'Infloww',model:row.model,partner:row.name,contact:'',link_name:row.name,date:row.date,status:'done',measured:true,clicks:row.clicks,subs:row.subs,earnings:row.earnings,fans:row.fans})}}for(var j=0;j<ins.length;j+=400)await sb.from('sfs').insert(ins.slice(j,j+400));toast('✅ '+mt+' MAJ, '+ins.length+' ajoutés');loadData()}catch(err){toast('Fichier illisible')}};rd.readAsArrayBuffer(f);e.target.value=''}
 
@@ -401,12 +426,65 @@ function render(){
   board.querySelectorAll('.stbadge').forEach(b=>b.onclick=()=>setStatus(b.dataset.id,b.dataset.st));
   board.querySelectorAll('.x').forEach(b=>b.onclick=()=>delSfs(b.dataset.id));
   board.querySelectorAll('.pl').forEach(a=>a.onclick=()=>openPartner(a.dataset.p));
+  // cockpit dopamine
+  renderCockpit();
   // dashboard
   if(isAdmin)renderDash();
   // partners
   renderParts();
 }
-function fmtStat(v,fmt){v=v||0;if(fmt==='money')return money(v);if(fmt==='pct1')return v.toFixed(1)+'%';if(fmt==='dec1')return v.toFixed(1);return Math.round(v).toLocaleString('fr-FR')}
+function fmtStat(v,fmt){v=v||0;if(fmt==='money')return money(v);if(fmt==='eur')return Math.round(v).toLocaleString('fr-FR')+' €';if(fmt==='pct1')return v.toFixed(1)+'%';if(fmt==='dec1')return v.toFixed(1);return Math.round(v).toLocaleString('fr-FR')}
+function animateNum(el,to,fmt){if(!el)return;var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;if(reduce){el.textContent=fmtStat(to,fmt);return}var dur=800,st=null;function s(ts){if(st==null)st=ts;var p=Math.min(1,(ts-st)/dur),e=1-Math.pow(1-p,3);el.textContent=fmtStat(to*e,fmt);if(p<1)requestAnimationFrame(s)}requestAnimationFrame(s)}
+/* ---- confettis + son (aucune lib, autonome) ---- */
+var __ac=null;
+function ding(freqs){try{if(localStorage.getItem('sfx')==='0')return;__ac=__ac||new(window.AudioContext||window.webkitAudioContext)();var t0=__ac.currentTime;(freqs||[660,990]).forEach(function(f,i){var o=__ac.createOscillator(),g=__ac.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(__ac.destination);var st=t0+i*0.085;g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.22,st+0.02);g.gain.exponentialRampToValueAtTime(0.0001,st+0.26);o.start(st);o.stop(st+0.28)})}catch(e){}}
+function confettiBurst(power){var c=document.getElementById('cfx');if(!c){c=document.createElement('canvas');c.id='cfx';c.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999';document.body.appendChild(c)}var ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;var N=power||90,cols=['#6172FF','#F3C24B','#3FC8DE','#39D9A0','#B197FC','#F26D63'],P=[];for(var i=0;i<N;i++)P.push({x:innerWidth/2+(Math.random()-.5)*220,y:innerHeight*0.34,vx:(Math.random()-.5)*11,vy:Math.random()*-13-4,g:0.32,s:6+Math.random()*7,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4});var start=null;function tick(t){if(start==null)start=t;var el=t-start;ctx.clearRect(0,0,c.width,c.height);var alive=false;for(var i=0;i<P.length;i++){var p=P[i];p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;if(p.y<c.height+20)alive=true;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.globalAlpha=Math.max(0,1-el/2600);ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.55);ctx.restore()}if(alive&&el<2600)requestAnimationFrame(tick);else ctx.clearRect(0,0,c.width,c.height)}requestAnimationFrame(tick)}
+function celebrate(msg,big){confettiBurst(big?190:95);ding(big?[523,659,784,1047]:[660,990]);if(msg)toast(msg)}
+/* ---- cockpit dopamine ---- */
+function renderCockpit(){
+  var ck=$('cockpit');if(!ck)return;
+  var now=new Date(),ymNow=now.toISOString().slice(0,7),todayStr=now.toISOString().slice(0,10);
+  var mine=data.filter(r=>r.src==='manual');
+  var monthC=mine.filter(r=>ym(r.date)===ymNow),created=monthC.length;
+  var day=(now.getDay()+6)%7,mon=new Date(now);mon.setDate(now.getDate()-day);var wkStart=mon.toISOString().slice(0,10);
+  var weekC=mine.filter(r=>r.date&&r.date>=wkStart&&r.date<=todayStr),weekN=weekC.length,weekGoal=MODELS.length*WEEK_PER_MODEL;
+  var perMod=MODELS.map(m=>({m:m,n:weekC.filter(r=>r.model===m).length}));
+  var todayN=mine.filter(r=>r.date===todayStr).length;
+  var ds=Array.from(new Set(mine.map(r=>r.date).filter(Boolean))).sort().reverse(),streak=0;
+  if(ds.length){var has=function(dt){return ds.indexOf(dt.toISOString().slice(0,10))>=0},probe=new Date(todayStr);if(!has(probe))probe.setDate(probe.getDate()-1);while(has(probe)){streak++;probe.setDate(probe.getDate()-1)}}
+  var bm={};mine.forEach(r=>{var k=ym(r.date);if(k)bm[k]=(bm[k]||0)+1});var record=0,recM='';Object.keys(bm).forEach(k=>{if(bm[k]>record){record=bm[k];recM=k}});
+  var measM=data.filter(r=>r.measured&&ym(r.date)===ymNow),notes=measM.map(scoreOf).filter(x=>x),avg=notes.length?notes.reduce((a,b)=>a+b,0)/notes.length:null;
+  var prime=0;if(avg!=null)prime=avg>=9?200:avg>=8?100:avg>=7?50:avg>=6?25:0;if(created>=PRIME_MIN_SFS&&prime<25)prime=25;
+  var base=created*PAY_PER_SFS,pay=base+prime;
+  var nudge;
+  if(created<PRIME_MIN_SFS)nudge='Encore <b>'+(PRIME_MIN_SFS-created)+' SFS</b> pour débloquer ta prime (+25 € garantis)';
+  else if(avg==null)nudge='Prime débloquée : <b>25 €</b> minimum ✦ tes notes la feront monter';
+  else if(avg<7)nudge='Monte ta moyenne à <b>7</b> → prime <b>50 €</b> <span style="color:var(--mut)">('+avg.toFixed(1)+' actuel)</span>';
+  else if(avg<8)nudge='Passe à <b>8</b> → <b>100 €</b> <span style="color:var(--mut)">('+avg.toFixed(1)+' actuel)</span>';
+  else if(avg<9)nudge='Un dernier effort → <b>9</b> = <b>200 €</b> <span style="color:var(--mut)">('+avg.toFixed(1)+')</span>';
+  else nudge='🔥 Prime <b>MAX 200 €</b> atteinte — énorme !';
+  var mp=created>=MONTH_GOAL?'🥇':created>=60?'🥈':created>=30?'🥉':'',
+      msg=created>=MONTH_GOAL?'Objectif du mois EXPLOSÉ 🚀':created>=60?'Dernier sprint 💪':created>=30?'Bien lancé 🔥':created>0?"C'est parti 👊":'Rentre ton 1er SFS 👇';
+  var sfxOn=localStorage.getItem('sfx')!=='0';
+  ck.innerHTML=
+    '<div class="pay"><button class="sfx" id="sfxBtn" title="Activer/couper le son">'+(sfxOn?'🔊':'🔇')+'</button>'+
+      '<div class="k">💶 Ta paye en direct · '+MO_FR[now.getMonth()]+' '+now.getFullYear()+'</div>'+
+      '<div class="big" id="payNum">'+fmtStat(pay,'eur')+'</div>'+
+      '<div class="brk">Base <b style="color:var(--ink)">'+base+' €</b> <span>('+created+' SFS × '+PAY_PER_SFS+'€)</span> + Prime <b style="color:var(--cash)">'+prime+' €</b></div>'+
+      '<div class="nudge">'+nudge+'</div></div>'+
+    '<div class="gpanel">'+
+      '<div class="gbar"><div class="gtop"><span>'+(mp?mp+' ':'')+'Objectif du mois</span><b>'+created+' / '+MONTH_GOAL+'</b></div>'+
+        '<div class="track"><div class="fill" style="width:'+Math.min(100,created/MONTH_GOAL*100).toFixed(1)+'%"></div></div><div class="gmsg">'+msg+'</div></div>'+
+      '<div class="gbar"><div class="gtop"><span>📅 Cette semaine</span><b>'+weekN+' / '+weekGoal+'</b></div>'+
+        '<div class="track"><div class="fill week" style="width:'+Math.min(100,weekN/weekGoal*100).toFixed(1)+'%"></div></div>'+
+        '<div class="mods">'+perMod.map(x=>'<span class="mod'+(x.n>=WEEK_PER_MODEL?' ok':'')+'">'+x.m.slice(0,3)+' '+x.n+'/'+WEEK_PER_MODEL+'</span>').join('')+'</div></div>'+
+      '<div class="chips"><span class="chip"><span class="em">🔥</span>Série <b>'+streak+'</b> j</span>'+
+        '<span class="chip"><span class="em">🎯</span>Aujourd\'hui <b>'+todayN+'/3</b></span>'+
+        '<span class="chip"><span class="em">🏆</span>Record <b>'+record+'</b>'+(recM?' <span style="color:var(--mut)">('+MO_FR[parseInt(recM.slice(5),10)-1]+')</span>':'')+'</span></div>'+
+    '</div>';
+  var sfb=$('sfxBtn');if(sfb)sfb.onclick=function(){localStorage.setItem('sfx',sfxOn?'0':'1');renderCockpit()};
+  if(window.__payLast===pay)$('payNum').textContent=fmtStat(pay,'eur');else{window.__payLast=pay;animateNum($('payNum'),pay,'eur')}
+}
 function animateStats(){
   if(!$('p-dash')||!$('p-dash').classList.contains('active'))return;
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
