@@ -282,6 +282,17 @@
   .ck-mcard.pop{animation:ckpop .6s var(--ease-out)}
   @keyframes ckpop{0%{box-shadow:0 0 0 0 rgba(37,232,195,.55)}100%{box-shadow:0 0 0 12px rgba(37,232,195,0)}}
   .ck-batch{font-size:11.5px;color:var(--mut);margin-top:14px}.ck-batch b{color:var(--cvr)}
+  /* ===== THÈMES (Gris défaut · Blanc épuré · OLED) ===== */
+  html,body{transition:background .4s ease,color .4s ease}
+  :root[data-theme="oled"]{--bg:#000000;--bg2:#0A0A0A;--card:#0D0D0D;--card2:#151515;--line:#1E1E1E;--line2:#2A2A2A;--ink:#F3F3F3;--soft:#9C9C9C;--mut:#5E5E5E}
+  :root[data-theme="blanc"]{--bg:#F5F7FA;--bg2:#ECEFF4;--card:#FFFFFF;--card2:#F4F6F9;--line:#E4E8EE;--line2:#D4DAE2;--ink:#121820;--soft:#5B6672;--mut:#98A2AD;--cash:#B7860E;--acc:#5566F0;--acc2:#4A49F2;--accSoft:rgba(85,102,240,.12);--cvr:#0E93B8;--green:#0E9F6E;--amber:#C77D0E;--red:#E0554B;--violet:#7C56E6;--mint:#5566F0;--mint2:#4A49F2;--teal:#5566F0;--sh:0 1px 2px rgba(20,30,50,.06),0 12px 34px rgba(20,30,50,.10)}
+  :root[data-theme="blanc"] .ck-hero{background:linear-gradient(155deg,rgba(243,194,75,.12),var(--card) 48%)}
+  :root[data-theme="blanc"] .ck-pay{background:linear-gradient(100deg,#7A5608,#C79210 42%,#E7C25A 60%,#A8760C);background-size:230% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+  :root[data-theme="blanc"] .ck-nval{background:linear-gradient(120deg,#0E9F6E,#12B07A 50%,#4C9E0E);-webkit-background-clip:text;background-clip:text;color:transparent}
+  :root[data-theme="blanc"] .ck-grade{color:#fff;background:linear-gradient(120deg,#0E9F6E,#4C9E0E)}
+  :root[data-theme="blanc"] .ck-nmeter i{background:linear-gradient(90deg,#0E9F6E,#12B07A,#4C9E0E)}
+  :root[data-theme="blanc"] .btn.primary,:root[data-theme="blanc"] .tab.active{color:#fff}
+  :root[data-theme="blanc"] .note,:root[data-theme="blanc"] .grade{filter:saturate(1.05)}
 </style></head>
 <body>
 <div id="login">
@@ -304,6 +315,7 @@
     <div class="actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button class="btn primary" id="newBtn">＋ Nouveau SFS</button>
       <label class="btn adminonly" style="cursor:pointer" id="impLabel">⬆ Importer Infloww<input type="file" id="impFile" accept=".xlsx" hidden></label>
+      <select class="btn ghost" id="themeSel" title="Thème" style="cursor:pointer"><option value="">🎨 Gris</option><option value="blanc">🎨 Blanc</option><option value="oled">🎨 OLED</option></select>
       <span class="who" id="who"></span>
       <button class="btn ghost" id="logout">Quitter</button>
     </div>
@@ -386,6 +398,7 @@ const RING_PALS=[['#25E8C3','#6172FF','#B197FC'],['#FF375F','#A6FF3A','#38E8E0']
 const MO_FR=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 let data=[],parts={},showAll=false,isAdmin=true,chart=null,chMode='subs';
 const $=id=>document.getElementById(id);
+(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)})();
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function cvrOf(r){return r.clicks>0?r.subs/r.clicks*100:null}
 function spendOf(r){return r.subs>0?r.fans/r.subs*100:null}
@@ -442,6 +455,7 @@ function initUI(){
   $('allMonths').onclick=()=>{showAll=!showAll;$('allMonths').textContent=showAll?'Ce mois':'Historique';render()};
   $('q').oninput=render;$('fModel').onchange=render;$('fStatus').onchange=render;$('pq').oninput=render;
   $('impFile').onchange=onImport;
+  var ts=$('themeSel');if(ts){ts.value=localStorage.getItem('theme')||'';ts.onchange=function(){var v=ts.value;if(v)document.documentElement.setAttribute('data-theme',v);else document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme',v)}}
   $('chSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{chMode=b.dataset.m;$('chSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawChart()});
   $('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal()};
   upLn();
