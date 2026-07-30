@@ -924,10 +924,14 @@ function renderAide(){
   if(isAdmin)html+='<button class="btn primary" id="aideAdd" style="margin-bottom:14px">＋ Ajouter une section</button>';
   if(!secs.length){html+='<div class="card"><p class="hint">Aucune section pour l\'instant.'+(isAdmin?' Clique « Ajouter une section » pour créer le guide.':'')+'</p></div>';}
   else{secs.forEach(function(s){
+    var canEdit=isAdmin||s.kind==='template';
     html+='<div class="card aidecard"><div class="aidehead"><h2>'+esc(s.title||'Section')+'</h2><div class="aideact">'
       +'<button class="btn ghost aicopy" data-id="'+s.id+'">Copier</button>'
-      +(isAdmin?'<button class="btn ghost aiedit" data-id="'+s.id+'">Éditer</button><button class="btn ghost aidel" data-id="'+s.id+'">✕</button>':'')
-      +'</div></div><div class="aidebody">'+esc(s.body||'')+'</div></div>';
+      +(canEdit?'<button class="btn ghost aiedit" data-id="'+s.id+'">Éditer</button>':'')
+      +(isAdmin?'<button class="btn ghost aidel" data-id="'+s.id+'">✕</button>':'')
+      +'</div></div>'
+      +((s.kind==='template'&&!isAdmin)?'<div class="hint" style="margin:-2px 0 8px">✏️ Tu peux mettre à jour les stats : clique « Éditer ».</div>':'')
+      +'<div class="aidebody">'+esc(s.body||'')+'</div></div>';
   });}
   wrap.innerHTML=html;
   var add=$('aideAdd');if(add)add.onclick=function(){openAideEditor(null)};
@@ -942,14 +946,14 @@ function copyPlain(text,btn){text=text||'';
   else{copyFallback(text);done()}
 }
 function openAideEditor(id){
-  if(!isAdmin)return;
   var s=id?aideSecs().find(function(x){return String(x.id)===String(id)}):null;
+  if(!isAdmin && !(s&&s.kind==='template'))return;
   var secs=aideSecs();var defSort=s?s.sort:(secs.length?Math.max.apply(null,secs.map(function(x){return x.sort||0}))+1:1);
   $('modal').innerHTML='<div class="mh"><div><div class="label">'+(s?'Éditer la section':'Nouvelle section')+'</div><h2>Aide</h2></div><button class="close" id="mClose">✕</button></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Titre</label><input type="text" id="ai_title" value="'+esc(s?s.title:'')+'" placeholder="Ex : 📋 Template pour les groupes SFS"></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Contenu (le bouton « Copier » copiera ce texte tel quel)</label><textarea id="ai_body" rows="12" placeholder="Écris le contenu ici…">'+esc(s?s.body:'')+'</textarea></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Ordre d\'affichage</label><input type="number" id="ai_sort" value="'+defSort+'" style="max-width:120px"></div>'
-    +'<div style="display:flex;gap:8px;margin-top:6px"><button class="btn primary" id="ai_save">💾 Enregistrer</button>'+(s?'<button class="btn ghost" id="ai_del">Supprimer</button>':'')+'<button class="btn ghost" id="ai_cancel">Annuler</button></div><div class="lerr" id="ai_err"></div>';
+    +'<div style="display:flex;gap:8px;margin-top:6px"><button class="btn primary" id="ai_save">💾 Enregistrer</button>'+((s&&isAdmin)?'<button class="btn ghost" id="ai_del">Supprimer</button>':'')+'<button class="btn ghost" id="ai_cancel">Annuler</button></div><div class="lerr" id="ai_err"></div>';
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;$('ai_cancel').onclick=closeModal;
   $('ai_save').onclick=function(){saveAide(s?s.id:null)};
   var dl=$('ai_del');if(dl)dl.onclick=function(){delAide(s.id)};
@@ -957,6 +961,8 @@ function openAideEditor(id){
 async function saveAide(id){
   var err=$('ai_err');if(err)err.textContent='';
   var title=$('ai_title').value.trim(),body=$('ai_body').value,sort=parseInt($('ai_sort').value,10)||0;
+  var sec=id?aideSecs().find(function(x){return String(x.id)===String(id)}):null;
+  if(!isAdmin && !(sec&&sec.kind==='template')){if(err)err.textContent='Non autorisé.';return}
   if(!title){if(err)err.textContent='Mets un titre.';return}
   try{
     if(id)await sb.from('contenu').update({title:title,body:body,sort:sort}).eq('id',id);
