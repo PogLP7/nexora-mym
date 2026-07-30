@@ -853,7 +853,7 @@ function renderContenu(){
     var cover=b.cover?b.cover.media_url:(b.photos.length?b.photos[0].media_url:''),g=CGRADS[MODELS.indexOf(m)%CGRADS.length];
     var bg=cover?'<div class="mcover" style="background-image:url(\''+esc(cover)+'\')"></div>':'<div class="mcover grad" style="background:linear-gradient(150deg,'+g[0]+','+g[1]+')"><span class="mmono">'+esc(m.slice(0,2).toUpperCase())+'</span></div>';
     var chips=has?((b.text?'<span class="mchip">'+IC_TXT+'Texte</span>':'')+(b.video?'<span class="mchip">'+IC_VID+'Vidéo</span>':'')+(b.photos.length?'<span class="mchip">'+IC_IMG+b.photos.length+'</span>':'')):'<span class="mchip empty">'+(isAdmin?'＋ Remplir':'Vide')+'</span>';
-    var pf=(PLAT[m]||''),pc=pf==='MYM'?'mym':'of',complete=b.texts.length&&b.video&&b.photos.length;
+    var pf=(PLAT[m]||''),pc=pf==='MYM'?'mym':'of',complete=b.texts.length&&b.video&&b.photos.length&&m!=='Bethy OF'&&m!=='Bethy MYM';
     return '<div class="modelcard'+(has?'':' vide')+'" data-m="'+esc(m)+'">'+bg+(complete?'<div class="kdone" title="Kit complet">✓</div>':'')+'<div class="mscrim"></div><div class="mcinfo"><div class="mcn">'+esc(m)+(pf?' <span class="cpf '+pc+'">'+pf+'</span>':'')+'</div><div class="mchips">'+chips+'</div></div></div>';
   }).join('');
   host.className='modelgrid';
