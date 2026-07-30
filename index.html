@@ -486,10 +486,10 @@ const SUPABASE_URL='https://bvcnbtbdfkoiefuedxem.supabase.co';
 const SUPABASE_KEY='sb_publishable__X2Z5ELAvPpQ2CK7CKoXpQ_J2F2ZxEP';
 const MOISE_EMAILS=[]; // emails en minuscule qui voient la version simplifiée (sans Dashboard ni Import)
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Marion:{cvr:50,spend:13},Bethy:{cvr:60,spend:13},Milla:{cvr:60,spend:15}};
+const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Marion:{cvr:50,spend:13},'Bethy OF':{cvr:60,spend:13},'Bethy MYM':{cvr:60,spend:13},Milla:{cvr:60,spend:15}};
 const MODELS=Object.keys(CIBLES);
-const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF',Bethy:'MYM',Milla:'MYM'};
-const WK_TARGET={Alice:4,Louise:4,Amandine:4,Margot:4,Marion:4,Bethy:1,Milla:1};
+const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF','Bethy OF':'OF','Bethy MYM':'MYM',Milla:'MYM'};
+const WK_TARGET={Alice:4,Louise:4,Amandine:4,Margot:4,Marion:4,'Bethy OF':4,'Bethy MYM':1,Milla:1};
 /* gamification / dopamine Moïse */
 const PAY_PER_SFS=2,PRIME_MIN_SFS=45;
 const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.round(WEEK_GOAL/7));
@@ -532,7 +532,7 @@ function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',sch
 /* xlsx */
 function decEnt(s){return String(s==null?'':s).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
 function numv(s){var t=String(s==null?'':s).replace(/[^0-9.\-]/g,'');return(t===''||t==='-'||t==='.')?0:(parseFloat(t)||0)}
-function cleanModel(name){var m=/^\s*([A-Za-zÀ-ÿ]+)/.exec(name||'');if(!m)return null;var n=m[1],map={Loulou:'Louise',Betty:'Bethy'};n=map[n]||n;return MODELS.indexOf(n)>=0?n:null}
+function cleanModel(name){var m=/^\s*([A-Za-zÀ-ÿ]+)/.exec(name||'');if(!m)return null;var n=m[1],map={Loulou:'Louise',Betty:'Bethy OF',Bethy:'Bethy OF'};n=map[n]||n;return MODELS.indexOf(n)>=0?n:null}
 function normDate(s){if(!s)return null;var d=new Date(s);return isNaN(d.getTime())?null:d.toISOString().slice(0,10)}
 function parseSheet(xml){var i=xml.indexOf('<sheetData>');if(i<0)return[];var b=xml.slice(i+11);var j=b.indexOf('</sheetData>');if(j>=0)b=b.slice(0,j);var rows=[],rr=/<row\b[^>]*>([\s\S]*?)<\/row>/g,rm;while(rm=rr.exec(b)){var inner=rm[1],cells={},cr=/<c\b([^>]*?)(\/>|>([\s\S]*?)<\/c>)/g,cm;while(cm=cr.exec(inner)){var a=cm[1],b2=cm[3]||'';var g=/r="([A-Z]+)\d+"/.exec(a);if(!g)continue;var col=g[1],tm=/t="([^"]+)"/.exec(a),t=tm?tm[1]:null,v='';if(t==='inlineStr'){var x=/<t[^>]*>([\s\S]*?)<\/t>/.exec(b2);v=x?decEnt(x[1]):''}else{var y=/<v>([\s\S]*?)<\/v>/.exec(b2);v=y?y[1]:''}cells[col]=v}rows.push(cells)}return rows}
 function parseXlsx(buf){var files=fflate.unzipSync(new Uint8Array(buf));var txt=p=>files[p]?fflate.strFromU8(files[p]):'';var wb=txt('xl/workbook.xml'),rels=txt('xl/_rels/workbook.xml.rels');var sh=[],sr=/<sheet\b[^>]*name="([^"]*)"[^>]*r:id="([^"]*)"/g,sm;while(sm=sr.exec(wb))sh.push({name:decEnt(sm[1]),rid:sm[2]});var rmap={},rr=/<Relationship\b[^>]*Id="([^"]*)"[^>]*Target="([^"]*)"/g,rm;while(rm=rr.exec(rels))rmap[rm[1]]=rm[2];var out=[];sh.forEach(s=>{var model=cleanModel(s.name);if(!model)return;var tg=rmap[s.rid];if(!tg)return;var path='xl/'+tg.replace(/^\//,'');if(!files[path])return;var rows=parseSheet(txt(path));if(rows.length<2)return;var h=rows[0],c={};for(var k in h)c[(h[k]||'').trim()]=k;var cN=c['Tracking link'],cC=c['Clicks'],cS=c['Subs'],cE=c['Earnings'],cF=c['Fans who spent'],cD=c['Date created'];if(!cN||!cC)return;for(var r=1;r<rows.length;r++){var x=rows[r],name=(x[cN]||'').trim();if(!name||name.toLowerCase().indexOf('sfs')<0)continue;var clk=numv(x[cC]);if(!(clk>0))continue;out.push({model:model,name:name,date:normDate(x[cD]),clicks:clk,subs:numv(x[cS]),earnings:numv(x[cE]),fans:numv(x[cF])})}});return out}
