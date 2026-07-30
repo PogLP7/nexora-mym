@@ -145,6 +145,20 @@
   .cmini{font-size:11px;padding:5px 10px}
   .cprev{font-size:12px;color:var(--soft);margin-bottom:8px}
   #ce_body{width:100%;font-family:var(--f);font-size:14px;padding:10px 12px;border:1px solid var(--line2);border-radius:11px;background:var(--card);color:var(--ink);resize:vertical}
+  .modelgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .modelcard{background:var(--card2);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .2s var(--ease),border-color .2s}
+  .modelcard:hover{transform:translateY(-3px);border-color:var(--acc)}
+  .modelcard.vide{opacity:.65}
+  .mcover{height:130px;background:var(--bg2) center/cover no-repeat;display:grid;place-items:center}
+  .mcover.empty{font-family:var(--fd);font-size:34px;font-weight:800;color:var(--mut)}
+  .mcinfo{padding:12px 14px}
+  .mcn{font-weight:700;font-size:15px;display:flex;align-items:center;gap:7px}
+  .mcn .cpf{font-family:var(--fm);font-size:9px;letter-spacing:.06em;color:var(--mut);border:1px solid var(--line2);border-radius:5px;padding:1px 6px}
+  .mcs{font-family:var(--fm);font-size:11px;color:var(--mut);margin-top:4px}
+  .pgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+  .pgal img{width:100%;height:88px;object-fit:cover;border-radius:8px;display:block}
+  .pedit{position:relative}
+  .pedit .pdel{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:12px;line-height:1}
   .overlay{position:fixed;inset:0;background:rgba(4,8,12,.7);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
   .overlay.open{display:flex}
   .modal{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line2);border-radius:20px;max-width:640px;width:100%;box-shadow:var(--sh);padding:24px 26px}
@@ -431,7 +445,7 @@
       <p class="hint">Textes SFS à copier en 1 clic + photos/vidéos, rangés par modèle. <span class="adminonly">Toi seul peux ajouter / éditer — Moïse consulte et copie.</span></p>
       <div class="bar">
         <select id="cModelFilter"><option value="">Tous les modèles</option></select>
-        <button class="btn primary adminonly" id="cAddBtn" style="margin-left:auto">＋ Ajouter un contenu</button>
+        <span class="adminonly" style="font-size:12px;color:var(--mut);margin-left:6px">Clique une case pour remplir / éditer son kit</span>
       </div>
       <div id="contenuList"></div>
     </div>
@@ -518,7 +532,6 @@ function initUI(){
   $('impFile').onchange=onImport;
   var ts=$('themeSel');if(ts){ts.value=localStorage.getItem('theme')||'';ts.onchange=function(){var v=ts.value;if(v)document.documentElement.setAttribute('data-theme',v);else document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme',v)}}
   var cf=$('cModelFilter');if(cf&&cf.options.length<2){MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;cf.appendChild(o)});cf.onchange=renderContenu}
-  var cab=$('cAddBtn');if(cab)cab.onclick=()=>openContenuEditor(null);
   $('chSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{chMode=b.dataset.m;$('chSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawChart()});
   $('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal()};
   upLn();
@@ -785,51 +798,57 @@ async function loadContenu(){try{var r=await sb.from('contenu').select('*');if(!
 function copyText(id,btn,orig){var c=contenu.find(x=>String(x.id)===String(id));if(!c)return;var t=c.body||'';function ok(){toast('Texte copié ✓');if(btn){btn.textContent='Copié ✓';setTimeout(function(){btn.innerHTML=orig||'Copier le texte'},1200)}}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fallbackCopy(t,ok)})}else fallbackCopy(t,ok)}
 function fallbackCopy(t,ok){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){}ta.remove()}
-function contenuCard(c){
-  var media='';
-  if(c.media_url)media=c.kind==='video'?'<video src="'+esc(c.media_url)+'" controls preload="metadata" class="cmedia"></video>':'<img src="'+esc(c.media_url)+'" class="cmedia" loading="lazy" alt="">';
-  var copyIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>';
-  var txt=c.body?'<div class="ctext">'+esc(c.body)+'</div><button class="btn ccopy" data-copy="'+c.id+'">'+copyIc+' Copier le texte</button>':'';
-  var adm=isAdmin?'<div class="cadm"><button class="btn ghost cmini" data-edit="'+c.id+'">Éditer</button><button class="btn ghost cmini" data-del="'+c.id+'">Suppr</button></div>':'';
-  return '<div class="ccard">'+media+(c.title?'<div class="ctitle">'+esc(c.title)+'</div>':'')+txt+adm+'</div>';
-}
+function modelBundle(m){var rows=contenu.filter(c=>c.model===m);return {text:rows.find(r=>r.kind==='texte')||null,video:rows.find(r=>r.kind==='video')||null,photos:rows.filter(r=>r.kind==='photo').sort((a,b)=>(a.created_at||'').localeCompare(b.created_at||''))}}
 function renderContenu(){
   var host=$('contenuList');if(!host)return;
   var fm=$('cModelFilter')?$('cModelFilter').value:'';
-  var html=MODELS.filter(m=>!fm||m===fm).map(function(m){
-    var items=contenu.filter(c=>c.model===m).sort((a,b)=>(a.sort||0)-(b.sort||0)||(a.created_at||'').localeCompare(b.created_at||''));
-    if(!items.length&&fm)return '<div class="colempty">Aucun contenu pour '+esc(m)+(isAdmin?' — clique « Ajouter un contenu »':'')+'.</div>';
-    if(!items.length)return '';
-    return '<div class="cmodel"><div class="cmh">'+esc(m)+' <span class="cpf">'+(PLAT[m]||'')+'</span><span class="cct">'+items.length+' contenu'+(items.length>1?'s':'')+'</span></div><div class="cgrid">'+items.map(contenuCard).join('')+'</div></div>';
+  var cards=MODELS.filter(m=>!fm||m===fm).map(function(m){
+    var b=modelBundle(m),has=!!(b.text||b.video||b.photos.length);
+    if(!has&&!isAdmin)return '';
+    var cover=b.photos.length?b.photos[0].media_url:'';
+    var thumb=cover?'<div class="mcover" style="background-image:url(\''+esc(cover)+'\')"></div>':'<div class="mcover empty">'+esc(m.slice(0,2).toUpperCase())+'</div>';
+    var bits=[];if(b.text)bits.push('texte');if(b.video)bits.push('vidéo');if(b.photos.length)bits.push(b.photos.length+' photo'+(b.photos.length>1?'s':''));
+    var summary=bits.length?bits.join(' · '):(isAdmin?'Vide — clique pour remplir':'—');
+    return '<div class="modelcard'+(has?'':' vide')+'" data-m="'+esc(m)+'">'+thumb+'<div class="mcinfo"><div class="mcn">'+esc(m)+' <span class="cpf">'+(PLAT[m]||'')+'</span></div><div class="mcs">'+summary+'</div></div></div>';
   }).join('');
-  host.innerHTML=html||'<div class="colempty">Aucun contenu pour l\'instant.'+(isAdmin?' Clique « Ajouter un contenu ».':'')+'</div>';
-  host.querySelectorAll('[data-copy]').forEach(b=>{var orig=b.innerHTML;b.onclick=()=>copyText(b.getAttribute('data-copy'),b,orig)});
-  if(isAdmin){host.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openContenuEditor(b.getAttribute('data-edit')));host.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delContenu(b.getAttribute('data-del')));}
+  host.className='modelgrid';
+  host.innerHTML=cards||'<div class="colempty">Aucun contenu pour l\'instant.</div>';
+  host.querySelectorAll('.modelcard').forEach(c=>c.onclick=()=>openModelView(c.getAttribute('data-m')));
 }
-function openContenuEditor(id){
-  if(!isAdmin)return;
-  var c=id?contenu.find(x=>String(x.id)===String(id)):{model:MODELS[0],kind:'texte',title:'',body:'',media_url:''};if(!c)return;
-  var opts=MODELS.map(m=>'<option'+(c.model===m?' selected':'')+'>'+m+'</option>').join('');
-  var kinds=[['texte','Texte'],['photo','Photo'],['video','Vidéo']].map(k=>'<option value="'+k[0]+'"'+(c.kind===k[0]?' selected':'')+'>'+k[1]+'</option>').join('');
-  $('modal').innerHTML='<div class="mh"><div><div class="label">Contenu</div><h2>'+(id?'Éditer le':'Nouveau')+' contenu</h2></div><button class="close" id="mClose">✕</button></div>'+
-    '<div class="fgrid"><div class="fld"><label>Modèle</label><select id="ce_model">'+opts+'</select></div><div class="fld"><label>Type</label><select id="ce_kind">'+kinds+'</select></div></div>'+
-    '<div class="fld" style="margin-bottom:12px"><label>Titre (optionnel)</label><input id="ce_title" value="'+esc(c.title||'')+'" placeholder="ex. Accroche story"></div>'+
-    '<div class="fld" style="margin-bottom:12px"><label>Texte SFS (copiable en 1 clic)</label><textarea id="ce_body" rows="5" placeholder="Le texte à copier…">'+esc(c.body||'')+'</textarea></div>'+
-    '<div class="fld" style="margin-bottom:10px"><label>Média photo/vidéo '+(id?'(laisse vide pour garder l\'actuel)':'(optionnel)')+'</label><input type="file" id="ce_file" accept="image/*,video/*"></div>'+
-    (c.media_url?'<div class="cprev">Média actuel : <a href="'+esc(c.media_url)+'" target="_blank">voir</a></div>':'')+
-    '<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap"><button class="btn primary" id="ce_save">💾 Enregistrer</button>'+(id?'<button class="btn ghost" id="ce_del">Supprimer</button>':'')+'</div><div class="lerr" id="ce_err"></div>';
+function openModelView(m){
+  var b=modelBundle(m),media='';
+  if(b.video&&b.video.media_url)media+='<video src="'+esc(b.video.media_url)+'" controls preload="metadata" class="cmedia" style="margin-bottom:12px"></video>';
+  if(b.photos.length)media+='<div class="pgal">'+b.photos.map(p=>'<a href="'+esc(p.media_url)+'" target="_blank"><img src="'+esc(p.media_url)+'" loading="lazy" alt=""></a>').join('')+'</div>';
+  var txt=(b.text&&b.text.body)?'<div class="ctext" style="margin-top:12px">'+esc(b.text.body)+'</div><button class="btn ccopy" id="mvCopy">Copier le texte</button>':'<div class="cprev" style="margin-top:12px">Pas encore de texte.</div>';
+  var adm=isAdmin?'<button class="btn ghost" id="mvEdit">✎ Éditer ce kit</button>':'';
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Kit SFS</div><h2>'+esc(m)+' <span class="cpf" style="font-size:10px;vertical-align:middle">'+(PLAT[m]||'')+'</span></h2></div><button class="close" id="mClose">✕</button></div>'+(media||'')+txt+'<div style="margin-top:14px">'+adm+'</div>';
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;
-  $('ce_save').onclick=()=>saveContenu(id);var dd=$('ce_del');if(dd)dd.onclick=()=>delContenu(id);
+  var cp=$('mvCopy');if(cp&&b.text){var orig=cp.innerHTML;cp.onclick=()=>copyText(b.text.id,cp,orig)}
+  var ed=$('mvEdit');if(ed)ed.onclick=()=>openModelEditor(m);
 }
-async function saveContenu(id){
-  var model=$('ce_model').value,kind=$('ce_kind').value,title=$('ce_title').value.trim(),body=$('ce_body').value,file=$('ce_file').files[0],err=$('ce_err');err.textContent='';
+function openModelEditor(m){
+  if(!isAdmin)return;var b=modelBundle(m);
+  var photos=b.photos.map(p=>'<div class="pedit"><img src="'+esc(p.media_url)+'" alt=""><button class="pdel" data-pid="'+p.id+'">✕</button></div>').join('');
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Éditer le kit</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">✕</button></div>'+
+    '<div class="fld" style="margin-bottom:12px"><label>Texte SFS (copiable en 1 clic)</label><textarea id="ce_body" rows="5" placeholder="Le texte que Moïse copiera…">'+esc(b.text?b.text.body:'')+'</textarea></div>'+
+    '<div class="fld" style="margin-bottom:12px"><label>Vidéo de présentation '+(b.video?'(en choisir une remplace l\'actuelle)':'')+'</label><input type="file" id="ce_video" accept="video/*">'+(b.video?' <a href="'+esc(b.video.media_url)+'" target="_blank" style="font-size:12px;color:var(--acc)">vidéo actuelle</a>':'')+'</div>'+
+    '<div class="fld" style="margin-bottom:8px"><label>Photos — ajoute-en (plusieurs à la fois possible)</label><input type="file" id="ce_photos" accept="image/*" multiple></div>'+
+    (photos?'<div class="pgal edit">'+photos+'</div>':'')+
+    '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn primary" id="ce_save">💾 Enregistrer</button><button class="btn ghost" id="ce_back">Retour</button></div><div class="lerr" id="ce_err"></div>';
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;
+  $('ce_back').onclick=()=>openModelView(m);
+  $('ce_save').onclick=()=>saveModelContent(m);
+  document.querySelectorAll('#modal .pdel').forEach(x=>x.onclick=async()=>{if(!confirm('Supprimer cette photo ?'))return;await sb.from('contenu').delete().eq('id',x.getAttribute('data-pid'));await loadContenu();openModelEditor(m)});
+}
+async function uploadMedia(model,file){var path=norm(model).replace(/\s+/g,'_')+'/'+Date.now()+'_'+Math.floor(Math.random()*1e5)+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');var up=await sb.storage.from('contenu').upload(path,file,{cacheControl:'3600',upsert:false});if(up.error)throw up.error;return sb.storage.from('contenu').getPublicUrl(path).data.publicUrl}
+async function saveModelContent(m){
+  var err=$('ce_err');err.textContent='';
   try{
-    var media_url=null;
-    if(file){err.textContent='Upload du média…';var path=norm(model)+'/'+Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');var up=await sb.storage.from('contenu').upload(path,file,{cacheControl:'3600',upsert:false});if(up.error){err.textContent='Erreur upload : '+up.error.message;return}media_url=sb.storage.from('contenu').getPublicUrl(path).data.publicUrl;}
-    var row={model:model,kind:kind,title:title,body:body};if(media_url)row.media_url=media_url;
-    var r=id?await sb.from('contenu').update(row).eq('id',id):await sb.from('contenu').insert(row);
-    if(r.error){err.textContent='Erreur : '+r.error.message;return}
-    toast('Contenu enregistré ✓');closeModal();await loadContenu();renderContenu();
+    var text=$('ce_body').value,vfile=$('ce_video').files[0],pfiles=$('ce_photos').files,b=modelBundle(m);
+    if(b.text){await sb.from('contenu').update({body:text}).eq('id',b.text.id)}else if(text.trim()){await sb.from('contenu').insert({model:m,kind:'texte',body:text})}
+    if(vfile){err.textContent='Upload de la vidéo…';var vurl=await uploadMedia(m,vfile);if(b.video)await sb.from('contenu').update({media_url:vurl}).eq('id',b.video.id);else await sb.from('contenu').insert({model:m,kind:'video',media_url:vurl})}
+    if(pfiles&&pfiles.length){for(var i=0;i<pfiles.length;i++){err.textContent='Upload photo '+(i+1)+'/'+pfiles.length+'…';var purl=await uploadMedia(m,pfiles[i]);await sb.from('contenu').insert({model:m,kind:'photo',media_url:purl})}}
+    toast('Kit '+m+' enregistré ✓');await loadContenu();closeModal();renderContenu();
   }catch(e){err.textContent='Erreur : '+(e.message||e)}
 }
 async function delContenu(id){if(!isAdmin)return;if(!confirm('Supprimer ce contenu ?'))return;var r=await sb.from('contenu').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast('Contenu supprimé');closeModal();await loadContenu();renderContenu()}
