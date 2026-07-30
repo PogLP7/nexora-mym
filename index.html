@@ -243,6 +243,18 @@
   .ck-tile.jok{border-color:rgba(97,114,255,.35)}.ck-tile.jok .tv{color:var(--acc)}
   .ck-ic{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,currentColor 15%,transparent);flex:none}
   .ck-ic svg{width:18px;height:18px;display:block}
+  .tabs .tab{display:inline-flex;align-items:center;gap:7px}
+  .tabic{width:15px;height:15px;flex:none}
+  .btnic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+  /* célébration plein écran (paliers / records) */
+  .ckwin{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(4,6,10,.74);backdrop-filter:blur(6px);opacity:0;transition:opacity .3s ease;padding:20px;cursor:pointer}
+  .ckwin.show{display:flex;opacity:1}
+  .ckwin .box{text-align:center;transform:scale(.82);transition:transform .55s var(--spring)}
+  .ckwin.show .box{transform:scale(1)}
+  .ckwin .medal{width:120px;height:120px;margin:0 auto 18px;border-radius:30px;display:grid;place-items:center;background:linear-gradient(150deg,rgba(243,194,75,.28),rgba(243,194,75,.04));border:1px solid rgba(243,194,75,.45);box-shadow:0 0 70px rgba(243,194,75,.4)}
+  .ckwin .medal svg{width:58px;height:58px;color:var(--cash)}
+  .ckwin h2{font-size:clamp(30px,6vw,52px);font-weight:800;letter-spacing:-.02em;margin-bottom:10px;background:linear-gradient(100deg,#DFA01F,#F3C24B 40%,#FFF3CE 55%,#F3C24B 70%,#DFA01F);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ckwin p{color:var(--soft);font-size:15px}
   .ck-rings-panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;animation:cardIn .6s var(--ease-out) both}
   .ck-ringwrap{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center}
   @media(max-width:760px){.ck-ringwrap{grid-template-columns:1fr;justify-items:center}}
@@ -316,17 +328,17 @@
     <div class="sp"></div>
     <div class="actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button class="btn primary" id="newBtn">＋ Nouveau SFS</button>
-      <label class="btn adminonly" style="cursor:pointer" id="impLabel">⬆ Importer Infloww<input type="file" id="impFile" accept=".xlsx" hidden></label>
-      <select class="btn ghost" id="themeSel" title="Thème" style="cursor:pointer"><option value="">🎨 Gris</option><option value="blanc">🎨 Blanc</option><option value="oled">🎨 OLED</option></select>
+      <label class="btn adminonly" style="cursor:pointer" id="impLabel"><svg class="btnic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>Importer Infloww<input type="file" id="impFile" accept=".xlsx" hidden></label>
+      <select class="btn ghost" id="themeSel" title="Thème" style="cursor:pointer"><option value="">Thème · Gris</option><option value="blanc">Thème · Blanc</option><option value="oled">Thème · OLED</option></select>
       <span class="who" id="who"></span>
       <button class="btn ghost" id="logout">Quitter</button>
     </div>
   </div>
   <div class="tabs">
-    <button class="tab active adminonly" data-tab="dash">📊 Dashboard</button>
-    <button class="tab" data-tab="board">📋 Tableau</button>
-    <button class="tab" data-tab="part">🤝 Partenaires</button>
-    <button class="tab" data-tab="help">❔ Aide</button>
+    <button class="tab active adminonly" data-tab="dash"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg>Dashboard</button>
+    <button class="tab" data-tab="board"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="6.5" height="15" rx="1.6"/><rect x="14" y="4.5" width="6.5" height="9.5" rx="1.6"/></svg>Tableau</button>
+    <button class="tab" data-tab="part"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><path d="M3.5 19c0-2.8 2.2-4.7 5-4.7s5 1.9 5 4.7"/><circle cx="16.7" cy="9" r="2.4"/><path d="M15.2 14.6c2.2.2 3.9 1.9 3.9 4.4"/></svg>Partenaires</button>
+    <button class="tab" data-tab="help"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1.3 1-1.3 1.9"/><path d="M12 16.5h.01" stroke-width="2.4"/></svg>Aide</button>
   </div>
 
   <div class="panel adminonly" id="p-dash">
@@ -383,6 +395,7 @@
 
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
+<div class="ckwin" id="ckWin"></div>
 
 <script>
 const SUPABASE_URL='https://bvcnbtbdfkoiefuedxem.supabase.co';
@@ -463,7 +476,7 @@ function initUI(){
   upLn();
 }
 function upLn(){var m=$('f_model').value,p=$('f_partner').value,d=$('f_date').value,t=$('f_time').value;$('lnPreview').innerHTML=p?('<span class="lnlabel">Nom à donner au lien Infloww · identique des 2 côtés</span><b>'+esc(linkName(m,p,d,t))+'</b>'):'<span class="lnlabel">Nom du lien Infloww</span>Renseigne le partenaire → le nom exact apparaît ici.'}
-async function addSfs(){var p=$('f_partner').value.trim();if(!p){toast('Mets le partenaire.');return}var m=$('f_model').value,d=$('f_date').value||new Date().toISOString().slice(0,10),t=$('f_time').value,ct=$('f_contact').value.trim();var row={src:'manual',model:m,partner:p,contact:ct,link_name:linkName(m,p,d,t),date:d,status:'prog',measured:false,clicks:0,subs:0,earnings:0,fans:0};var r=await sb.from('sfs').insert(row);if(r.error){toast('Erreur : '+r.error.message);return}if(ct){var k=norm(p);parts[k]={partner_key:k,partner:p,contact:ct};sb.from('partner_contacts').upsert({partner_key:k,partner:p,contact:ct})}$('f_partner').value='';$('f_contact').value='';upLn();var cc=data.filter(x=>x.src==='manual'&&ym(x.date)===ym(d)).length+1;if(cc===30||cc===60||cc===MONTH_GOAL){var med=cc===MONTH_GOAL?'🥇 OR':cc===60?'🥈 ARGENT':'🥉 BRONZE';celebrate('PALIER '+med+' · '+cc+' SFS ce mois ! 🎉',true)}else{celebrate('SFS ajouté · +'+PAY_PER_SFS+'€ 💥')}loadData()}
+async function addSfs(){var p=$('f_partner').value.trim();if(!p){toast('Mets le partenaire.');return}var m=$('f_model').value,d=$('f_date').value||new Date().toISOString().slice(0,10),t=$('f_time').value,ct=$('f_contact').value.trim();var row={src:'manual',model:m,partner:p,contact:ct,link_name:linkName(m,p,d,t),date:d,status:'prog',measured:false,clicks:0,subs:0,earnings:0,fans:0};var r=await sb.from('sfs').insert(row);if(r.error){toast('Erreur : '+r.error.message);return}if(ct){var k=norm(p);parts[k]={partner_key:k,partner:p,contact:ct};sb.from('partner_contacts').upsert({partner_key:k,partner:p,contact:ct})}$('f_partner').value='';$('f_contact').value='';upLn();var curK=ym(d),mineA=data.filter(x=>x.src==='manual'),cc=mineA.filter(x=>ym(x.date)===curK).length+1,pb={};mineA.forEach(function(x){var k=ym(x.date);if(k&&k!==curK)pb[k]=(pb[k]||0)+1});var prevBest=0;Object.keys(pb).forEach(function(k){if(pb[k]>prevBest)prevBest=pb[k]});if(cc===30||cc===60||cc===MONTH_GOAL){bigWin(cc===MONTH_GOAL?'PALIER OR':cc===60?'PALIER ARGENT':'PALIER BRONZE',cc+' SFS ce mois — continue comme ça !')}else if(prevBest>0&&cc===prevBest+1){bigWin('NOUVEAU RECORD',cc+' SFS ce mois, ton meilleur mois !')}else{celebrate('SFS ajouté · +'+PAY_PER_SFS+'€')}loadData()}
 async function setStatus(id,cur){var next={prog:'sent',sent:'done',done:'prog'}[cur],patch={status:next};if(next==='done')patch.measured=true;await sb.from('sfs').update(patch).eq('id',id);ding(next==='sent'?[587,880]:next==='done'?[659,988,1319]:[440,660]);loadData()}
 async function delSfs(id){if(!confirm('Supprimer cette carte ?'))return;await sb.from('sfs').delete().eq('id',id);loadData()}
 async function onImport(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=async()=>{try{var imp=parseXlsx(rd.result);if(!imp.length){toast('Aucun SFS trouvé.');return}var mt=0,ins=[];for(var i=0;i<imp.length;i++){var row=imp[i],nm=norm(row.name);var card=data.find(d=>d.model===row.model&&norm(d.link_name)===nm)||data.find(d=>d.model===row.model&&d.src==='manual'&&norm(d.link_name)&&nm.indexOf(norm(d.link_name))>=0);if(card){await sb.from('sfs').update({clicks:row.clicks,subs:row.subs,earnings:row.earnings,fans:row.fans,measured:true,status:'done',date:card.date||row.date}).eq('id',card.id);mt++}else{ins.push({src:'Infloww',model:row.model,partner:row.name,contact:'',link_name:row.name,date:row.date,status:'done',measured:true,clicks:row.clicks,subs:row.subs,earnings:row.earnings,fans:row.fans})}}for(var j=0;j<ins.length;j+=400)await sb.from('sfs').insert(ins.slice(j,j+400));toast('✅ '+mt+' MAJ, '+ins.length+' ajoutés');loadData()}catch(err){toast('Fichier illisible')}};rd.readAsArrayBuffer(f);e.target.value=''}
@@ -513,7 +526,8 @@ var __ac=null;
 function ding(freqs){try{if(localStorage.getItem('sfx')==='0')return;__ac=__ac||new(window.AudioContext||window.webkitAudioContext)();var t0=__ac.currentTime;(freqs||[660,990]).forEach(function(f,i){var o=__ac.createOscillator(),g=__ac.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(__ac.destination);var st=t0+i*0.085;g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.22,st+0.02);g.gain.exponentialRampToValueAtTime(0.0001,st+0.26);o.start(st);o.stop(st+0.28)})}catch(e){}}
 function confettiBurst(power){var c=document.getElementById('cfx');if(!c){c=document.createElement('canvas');c.id='cfx';c.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999';document.body.appendChild(c)}var ctx=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;var N=power||90,cols=['#6172FF','#F3C24B','#3FC8DE','#39D9A0','#B197FC','#F26D63'],P=[];for(var i=0;i<N;i++)P.push({x:innerWidth/2+(Math.random()-.5)*220,y:innerHeight*0.34,vx:(Math.random()-.5)*11,vy:Math.random()*-13-4,g:0.32,s:6+Math.random()*7,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4});var start=null;function tick(t){if(start==null)start=t;var el=t-start;ctx.clearRect(0,0,c.width,c.height);var alive=false;for(var i=0;i<P.length;i++){var p=P[i];p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;if(p.y<c.height+20)alive=true;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.globalAlpha=Math.max(0,1-el/2600);ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.55);ctx.restore()}if(alive&&el<2600)requestAnimationFrame(tick);else ctx.clearRect(0,0,c.width,c.height)}requestAnimationFrame(tick)}
 function sfxSuccess(big){try{if(localStorage.getItem('sfx')==='0')return;__ac=__ac||new(window.AudioContext||window.webkitAudioContext)();if(__ac.state==='suspended')__ac.resume();var t0=__ac.currentTime,notes=big?[523,659,784,1047]:[523,659,784];notes.forEach(function(f,i){var o=__ac.createOscillator(),g=__ac.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(__ac.destination);var st=t0+(big?i*0.08:0);g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.14,st+0.02);g.gain.exponentialRampToValueAtTime(0.0001,st+0.5);o.start(st);o.stop(st+0.52)})}catch(e){}}
-function celebrate(msg,big){confettiBurst(big?190:95);sfxSuccess(big);if(msg)toast(msg)}
+function celebrate(msg,big){confettiBurst(big?190:95);sfxSuccess(big);try{if(navigator.vibrate)navigator.vibrate(big?[30,50,30]:22)}catch(e){}if(msg)toast(msg)}
+function bigWin(title,sub){var w=$('ckWin');if(!w)return;w.innerHTML='<div class="box"><div class="medal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.6h10V8a5 5 0 0 1-10 0V4.6z"/><path d="M7 6.1H4.6v1.1A2.7 2.7 0 0 0 7 9.9"/><path d="M17 6.1h2.4v1.1A2.7 2.7 0 0 1 17 9.9"/><path d="M12 13v3.2"/><path d="M8.7 19.6h6.6"/><path d="M9.6 16.4h4.8l.8 3.2H8.8l.8-3.2z"/></svg></div><h2>'+esc(title)+'</h2><p>'+esc(sub)+'</p></div>';w.classList.add('show');confettiBurst(220);sfxSuccess(true);try{if(navigator.vibrate)navigator.vibrate([40,60,40,60,140])}catch(e){}clearTimeout(window.__winT);window.__winT=setTimeout(function(){w.classList.remove('show')},2900);w.onclick=function(){w.classList.remove('show')}}
 /* ---- cockpit dopamine ---- */
 function gradeOf(n){if(n>=9.5)return'LÉGENDE';if(n>=9)return'ÉLITE';if(n>=8)return'A';if(n>=7)return'B';if(n>=6)return'C';return'—'}
 function streakBonus(s){return s>=30?0.5:s>=21?0.3:s>=14?0.2:0}
