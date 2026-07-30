@@ -127,6 +127,24 @@
   .fchip{font-family:var(--f);font-size:12.5px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:6px 12px;cursor:pointer;transition:.18s var(--ease,ease)}
   .fchip:hover{border-color:var(--amber);transform:translateY(-1px)}.fchip b{color:var(--amber)}
   .fdone{font-size:12.5px;color:var(--green);font-weight:600}
+  /* ===== Bibliothèque Contenu ===== */
+  .cmodel{margin-bottom:26px}
+  .cmh{display:flex;align-items:center;gap:9px;font-family:var(--fd);font-size:18px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .cmh .cpf{font-family:var(--fm);font-size:9px;letter-spacing:.06em;color:var(--mut);border:1px solid var(--line2);border-radius:5px;padding:1px 6px;font-weight:400}
+  .cmh .cct{margin-left:auto;font-family:var(--fm);font-size:12px;color:var(--mut);font-weight:400}
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .ccard{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;transition:.2s var(--ease)}
+  .ccard:hover{border-color:var(--line2)}
+  .cmedia{width:100%;border-radius:10px;max-height:220px;object-fit:cover;background:var(--bg2);display:block}
+  .ctitle{font-weight:700;font-size:14px}
+  .ctext{font-size:13px;color:var(--soft);white-space:pre-wrap;line-height:1.5;max-height:170px;overflow:auto;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px}
+  .ccopy{align-self:flex-start;background:var(--acc);color:#fff;border:none;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+  .ccopy:hover{filter:brightness(1.1);color:#fff;border:none}
+  .ccopy svg{width:14px;height:14px}
+  .cadm{display:flex;gap:6px;margin-top:2px}
+  .cmini{font-size:11px;padding:5px 10px}
+  .cprev{font-size:12px;color:var(--soft);margin-bottom:8px}
+  #ce_body{width:100%;font-family:var(--f);font-size:14px;padding:10px 12px;border:1px solid var(--line2);border-radius:11px;background:var(--card);color:var(--ink);resize:vertical}
   .overlay{position:fixed;inset:0;background:rgba(4,8,12,.7);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
   .overlay.open{display:flex}
   .modal{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line2);border-radius:20px;max-width:640px;width:100%;box-shadow:var(--sh);padding:24px 26px}
@@ -351,6 +369,7 @@
     <button class="tab active adminonly" data-tab="dash"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg>Dashboard</button>
     <button class="tab" data-tab="board"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="6.5" height="15" rx="1.6"/><rect x="14" y="4.5" width="6.5" height="9.5" rx="1.6"/></svg>Tableau</button>
     <button class="tab" data-tab="part"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><path d="M3.5 19c0-2.8 2.2-4.7 5-4.7s5 1.9 5 4.7"/><circle cx="16.7" cy="9" r="2.4"/><path d="M15.2 14.6c2.2.2 3.9 1.9 3.9 4.4"/></svg>Partenaires</button>
+    <button class="tab" data-tab="contenu"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>Contenu</button>
     <button class="tab" data-tab="help"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1.3 1-1.3 1.9"/><path d="M12 16.5h.01" stroke-width="2.4"/></svg>Aide</button>
   </div>
 
@@ -405,6 +424,18 @@
       <p class="hint" style="line-height:1.7">1. <b>＋ Nouveau SFS</b> : modèle, partenaire, contact, date+heure.<br>2. Le site te donne le <b>nom exact</b> à mettre sur ton lien Infloww — nomme-le pareil.<br>3. Une fois envoyé, clique le statut → <b>Envoyé</b>.<br>4. Titouan importe l'export Infloww → les stats et la <b>note /10</b> se collent, statut → <b>Mesuré</b>.<br>Clique le nom d'un partenaire (en bleu) pour voir sa <b>fiche complète</b>.</p>
     </div>
   </div>
+
+  <div class="panel" id="p-contenu">
+    <div class="card">
+      <div class="label">Bibliothèque</div><h2>Contenus par modèle</h2>
+      <p class="hint">Textes SFS à copier en 1 clic + photos/vidéos, rangés par modèle. <span class="adminonly">Toi seul peux ajouter / éditer — Moïse consulte et copie.</span></p>
+      <div class="bar">
+        <select id="cModelFilter"><option value="">Tous les modèles</option></select>
+        <button class="btn primary adminonly" id="cAddBtn" style="margin-left:auto">＋ Ajouter un contenu</button>
+      </div>
+      <div id="contenuList"></div>
+    </div>
+  </div>
 </div>
 
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
@@ -425,7 +456,7 @@ const PAY_PER_SFS=2,PRIME_MIN_SFS=45;
 const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.round(WEEK_GOAL/7));
 const RING_PALS=[['#25E8C3','#6172FF','#B197FC'],['#FF375F','#A6FF3A','#38E8E0'],['#FF784A','#FFC24B','#FF4D9D'],['#3FC8DE','#5B8CFF','#39D9A0']];
 const MO_FR=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-let data=[],parts={},showAll=false,isAdmin=true,chart=null,chMode='subs';
+let data=[],parts={},showAll=false,isAdmin=true,chart=null,chMode='subs',contenu=[];
 const $=id=>document.getElementById(id);
 (function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)})();
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -452,12 +483,12 @@ async function showApp(){
   if(!isAdmin){var bt=document.querySelector('.tab[data-tab="board"]');bt.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$('p-board').classList.add('active');}
   $('login').style.display='none';$('app').style.display='block';
   $('who').textContent=u?u.email:'';
-  await loadParts();await loadData();initUI();subscribe();monthlyRecap();
+  await loadParts();await loadData();await loadContenu();initUI();subscribe();monthlyRecap();
 }
 /* data */
 async function loadData(){var r=await sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
 async function loadParts(){var r=await sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
-function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe()}
+function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(renderContenu)}).subscribe()}
 
 /* xlsx */
 function decEnt(s){return String(s==null?'':s).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
@@ -476,7 +507,7 @@ function initUI(){
   var ms=$('f_model');if(!ms.options.length)MODELS.forEach(m=>{var o=document.createElement('option');o.textContent=m;ms.appendChild(o)});
   var fm=$('fModel');if(fm.options.length<2)MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;fm.appendChild(o)});
   var today=new Date().toISOString().slice(0,10);if(!$('f_date').value)$('f_date').value=today;if(!$('monthSel').value)$('monthSel').value=today.slice(0,7);
-  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit()});
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu()});
   ['f_model','f_partner','f_date','f_time'].forEach(id=>$(id).oninput=upLn);
   $('f_partner').addEventListener('blur',()=>{var k=norm($('f_partner').value),c=parts[k];if(c&&c.contact&&!$('f_contact').value)$('f_contact').value=c.contact});
   $('newBtn').onclick=()=>{$('addForm').classList.toggle('open');upLn()};
@@ -486,6 +517,8 @@ function initUI(){
   $('q').oninput=render;$('fModel').onchange=render;$('fStatus').onchange=render;$('pq').oninput=render;
   $('impFile').onchange=onImport;
   var ts=$('themeSel');if(ts){ts.value=localStorage.getItem('theme')||'';ts.onchange=function(){var v=ts.value;if(v)document.documentElement.setAttribute('data-theme',v);else document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme',v)}}
+  var cf=$('cModelFilter');if(cf&&cf.options.length<2){MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;cf.appendChild(o)});cf.onchange=renderContenu}
+  var cab=$('cAddBtn');if(cab)cab.onclick=()=>openContenuEditor(null);
   $('chSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{chMode=b.dataset.m;$('chSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawChart()});
   $('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal()};
   upLn();
@@ -747,6 +780,59 @@ function openPartner(name){
   $('pf_save').onclick=async()=>{var payload={partner_key:k,partner:name,contact:$('pf_contact').value.trim(),platform:$('pf_platform').value.trim(),reliability:$('pf_rel').value,notes:$('pf_notes').value.trim()};var r=await sb.from('partner_contacts').upsert(payload);if(r.error){toast('Erreur : '+r.error.message);return}parts[k]=payload;toast('Fiche enregistrée ✓');closeModal();render()};
 }
 function closeModal(){$('overlay').classList.remove('open')}
+/* ===== Contenu (bibliothèque par modèle) ===== */
+async function loadContenu(){try{var r=await sb.from('contenu').select('*');if(!r.error)contenu=r.data||[]}catch(e){}}
+function copyText(id,btn,orig){var c=contenu.find(x=>String(x.id)===String(id));if(!c)return;var t=c.body||'';function ok(){toast('Texte copié ✓');if(btn){btn.textContent='Copié ✓';setTimeout(function(){btn.innerHTML=orig||'Copier le texte'},1200)}}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fallbackCopy(t,ok)})}else fallbackCopy(t,ok)}
+function fallbackCopy(t,ok){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){}ta.remove()}
+function contenuCard(c){
+  var media='';
+  if(c.media_url)media=c.kind==='video'?'<video src="'+esc(c.media_url)+'" controls preload="metadata" class="cmedia"></video>':'<img src="'+esc(c.media_url)+'" class="cmedia" loading="lazy" alt="">';
+  var copyIc='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>';
+  var txt=c.body?'<div class="ctext">'+esc(c.body)+'</div><button class="btn ccopy" data-copy="'+c.id+'">'+copyIc+' Copier le texte</button>':'';
+  var adm=isAdmin?'<div class="cadm"><button class="btn ghost cmini" data-edit="'+c.id+'">Éditer</button><button class="btn ghost cmini" data-del="'+c.id+'">Suppr</button></div>':'';
+  return '<div class="ccard">'+media+(c.title?'<div class="ctitle">'+esc(c.title)+'</div>':'')+txt+adm+'</div>';
+}
+function renderContenu(){
+  var host=$('contenuList');if(!host)return;
+  var fm=$('cModelFilter')?$('cModelFilter').value:'';
+  var html=MODELS.filter(m=>!fm||m===fm).map(function(m){
+    var items=contenu.filter(c=>c.model===m).sort((a,b)=>(a.sort||0)-(b.sort||0)||(a.created_at||'').localeCompare(b.created_at||''));
+    if(!items.length&&fm)return '<div class="colempty">Aucun contenu pour '+esc(m)+(isAdmin?' — clique « Ajouter un contenu »':'')+'.</div>';
+    if(!items.length)return '';
+    return '<div class="cmodel"><div class="cmh">'+esc(m)+' <span class="cpf">'+(PLAT[m]||'')+'</span><span class="cct">'+items.length+' contenu'+(items.length>1?'s':'')+'</span></div><div class="cgrid">'+items.map(contenuCard).join('')+'</div></div>';
+  }).join('');
+  host.innerHTML=html||'<div class="colempty">Aucun contenu pour l\'instant.'+(isAdmin?' Clique « Ajouter un contenu ».':'')+'</div>';
+  host.querySelectorAll('[data-copy]').forEach(b=>{var orig=b.innerHTML;b.onclick=()=>copyText(b.getAttribute('data-copy'),b,orig)});
+  if(isAdmin){host.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openContenuEditor(b.getAttribute('data-edit')));host.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delContenu(b.getAttribute('data-del')));}
+}
+function openContenuEditor(id){
+  if(!isAdmin)return;
+  var c=id?contenu.find(x=>String(x.id)===String(id)):{model:MODELS[0],kind:'texte',title:'',body:'',media_url:''};if(!c)return;
+  var opts=MODELS.map(m=>'<option'+(c.model===m?' selected':'')+'>'+m+'</option>').join('');
+  var kinds=[['texte','Texte'],['photo','Photo'],['video','Vidéo']].map(k=>'<option value="'+k[0]+'"'+(c.kind===k[0]?' selected':'')+'>'+k[1]+'</option>').join('');
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Contenu</div><h2>'+(id?'Éditer le':'Nouveau')+' contenu</h2></div><button class="close" id="mClose">✕</button></div>'+
+    '<div class="fgrid"><div class="fld"><label>Modèle</label><select id="ce_model">'+opts+'</select></div><div class="fld"><label>Type</label><select id="ce_kind">'+kinds+'</select></div></div>'+
+    '<div class="fld" style="margin-bottom:12px"><label>Titre (optionnel)</label><input id="ce_title" value="'+esc(c.title||'')+'" placeholder="ex. Accroche story"></div>'+
+    '<div class="fld" style="margin-bottom:12px"><label>Texte SFS (copiable en 1 clic)</label><textarea id="ce_body" rows="5" placeholder="Le texte à copier…">'+esc(c.body||'')+'</textarea></div>'+
+    '<div class="fld" style="margin-bottom:10px"><label>Média photo/vidéo '+(id?'(laisse vide pour garder l\'actuel)':'(optionnel)')+'</label><input type="file" id="ce_file" accept="image/*,video/*"></div>'+
+    (c.media_url?'<div class="cprev">Média actuel : <a href="'+esc(c.media_url)+'" target="_blank">voir</a></div>':'')+
+    '<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap"><button class="btn primary" id="ce_save">💾 Enregistrer</button>'+(id?'<button class="btn ghost" id="ce_del">Supprimer</button>':'')+'</div><div class="lerr" id="ce_err"></div>';
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;
+  $('ce_save').onclick=()=>saveContenu(id);var dd=$('ce_del');if(dd)dd.onclick=()=>delContenu(id);
+}
+async function saveContenu(id){
+  var model=$('ce_model').value,kind=$('ce_kind').value,title=$('ce_title').value.trim(),body=$('ce_body').value,file=$('ce_file').files[0],err=$('ce_err');err.textContent='';
+  try{
+    var media_url=null;
+    if(file){err.textContent='Upload du média…';var path=norm(model)+'/'+Date.now()+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');var up=await sb.storage.from('contenu').upload(path,file,{cacheControl:'3600',upsert:false});if(up.error){err.textContent='Erreur upload : '+up.error.message;return}media_url=sb.storage.from('contenu').getPublicUrl(path).data.publicUrl;}
+    var row={model:model,kind:kind,title:title,body:body};if(media_url)row.media_url=media_url;
+    var r=id?await sb.from('contenu').update(row).eq('id',id):await sb.from('contenu').insert(row);
+    if(r.error){err.textContent='Erreur : '+r.error.message;return}
+    toast('Contenu enregistré ✓');closeModal();await loadContenu();renderContenu();
+  }catch(e){err.textContent='Erreur : '+(e.message||e)}
+}
+async function delContenu(id){if(!isAdmin)return;if(!confirm('Supprimer ce contenu ?'))return;var r=await sb.from('contenu').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast('Contenu supprimé');closeModal();await loadContenu();renderContenu()}
 
 /* export */
 window.exportCsv=function(){if(!data.length){toast('Rien à exporter.');return}var h=['Date','Modele','Partenaire','Contact','Statut','Lien','Clicks','Subs','Earnings','Fans','CVR','Note'];var L=[h.join(',')];data.forEach(r=>{var cvr=cvrOf(r),sc=scoreOf(r);L.push([r.date,r.model,'"'+(r.partner||'').replace(/"/g,'""')+'"','"'+(r.contact||'').replace(/"/g,'""')+'"',STL[r.status]||'','"'+(r.link_name||'').replace(/"/g,'""')+'"',r.clicks,r.subs,r.earnings,r.fans,cvr==null?'':cvr.toFixed(1),sc||''].join(','))});var s=L.join('\n');if(window.claude&&window.claude.downloads){window.claude.downloads.save({filename:'sfs.csv',data:s}).catch(()=>{})}else{var bl=new Blob([s],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='sfs.csv';a.click()}};
