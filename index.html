@@ -530,7 +530,7 @@ function renderCockpit(){
   else if(avg<9)nudge='Un dernier effort → <b>9</b> = <b>200 €</b>';
   else nudge='🔥 Prime <b>MAX 200 €</b> — énorme !';
   var sfxOn=localStorage.getItem('sfx')!=='0';
-  var palIdx=(parseInt(localStorage.getItem('ckpal'),10)||0);if(palIdx<0||palIdx>3)palIdx=0;var pc=RING_PALS[palIdx];
+  var pc=RING_PALS[0];
   var grade=avg!=null?gradeOf(avg):'—';
   var sbonusHtml=(avg!=null&&sbn>0)?'<span class="ck-sbonus">🔥 +'+sbn.toFixed(1).replace('.',',')+'</span>':'';
   var ntrend=avgBase==null?'Aucun SFS mesuré ce mois-ci pour l\'instant':('Base <b>'+avgBase.toFixed(1).replace('.',',')+'</b>'+(sbn>0?' + <b style="color:var(--cash)">'+sbn.toFixed(1).replace('.',',')+'</b> win streak ('+streak+' j)':'')+' · Prime <b>'+prime+' €</b> 🔥');
@@ -562,7 +562,7 @@ function renderCockpit(){
        '<circle class="val" data-ring="2" cx="150" cy="150" r="68" stroke="'+pc[2]+'" stroke-width="15" stroke-dasharray="'+C2+'" stroke-dashoffset="'+C2+'"/>'+
        '<circle class="hit" data-hit="0" cx="150" cy="150" r="124" stroke-width="24"/><circle class="hit" data-hit="1" cx="150" cy="150" r="96" stroke-width="24"/><circle class="hit" data-hit="2" cx="150" cy="150" r="68" stroke-width="24"/>'+
        '</svg><div class="ctr"><div class="big" id="ckPct">0%</div><div class="lbl" id="ckLbl">du mois</div></div></div>'+
-     '<div class="ck-legend"><div class="ck-palette" id="ckPalette"></div>'+
+     '<div class="ck-legend">'+
        '<div class="ck-lrow" data-leg="0"><span class="dot" style="color:'+pc[0]+';background:'+pc[0]+'"></span><span class="nm">Mois</span><span class="rgt"><span class="vv" style="color:'+pc[0]+'">'+created+' / '+MONTH_GOAL+'</span></span></div>'+
        '<div class="ck-lrow" data-leg="1"><span class="dot" style="color:'+pc[1]+';background:'+pc[1]+'"></span><span class="nm">Semaine</span><span class="rgt"><span class="vv" style="color:'+pc[1]+'">'+weekN+' / '+WEEK_GOAL+'</span></span></div>'+
        '<div class="ck-lrow" data-leg="2"><span class="dot" style="color:'+pc[2]+';background:'+pc[2]+'"></span><span class="nm">Aujourd\'hui</span><span class="rgt"><span class="vv" style="color:'+pc[2]+'">'+todayN+' / '+DAY_GOAL+'</span></span></div>'+
@@ -591,7 +591,6 @@ function renderCockpit(){
   }
   ck.querySelectorAll('.ck-mfill').forEach(function(f){requestAnimationFrame(function(){f.style.width=f.getAttribute('data-w')+'%'})});
   ck.querySelectorAll('.ck-mcard').forEach(function(card){card.onclick=function(){var m=card.getAttribute('data-m'),af=$('addForm');if(af){af.classList.add('open');var ms=$('f_model');if(ms)ms.value=m;upLn();var fp=$('f_partner');if(fp)fp.focus();af.scrollIntoView({behavior:'smooth',block:'nearest'})}}});
-  var pal=$('ckPalette');if(pal){pal.innerHTML='<span class="pl">Couleurs</span>'+RING_PALS.map(function(cs,i){return '<div class="ck-sw'+(i===palIdx?' on':'')+'" data-p="'+i+'">'+cs.map(function(c){return '<i style="background:'+c+'"></i>'}).join('')+'</div>'}).join('');pal.querySelectorAll('.ck-sw').forEach(function(s){s.onclick=function(){localStorage.setItem('ckpal',s.getAttribute('data-p'));renderCockpit()}})}
 }
 function animateStats(){
   if(!$('p-dash')||!$('p-dash').classList.contains('active'))return;
