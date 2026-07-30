@@ -121,6 +121,12 @@
   .pcard .m{font-family:var(--fm);font-size:11px;color:var(--mut);margin-top:6px}
   .rel{font-family:var(--fm);font-size:9.5px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:6px}
   .rel-ok{background:rgba(52,211,153,.14);color:var(--green)} .rel-watch{background:rgba(245,184,65,.14);color:var(--amber)} .rel-scam{background:rgba(240,115,106,.14);color:var(--red)} .rel-none{background:var(--card2);color:var(--mut)}
+  .scard.blk{border-color:rgba(240,115,106,.5)}
+  .focus{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .focus .fk{font-family:var(--fm);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-right:2px}
+  .fchip{font-family:var(--f);font-size:12.5px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:6px 12px;cursor:pointer;transition:.18s var(--ease,ease)}
+  .fchip:hover{border-color:var(--amber);transform:translateY(-1px)}.fchip b{color:var(--amber)}
+  .fdone{font-size:12.5px;color:var(--green);font-weight:600}
   .overlay{position:fixed;inset:0;background:rgba(4,8,12,.7);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
   .overlay.open{display:flex}
   .modal{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line2);border-radius:20px;max-width:640px;width:100%;box-shadow:var(--sh);padding:24px 26px}
@@ -373,6 +379,7 @@
       <button class="btn ghost" id="allMonths">Historique</button>
       <span class="who" id="sync" style="margin-left:auto"></span>
     </div>
+    <div class="focus" id="focus" style="display:none"></div>
     <div class="board" id="board"></div>
   </div>
 
@@ -425,6 +432,7 @@ function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTi
 // note /10 sur CVR + spend
 function scoreOf(r){if(!r.measured)return null;var c=cvrOf(r)||0,s=spendOf(r)||0;var n=Math.round(c/66*6+s/20*4);return Math.max(1,Math.min(10,n))}
 function scoreColor(n){if(n>=9)return['#053b30','#34D399'];if(n>=7)return['#093a3a','#2FE0C4'];if(n>=5)return['#3a2f0a','#F5B841'];if(n>=3)return['#3a1c14','#F0885E'];return['#3a1210','#F0736A']}
+function relKey(v){v=v||'';if(v==='fiable')return'white';if(v==='scammer')return'black';if(v==='surveiller'||v==='none')return'';return v}
 
 /* auth */
 $('l_btn').onclick=doLogin;$('l_pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
@@ -501,9 +509,10 @@ function render(){
       var cvr=cvrOf(c),sp=spendOf(c),sc=scoreOf(c);
       var noteHtml=sc?('<div class="note" style="background:'+scoreColor(sc)[0]+';color:'+scoreColor(sc)[1]+'">'+sc+'</div>'):'';
       var stats=c.measured?('<div class="st"><span>CVR '+(cvr==null?'–':cvr.toFixed(0)+'%')+'</span><span>·</span><span>Sp '+(sp==null?'–':sp.toFixed(0)+'%')+'</span><span>·</span><span>'+money(c.earnings||0)+'</span></div>'):'';
-      var el=document.createElement('div');el.className='scard'+(c.src==='Infloww'?' hist':'');el.style.setProperty('--i',si);
+      var relB=relKey((parts[norm(c.partner)]||{}).reliability);
+      var el=document.createElement('div');el.className='scard'+(c.src==='Infloww'?' hist':'')+(relB==='black'?' blk':'');el.style.setProperty('--i',si);
       el.innerHTML='<button class="x" data-id="'+c.id+'">✕</button><div class="top"><a class="pl" data-p="'+esc(c.partner)+'">'+esc(c.partner)+'</a>'+noteHtml+'</div>'+
-        (c.contact?'<div class="ctc">'+esc(c.contact)+'</div>':'')+'<div class="meta">'+esc(c.date||'')+(c.src==='Infloww'?' · Infloww':'')+'</div>'+
+        (c.contact?'<div class="ctc">'+esc(c.contact)+'</div>':'')+'<div class="meta">'+esc(c.date||'')+(c.src==='Infloww'?' · Infloww':'')+(relB==='black'?' · <b style="color:var(--red)">BLACKLIST</b>':relB==='white'?' · <b style="color:var(--green)">WHITELIST</b>':'')+'</div>'+
         '<span class="stbadge '+STC[c.status]+'" data-id="'+c.id+'" data-st="'+c.status+'">'+STL[c.status]+'</span>'+stats;
       col.appendChild(el);
     });
@@ -512,6 +521,16 @@ function render(){
   board.querySelectorAll('.stbadge').forEach(b=>b.onclick=()=>setStatus(b.dataset.id,b.dataset.st));
   board.querySelectorAll('.x').forEach(b=>b.onclick=()=>delSfs(b.dataset.id));
   board.querySelectorAll('.pl').forEach(a=>a.onclick=()=>openPartner(a.dataset.p));
+  // focus « à taper cette semaine »
+  var fo=$('focus');
+  if(fo){var _n=new Date(),_d=(_n.getDay()+6)%7,_m=new Date(_n);_m.setDate(_n.getDate()-_d);var _ws=_m.toISOString().slice(0,10),_ts=_n.toISOString().slice(0,10);
+    var _wk=data.filter(r=>r.src==='manual'&&r.date>=_ws&&r.date<=_ts);
+    var _be=MODELS.map(m=>({m:m,r:WK_TARGET[m]-_wk.filter(x=>x.model===m).length})).filter(x=>x.r>0).sort((a,b)=>b.r-a.r);
+    if(_be.length)fo.innerHTML='<span class="fk">À taper cette semaine</span>'+_be.map(x=>'<button class="fchip" data-m="'+esc(x.m)+'">'+x.m+' <b>'+x.r+'</b></button>').join('');
+    else fo.innerHTML='<span class="fk">Focus</span><span class="fdone">Tout est à jour cette semaine ✓</span>';
+    fo.style.display='';
+    fo.querySelectorAll('.fchip').forEach(b=>b.onclick=()=>{var af=$('addForm');if(af){af.classList.add('open');$('f_model').value=b.dataset.m;upLn();$('f_partner').focus()}});
+  }
   // cockpit dopamine
   renderCockpit();
   // dashboard
@@ -553,7 +572,7 @@ function renderCockpit(){
   var todayN=mine.filter(r=>r.date===todayStr).length;
   var perMod=MODELS.map(function(m){return {m:m,n:weekC.filter(r=>r.model===m).length,t:WK_TARGET[m],p:PLAT[m]}});
   var ds=Array.from(new Set(mine.map(r=>r.date).filter(Boolean))).sort().reverse(),streak=0;
-  if(ds.length){var has=function(dt){return ds.indexOf(dt.toISOString().slice(0,10))>=0},probe=new Date(todayStr);if(!has(probe))probe.setDate(probe.getDate()-1);while(has(probe)){streak++;probe.setDate(probe.getDate()-1)}}
+  if(ds.length){var has=function(dt){return ds.indexOf(dt.toISOString().slice(0,10))>=0},probe=new Date(todayStr),miss=0,guard=0;while(guard++<500){if(has(probe)){streak++;miss=0}else{miss++;if(miss>1)break}probe.setDate(probe.getDate()-1)}}
   var bm={};mine.forEach(function(r){var k=ym(r.date);if(k)bm[k]=(bm[k]||0)+1});var record=0,recM='';Object.keys(bm).forEach(function(k){if(bm[k]>record){record=bm[k];recM=k}});
   var diM=new Date(now.getFullYear(),now.getMonth()+1,0).getDate(),pace=MONTH_GOAL/diM,advance=Math.max(0,Math.round(created-pace*now.getDate())),daysCov=pace>0?advance/pace:0;
   var measM=data.filter(r=>r.measured&&ym(r.date)===ymNow),notes=measM.map(scoreOf).filter(function(x){return x}),avgBase=notes.length?notes.reduce(function(a,b){return a+b},0)/notes.length:null;
@@ -684,8 +703,8 @@ function drawChart(){
 function renderParts(){
   var pa=partnerAgg(),q=($('pq').value||'').toLowerCase();
   var arr=Object.values(pa).filter(p=>!q||p.name.toLowerCase().indexOf(q)>=0).sort((a,b)=>b.e-a.e);
-  var relCls={fiable:'rel-ok',surveiller:'rel-watch',scammer:'rel-scam'},relLbl={fiable:'Fiable',surveiller:'À surveiller',scammer:'Scammer'};
-  $('partList').innerHTML=arr.length?arr.map((p,i)=>{var rel=(parts[p.key]||{}).reliability;var badge=rel?('<span class="rel '+(relCls[rel]||'rel-none')+'">'+(relLbl[rel]||rel)+'</span>'):'';
+  var relCls={white:'rel-ok',black:'rel-scam'},relLbl={white:'Whitelist',black:'Blacklist'};
+  $('partList').innerHTML=arr.length?arr.map((p,i)=>{var rel=relKey((parts[p.key]||{}).reliability);var badge=rel?('<span class="rel '+relCls[rel]+'">'+relLbl[rel]+'</span>'):'';
     return '<div class="pcard" style="--i:'+i+'" data-p="'+esc(p.name)+'"><div class="n">'+esc(p.name)+' '+badge+'</div><div class="m">'+p.n+' SFS · CVR '+p.cvr.toFixed(0)+'% · '+money(p.e)+(p.avgNote?' · note '+p.avgNote.toFixed(1)+'/10':'')+'</div></div>'}).join(''):'<div class="colempty">Aucun partenaire (importe d\'abord les stats).</div>';
   $('partList').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>openPartner(c.dataset.p));
 }
@@ -694,7 +713,7 @@ function renderParts(){
 function openPartner(name){
   var k=norm(name),meta=parts[k]||{partner_key:k,partner:name},pa=partnerAgg(),ag=pa[k];
   var rows=data.filter(r=>norm(r.partner)===k).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  var relSel=r=>['','fiable','surveiller','scammer'].map(v=>'<option value="'+v+'"'+((meta.reliability||'')===v?' selected':'')+'>'+({'':'—',fiable:'Fiable',surveiller:'À surveiller',scammer:'Scammer'}[v])+'</option>').join('');
+  var relSel=r=>['','white','black'].map(v=>'<option value="'+v+'"'+(relKey(meta.reliability)===v?' selected':'')+'>'+({'':'Neutre',white:'Whitelist',black:'Blacklist'}[v])+'</option>').join('');
   var hist=rows.map(r=>{var sc=scoreOf(r),cvr=cvrOf(r);var nb=sc?'<span class="grade" style="background:'+scoreColor(sc)[0]+';color:'+scoreColor(sc)[1]+'">'+sc+'/10</span>':'—';
     return '<tr><td>'+esc(r.model)+'</td><td>'+esc(r.date||'')+'</td><td class="num">'+(cvr==null?'—':cvr.toFixed(0)+'%')+'</td><td class="num">'+money(r.earnings||0)+'</td><td class="num">'+nb+'</td></tr>'}).join('');
   $('modal').innerHTML=
@@ -702,7 +721,7 @@ function openPartner(name){
     '<div class="fgrid">'+
       '<div class="fld"><label>Contact (Telegram/WhatsApp)</label><input id="pf_contact" value="'+esc(meta.contact||'')+'" placeholder="@handle / n°"></div>'+
       '<div class="fld"><label>Plateforme</label><input id="pf_platform" value="'+esc(meta.platform||'')+'" placeholder="Telegram, Insta…"></div>'+
-      '<div class="fld"><label>Fiabilité</label><select id="pf_rel">'+relSel()+'</select></div>'+
+      '<div class="fld"><label>Statut</label><select id="pf_rel">'+relSel()+'</select></div>'+
       '<div class="fld"><label>Notes</label><input id="pf_notes" value="'+esc(meta.notes||'')+'" placeholder="remarque…"></div>'+
     '</div>'+
     '<div class="mstats">'+
