@@ -1228,7 +1228,7 @@ function renderOrbit(){
   else{var groups={};orbitLinks.forEach(function(l){(groups[l.model]=groups[l.model]||[]).push(l)});
     html+=Object.keys(groups).sort().map(function(m){var links=groups[m];var gc=links.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);
       return '<div class="ogroup"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+links.length+' lien'+(links.length>1?'s':'')+' · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'
-        +links.map(function(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);
+        +links.map(function(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug,l.clipper);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);
           return '<div class="olink"><div class="oli"><div class="olname">'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span>'+(l.source==='instagram'?' <span class="opreset" style="background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);color:#fff">IG</span>':'')+'</div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}).join('')
       +'</div>'}).join('');}
   wrap.innerHTML=html;
@@ -1247,24 +1247,26 @@ function openOrbitEditor(id){
   var pol=Object.keys(ORBIT_PRESETS).map(function(k){return '<option value="'+k+'"'+((l&&l.preset===k)?' selected':'')+'>'+ORBIT_PRESETS[k]+'</option>'}).join('');
   $('modal').innerHTML='<div class="mh"><div><div class="label">'+(l?'Éditer le lien':'Générer un lien')+'</div><h2>Nexora Orbit</h2></div><button class="close" id="mClose">✕</button></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Modèle</label><select id="o_model">'+opts+'</select></div>'
-    +'<div class="fld" style="margin-bottom:12px"><label>Slug (l\'URL courte : .../<b>slug</b>)</label><input id="o_slug" value="'+esc(l?l.slug:'')+'" placeholder="alice"></div>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Clippeur / VA <span class="klabel">(nom — pour l\'attribution ; vide = lien général)</span></label><input id="o_clip" value="'+esc(l?(l.clipper||''):'')+'" placeholder="Josya"></div>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Slug (auto : .../<b>slug</b>)</label><input id="o_slug" value="'+esc(l?l.slug:'')+'" placeholder="alice-josya"></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Lien OnlyFans (destination de la redirection)</label><input id="o_url" value="'+esc(l?l.of_url:'')+'" placeholder="https://onlyfans.com/..."></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Photo de la modèle (URL — s\'affiche sur la landing, optionnel)</label><input id="o_photo" value="'+esc(l?(l.photo_url||''):'')+'" placeholder="https://..."></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Style de la page (preset)</label><select id="o_preset">'+pol+'</select></div>'
     +'<div style="display:flex;gap:8px;margin-top:6px"><button class="btn primary" id="o_save">💾 Enregistrer</button>'+(l?'<button class="btn ghost" id="o_del">Supprimer</button>':'')+'<button class="btn ghost" id="o_cancel">Annuler</button></div><div class="lerr" id="o_err"></div>';
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;$('o_cancel').onclick=closeModal;
-  var sl=$('o_slug'),mo=$('o_model');
-  if(!l){if(!sl.value)sl.value=oslug(mo.value);mo.onchange=function(){sl.value=oslug(mo.value)}}
+  var sl=$('o_slug'),mo=$('o_model'),ur=$('o_url'),cp=$('o_clip');
+  function osync(){var c=cp?cp.value.trim():'';sl.value=c?(oslug(mo.value)+'-'+oslug(c)):oslug(mo.value)}
+  if(!l){if(ur&&MODEL_OF[mo.value])ur.value=MODEL_OF[mo.value];osync();mo.onchange=function(){if(ur&&MODEL_OF[mo.value])ur.value=MODEL_OF[mo.value];osync()};if(cp)cp.oninput=osync}
   $('o_save').onclick=function(){saveOrbitLink(l?l.id:null)};
   var dl=$('o_del');if(dl)dl.onclick=function(){delOrbitLink(l.id)};
 }
 async function saveOrbitLink(id){
   var err=$('o_err');if(err)err.textContent='';
-  var model=$('o_model').value,slug=oslug($('o_slug').value),of_url=$('o_url').value.trim(),preset=$('o_preset').value,photo=$('o_photo').value.trim();
+  var model=$('o_model').value,clip=($('o_clip')?$('o_clip').value.trim():''),slug=oslug($('o_slug').value),of_url=$('o_url').value.trim(),preset=$('o_preset').value,photo=$('o_photo').value.trim();
   if(!slug){if(err)err.textContent='Mets un slug.';return}
   if(!/^https?:\/\//.test(of_url)){if(err)err.textContent='Le lien OF doit commencer par https://';return}
   try{
-    var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:model,photo_url:photo||null};
+    var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:(clip?(model+' · '+clip):model),photo_url:photo||null,source:'instagram',clipper:clip||null};
     if(id){var u=await sb.from('orbit_links').update(row).eq('id',id);if(u.error)throw u.error;}
     else{var r=await sb.from('orbit_links').insert(row);if(r.error)throw r.error;}
     toast('Lien enregistré ✓');closeModal();await loadOrbit();renderOrbit();
