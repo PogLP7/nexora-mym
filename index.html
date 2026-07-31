@@ -29,6 +29,11 @@
   .aidebody{white-space:pre-wrap;line-height:1.7;color:var(--soft);font-size:14px;word-break:break-word}
   .btn.ok{color:var(--green);border-color:var(--green)}
   .aidecard.pinned{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset,0 8px 24px rgba(97,114,255,.14)}
+  .orank{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .orank:last-child{border-bottom:0}
+  .orank b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .oin{flex:1;min-width:0;font-family:var(--fm);font-size:11px;padding:9px 10px;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);color:var(--soft)}
+  .fld select{width:100%;padding:12px 14px;border:1px solid var(--line2);border-radius:12px;background:var(--bg2);color:var(--ink);font-size:16px}
   .logohero{text-align:center;margin:0 0 18px}
   .brand3d{perspective:900px;display:inline-block}
   .brand3d .inner{transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:.42em;filter:drop-shadow(0 6px 22px rgba(84,87,255,.42))}
@@ -431,6 +436,7 @@
     <button class="tab" data-tab="part"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><path d="M3.5 19c0-2.8 2.2-4.7 5-4.7s5 1.9 5 4.7"/><circle cx="16.7" cy="9" r="2.4"/><path d="M15.2 14.6c2.2.2 3.9 1.9 3.9 4.4"/></svg>Partenaires</button>
     <button class="tab" data-tab="contenu"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>Contenu</button>
     <button class="tab" data-tab="help"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1.3 1-1.3 1.9"/><path d="M12 16.5h.01" stroke-width="2.4"/></svg>Aide</button>
+    <button class="tab" data-tab="orbit"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l1-1a4 4 0 0 1 6 6l-1 1"/><path d="M13 18l-1 1a4 4 0 0 1-6-6l1-1"/></svg>Orbit</button>
   </div>
 
   <div class="panel adminonly" id="p-dash">
@@ -482,6 +488,11 @@
   <div class="panel" id="p-help">
     <div class="ahead"><div class="label">Centre d'aide</div><h2>Le guide de Moïse</h2><p class="hint" style="line-height:1.6">Comment faire des SFS, progresser sur OF &amp; MYM, et la template à poster dans les groupes.<span class="adminonly"> Toi seul peux éditer les sections.</span></p></div>
     <div id="aideWrap"></div>
+  </div>
+
+  <div class="panel" id="p-orbit">
+    <div class="ahead"><div class="label">Nexora Orbit</div><h2>Liens trackés</h2><p class="hint">Génère un lien par modèle, récupère son lien par clippeur, et suis les clics en direct (pays, device, qui a ramené quoi).</p></div>
+    <div id="orbitWrap"></div>
   </div>
 
   <div class="panel" id="p-contenu">
@@ -548,7 +559,7 @@ async function showApp(){
 async function loadData(){var r=await sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
 async function loadParts(){var r=await sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
 async function syncInfloww(){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b){b.disabled=true;b.textContent='Sync…'}toast('Synchronisation Infloww…');try{var r=await sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){celebrate((d.updated||0)+' SFS synchronisés ✓',(d.updated||0)>0);loadData()}else{toast('Erreur sync : '+(d.error||'?'))}}catch(e){toast('Erreur sync : '+(e.message||e))}if(b){b.disabled=false;b.innerHTML=o}}
-function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe()}
+function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{var p=$('p-orbit');if(p&&p.classList.contains('active'))loadOrbit().then(renderOrbit)}).subscribe()}
 
 /* xlsx */
 function decEnt(s){return String(s==null?'':s).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
@@ -567,7 +578,7 @@ function initUI(){
   var ms=$('f_model');if(!ms.options.length)MODELS.forEach(m=>{var o=document.createElement('option');o.textContent=m;ms.appendChild(o)});
   var fm=$('fModel');if(fm.options.length<2)MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;fm.appendChild(o)});
   var today=new Date().toISOString().slice(0,10);if(!$('f_date').value)$('f_date').value=today;if(!$('monthSel').value)$('monthSel').value=today.slice(0,7);
-  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide()});
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}});
   ['f_model','f_partner','f_date','f_time'].forEach(id=>$(id).oninput=upLn);
   $('f_partner').addEventListener('blur',()=>{var k=norm($('f_partner').value),c=parts[k];if(c&&c.contact&&!$('f_contact').value)$('f_contact').value=c.contact});
   $('newBtn').onclick=()=>{$('addForm').classList.toggle('open');upLn()};
@@ -976,6 +987,92 @@ async function delAide(id){
   var r=await sb.from('contenu').delete().eq('id',id);
   if(r.error){toast('Erreur : '+r.error.message);return}
   toast('Section supprimée');closeModal();await loadContenu();renderAide();
+}
+/* ===== Nexora Orbit ===== */
+var ORBIT_GO='https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go';
+var orbitLinks=[],orbitClicks=[];
+var ORBIT_PRESETS={hot:'Hot Bold',min:'Minimal',chr:'Chrome Y2K'};
+async function loadOrbit(){try{
+  var a=await sb.from('orbit_links').select('*').order('created_at',{ascending:false});if(!a.error)orbitLinks=a.data||[];
+  var b=await sb.from('orbit_clicks').select('*').order('created_at',{ascending:false}).limit(1000);if(!b.error)orbitClicks=b.data||[];
+}catch(e){}}
+function orbitUrl(slug,clip){return ORBIT_GO+'?l='+encodeURIComponent(slug)+(clip?'&c='+encodeURIComponent(clip):'')}
+function oslug(s){return norm(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')}
+function renderOrbit(){
+  var wrap=$('orbitWrap');if(!wrap)return;
+  var today=new Date().toISOString().slice(0,10);
+  var todayC=orbitClicks.filter(function(c){return (c.created_at||'').slice(0,10)===today}).length;
+  var byClip={},byCty={},byLink={};
+  orbitClicks.forEach(function(c){var k=c.clipper||'—';byClip[k]=(byClip[k]||0)+1;var cc=c.country||'?';byCty[cc]=(byCty[cc]||0)+1;byLink[c.slug]=(byLink[c.slug]||0)+1});
+  function topN(o,n){return Object.keys(o).map(function(k){return [k,o[k]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,n)}
+  var html='';
+  html+='<div class="band" style="margin-bottom:16px">'
+    +'<div class="stat"><div class="v">'+orbitClicks.length+'</div><div class="k">Clics total</div></div>'
+    +'<div class="stat"><div class="v" style="color:var(--green)">'+todayC+'</div><div class="k">Clics aujourd\'hui</div></div>'
+    +'<div class="stat"><div class="v">'+orbitLinks.filter(function(l){return l.active!==false}).length+'</div><div class="k">Liens actifs</div></div>'
+    +'<div class="stat"><div class="v">'+Object.keys(byClip).filter(function(k){return k!=='—'}).length+'</div><div class="k">Clippeurs actifs</div></div>'
+  +'</div>';
+  html+='<button class="btn primary" id="orbitAdd" style="margin-bottom:14px">＋ Générer un lien</button>';
+  if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucun lien pour l\'instant. Clique « Générer un lien ».</p></div>';}
+  else{html+='<div class="grid g2">'+orbitLinks.map(function(l){
+    var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug);
+    return '<div class="card"><div class="aidehead"><h3>'+esc(l.display_name||l.model)+' <span class="klabel">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span></h3><div class="aideact"><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Lien clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">Éditer</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'
+      +'<div class="klabel" style="margin:4px 0 6px">'+esc(l.slug)+' · <b style="color:var(--teal)">'+clk+' clics</b></div>'
+      +'<div style="font-size:12px;color:var(--mut);word-break:break-all">→ '+esc(l.of_url||'')+'</div>'
+      +'<div style="display:flex;gap:6px;margin-top:10px"><input class="oin" readonly value="'+esc(u)+'"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button></div>'
+    +'</div>';
+  }).join('')+'</div>';}
+  html+='<div class="grid g2" style="margin-top:18px">';
+  html+='<div class="card"><div class="label">Top clippeurs</div>'+(topN(byClip,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
+  html+='<div class="card"><div class="label">Top pays</div>'+(topN(byCty,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
+  html+='</div>';
+  html+='<div class="card" style="margin-top:16px"><div class="label">Clics récents</div>'+(orbitClicks.slice(0,12).map(function(c){return '<div class="orank"><span>'+esc(c.clipper||'—')+' · '+esc(c.city||c.country||'?')+' · '+esc(c.device||'')+'</span><b class="klabel">'+esc((c.created_at||'').slice(11,16))+'</b></div>'}).join('')||'<p class="hint">Aucun clic encore.</p>')+'</div>';
+  wrap.innerHTML=html;
+  var add=$('orbitAdd');if(add)add.onclick=function(){openOrbitEditor(null)};
+  wrap.querySelectorAll('.oedit').forEach(function(b){b.onclick=function(){openOrbitEditor(b.getAttribute('data-id'))}});
+  wrap.querySelectorAll('.odel').forEach(function(b){b.onclick=function(){delOrbitLink(b.getAttribute('data-id'))}});
+  wrap.querySelectorAll('.ocopy').forEach(function(b){b.onclick=function(){copyPlain(b.getAttribute('data-url'),b)}});
+  wrap.querySelectorAll('.oclip').forEach(function(b){b.onclick=function(){openClipLink(b.getAttribute('data-slug'))}});
+}
+function openOrbitEditor(id){
+  var l=id?orbitLinks.find(function(x){return String(x.id)===String(id)}):null;
+  var opts=MODELS.map(function(m){return '<option'+((l&&l.model===m)?' selected':'')+'>'+esc(m)+'</option>'}).join('');
+  var pol=Object.keys(ORBIT_PRESETS).map(function(k){return '<option value="'+k+'"'+((l&&l.preset===k)?' selected':'')+'>'+ORBIT_PRESETS[k]+'</option>'}).join('');
+  $('modal').innerHTML='<div class="mh"><div><div class="label">'+(l?'Éditer le lien':'Générer un lien')+'</div><h2>Nexora Orbit</h2></div><button class="close" id="mClose">✕</button></div>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Modèle</label><select id="o_model">'+opts+'</select></div>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Slug (l\'URL courte : .../<b>slug</b>)</label><input id="o_slug" value="'+esc(l?l.slug:'')+'" placeholder="alice"></div>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Lien OnlyFans (destination de la redirection)</label><input id="o_url" value="'+esc(l?l.of_url:'')+'" placeholder="https://onlyfans.com/..."></div>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Style de la page (preset)</label><select id="o_preset">'+pol+'</select></div>'
+    +'<div style="display:flex;gap:8px;margin-top:6px"><button class="btn primary" id="o_save">💾 Enregistrer</button>'+(l?'<button class="btn ghost" id="o_del">Supprimer</button>':'')+'<button class="btn ghost" id="o_cancel">Annuler</button></div><div class="lerr" id="o_err"></div>';
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;$('o_cancel').onclick=closeModal;
+  var sl=$('o_slug'),mo=$('o_model');
+  if(!l){if(!sl.value)sl.value=oslug(mo.value);mo.onchange=function(){sl.value=oslug(mo.value)}}
+  $('o_save').onclick=function(){saveOrbitLink(l?l.id:null)};
+  var dl=$('o_del');if(dl)dl.onclick=function(){delOrbitLink(l.id)};
+}
+async function saveOrbitLink(id){
+  var err=$('o_err');if(err)err.textContent='';
+  var model=$('o_model').value,slug=oslug($('o_slug').value),of_url=$('o_url').value.trim(),preset=$('o_preset').value;
+  if(!slug){if(err)err.textContent='Mets un slug.';return}
+  if(!/^https?:\/\//.test(of_url)){if(err)err.textContent='Le lien OF doit commencer par https://';return}
+  try{
+    var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:model};
+    if(id){var u=await sb.from('orbit_links').update(row).eq('id',id);if(u.error)throw u.error;}
+    else{var r=await sb.from('orbit_links').insert(row);if(r.error)throw r.error;}
+    toast('Lien enregistré ✓');closeModal();await loadOrbit();renderOrbit();
+  }catch(e){if(err)err.textContent='Erreur : '+((e&&e.message)||e)+' (slug déjà pris ?)'}
+}
+async function delOrbitLink(id){if(!confirm('Supprimer ce lien ? (les clics déjà enregistrés restent)'))return;var r=await sb.from('orbit_links').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast('Lien supprimé');closeModal();await loadOrbit();renderOrbit()}
+function openClipLink(slug){
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Lien pour un clippeur</div><h2>'+esc(slug)+'</h2></div><button class="close" id="mClose">✕</button></div>'
+    +'<p class="hint" style="margin-bottom:10px">Tape le nom du clippeur → tu obtiens son lien unique. Chaque clic sur CE lien lui sera attribué.</p>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Nom du clippeur</label><input id="c_name" placeholder="josya"></div>'
+    +'<div class="fld"><label>Son lien tracké (à lui envoyer)</label><div style="display:flex;gap:6px"><input class="oin" id="c_url" readonly value="'+esc(orbitUrl(slug))+'"><button class="btn primary" id="c_copy">Copier</button></div></div>'
+    +'<div style="margin-top:12px"><button class="btn ghost" id="c_close">Fermer</button></div>';
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;$('c_close').onclick=closeModal;
+  var nm=$('c_name'),ur=$('c_url');
+  nm.oninput=function(){ur.value=orbitUrl(slug,oslug(nm.value))};
+  $('c_copy').onclick=function(){copyPlain(ur.value,$('c_copy'))};
 }
 /* export */
 window.exportCsv=function(){if(!data.length){toast('Rien à exporter.');return}var h=['Date','Modele','Partenaire','Contact','Statut','Lien','Clicks','Subs','Earnings','Fans','CVR','Note'];var L=[h.join(',')];data.forEach(r=>{var cvr=cvrOf(r),sc=scoreOf(r);L.push([r.date,r.model,'"'+(r.partner||'').replace(/"/g,'""')+'"','"'+(r.contact||'').replace(/"/g,'""')+'"',STL[r.status]||'','"'+(r.link_name||'').replace(/"/g,'""')+'"',r.clicks,r.subs,r.earnings,r.fans,cvr==null?'':cvr.toFixed(1),sc||''].join(','))});var s=L.join('\n');if(window.claude&&window.claude.downloads){window.claude.downloads.save({filename:'sfs.csv',data:s}).catch(()=>{})}else{var bl=new Blob([s],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='sfs.csv';a.click()}};
