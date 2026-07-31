@@ -1109,7 +1109,7 @@ async function doGmsImport(){
   models.forEach(function(m){var el=$('gmsi_'+oslug(m));var v=el?(el.value||'').trim():'';ofs[m]=v;if(!v)missing.push(m)});
   if(missing.length){status.innerHTML='<span style="color:#ff6b6b">Il manque le lien OnlyFans de : '+esc(missing.join(', '))+'</span>';return}
   var existing={};orbitLinks.forEach(function(l){existing[l.slug]=1});
-  var rows=GMS_IMPORT.filter(function(r){return !existing[r.slug]}).map(function(r){return {model:r.m,slug:r.slug,of_url:ofs[r.m],display_name:r.t,preset:'hot',mode:'redirect'}});
+  var rows=GMS_IMPORT.filter(function(r){return !existing[r.slug]}).map(function(r){return {model:r.m,slug:r.slug,of_url:ofs[r.m],display_name:r.t,preset:'hot',mode:'redirect',source:'instagram'}});
   if(!rows.length){status.innerHTML='Tout est déjà importé ✅';return}
   status.textContent='Import de '+rows.length+' liens…';
   try{var res=await sb.from('orbit_links').insert(rows);
@@ -1229,7 +1229,7 @@ function renderOrbit(){
     html+=Object.keys(groups).sort().map(function(m){var links=groups[m];var gc=links.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);
       return '<div class="ogroup"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+links.length+' lien'+(links.length>1?'s':'')+' · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'
         +links.map(function(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);
-          return '<div class="olink"><div class="oli"><div class="olname">'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span></div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}).join('')
+          return '<div class="olink"><div class="oli"><div class="olname">'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span>'+(l.source==='instagram'?' <span class="opreset" style="background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);color:#fff">IG</span>':'')+'</div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}).join('')
       +'</div>'}).join('');}
   wrap.innerHTML=html;
   var add=$('orbitAdd');if(add)add.onclick=function(){openOrbitEditor(null)};
