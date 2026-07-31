@@ -47,6 +47,40 @@
   .oglobe-card .olg .h{font-weight:750;font-size:15px;margin-top:3px}
   .oglobe-legend{position:absolute;left:16px;bottom:12px;z-index:2;display:flex;gap:16px;font-size:11px;color:var(--soft);pointer-events:none}
   .oglobe-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .ohead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .ohead h2{font-size:22px;font-weight:850;letter-spacing:-.02em}
+  .okpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:820px){.okpis{grid-template-columns:repeat(2,1fr)}}
+  .okpi{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:15px 16px 10px}
+  .okpi .k{font-family:var(--fm);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+  .okpi .v{font-size:30px;font-weight:850;letter-spacing:-.02em;margin:5px 0 6px;font-variant-numeric:tabular-nums}
+  .ocardh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .oxaxis{display:flex;justify-content:space-between;margin-top:6px}
+  .oxaxis span{font-family:var(--fm);font-size:9px;color:var(--mut);flex:1;text-align:center}
+  .olive{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+  .olive i{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:bl 1.4s infinite}
+  @keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+  .ofeed{display:flex;flex-direction:column}
+  .ofev{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .ofev:last-child{border-bottom:0}
+  .ofev .ofd{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);flex:0 0 auto}
+  .ofa{font-size:13px;font-weight:600}
+  .tlwrap{display:flex;flex-direction:column}
+  .tlrow{display:grid;grid-template-columns:22px 1fr 90px 40px;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .tlrow:last-child{border-bottom:0}
+  .tlrank{font-family:var(--fm);font-weight:800;color:var(--mut);text-align:center}
+  .olname{font-size:13.5px;font-weight:600}
+  .tlc{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+  .ogroup{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+  .ogh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+  .ogm{font-size:16px;font-weight:800}
+  .ogspark{width:130px;flex:0 0 auto}
+  .olink{display:grid;grid-template-columns:1fr 80px 46px auto;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .olink:last-child{border-bottom:0}
+  .olink .olclk{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+  .olact{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+  .olact .btn{padding:6px 9px;font-size:11px}
+  @media(max-width:680px){.olink{grid-template-columns:1fr auto}.olink .olspark,.olink .olclk{display:none}.tlrow{grid-template-columns:20px 1fr 40px}.tlspark{display:none}}
   .logohero{text-align:center;margin:0 0 18px}
   .brand3d{perspective:900px;display:inline-block}
   .brand3d .inner{transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:.42em;filter:drop-shadow(0 6px 22px rgba(84,87,255,.42))}
@@ -1056,41 +1090,44 @@ function renderOrbit(){
   var wrap=$('orbitWrap');if(!wrap)return;
   var today=new Date().toISOString().slice(0,10);
   var todayC=orbitClicks.filter(function(c){return (c.created_at||'').slice(0,10)===today}).length;
+  var tc=orbitClicks.length;
   var byClip={},byCty={},byLink={};
   orbitClicks.forEach(function(c){var k=c.clipper||'—';byClip[k]=(byClip[k]||0)+1;var cc=c.country||'?';byCty[cc]=(byCty[cc]||0)+1;byLink[c.slug]=(byLink[c.slug]||0)+1});
   function topN(o,n){return Object.keys(o).map(function(k){return [k,o[k]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,n)}
-  function orankBars(o,n,grad,suffix){var arr=topN(o,n);if(!arr.length)return '<p class="hint">—</p>';var mx=Math.max(1,Math.max.apply(null,arr.map(function(r){return r[1]})));return arr.map(function(r){var w=Math.max(6,Math.round(r[1]/mx*100));return '<div class="obar"><div class="nm">'+esc(r[0])+'</div><div class="ct">'+r[1]+(suffix?suffix(r[1]):'')+'</div><div class="tr"><i style="width:'+w+'%;background:'+grad+'"></i></div></div>'}).join('')}
+  function orankBars(o,n,grad,suf){var arr=topN(o,n);if(!arr.length)return '<p class="hint">—</p>';var mx=Math.max(1,Math.max.apply(null,arr.map(function(r){return r[1]})));return arr.map(function(r){var w=Math.max(6,Math.round(r[1]/mx*100));return '<div class="obar"><div class="nm">'+esc(r[0])+'</div><div class="ct">'+r[1]+(suf?suf(r[1]):'')+'</div><div class="tr"><i style="width:'+w+'%;background:'+grad+'"></i></div></div>'}).join('')}
+  function seriesN(cl,n){var days={},order=[];for(var i=n-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.toISOString().slice(0,10);days[key]=0;order.push(key)}cl.forEach(function(c){var dd=(c.created_at||'').slice(0,10);if(dd in days)days[dd]++});return order.map(function(k){return days[k]})}
+  function spark(arr,w,h,color){if(!arr||!arr.length)arr=[0];var mx=Math.max(1,Math.max.apply(null,arr));var n=arr.length;var pts=arr.map(function(v,i){var x=n>1?i/(n-1)*w:w/2;var y=h-(v/mx)*(h-3)-1.5;return x.toFixed(1)+','+y.toFixed(1)});var line=pts.join(' ');var area='0,'+h+' '+line+' '+w+','+h;return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" style="width:100%;height:'+h+'px;display:block"><polygon points="'+area+'" fill="'+color+'" opacity="0.14"></polygon><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>'}
+  function bigChart(series){var W=700,H=180,pad=10;var mx=Math.max(1,Math.max.apply(null,series));var n=series.length;var X=function(i){return pad+(n>1?i/(n-1):0)*(W-2*pad)};var Y=function(v){return H-pad-(v/mx)*(H-2*pad-6)};var pts=series.map(function(v,i){return X(i).toFixed(1)+' '+Y(v).toFixed(1)});var line='M'+pts.join(' L');var area=line+' L'+X(n-1).toFixed(1)+' '+(H-pad)+' L'+X(0).toFixed(1)+' '+(H-pad)+' Z';var grid='';for(var g=1;g<=3;g++){var gy=pad+(H-2*pad)*g/4;grid+='<line x1="'+pad+'" y1="'+gy.toFixed(1)+'" x2="'+(W-pad)+'" y2="'+gy.toFixed(1)+'" stroke="rgba(255,255,255,.05)"></line>'}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:180px;display:block"><defs><linearGradient id="ocg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6172FF" stop-opacity="0.32"></stop><stop offset="1" stop-color="#6172FF" stop-opacity="0"></stop></linearGradient></defs>'+grid+'<path d="'+area+'" fill="url(#ocg)"></path><path d="'+line+'" fill="none" stroke="#6172FF" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg>'}
+  var series14=seriesN(orbitClicks,14);
+  var keys14=[];for(var ki=13;ki>=0;ki--){var kd=new Date();kd.setDate(kd.getDate()-ki);keys14.push(kd.toISOString().slice(0,10))}
   var html='';
-  html+='<div class="band" style="margin-bottom:16px">'
-    +'<div class="stat"><div class="v" style="color:#25E8C3">'+orbitClicks.length+'</div><div class="k">Clics total</div></div>'
-    +'<div class="stat"><div class="v" style="color:#3FD07E">'+todayC+'</div><div class="k">Clics aujourd\'hui</div></div>'
-    +'<div class="stat"><div class="v" style="color:#6172FF">'+orbitLinks.filter(function(l){return l.active!==false}).length+'</div><div class="k">Liens actifs</div></div>'
-    +'<div class="stat"><div class="v" style="color:#B197FC">'+Object.keys(byClip).filter(function(k){return k!=='—'}).length+'</div><div class="k">Clippeurs actifs</div></div>'
-  +'</div>';
-  html+='<div class="oglobe-card"><canvas id="oglobe"></canvas><div class="olg"><div class="t">Ciblage · clics en direct</div><div class="h">D\'où viennent tes clics</div></div><div class="oglobe-legend"><span><i style="background:#3FD07E;box-shadow:0 0 8px #3FD07E"></i>Ciblé (FR/QC/BE/CH)</span><span><i style="background:#FF6060;box-shadow:0 0 8px #FF6060"></i>Hors cible</span></div></div>';
-  html+='<button class="btn primary" id="orbitAdd" style="margin-bottom:14px">＋ Générer un lien</button>';
-  if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucun lien pour l\'instant. Clique « Générer un lien ».</p></div>';}
-  else{html+='<div class="grid g2">'+orbitLinks.map(function(l){
-    var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug);
-    return '<div class="card"><div class="aidehead"><h3>'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span></h3><div class="aideact"><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Lien clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">Éditer</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'
-      +'<div class="klabel" style="margin:4px 0 6px">'+esc(l.slug)+' · <b style="color:var(--teal)">'+clk+' clics</b></div>'
-      +'<div style="font-size:12px;color:var(--mut);word-break:break-all">→ '+esc(l.of_url||'')+'</div>'
-      +'<div style="display:flex;gap:6px;margin-top:10px"><input class="oin" readonly value="'+esc(u)+'"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button></div>'
-    +'</div>';
-  }).join('')+'</div>';}
-  var byModel={},byDev={},last7={};
-  for(var di=6;di>=0;di--){var dt=new Date();dt.setDate(dt.getDate()-di);last7[dt.toISOString().slice(0,10)]=0}
-  orbitClicks.forEach(function(c){var m=c.model||'?';byModel[m]=(byModel[m]||0)+1;var dv=c.device||'?';byDev[dv]=(byDev[dv]||0)+1;var dd=(c.created_at||'').slice(0,10);if(dd in last7)last7[dd]++});
-  var l7k=Object.keys(last7),l7max=Math.max(1,Math.max.apply(null,l7k.map(function(k){return last7[k]})));
-  var tc=orbitClicks.length;
-  html+='<div class="grid g2" style="margin-top:18px">';
-  html+='<div class="card"><div class="label">Top clippeurs</div>'+orankBars(byClip,8,'linear-gradient(90deg,#25E8C3,#6172FF)')+'</div>';
-  html+='<div class="card"><div class="label">Top pays</div>'+orankBars(byCty,8,'linear-gradient(90deg,#6172FF,#B197FC)')+'</div>';
-  html+='<div class="card"><div class="label">Clics par modèle</div>'+orankBars(byModel,8,'linear-gradient(90deg,#B197FC,#F3C24B)')+'</div>';
-  html+='<div class="card"><div class="label">Appareils</div>'+orankBars(byDev,5,'linear-gradient(90deg,#25E8C3,#3FD07E)',function(v){return ' · '+Math.round(v/Math.max(1,tc)*100)+'%'})+'</div>';
+  html+='<div class="ohead"><div><h2 style="margin:0">Bonjour 👋</h2><p class="hint" style="margin:3px 0 0">Vue globale de tes liens Orbit — clics, clippeurs, géo.</p></div><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div>';
+  html+='<div class="okpis">';
+  html+='<div class="okpi"><div class="k">Clics total</div><div class="v" style="color:#25E8C3">'+tc+'</div>'+spark(series14,140,32,'#25E8C3')+'</div>';
+  html+='<div class="okpi"><div class="k">Clics du jour</div><div class="v" style="color:#3FD07E">'+todayC+'</div>'+spark(seriesN(orbitClicks,7),140,32,'#3FD07E')+'</div>';
+  html+='<div class="okpi"><div class="k">Liens actifs</div><div class="v" style="color:#6172FF">'+orbitLinks.filter(function(l){return l.active!==false}).length+'</div></div>';
+  html+='<div class="okpi"><div class="k">Clippeurs actifs</div><div class="v" style="color:#B197FC">'+Object.keys(byClip).filter(function(k){return k!=='—'}).length+'</div></div>';
   html+='</div>';
-  html+='<div class="card" style="margin-top:16px"><div class="label">7 derniers jours</div><div style="display:flex;align-items:flex-end;gap:6px;height:82px;margin-top:12px">'+l7k.map(function(k){var v=last7[k];var h=Math.round(v/l7max*66)+3;return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div title="'+v+' clics" style="width:100%;height:'+h+'px;border-radius:5px;background:linear-gradient(180deg,var(--teal),var(--blue))"></div><div class="klabel" style="font-size:9px">'+k.slice(8,10)+'/'+k.slice(5,7)+'</div></div>'}).join('')+'</div></div>';
-  html+='<div class="card" style="margin-top:16px"><div class="label">Clics récents</div>'+(orbitClicks.slice(0,12).map(function(c){return '<div class="orank"><span>'+esc(c.clipper||'—')+' · '+esc(c.city||c.country||'?')+' · '+esc(c.device||'')+'</span><b class="klabel">'+esc((c.created_at||'').slice(11,16))+'</b></div>'}).join('')||'<p class="hint">Aucun clic encore.</p>')+'</div>';
+  html+='<div class="card" style="margin-top:16px"><div class="ocardh"><div class="label">Analytics · clics</div><span class="klabel">14 derniers jours</span></div>'+bigChart(series14)+'<div class="oxaxis">'+keys14.map(function(k,i){return '<span>'+((i%3===0)?(k.slice(8,10)+'/'+k.slice(5,7)):'')+'</span>'}).join('')+'</div></div>';
+  var topLinks=orbitLinks.map(function(l){return {l:l,c:byLink[l.slug]||0}}).sort(function(a,b){return b.c-a.c}).slice(0,6);
+  var tlHtml=topLinks.length?topLinks.map(function(o,i){var ls=seriesN(orbitClicks.filter(function(c){return c.slug===o.l.slug}),14);return '<div class="tlrow"><div class="tlrank">'+(i+1)+'</div><div class="tlname"><div class="olname">'+esc(o.l.display_name||o.l.model)+'</div><div class="klabel">'+esc(o.l.slug)+'</div></div><div class="tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="tlc">'+o.c+'</div></div>'}).join(''):'<p class="hint">Aucun lien.</p>';
+  html+='<div class="grid g2" style="margin-top:16px">';
+  html+='<div class="card"><div class="label">Top liens</div><div class="tlwrap">'+tlHtml+'</div></div>';
+  html+='<div class="card"><div class="ocardh"><div class="label">En direct</div><span class="olive"><i></i>Live</span></div><div class="ofeed">'+(orbitClicks.slice(0,9).map(function(c){return '<div class="ofev"><span class="ofd"></span><div><div class="ofa">'+esc(c.clipper||'—')+'</div><div class="klabel">'+esc(c.city||c.country||'?')+' · '+esc(c.device||'')+' · '+esc((c.created_at||'').slice(11,16))+'</div></div></div>'}).join('')||'<p class="hint">Aucun clic encore.</p>')+'</div></div>';
+  html+='</div>';
+  html+='<div class="oglobe-card" style="margin-top:16px"><canvas id="oglobe"></canvas><div class="olg"><div class="t">Ciblage · clics en direct</div><div class="h">Origine des clics</div></div><div class="oglobe-legend"><span><i style="background:#3FD07E;box-shadow:0 0 8px #3FD07E"></i>Ciblé (FR/QC/BE/CH)</span><span><i style="background:#FF6060;box-shadow:0 0 8px #FF6060"></i>Hors cible</span></div></div>';
+  html+='<div class="grid g2" style="margin-top:16px">';
+  html+='<div class="card"><div class="label">Top pays</div>'+orankBars(byCty,8,'linear-gradient(90deg,#6172FF,#B197FC)')+'</div>';
+  html+='<div class="card"><div class="label">Top clippeurs</div>'+orankBars(byClip,8,'linear-gradient(90deg,#25E8C3,#6172FF)')+'</div>';
+  html+='</div>';
+  html+='<div class="ocardh" style="margin:24px 0 10px"><h3 style="margin:0">Gestion des liens</h3><span class="klabel">par modèle</span></div>';
+  if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucun lien. Clique « Créer un lien ».</p></div>';}
+  else{var groups={};orbitLinks.forEach(function(l){(groups[l.model]=groups[l.model]||[]).push(l)});
+    html+=Object.keys(groups).sort().map(function(m){var links=groups[m];var gc=links.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);
+      return '<div class="ogroup"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+links.length+' lien'+(links.length>1?'s':'')+' · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'
+        +links.map(function(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);
+          return '<div class="olink"><div class="oli"><div class="olname">'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span></div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}).join('')
+      +'</div>'}).join('');}
   wrap.innerHTML=html;
   var add=$('orbitAdd');if(add)add.onclick=function(){openOrbitEditor(null)};
   wrap.querySelectorAll('.oedit').forEach(function(b){b.onclick=function(){openOrbitEditor(b.getAttribute('data-id'))}});
