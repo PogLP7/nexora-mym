@@ -1022,10 +1022,17 @@ function renderOrbit(){
       +'<div style="display:flex;gap:6px;margin-top:10px"><input class="oin" readonly value="'+esc(u)+'"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button></div>'
     +'</div>';
   }).join('')+'</div>';}
+  var byModel={},byDev={},last7={};
+  for(var di=6;di>=0;di--){var dt=new Date();dt.setDate(dt.getDate()-di);last7[dt.toISOString().slice(0,10)]=0}
+  orbitClicks.forEach(function(c){var m=c.model||'?';byModel[m]=(byModel[m]||0)+1;var dv=c.device||'?';byDev[dv]=(byDev[dv]||0)+1;var dd=(c.created_at||'').slice(0,10);if(dd in last7)last7[dd]++});
+  var l7k=Object.keys(last7),l7max=Math.max(1,Math.max.apply(null,l7k.map(function(k){return last7[k]})));
   html+='<div class="grid g2" style="margin-top:18px">';
   html+='<div class="card"><div class="label">Top clippeurs</div>'+(topN(byClip,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
   html+='<div class="card"><div class="label">Top pays</div>'+(topN(byCty,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
+  html+='<div class="card"><div class="label">Clics par modèle</div>'+(topN(byModel,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
+  html+='<div class="card"><div class="label">Appareils</div>'+(topN(byDev,5).map(function(r){var pct=Math.round(r[1]/Math.max(1,orbitClicks.length)*100);return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+' · '+pct+'%</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
   html+='</div>';
+  html+='<div class="card" style="margin-top:16px"><div class="label">7 derniers jours</div><div style="display:flex;align-items:flex-end;gap:6px;height:82px;margin-top:12px">'+l7k.map(function(k){var v=last7[k];var h=Math.round(v/l7max*66)+3;return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div title="'+v+' clics" style="width:100%;height:'+h+'px;border-radius:5px;background:linear-gradient(180deg,var(--teal),var(--blue))"></div><div class="klabel" style="font-size:9px">'+k.slice(8,10)+'/'+k.slice(5,7)+'</div></div>'}).join('')+'</div></div>';
   html+='<div class="card" style="margin-top:16px"><div class="label">Clics récents</div>'+(orbitClicks.slice(0,12).map(function(c){return '<div class="orank"><span>'+esc(c.clipper||'—')+' · '+esc(c.city||c.country||'?')+' · '+esc(c.device||'')+'</span><b class="klabel">'+esc((c.created_at||'').slice(11,16))+'</b></div>'}).join('')||'<p class="hint">Aucun clic encore.</p>')+'</div>';
   wrap.innerHTML=html;
   var add=$('orbitAdd');if(add)add.onclick=function(){openOrbitEditor(null)};
