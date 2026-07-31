@@ -123,7 +123,8 @@
   .kcb .olclk{font-weight:800;font-variant-numeric:tabular-nums}
   .lmdot{width:8px;height:8px;border-radius:50%;background:#3fd07e;box-shadow:0 0 8px rgba(63,208,126,.6);flex:0 0 8px}
   .lmdot.low{background:#c99a3a;box-shadow:none}.lmdot.dead{background:#4a5568;box-shadow:none}
-  .lmav{width:34px;height:34px;border-radius:10px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.28)}
+  .lmav{width:40px;height:40px;border-radius:50%;flex:0 0 40px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.28),0 0 0 2px rgba(255,255,255,.08)}
+  .lmav-pic{background-size:cover;background-position:center;background-repeat:no-repeat;background-color:#1a2234}
   .lmmh{display:flex;align-items:center;gap:11px}
   .lmmodel{transition:border-color .2s}
   .lmmodel:hover{border-color:rgba(127,140,255,.28)}
@@ -1317,6 +1318,8 @@ function parsePole(name){var n=(name||'').toUpperCase();var pats=[/P[ÔO]LE\s*([
 var MGRAD={'Alice':'linear-gradient(135deg,#ff8fb1,#c86bff)','Louise':'linear-gradient(135deg,#6172ff,#25e8c3)','Bethy OF':'linear-gradient(135deg,#ffb85c,#ff6b8f)','Amandine':'linear-gradient(135deg,#3fd07e,#25e8c3)','Margot':'linear-gradient(135deg,#b197fc,#6172ff)','Marion':'linear-gradient(135deg,#ff6b6b,#ffb85c)','Bethy MYM':'linear-gradient(135deg,#ff9a5c,#ff6b8f)','Milla MYM':'linear-gradient(135deg,#25e8c3,#6172ff)'};
 function modelGrad(m){return MGRAD[m]||'linear-gradient(135deg,#6172ff,#8b97ff)'}
 function modelInit(m){return esc((m||'?').replace(/\s*(OF|MYM)$/i,'').trim().charAt(0).toUpperCase())}
+var MODELPICS={'Alice':'https://images.getmysocial.com/6835e770c8858bdb89279558/1771066857464-cb7055396e67.jpg','Louise':'https://images.getmysocial.com/6835e770c8858bdb89279558/1771417226223-87ec99032a01.jpg','Marion':'https://images.getmysocial.com/6835e770c8858bdb89279558/1771418383413-84ac9b63b19d.jpg','Margot':'https://images.getmysocial.com/6835e770c8858bdb89279558/1773818341774-25dd4ee8bca8.jpg','Bethy OF':'https://images.getmysocial.com/profile-slides/6835e770c8858bdb89279558/1785068050437-b353fd1d7938.jpg'};
+function modelAvatar(m){var p=MODELPICS[m];if(p)return '<div class="lmav lmav-pic" style="background-image:url('+p+')" role="img" aria-label="'+esc(m)+'"></div>';return ''+modelAvatar(m)+''}
 function renderLinkManager(){
   var wrap=$('linksWrap');if(!wrap)return;
   var byLink={},lastClick={};
@@ -1342,13 +1345,13 @@ function renderLinkManager(){
         var body=M.order.map(function(key){var pl=M.poles[key];var resp=(pl.filter(function(x){return x.responsable})[0]||{}).responsable;var pc=pl.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var ps=seriesN(orbitClicks.filter(function(c){for(var i=0;i<pl.length;i++)if(pl[i].slug===c.slug)return true;return false}),14);
           return '<div class="pole"><div class="pole-head">'+poleChip(key)+(resp?'<span class="pole-mgr">Resp. <b>'+esc(resp)+'</b></span>':'')+'<span class="pole-stat"><span class="pnum">'+pl.length+' clipper'+(pl.length>1?'s':'')+' · '+pc+' clics</span>'+spark(ps,80,22,'#6172FF')+'</span></div>'+pl.map(cordeRow).join('')+'</div>'}).join('');
         var arch=M.archived.length?'<details class="lm-arch"><summary>🗄 Inactifs archivés ('+M.archived.length+')</summary>'+M.archived.map(function(l){return '<div class="archrow"><span>'+esc(l.clipper||l.display_name)+' <span class="klabel">'+esc(l.slug)+'</span></span><button class="btn ghost orest" data-id="'+l.id+'">↩︎ Restaurer</button></div>'}).join('')+'</details>':'';
-        return '<div class="ogroup lmmodel"><div class="ogh"><div class="lmmh"><div class="lmav" style="background:'+modelGrad(m)+'">'+modelInit(m)+'</div><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+np+' pôle'+(np>1?'s':'')+' · '+nc+' clippers · '+gc+' clics</div></div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'+body+arch+'</div>'}).join('');
+        return '<div class="ogroup lmmodel"><div class="ogh"><div class="lmmh">'+modelAvatar(m)+'<div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+np+' pôle'+(np>1?'s':'')+' · '+nc+' clippers · '+gc+' clics</div></div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'+body+arch+'</div>'}).join('');
     } else {
       html+=mk.map(function(m){var M=models[m];var gc=orbitLinks.filter(function(l){return l.model===m&&!l.archived}).reduce(function(a,l){return a+(byLink[l.slug]||0)},0);
         var cols=M.order.map(function(key){var pl=M.poles[key];var resp=(pl.filter(function(x){return x.responsable})[0]||{}).responsable;var pc=pl.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);
           return '<div class="kcol"><div class="kcol-head">'+poleChip(key)+'<span class="cnt">'+pl.length+'</span></div><div class="kmgr">'+(resp?'👤 <b>'+esc(resp)+'</b> · ':'')+pc+' clics</div>'+pl.map(function(l){var clk=byLink[l.slug]||0;var inact=isInact(l);return '<div class="kcard'+(inact?' dead':'')+'"><div class="kct"><span class="lmdot'+(inact?' dead':(clk?'':' low'))+'"></span><span class="kcn">'+esc(l.clipper||l.display_name)+'</span></div><div class="kcb"><button class="btn ghost ocopy" data-url="'+esc(orbitUrl(l.slug,l.clipper))+'" style="padding:3px 8px;font-size:10px">Copier</button><span class="olclk'+(clk?'':' z')+'">'+clk+'</span></div></div>'}).join('')+'</div>'}).join('');
         var acol=M.archived.length?'<div class="kcol inact"><div class="kcol-head"><span class="pchip" style="background:rgba(255,184,92,.25);color:#ffb85c">INACTIFS</span><span class="cnt">'+M.archived.length+'</span></div><div class="kmgr">0 clic &gt; 15j</div>'+M.archived.map(function(l){return '<div class="kcard dead"><div class="kct"><span class="lmdot dead"></span><span class="kcn">'+esc(l.clipper||l.display_name)+'</span></div><div class="kcb"><button class="btn ghost orest" data-id="'+l.id+'" style="padding:3px 8px;font-size:10px">↩︎ Restaurer</button><span class="olclk">0</span></div></div>'}).join('')+'</div>':'';
-        return '<div class="ogroup lmmodel"><div class="ogh"><div class="lmmh"><div class="lmav" style="background:'+modelGrad(m)+'">'+modelInit(m)+'</div><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+M.order.length+' colonne'+(M.order.length>1?'s':'')+' · '+gc+' clics</div></div></div></div><div class="kan">'+cols+acol+'</div></div>'}).join('');
+        return '<div class="ogroup lmmodel"><div class="ogh"><div class="lmmh">'+modelAvatar(m)+'<div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+M.order.length+' colonne'+(M.order.length>1?'s':'')+' · '+gc+' clics</div></div></div></div><div class="kan">'+cols+acol+'</div></div>'}).join('');
     }
   }
   wrap.innerHTML=html;
