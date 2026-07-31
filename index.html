@@ -92,6 +92,37 @@
   .olact{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
   .olact .btn{padding:6px 9px;font-size:11px}
   @media(max-width:680px){.olink{grid-template-columns:1fr auto}.olink .olspark,.olink .olclk{display:none}.tlrow{grid-template-columns:20px 1fr 40px}.tlspark{display:none}}
+  /* ===== Link Manager v2 : pôles + kanban ===== */
+  .lmseg{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px}
+  .lmseg button{border:0;background:transparent;color:var(--soft);font:inherit;font-size:12px;font-weight:650;padding:6px 12px;border-radius:7px;cursor:pointer}
+  .lmseg button.on{background:#6172FF;color:#fff}
+  .lmmodel .ogm{font-size:16px}
+  .pole{border:1px solid var(--line2);border-radius:12px;padding:10px 13px;margin-top:10px;background:rgba(127,140,255,.03)}
+  .pole-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .pchip{font-family:var(--fm);font-size:10.5px;font-weight:800;letter-spacing:.05em;color:#fff;padding:3px 9px;border-radius:7px}
+  .pole-mgr{font-size:12px;color:var(--soft)}.pole-mgr b{color:var(--ink)}
+  .pole-stat{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .pnum{font-family:var(--fm);font-size:11px;color:var(--soft);white-space:nowrap}
+  .pole-stat svg{width:80px}
+  .flag{font-family:var(--fm);font-size:9px;letter-spacing:.04em;color:#ffb85c;border:1px solid rgba(255,184,92,.35);border-radius:5px;padding:1px 6px;vertical-align:middle}
+  .olink.inact{opacity:.7}
+  .lm-arch{margin-top:10px}
+  .lm-arch summary{cursor:pointer;font-size:12px;color:var(--soft);font-family:var(--fm);letter-spacing:.03em;padding:4px 0}
+  .archrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 2px;border-top:1px solid var(--line2);font-size:13px}
+  .kan{display:flex;gap:12px;overflow-x:auto;padding:8px 2px 4px}
+  .kcol{flex:0 0 238px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px}
+  .kcol.inact{border-style:dashed}
+  .kcol-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .kcol-head .cnt{margin-left:auto;font-family:var(--fm);font-size:11px;color:var(--soft)}
+  .kmgr{font-size:11.5px;color:var(--soft);margin-bottom:9px}.kmgr b{color:var(--ink)}
+  .kcard{background:var(--card);border:1px solid var(--line2);border-radius:10px;padding:8px 10px;margin-bottom:7px}
+  .kcard.dead{opacity:.6}
+  .kct{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+  .kcn{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kcb{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .kcb .olclk{font-weight:800;font-variant-numeric:tabular-nums}
+  .lmdot{width:8px;height:8px;border-radius:50%;background:#3fd07e;box-shadow:0 0 8px rgba(63,208,126,.6);flex:0 0 8px}
+  .lmdot.low{background:#c99a3a;box-shadow:none}.lmdot.dead{background:#4a5568;box-shadow:none}
   .logohero{text-align:center;margin:0 0 18px}
   .brand3d{perspective:900px;display:inline-block}
   .brand3d .inner{transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:.42em;filter:drop-shadow(0 6px 22px rgba(84,87,255,.42))}
@@ -1149,7 +1180,7 @@ async function doGmsImport(){
   models.forEach(function(m){var el=$('gmsi_'+oslug(m));var v=el?(el.value||'').trim():'';ofs[m]=v;if(!v)missing.push(m)});
   if(missing.length){status.innerHTML='<span style="color:#ff6b6b">Il manque le lien OnlyFans de : '+esc(missing.join(', '))+'</span>';return}
   var existing={};orbitLinks.forEach(function(l){existing[l.slug]=1});
-  var rows=GMS_IMPORT.filter(function(r){return !existing[r.slug]}).map(function(r){return {model:r.m,slug:r.slug,of_url:ofs[r.m],display_name:r.t,preset:'hot',mode:'redirect',source:'instagram'}});
+  var rows=GMS_IMPORT.filter(function(r){return !existing[r.slug]}).map(function(r){return {model:r.m,slug:r.slug,of_url:ofs[r.m],display_name:r.t,preset:'hot',mode:'redirect',source:'instagram',clipper:r.c||null,pole:parsePole(r.t)||null}});
   if(!rows.length){status.innerHTML='Tout est déjà importé ✅';return}
   status.textContent='Import de '+rows.length+' liens…';
   try{var res=await sb.from('orbit_links').insert(rows);
@@ -1267,28 +1298,55 @@ function renderOrbit(){
   var _bg=$('ogGlobe'),_bm=$('ogMap');if(_bg)_bg.onclick=function(){setOrbitGeo('globe')};if(_bm)_bm.onclick=function(){setOrbitGeo('map')};
   try{setOrbitGeo(orbitGeoMode)}catch(e){}
 }
+var lmView='liste';
+var POLECOL={A:'linear-gradient(90deg,#6172ff,#8b97ff)',B:'linear-gradient(90deg,#25e8c3,#3fd07e)',C:'linear-gradient(90deg,#ffb85c,#ff8f5c)',D:'linear-gradient(90deg,#b197fc,#c86bff)'};
+function parsePole(name){var n=(name||'').toUpperCase();var pats=[/P[ÔO]LE\s*([A-Z])\b/,/#P?([A-Z])\b/,/\[([A-Z])\]/,/\bP([A-Z])\b/];for(var i=0;i<pats.length;i++){var m=n.match(pats[i]);if(m)return m[1]}return null}
 function renderLinkManager(){
   var wrap=$('linksWrap');if(!wrap)return;
-  var byLink={};orbitClicks.forEach(function(c){byLink[c.slug]=(byLink[c.slug]||0)+1});
+  var byLink={},lastClick={};
+  orbitClicks.forEach(function(c){byLink[c.slug]=(byLink[c.slug]||0)+1;var d=c.created_at||'';if(!lastClick[c.slug]||d>lastClick[c.slug])lastClick[c.slug]=d});
+  var now=Date.now();
   function seriesN(cl,n){var days={},order=[];for(var i=n-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.toISOString().slice(0,10);days[key]=0;order.push(key)}cl.forEach(function(c){var dd=(c.created_at||'').slice(0,10);if(dd in days)days[dd]++});return order.map(function(k){return days[k]})}
   function spark(arr,w,h,color){if(!arr||!arr.length)arr=[0];var mx=Math.max(1,Math.max.apply(null,arr));var n=arr.length;var pts=arr.map(function(v,i){var x=n>1?i/(n-1)*w:w/2;var y=h-(v/mx)*(h-3)-1.5;return x.toFixed(1)+','+y.toFixed(1)});var line=pts.join(' ');var area='0,'+h+' '+line+' '+w+','+h;return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" style="width:100%;height:'+h+'px;display:block"><polygon points="'+area+'" fill="'+color+'" opacity="0.14"></polygon><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>'}
+  function inactDays(l){var ref=lastClick[l.slug]||l.created_at||'';if(!ref)return 0;return Math.floor((now-new Date(ref).getTime())/864e5)}
+  function isInact(l){return inactDays(l)>=15}
+  function poleChip(key){var m=key.match(/P[ÔO]LE\s([A-Z])/i);var L=m?m[1].toUpperCase():null;var grad=L?POLECOL[L]:'rgba(255,255,255,.12)';return '<span class="pchip" style="background:'+grad+(L==='B'?';color:#052':'')+'">'+esc(key.toUpperCase())+'</span>'}
+  var nmod=Object.keys(orbitLinks.reduce(function(a,l){a[l.model]=1;return a},{})).length;
   var html='';
-  html+='<div class="ohead"><div><div class="label">'+orbitLinks.length+' corde'+(orbitLinks.length>1?'s':'')+' · '+Object.keys(orbitLinks.reduce(function(a,l){a[l.model]=1;return a},{})).length+' modèles</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="orbitImport">⤓ Importer GMS</button><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div></div>';
+  html+='<div class="ohead"><div><div class="label">'+orbitLinks.length+' corde'+(orbitLinks.length>1?'s':'')+' · '+nmod+' modèles</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><div class="lmseg"><button data-v="liste" class="'+(lmView==='liste'?'on':'')+'">▤ Liste</button><button data-v="kanban" class="'+(lmView==='kanban'?'on':'')+'">▦ Kanban</button></div><button class="btn ghost" id="orbitImport">⤓ Importer GMS</button><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div></div>';
   if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucune corde. Clique « Créer un lien » ou « Importer GMS ».</p></div>';}
-  else{var groups={};orbitLinks.forEach(function(l){(groups[l.model]=groups[l.model]||[]).push(l)});
-    html+=Object.keys(groups).sort().map(function(m){var links=groups[m];var gc=links.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);
-      return '<div class="ogroup"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+links.length+' corde'+(links.length>1?'s':'')+' · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'
-        +links.map(function(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug,l.clipper);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);
-          return '<div class="olink"><div class="oli"><div class="olname">'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span>'+(l.source==='instagram'?' <span class="opreset" style="background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);color:#fff">IG</span>':'')+'</div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}).join('')
-      +'</div>'}).join('');}
+  else{
+    var models={};
+    orbitLinks.forEach(function(l){var m=l.model||'—';var M=models[m]||(models[m]={poles:{},order:[],archived:[]});if(l.archived){M.archived.push(l);return}var key=l.pole?('Pôle '+l.pole):'Non assigné';if(!M.poles[key]){M.poles[key]=[];M.order.push(key)}M.poles[key].push(l)});
+    var mk=Object.keys(models).sort();
+    function cordeRow(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug,l.clipper);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);var inact=isInact(l);
+      return '<div class="olink'+(inact?' inact':'')+'"><div class="oli"><div class="olname">'+esc(l.clipper||l.display_name||l.model)+' <span class="opreset" style="background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);color:#fff">IG</span>'+(inact?' <span class="flag">inactif '+inactDays(l)+'j</span>':'')+'</div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button>'+(inact?'<button class="btn ghost oarch" data-id="'+l.id+'">Archiver</button>':'')+'<button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}
+    if(lmView==='liste'){
+      html+=mk.map(function(m){var M=models[m];var gc=orbitLinks.filter(function(l){return l.model===m&&!l.archived}).reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);var np=M.order.filter(function(k){return k!=='Non assigné'}).length;var nc=M.order.reduce(function(a,k){return a+M.poles[k].length},0);
+        var body=M.order.map(function(key){var pl=M.poles[key];var resp=(pl.filter(function(x){return x.responsable})[0]||{}).responsable;var pc=pl.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var ps=seriesN(orbitClicks.filter(function(c){for(var i=0;i<pl.length;i++)if(pl[i].slug===c.slug)return true;return false}),14);
+          return '<div class="pole"><div class="pole-head">'+poleChip(key)+(resp?'<span class="pole-mgr">Resp. <b>'+esc(resp)+'</b></span>':'')+'<span class="pole-stat"><span class="pnum">'+pl.length+' clipper'+(pl.length>1?'s':'')+' · '+pc+' clics</span>'+spark(ps,80,22,'#6172FF')+'</span></div>'+pl.map(cordeRow).join('')+'</div>'}).join('');
+        var arch=M.archived.length?'<details class="lm-arch"><summary>🗄 Inactifs archivés ('+M.archived.length+')</summary>'+M.archived.map(function(l){return '<div class="archrow"><span>'+esc(l.clipper||l.display_name)+' <span class="klabel">'+esc(l.slug)+'</span></span><button class="btn ghost orest" data-id="'+l.id+'">↩︎ Restaurer</button></div>'}).join('')+'</details>':'';
+        return '<div class="ogroup lmmodel"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+np+' pôle'+(np>1?'s':'')+' · '+nc+' clippers · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'+body+arch+'</div>'}).join('');
+    } else {
+      html+=mk.map(function(m){var M=models[m];var gc=orbitLinks.filter(function(l){return l.model===m&&!l.archived}).reduce(function(a,l){return a+(byLink[l.slug]||0)},0);
+        var cols=M.order.map(function(key){var pl=M.poles[key];var resp=(pl.filter(function(x){return x.responsable})[0]||{}).responsable;var pc=pl.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);
+          return '<div class="kcol"><div class="kcol-head">'+poleChip(key)+'<span class="cnt">'+pl.length+'</span></div><div class="kmgr">'+(resp?'👤 <b>'+esc(resp)+'</b> · ':'')+pc+' clics</div>'+pl.map(function(l){var clk=byLink[l.slug]||0;var inact=isInact(l);return '<div class="kcard'+(inact?' dead':'')+'"><div class="kct"><span class="lmdot'+(inact?' dead':(clk?'':' low'))+'"></span><span class="kcn">'+esc(l.clipper||l.display_name)+'</span></div><div class="kcb"><button class="btn ghost ocopy" data-url="'+esc(orbitUrl(l.slug,l.clipper))+'" style="padding:3px 8px;font-size:10px">Copier</button><span class="olclk">'+clk+'</span></div></div>'}).join('')+'</div>'}).join('');
+        var acol=M.archived.length?'<div class="kcol inact"><div class="kcol-head"><span class="pchip" style="background:rgba(255,184,92,.25);color:#ffb85c">INACTIFS</span><span class="cnt">'+M.archived.length+'</span></div><div class="kmgr">0 clic &gt; 15j</div>'+M.archived.map(function(l){return '<div class="kcard dead"><div class="kct"><span class="lmdot dead"></span><span class="kcn">'+esc(l.clipper||l.display_name)+'</span></div><div class="kcb"><button class="btn ghost orest" data-id="'+l.id+'" style="padding:3px 8px;font-size:10px">↩︎ Restaurer</button><span class="olclk">0</span></div></div>'}).join('')+'</div>':'';
+        return '<div class="ogroup lmmodel"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+M.order.length+' colonne'+(M.order.length>1?'s':'')+' · '+gc+' clics</div></div></div><div class="kan">'+cols+acol+'</div></div>'}).join('');
+    }
+  }
   wrap.innerHTML=html;
+  wrap.querySelectorAll('.lmseg button').forEach(function(b){b.onclick=function(){lmView=b.getAttribute('data-v');renderLinkManager()}});
   var add=$('orbitAdd');if(add)add.onclick=function(){openOrbitEditor(null)};
   var imp=$('orbitImport');if(imp)imp.onclick=openGmsImport;
   wrap.querySelectorAll('.oedit').forEach(function(b){b.onclick=function(){openOrbitEditor(b.getAttribute('data-id'))}});
   wrap.querySelectorAll('.odel').forEach(function(b){b.onclick=function(){delOrbitLink(b.getAttribute('data-id'))}});
   wrap.querySelectorAll('.ocopy').forEach(function(b){b.onclick=function(){copyPlain(b.getAttribute('data-url'),b)}});
   wrap.querySelectorAll('.oclip').forEach(function(b){b.onclick=function(){openClipLink(b.getAttribute('data-slug'))}});
+  wrap.querySelectorAll('.oarch').forEach(function(b){b.onclick=function(){archiveLink(b.getAttribute('data-id'),true)}});
+  wrap.querySelectorAll('.orest').forEach(function(b){b.onclick=function(){archiveLink(b.getAttribute('data-id'),false)}});
 }
+async function archiveLink(id,val){var r=await sb.from('orbit_links').update({archived:val}).eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast(val?'Clipper archivé':'Clipper restauré');await loadOrbit();renderLinkManager()}
 function openOrbitEditor(id){
   var l=id?orbitLinks.find(function(x){return String(x.id)===String(id)}):null;
   var opts=MODELS.map(function(m){return '<option'+((l&&l.model===m)?' selected':'')+'>'+esc(m)+'</option>'}).join('');
@@ -1296,6 +1354,7 @@ function openOrbitEditor(id){
   $('modal').innerHTML='<div class="mh"><div><div class="label">'+(l?'Éditer le lien':'Générer un lien')+'</div><h2>Nexora Orbit</h2></div><button class="close" id="mClose">✕</button></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Modèle</label><select id="o_model">'+opts+'</select></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Clippeur / VA <span class="klabel">(nom — pour l\'attribution ; vide = lien général)</span></label><input id="o_clip" value="'+esc(l?(l.clipper||''):'')+'" placeholder="Josya"></div>'
+    +'<div style="display:flex;gap:10px;margin-bottom:12px"><div class="fld" style="flex:0 0 130px"><label>Pôle</label><select id="o_pole"><option value="">— Non assigné</option>'+['A','B','C','D'].map(function(p){return '<option'+((l&&l.pole===p)?' selected':'')+'>'+p+'</option>'}).join('')+'</select></div><div class="fld" style="flex:1"><label>Responsable du pôle</label><input id="o_resp" value="'+esc(l?(l.responsable||''):'')+'" placeholder="ex. Diary"></div></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Slug (auto : .../<b>slug</b>)</label><input id="o_slug" value="'+esc(l?l.slug:'')+'" placeholder="alice-josya"></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Lien OnlyFans (destination de la redirection)</label><input id="o_url" value="'+esc(l?l.of_url:'')+'" placeholder="https://onlyfans.com/..."></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Photo de la modèle (URL — s\'affiche sur la landing, optionnel)</label><input id="o_photo" value="'+esc(l?(l.photo_url||''):'')+'" placeholder="https://..."></div>'
@@ -1310,11 +1369,11 @@ function openOrbitEditor(id){
 }
 async function saveOrbitLink(id){
   var err=$('o_err');if(err)err.textContent='';
-  var model=$('o_model').value,clip=($('o_clip')?$('o_clip').value.trim():''),slug=oslug($('o_slug').value),of_url=$('o_url').value.trim(),preset=$('o_preset').value,photo=$('o_photo').value.trim();
+  var model=$('o_model').value,clip=($('o_clip')?$('o_clip').value.trim():''),slug=oslug($('o_slug').value),of_url=$('o_url').value.trim(),preset=$('o_preset').value,photo=$('o_photo').value.trim(),pole=($('o_pole')?$('o_pole').value:''),resp=($('o_resp')?$('o_resp').value.trim():'');
   if(!slug){if(err)err.textContent='Mets un slug.';return}
   if(!/^https?:\/\//.test(of_url)){if(err)err.textContent='Le lien OF doit commencer par https://';return}
   try{
-    var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:(clip?(model+' · '+clip):model),photo_url:photo||null,source:'instagram',clipper:clip||null};
+    var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:(clip?(model+' · '+clip):model),photo_url:photo||null,source:'instagram',clipper:clip||null,pole:pole||null,responsable:resp||null};
     if(id){var u=await sb.from('orbit_links').update(row).eq('id',id);if(u.error)throw u.error;}
     else{var r=await sb.from('orbit_links').insert(row);if(r.error)throw r.error;}
     toast('Lien enregistré ✓');closeModal();await loadOrbit();renderLinkManager();
