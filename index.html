@@ -608,7 +608,7 @@
         <div class="navlabel">Pôle Liens</div>
         <button class="tab" data-tab="orbit"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 0 0 18M12 3a14 14 0 0 1 0 18M3.5 9h17M3.5 15h17"/></svg>Dashboard</button>
         <button class="tab" data-tab="links"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l1-1a4 4 0 0 1 6 6l-1 1"/><path d="M13 18l-1 1a4 4 0 0 1-6-6l1-1"/></svg>Link Manager</button>
-        <button class="tab" data-tab="social"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 15l4.5-4.5 3.5 3.5 7-7.5"/><path d="M20 6.5V11"/><path d="M20 6.5h-4.5"/></svg>Social Analytics <span class="soon">SOON</span></button>
+        <button class="tab" data-tab="social"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 15l4.5-4.5 3.5 3.5 7-7.5"/><path d="M20 6.5V11"/><path d="M20 6.5h-4.5"/></svg>Social Analytics</button>
       </div>
     </aside>
     <div class="content">
@@ -676,7 +676,7 @@
 
   <div class="panel" id="p-social">
     <div class="ahead"><div class="label">Pôle Liens · Nexora Orbit</div><h2>Social Analytics</h2><p class="hint">Suivi des comptes Instagram de clip (vues, abonnés, posts).</p></div>
-    <div class="card"><div class="label">Bientôt</div><h2 style="margin:.2em 0 .4em">🚧 En préparation</h2><p class="hint">On branchera une source de données Instagram pour suivre les comptes de clip (façon la section Social Analytics de GMS). Pour l'instant, place au tracking de clics.</p></div>
+    <div id="socialWrap"></div>
   </div>
 
   <div class="panel" id="p-contenu">
@@ -764,7 +764,7 @@ function initUI(){
   var ms=$('f_model');if(!ms.options.length)MODELS.forEach(m=>{var o=document.createElement('option');o.textContent=m;ms.appendChild(o)});
   var fm=$('fModel');if(fm.options.length<2)MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;fm.appendChild(o)});
   var today=new Date().toISOString().slice(0,10);if(!$('f_date').value)$('f_date').value=today;if(!$('monthSel').value)$('monthSel').value=today.slice(0,7);
-  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}if(t.dataset.tab==='links'){loadOrbit().then(renderLinkManager)}});
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}if(t.dataset.tab==='links'){loadOrbit().then(renderLinkManager)}if(t.dataset.tab==='social')renderSocial()});
   ['f_model','f_partner','f_date','f_time'].forEach(id=>$(id).oninput=upLn);
   $('f_partner').addEventListener('blur',()=>{var k=norm($('f_partner').value),c=parts[k];if(c&&c.contact&&!$('f_contact').value)$('f_contact').value=c.contact});
   $('newBtn').onclick=()=>{$('addForm').classList.toggle('open');upLn()};
@@ -1429,6 +1429,51 @@ function lmMenu(btn){
   setTimeout(function(){window.addEventListener('click',closeLmMenu,{once:true});window.addEventListener('scroll',closeLmMenu,{once:true})},0);
 }
 async function archiveLink(id,val){var r=await sb.from('orbit_links').update({archived:val}).eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast(val?'Clipper archivé':'Clipper restauré');await loadOrbit();renderLinkManager()}
+var SOCIAL_SNAPSHOT={date:'31/07/2026',accounts:[
+{u:'alicebeaumonttt',m:'Alice',f:933,md:99,v:7323,s:[4072,584,615,578,945,529]},
+{u:'itsbeaumontalice',m:'Alice',f:76,md:34,v:2108,s:[593,204,369,334,394,214]},
+{u:'alice.bmnttt',m:'Alice',f:331,md:71,v:1157,s:[489,117,74,129,253,95]},
+{u:'alicee.beaumt',m:'Alice',f:136,md:32,v:51,s:[19,8,5,4,7,8]},
+{u:'bmtalice',m:'Alice',f:17,md:5,v:4,s:[0,0,0,0,0,4]},
+{u:'liliceprivate_',m:'Alice',f:2662,md:28,v:0,s:[]},
+{u:'itsaliicebmtt',m:'Alice',f:1789,md:31,v:0,s:[]},
+{u:'lilice.bmtt',m:'Alice',f:1407,md:71,v:0,s:[]},
+{u:'alicebmnt',m:'Alice',f:1248,md:87,v:0,s:[]},
+{u:'alicee_beaumont_',m:'Alice',f:899,md:171,v:0,s:[]},
+{u:'alicebeaumont_',m:'Alice',f:630,md:48,v:0,s:[]},
+{u:'loudct_pv',m:'Louise',f:329,md:1,v:0,s:[]},
+{u:'its_alicebmnt',m:'Alice',f:238,md:48,v:0,s:[]},
+{u:'alice_bmt0',m:'Alice',f:224,md:36,v:0,s:[]},
+{u:'aliceebmtpvv',m:'Alice',f:25,md:13,v:0,s:[]},
+{u:'babe__aalice',m:'Alice',f:15,md:6,v:0,s:[]},
+{u:'itslilicebeaumont',m:'Alice',f:9,md:8,v:0,s:[]},
+{u:'lou_dctt',m:'Louise',f:3,md:0,v:0,s:[]}
+]};
+function renderSocial(){
+  var w=$('socialWrap');if(!w)return;
+  var acc=SOCIAL_SNAPSHOT.accounts;
+  function spark(arr,wd,h,color){if(!arr||!arr.length)arr=[0];var mx=Math.max(1,Math.max.apply(null,arr));var n=arr.length;var pts=arr.map(function(v,i){var x=n>1?i/(n-1)*wd:wd/2;var y=h-(v/mx)*(h-3)-1.5;return x.toFixed(1)+','+y.toFixed(1)});var line=pts.join(' ');var area='0,'+h+' '+line+' '+wd+','+h;return '<svg viewBox="0 0 '+wd+' '+h+'" preserveAspectRatio="none" style="width:100%;height:'+h+'px;display:block"><polygon points="'+area+'" fill="'+color+'" opacity="0.14"></polygon><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>'}
+  function fmt(n){return (n||0).toLocaleString('fr-FR')}
+  var totV=acc.reduce(function(s,a){return s+a.v},0),totF=acc.reduce(function(s,a){return s+a.f},0),active=acc.filter(function(a){return a.v>0}).length;
+  var topV=acc.slice().sort(function(a,b){return b.v-a.v}),topF=acc.slice().sort(function(a,b){return b.f-a.f});
+  var byM={};acc.forEach(function(a){var o=byM[a.m]=byM[a.m]||{v:0,f:0,n:0};o.v+=a.v;o.f+=a.f;o.n++});
+  var html='';
+  html+='<div class="ohead"><div><div class="label">Instagram · 7 derniers jours</div><p class="hint" style="margin:3px 0 0">'+acc.length+' comptes suivis · snapshot du '+SOCIAL_SNAPSHOT.date+'</p></div></div>';
+  html+='<div class="okpis">';
+  html+='<div class="okpi"><div class="k">Vues · 7j</div><div class="v" style="color:#9b86ff">'+fmt(totV)+'</div></div>';
+  html+='<div class="okpi"><div class="k">Abonnés · total</div><div class="v" style="color:#25E8C3">'+fmt(totF)+'</div></div>';
+  html+='<div class="okpi"><div class="k">Comptes suivis</div><div class="v" style="color:#6172FF">'+acc.length+'</div></div>';
+  html+='<div class="okpi"><div class="k">Comptes actifs</div><div class="v" style="color:#3FD07E">'+active+'</div></div>';
+  html+='</div>';
+  html+='<div class="grid g2" style="margin-top:16px">';
+  html+='<div class="card"><div class="label">Top comptes · vues 7j</div><div class="tlwrap">'+topV.slice(0,9).map(function(a,i){return '<div class="tlrow"><div class="tlrank">'+(i+1)+'</div><div class="tlname"><div class="olname">@'+esc(a.u)+'</div><div class="klabel">'+esc(a.m)+' · '+fmt(a.f)+' abo</div></div><div class="tlspark">'+spark(a.s&&a.s.length?a.s:[0],80,24,'#9b86ff')+'</div><div class="tlc">'+fmt(a.v)+'</div></div>'}).join('')+'</div></div>';
+  var mxf=Math.max.apply(null,topF.map(function(a){return a.f}))||1;
+  html+='<div class="card"><div class="label">Top comptes · abonnés</div>'+topF.slice(0,9).map(function(a){var wd=Math.max(6,Math.round(a.f/mxf*100));return '<div class="obar"><div class="nm">@'+esc(a.u)+'</div><div class="ct">'+fmt(a.f)+'</div><div class="tr"><i style="width:'+wd+'%;background:linear-gradient(90deg,#7c5cff,#9b86ff)"></i></div></div>'}).join('')+'</div>';
+  html+='</div>';
+  html+='<div class="card" style="margin-top:16px"><div class="label">Par modèle</div><div class="tbl-scroll"><table><thead><tr><th>Modèle</th><th>Comptes</th><th>Abonnés</th><th>Vues 7j</th></tr></thead><tbody>'+Object.keys(byM).sort(function(a,b){return byM[b].v-byM[a].v}).map(function(m){var o=byM[m];return '<tr><td><b>'+esc(m)+'</b></td><td>'+o.n+'</td><td>'+fmt(o.f)+'</td><td>'+fmt(o.v)+'</td></tr>'}).join('')+'</tbody></table></div></div>';
+  html+='<p class="hint" style="margin-top:14px;font-size:12px;opacity:.8">📸 Données Instagram scrapées (snapshot du '+SOCIAL_SNAPSHOT.date+'). Pour des mises à jour automatiques une fois GMS lâché, il faudra brancher une source IG (API/scraper) — on en reparle quand tu veux.</p>';
+  w.innerHTML=html;
+}
 function openOrbitEditor(id){
   var l=id?orbitLinks.find(function(x){return String(x.id)===String(id)}):null;
   var opts=MODELS.map(function(m){return '<option'+((l&&l.model===m)?' selected':'')+'>'+esc(m)+'</option>'}).join('');
