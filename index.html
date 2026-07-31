@@ -1318,7 +1318,7 @@ function parsePole(name){var n=(name||'').toUpperCase();var pats=[/P[ÔO]LE\s*([
 var MGRAD={'Alice':'linear-gradient(135deg,#ff8fb1,#c86bff)','Louise':'linear-gradient(135deg,#6172ff,#25e8c3)','Bethy OF':'linear-gradient(135deg,#ffb85c,#ff6b8f)','Amandine':'linear-gradient(135deg,#3fd07e,#25e8c3)','Margot':'linear-gradient(135deg,#b197fc,#6172ff)','Marion':'linear-gradient(135deg,#ff6b6b,#ffb85c)','Bethy MYM':'linear-gradient(135deg,#ff9a5c,#ff6b8f)','Milla MYM':'linear-gradient(135deg,#25e8c3,#6172ff)'};
 function modelGrad(m){return MGRAD[m]||'linear-gradient(135deg,#6172ff,#8b97ff)'}
 function modelInit(m){return esc((m||'?').replace(/\s*(OF|MYM)$/i,'').trim().charAt(0).toUpperCase())}
-var MODELPICS={'Alice':'https://images.getmysocial.com/6835e770c8858bdb89279558/1771066857464-cb7055396e67.jpg','Louise':'https://images.getmysocial.com/6835e770c8858bdb89279558/1771417226223-87ec99032a01.jpg','Marion':'https://images.getmysocial.com/6835e770c8858bdb89279558/1771418383413-84ac9b63b19d.jpg','Margot':'https://images.getmysocial.com/6835e770c8858bdb89279558/1773818341774-25dd4ee8bca8.jpg','Bethy OF':'https://images.getmysocial.com/profile-slides/6835e770c8858bdb89279558/1785068050437-b353fd1d7938.jpg'};
+var MODELPICS={'Alice':'photos/alice.jpg','Louise':'photos/louise.jpg','Marion':'photos/marion.jpg','Margot':'photos/margot.jpg','Bethy OF':'photos/bethy.jpg'};
 function modelAvatar(m){var p=MODELPICS[m];if(p)return '<div class="lmav lmav-pic" style="background-image:url('+p+')" role="img" aria-label="'+esc(m)+'"></div>';return ''+modelAvatar(m)+''}
 function renderLinkManager(){
   var wrap=$('linksWrap');if(!wrap)return;
