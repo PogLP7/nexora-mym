@@ -1057,6 +1057,66 @@ async function loadOrbit(){try{
 }catch(e){}}
 function orbitUrl(slug,clip){return ORBIT_GO+'?l='+encodeURIComponent(slug)+(clip?'&c='+encodeURIComponent(clip):'')}
 function oslug(s){return norm(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')}
+var GMS_IMPORT=[
+{m:'Alice',t:'IG ALICE VA ILAN',slug:'alice-ilan',c:'Ilan'},
+{m:'Alice',t:'IG ALICE GABIN VA',slug:'alice-gabin',c:'Gabin'},
+{m:'Alice',t:'VA LAMIA',slug:'alice-lamia',c:'Lamia'},
+{m:'Alice',t:'IG ALICE VA LISON',slug:'alice-lison',c:'Lison'},
+{m:'Alice',t:'IG ALICE VA MYSA',slug:'alice-mysa',c:'Mysa'},
+{m:'Alice',t:'IG ALICE VA AUDREY',slug:'alice-audrey',c:'Audrey'},
+{m:'Alice',t:'IG ALICE VA JADE',slug:'alice-jade',c:'Jade'},
+{m:'Alice',t:'VA DIARY',slug:'alice-diary',c:'Diary'},
+{m:'Alice',t:'VA ALICE IG KARIM',slug:'alice-karim',c:'Karim'},
+{m:'Alice',t:'IG CLIPPER HASSANATOU',slug:'alice-hassanatou',c:'Hassanatou'},
+{m:'Alice',t:'IG ALESS CLIPPER',slug:'alice-aless',c:'Aless'},
+{m:'Alice',t:'IG HANITRA CLIPPER',slug:'alice-hanitra',c:'Hanitra'},
+{m:'Alice',t:'IG ALOYS CLIPPER',slug:'alice-aloys',c:'Aloys'},
+{m:'Alice',t:'IG RUTH CLIPPER',slug:'alice-ruth',c:'Ruth'},
+{m:'Alice',t:'IG KILLUA CLIPPER',slug:'alice-killua',c:'Killua'},
+{m:'Alice',t:'IG RIA CLIPPER',slug:'alice-ria',c:'Ria'},
+{m:'Alice',t:'IG WELLHINA CLIPPER',slug:'alice-wellhina',c:'Wellhina'},
+{m:'Alice',t:'IG CHARBEL CLIPPER',slug:'alice-charbel',c:'Charbel'},
+{m:'Alice',t:'IG CEDRIC CLIPPER',slug:'alice-cedric',c:'Cedric'},
+{m:'Alice',t:'IG CLIPPER Abigaelle',slug:'alice-abigaelle',c:'Abigaelle'},
+{m:'Alice',t:'IG CLIPPER OMOTOLA',slug:'alice-omotola',c:'Omotola'},
+{m:'Alice',t:'IG ABILOU CLIPPER ALICE',slug:'alice-abilou',c:'Abilou'},
+{m:'Louise',t:'IG CLIPPER NAIVO',slug:'louise-naivo',c:'Naivo'},
+{m:'Louise',t:'IG CLIPPER IKILILOU',slug:'louise-ikililou',c:'Ikililou'},
+{m:'Louise',t:'IG CLIPPER SANDRINE',slug:'louise-sandrine',c:'Sandrine'},
+{m:'Bethy OF',t:'IG CLIPPER JOSYA',slug:'bethy-josya',c:'Josya'},
+{m:'Bethy OF',t:'IG CLIPPER RUVALDO',slug:'bethy-ruvaldo',c:'Ruvaldo'},
+{m:'Bethy OF',t:'IG CLIPPER LAETITIA',slug:'bethy-laetitia',c:'Laetitia'}
+];
+var MODEL_OF={'Louise':'https://onlyfans.com/loulousurof','Bethy OF':'https://onlyfans.com/bethystory','Margot':'https://onlyfans.com/margotprz','Marion':'https://onlyfans.com/itsmariion'};
+function openGmsImport(){
+  var models=[];GMS_IMPORT.forEach(function(r){if(models.indexOf(r.m)<0)models.push(r.m)});
+  var byM={};GMS_IMPORT.forEach(function(r){(byM[r.m]=byM[r.m]||[]).push(r)});
+  var existing={};orbitLinks.forEach(function(l){existing[l.slug]=1});
+  var already=GMS_IMPORT.filter(function(r){return existing[r.slug]}).length;
+  var ofFields=models.map(function(m){return '<div class="fld" style="margin-bottom:10px"><label>Lien OnlyFans de <b>'+esc(m)+'</b> <span class="klabel">('+byM[m].length+' liens)</span></label><input id="gmsi_'+oslug(m)+'" value="'+esc(MODEL_OF[m]||'')+'" placeholder="https://onlyfans.com/..."></div>'}).join('');
+  var preview=models.map(function(m){return '<div style="margin:8px 0"><div class="klabel" style="margin-bottom:4px">'+esc(m)+'</div>'+byM[m].map(function(r){return '<div style="font-size:12px;color:var(--soft);padding:2px 0">• '+esc(r.t)+' <span style="opacity:.5">→ /'+esc(r.slug)+'</span></div>'}).join('')+'</div>'}).join('');
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Import GetMySocial</div><h2>'+GMS_IMPORT.length+' liens CLIPPER / VA · source Instagram</h2></div><button class="close" id="mClose">✕</button></div>'
+    +'<p class="hint" style="margin:0 0 14px">Mets le lien OnlyFans de chaque modèle (tous ses liens pointent vers le même OF). '+(already?('<b style="color:#3FD07E">'+already+'</b> déjà importés (ignorés).'):'')+'</p>'
+    +ofFields
+    +'<details style="margin:8px 0"><summary style="cursor:pointer;color:var(--soft);font-size:12px">Voir les '+GMS_IMPORT.length+' liens détectés</summary>'+preview+'</details>'
+    +'<div style="display:flex;gap:8px;margin-top:12px"><button class="btn primary" id="gmsi_go">⤓ Importer dans Orbit</button><button class="btn ghost" id="gmsi_cancel">Annuler</button></div><div class="lerr" id="gmsiStatus"></div>';
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;$('gmsi_cancel').onclick=closeModal;$('gmsi_go').onclick=doGmsImport;
+}
+async function doGmsImport(){
+  var status=$('gmsiStatus');
+  var models=[];GMS_IMPORT.forEach(function(r){if(models.indexOf(r.m)<0)models.push(r.m)});
+  var ofs={},missing=[];
+  models.forEach(function(m){var el=$('gmsi_'+oslug(m));var v=el?(el.value||'').trim():'';ofs[m]=v;if(!v)missing.push(m)});
+  if(missing.length){status.innerHTML='<span style="color:#ff6b6b">Il manque le lien OnlyFans de : '+esc(missing.join(', '))+'</span>';return}
+  var existing={};orbitLinks.forEach(function(l){existing[l.slug]=1});
+  var rows=GMS_IMPORT.filter(function(r){return !existing[r.slug]}).map(function(r){return {model:r.m,slug:r.slug,of_url:ofs[r.m],display_name:r.t,preset:'hot',mode:'redirect'}});
+  if(!rows.length){status.innerHTML='Tout est déjà importé ✅';return}
+  status.textContent='Import de '+rows.length+' liens…';
+  try{var res=await sb.from('orbit_links').insert(rows);
+    if(res.error){status.innerHTML='<span style="color:#ff6b6b">Erreur : '+esc(res.error.message)+'</span>';return}
+    closeModal();toast(rows.length+' liens importés dans Orbit ✅');await loadOrbit();renderOrbit();
+  }catch(e){status.innerHTML='<span style="color:#ff6b6b">Erreur : '+esc(e.message||e)+'</span>'}
+}
 var oGlobeRAF=null;
 var orbitGeoMode='map';
 var OCC={FR:[46.6,2.2],BE:[50.6,4.5],CH:[46.8,8.2],CA:[56,-106],US:[39,-98],GB:[54,-2],DE:[51,10],ES:[40,-3],IT:[42,12],PT:[39.5,-8],NL:[52.2,5.3],LU:[49.8,6.1],IE:[53.4,-8],AT:[47.6,14.1],PL:[52,19],SE:[62,15],NO:[62,10],DK:[56,9.5],FI:[64,26],GR:[39,22],RO:[46,25],HU:[47,19.5],CZ:[49.8,15.5],BG:[43,25],HR:[45,15.5],RS:[44,21],SK:[48.7,19.5],SI:[46,15],LT:[55,24],LV:[57,25],EE:[59,26],UA:[49,32],BY:[53,28],IS:[65,-18],AL:[41,20],MK:[41.6,21.7],BA:[44,18],MD:[47,28],CY:[35,33],MT:[35.9,14.4],MA:[32,-6],DZ:[28,3],TN:[34,9],EG:[26,30],SN:[14,-14],CI:[7.5,-5.5],CM:[6,12],CD:[-2,23],CG:[-1,15],GA:[-0.8,11.6],ML:[17,-4],BF:[12,-2],NE:[17,8],TG:[8,1.2],BJ:[9.5,2.3],GN:[10,-11],MG:[-19,46],NG:[9,8],ZA:[-29,24],KE:[0,38],GH:[8,-1],AO:[-12,18],ET:[8,38],TZ:[-6,35],MX:[23,-102],BR:[-10,-52],AR:[-34,-64],CO:[4,-73],CL:[-30,-71],PE:[-10,-76],VE:[8,-66],RU:[61,90],CN:[35,105],IN:[22,79],JP:[36,138],KR:[36,128],ID:[-2,118],TH:[15,101],VN:[16,106],PH:[13,122],MY:[4,102],TR:[39,35],SA:[24,45],AE:[24,54],IL:[31,35],LB:[34,36],AU:[-25,133],NZ:[-42,172],PK:[30,70],BD:[24,90]};
@@ -1143,7 +1203,7 @@ function renderOrbit(){
   var series14=seriesN(orbitClicks,14);
   var keys14=[];for(var ki=13;ki>=0;ki--){var kd=new Date();kd.setDate(kd.getDate()-ki);keys14.push(kd.toISOString().slice(0,10))}
   var html='';
-  html+='<div class="ohead"><div><h2 style="margin:0">Bonjour 👋</h2><p class="hint" style="margin:3px 0 0">Vue globale de tes liens Orbit — clics, clippeurs, géo.</p></div><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div>';
+  html+='<div class="ohead"><div><h2 style="margin:0">Bonjour 👋</h2><p class="hint" style="margin:3px 0 0">Vue globale de tes liens Orbit — clics, clippeurs, géo.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="orbitImport">⤓ Importer GMS</button><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div></div>';
   html+='<div class="okpis">';
   html+='<div class="okpi"><div class="k">Clics total</div><div class="v" style="color:#25E8C3">'+tc+'</div>'+spark(series14,140,32,'#25E8C3')+'</div>';
   html+='<div class="okpi"><div class="k">Clics du jour</div><div class="v" style="color:#3FD07E">'+todayC+'</div>'+spark(seriesN(orbitClicks,7),140,32,'#3FD07E')+'</div>';
@@ -1173,6 +1233,7 @@ function renderOrbit(){
       +'</div>'}).join('');}
   wrap.innerHTML=html;
   var add=$('orbitAdd');if(add)add.onclick=function(){openOrbitEditor(null)};
+  var imp=$('orbitImport');if(imp)imp.onclick=openGmsImport;
   wrap.querySelectorAll('.oedit').forEach(function(b){b.onclick=function(){openOrbitEditor(b.getAttribute('data-id'))}});
   wrap.querySelectorAll('.odel').forEach(function(b){b.onclick=function(){delOrbitLink(b.getAttribute('data-id'))}});
   wrap.querySelectorAll('.ocopy').forEach(function(b){b.onclick=function(){copyPlain(b.getAttribute('data-url'),b)}});
