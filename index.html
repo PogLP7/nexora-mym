@@ -131,6 +131,24 @@
   .tab:hover{color:var(--ink)}
   .tab.active{background:var(--mint);color:#04120F;border-color:var(--mint)}
   .panel{display:none}.panel.active{display:block}
+  /* ===== Sidebar unifiée (2 pôles) ===== */
+  .workspace{display:flex;gap:24px;align-items:flex-start}
+  .sidenav{flex:0 0 216px;position:sticky;top:18px;display:flex;flex-direction:column;gap:22px}
+  .navgroup{display:flex;flex-direction:column;gap:3px}
+  .navlabel{font-family:var(--fm);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);padding:2px 10px 7px}
+  .content{flex:1;min-width:0}
+  .sidenav .tab{display:flex;align-items:center;gap:11px;width:100%;justify-content:flex-start;border-radius:11px;border:1px solid transparent;background:transparent;padding:10px 12px;font-size:14px;font-weight:600;color:var(--soft)}
+  .sidenav .tab .tabic{width:17px;height:17px;flex:0 0 17px}
+  .sidenav .tab:hover{background:var(--card);color:var(--ink)}
+  .sidenav .tab.active{background:linear-gradient(90deg,rgba(97,114,255,.20),rgba(97,114,255,.05));color:var(--ink);border-color:rgba(97,114,255,.30);box-shadow:inset 0 0 0 .5px rgba(97,114,255,.2)}
+  .sidenav .tab .soon{margin-left:auto;font-family:var(--fm);font-size:8.5px;letter-spacing:.1em;color:var(--mut);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+  @media(max-width:860px){
+    .workspace{flex-direction:column;gap:14px}
+    .sidenav{position:static;flex-direction:row;flex-wrap:wrap;width:100%;gap:12px}
+    .navgroup{flex-direction:row;flex-wrap:wrap;gap:6px;align-items:center}
+    .navlabel{padding:0 6px 0 0;align-self:center}
+    .sidenav .tab{width:auto}
+  }
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
   h2{font-family:var(--fd);font-size:20px;margin:0 0 3px;font-weight:700}
   .label{font-family:var(--fm);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mint);font-weight:600}
@@ -488,14 +506,24 @@
       <button class="btn ghost" id="logout">Quitter</button>
     </div>
   </div>
-  <div class="tabs">
-    <button class="tab active adminonly" data-tab="dash"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg>Dashboard</button>
-    <button class="tab" data-tab="board"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="6.5" height="15" rx="1.6"/><rect x="14" y="4.5" width="6.5" height="9.5" rx="1.6"/></svg>Tableau</button>
-    <button class="tab" data-tab="part"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><path d="M3.5 19c0-2.8 2.2-4.7 5-4.7s5 1.9 5 4.7"/><circle cx="16.7" cy="9" r="2.4"/><path d="M15.2 14.6c2.2.2 3.9 1.9 3.9 4.4"/></svg>Partenaires</button>
-    <button class="tab" data-tab="contenu"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>Contenu</button>
-    <button class="tab" data-tab="help"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1.3 1-1.3 1.9"/><path d="M12 16.5h.01" stroke-width="2.4"/></svg>Aide</button>
-    <button class="tab" data-tab="orbit"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l1-1a4 4 0 0 1 6 6l-1 1"/><path d="M13 18l-1 1a4 4 0 0 1-6-6l1-1"/></svg>Orbit</button>
-  </div>
+  <div class="workspace">
+    <aside class="sidenav">
+      <div class="navgroup">
+        <div class="navlabel">Pôle SFS</div>
+        <button class="tab active adminonly" data-tab="dash"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6.5 20v-6"/><path d="M12 20V6"/><path d="M17.5 20v-9"/></svg>Dashboard</button>
+        <button class="tab" data-tab="board"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="6.5" height="15" rx="1.6"/><rect x="14" y="4.5" width="6.5" height="9.5" rx="1.6"/></svg>Tableau</button>
+        <button class="tab" data-tab="part"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><path d="M3.5 19c0-2.8 2.2-4.7 5-4.7s5 1.9 5 4.7"/><circle cx="16.7" cy="9" r="2.4"/><path d="M15.2 14.6c2.2.2 3.9 1.9 3.9 4.4"/></svg>Partenaires</button>
+        <button class="tab" data-tab="contenu"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>Contenu</button>
+        <button class="tab" data-tab="help"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1.3 1-1.3 1.9"/><path d="M12 16.5h.01" stroke-width="2.4"/></svg>Aide</button>
+      </div>
+      <div class="navgroup">
+        <div class="navlabel">Pôle Liens</div>
+        <button class="tab" data-tab="orbit"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 0 0 18M12 3a14 14 0 0 1 0 18M3.5 9h17M3.5 15h17"/></svg>Dashboard</button>
+        <button class="tab" data-tab="links"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l1-1a4 4 0 0 1 6 6l-1 1"/><path d="M13 18l-1 1a4 4 0 0 1-6-6l1-1"/></svg>Link Manager</button>
+        <button class="tab" data-tab="social"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"/><path d="M4 15l4.5-4.5 3.5 3.5 7-7.5"/><path d="M20 6.5V11"/><path d="M20 6.5h-4.5"/></svg>Social Analytics <span class="soon">SOON</span></button>
+      </div>
+    </aside>
+    <div class="content">
 
   <div class="panel adminonly" id="p-dash">
     <div class="stats" id="statCards"></div>
@@ -549,8 +577,18 @@
   </div>
 
   <div class="panel" id="p-orbit">
-    <div class="ahead"><div class="label">Nexora Orbit</div><h2>Liens trackés</h2><p class="hint">Génère un lien par modèle, récupère son lien par clippeur, et suis les clics en direct (pays, device, qui a ramené quoi).</p></div>
+    <div class="ahead"><div class="label">Pôle Liens · Nexora Orbit</div><h2>Dashboard</h2><p class="hint">Vue globale des liens trackés : clics, clippeurs, géographie en direct.</p></div>
     <div id="orbitWrap"></div>
+  </div>
+
+  <div class="panel" id="p-links">
+    <div class="ahead"><div class="label">Pôle Liens · Nexora Orbit</div><h2>Link Manager</h2><p class="hint">Tes cordes (liens trackés) groupées par modèle. Crée, importe, copie, attribue à un clippeur.</p></div>
+    <div id="linksWrap"></div>
+  </div>
+
+  <div class="panel" id="p-social">
+    <div class="ahead"><div class="label">Pôle Liens · Nexora Orbit</div><h2>Social Analytics</h2><p class="hint">Suivi des comptes Instagram de clip (vues, abonnés, posts).</p></div>
+    <div class="card"><div class="label">Bientôt</div><h2 style="margin:.2em 0 .4em">🚧 En préparation</h2><p class="hint">On branchera une source de données Instagram pour suivre les comptes de clip (façon la section Social Analytics de GMS). Pour l'instant, place au tracking de clics.</p></div>
   </div>
 
   <div class="panel" id="p-contenu">
@@ -562,6 +600,8 @@
         <span class="adminonly" style="font-size:12px;color:var(--mut);margin-left:6px">Clique une case pour remplir / éditer son kit</span>
       </div>
       <div id="contenuList"></div>
+    </div>
+  </div>
     </div>
   </div>
 </div>
@@ -617,7 +657,7 @@ async function showApp(){
 async function loadData(){var r=await sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
 async function loadParts(){var r=await sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
 async function syncInfloww(){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b){b.disabled=true;b.textContent='Sync…'}toast('Synchronisation Infloww…');try{var r=await sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){celebrate((d.updated||0)+' SFS synchronisés ✓',(d.updated||0)>0);loadData()}else{toast('Erreur sync : '+(d.error||'?'))}}catch(e){toast('Erreur sync : '+(e.message||e))}if(b){b.disabled=false;b.innerHTML=o}}
-function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{var p=$('p-orbit');if(p&&p.classList.contains('active'))loadOrbit().then(renderOrbit)}).subscribe()}
+function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe()}
 
 /* xlsx */
 function decEnt(s){return String(s==null?'':s).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
@@ -636,7 +676,7 @@ function initUI(){
   var ms=$('f_model');if(!ms.options.length)MODELS.forEach(m=>{var o=document.createElement('option');o.textContent=m;ms.appendChild(o)});
   var fm=$('fModel');if(fm.options.length<2)MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;fm.appendChild(o)});
   var today=new Date().toISOString().slice(0,10);if(!$('f_date').value)$('f_date').value=today;if(!$('monthSel').value)$('monthSel').value=today.slice(0,7);
-  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}});
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}if(t.dataset.tab==='links'){loadOrbit().then(renderLinkManager)}});
   ['f_model','f_partner','f_date','f_time'].forEach(id=>$(id).oninput=upLn);
   $('f_partner').addEventListener('blur',()=>{var k=norm($('f_partner').value),c=parts[k];if(c&&c.contact&&!$('f_contact').value)$('f_contact').value=c.contact});
   $('newBtn').onclick=()=>{$('addForm').classList.toggle('open');upLn()};
@@ -1114,7 +1154,7 @@ async function doGmsImport(){
   status.textContent='Import de '+rows.length+' liens…';
   try{var res=await sb.from('orbit_links').insert(rows);
     if(res.error){status.innerHTML='<span style="color:#ff6b6b">Erreur : '+esc(res.error.message)+'</span>';return}
-    closeModal();toast(rows.length+' liens importés dans Orbit ✅');await loadOrbit();renderOrbit();
+    closeModal();toast(rows.length+' liens importés dans Orbit ✅');await loadOrbit();renderLinkManager();
   }catch(e){status.innerHTML='<span style="color:#ff6b6b">Erreur : '+esc(e.message||e)+'</span>'}
 }
 var oGlobeRAF=null;
@@ -1203,7 +1243,7 @@ function renderOrbit(){
   var series14=seriesN(orbitClicks,14);
   var keys14=[];for(var ki=13;ki>=0;ki--){var kd=new Date();kd.setDate(kd.getDate()-ki);keys14.push(kd.toISOString().slice(0,10))}
   var html='';
-  html+='<div class="ohead"><div><h2 style="margin:0">Bonjour 👋</h2><p class="hint" style="margin:3px 0 0">Vue globale de tes liens Orbit — clics, clippeurs, géo.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="orbitImport">⤓ Importer GMS</button><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div></div>';
+  html+='<div class="ohead"><div><h2 style="margin:0">Bonjour 👋</h2><p class="hint" style="margin:3px 0 0">Vue globale de tes liens Orbit — clics, clippeurs, géo. Gère tes cordes dans <b>Link Manager</b>.</p></div></div>';
   html+='<div class="okpis">';
   html+='<div class="okpi"><div class="k">Clics total</div><div class="v" style="color:#25E8C3">'+tc+'</div>'+spark(series14,140,32,'#25E8C3')+'</div>';
   html+='<div class="okpi"><div class="k">Clics du jour</div><div class="v" style="color:#3FD07E">'+todayC+'</div>'+spark(seriesN(orbitClicks,7),140,32,'#3FD07E')+'</div>';
@@ -1223,11 +1263,21 @@ function renderOrbit(){
   html+='<div class="card"><div class="label">Top pays</div>'+orankBars(byCty,8,'linear-gradient(90deg,#6172FF,#B197FC)')+'</div>';
   html+='<div class="card"><div class="label">Top clippeurs</div>'+orankBars(byClip,8,'linear-gradient(90deg,#25E8C3,#6172FF)')+'</div>';
   html+='</div>';
-  html+='<div class="ocardh" style="margin:24px 0 10px"><h3 style="margin:0">Gestion des liens</h3><span class="klabel">par modèle</span></div>';
-  if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucun lien. Clique « Créer un lien ».</p></div>';}
+  wrap.innerHTML=html;
+  var _bg=$('ogGlobe'),_bm=$('ogMap');if(_bg)_bg.onclick=function(){setOrbitGeo('globe')};if(_bm)_bm.onclick=function(){setOrbitGeo('map')};
+  try{setOrbitGeo(orbitGeoMode)}catch(e){}
+}
+function renderLinkManager(){
+  var wrap=$('linksWrap');if(!wrap)return;
+  var byLink={};orbitClicks.forEach(function(c){byLink[c.slug]=(byLink[c.slug]||0)+1});
+  function seriesN(cl,n){var days={},order=[];for(var i=n-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.toISOString().slice(0,10);days[key]=0;order.push(key)}cl.forEach(function(c){var dd=(c.created_at||'').slice(0,10);if(dd in days)days[dd]++});return order.map(function(k){return days[k]})}
+  function spark(arr,w,h,color){if(!arr||!arr.length)arr=[0];var mx=Math.max(1,Math.max.apply(null,arr));var n=arr.length;var pts=arr.map(function(v,i){var x=n>1?i/(n-1)*w:w/2;var y=h-(v/mx)*(h-3)-1.5;return x.toFixed(1)+','+y.toFixed(1)});var line=pts.join(' ');var area='0,'+h+' '+line+' '+w+','+h;return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" style="width:100%;height:'+h+'px;display:block"><polygon points="'+area+'" fill="'+color+'" opacity="0.14"></polygon><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>'}
+  var html='';
+  html+='<div class="ohead"><div><h2 style="margin:0">Link Manager</h2><p class="hint" style="margin:3px 0 0">'+orbitLinks.length+' corde'+(orbitLinks.length>1?'s':'')+' · groupées par modèle</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="orbitImport">⤓ Importer GMS</button><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div></div>';
+  if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucune corde. Clique « Créer un lien » ou « Importer GMS ».</p></div>';}
   else{var groups={};orbitLinks.forEach(function(l){(groups[l.model]=groups[l.model]||[]).push(l)});
     html+=Object.keys(groups).sort().map(function(m){var links=groups[m];var gc=links.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);
-      return '<div class="ogroup"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+links.length+' lien'+(links.length>1?'s':'')+' · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'
+      return '<div class="ogroup"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+links.length+' corde'+(links.length>1?'s':'')+' · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'
         +links.map(function(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug,l.clipper);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);
           return '<div class="olink"><div class="oli"><div class="olname">'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span>'+(l.source==='instagram'?' <span class="opreset" style="background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);color:#fff">IG</span>':'')+'</div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}).join('')
       +'</div>'}).join('');}
@@ -1238,8 +1288,6 @@ function renderOrbit(){
   wrap.querySelectorAll('.odel').forEach(function(b){b.onclick=function(){delOrbitLink(b.getAttribute('data-id'))}});
   wrap.querySelectorAll('.ocopy').forEach(function(b){b.onclick=function(){copyPlain(b.getAttribute('data-url'),b)}});
   wrap.querySelectorAll('.oclip').forEach(function(b){b.onclick=function(){openClipLink(b.getAttribute('data-slug'))}});
-  var _bg=$('ogGlobe'),_bm=$('ogMap');if(_bg)_bg.onclick=function(){setOrbitGeo('globe')};if(_bm)_bm.onclick=function(){setOrbitGeo('map')};
-  try{setOrbitGeo(orbitGeoMode)}catch(e){}
 }
 function openOrbitEditor(id){
   var l=id?orbitLinks.find(function(x){return String(x.id)===String(id)}):null;
@@ -1269,10 +1317,10 @@ async function saveOrbitLink(id){
     var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:(clip?(model+' · '+clip):model),photo_url:photo||null,source:'instagram',clipper:clip||null};
     if(id){var u=await sb.from('orbit_links').update(row).eq('id',id);if(u.error)throw u.error;}
     else{var r=await sb.from('orbit_links').insert(row);if(r.error)throw r.error;}
-    toast('Lien enregistré ✓');closeModal();await loadOrbit();renderOrbit();
+    toast('Lien enregistré ✓');closeModal();await loadOrbit();renderLinkManager();
   }catch(e){if(err)err.textContent='Erreur : '+((e&&e.message)||e)+' (slug déjà pris ?)'}
 }
-async function delOrbitLink(id){if(!confirm('Supprimer ce lien ? (les clics déjà enregistrés restent)'))return;var r=await sb.from('orbit_links').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast('Lien supprimé');closeModal();await loadOrbit();renderOrbit()}
+async function delOrbitLink(id){if(!confirm('Supprimer ce lien ? (les clics déjà enregistrés restent)'))return;var r=await sb.from('orbit_links').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast('Lien supprimé');closeModal();await loadOrbit();renderLinkManager()}
 function openClipLink(slug){
   $('modal').innerHTML='<div class="mh"><div><div class="label">Lien pour un clippeur</div><h2>'+esc(slug)+'</h2></div><button class="close" id="mClose">✕</button></div>'
     +'<p class="hint" style="margin-bottom:10px">Tape le nom du clippeur → tu obtiens son lien unique. Chaque clic sur CE lien lui sera attribué.</p>'
