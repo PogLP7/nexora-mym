@@ -1042,6 +1042,7 @@ function openOrbitEditor(id){
     +'<div class="fld" style="margin-bottom:12px"><label>Modèle</label><select id="o_model">'+opts+'</select></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Slug (l\'URL courte : .../<b>slug</b>)</label><input id="o_slug" value="'+esc(l?l.slug:'')+'" placeholder="alice"></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Lien OnlyFans (destination de la redirection)</label><input id="o_url" value="'+esc(l?l.of_url:'')+'" placeholder="https://onlyfans.com/..."></div>'
+    +'<div class="fld" style="margin-bottom:12px"><label>Photo de la modèle (URL — s\'affiche sur la landing, optionnel)</label><input id="o_photo" value="'+esc(l?(l.photo_url||''):'')+'" placeholder="https://..."></div>'
     +'<div class="fld" style="margin-bottom:12px"><label>Style de la page (preset)</label><select id="o_preset">'+pol+'</select></div>'
     +'<div style="display:flex;gap:8px;margin-top:6px"><button class="btn primary" id="o_save">💾 Enregistrer</button>'+(l?'<button class="btn ghost" id="o_del">Supprimer</button>':'')+'<button class="btn ghost" id="o_cancel">Annuler</button></div><div class="lerr" id="o_err"></div>';
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;$('o_cancel').onclick=closeModal;
@@ -1052,11 +1053,11 @@ function openOrbitEditor(id){
 }
 async function saveOrbitLink(id){
   var err=$('o_err');if(err)err.textContent='';
-  var model=$('o_model').value,slug=oslug($('o_slug').value),of_url=$('o_url').value.trim(),preset=$('o_preset').value;
+  var model=$('o_model').value,slug=oslug($('o_slug').value),of_url=$('o_url').value.trim(),preset=$('o_preset').value,photo=$('o_photo').value.trim();
   if(!slug){if(err)err.textContent='Mets un slug.';return}
   if(!/^https?:\/\//.test(of_url)){if(err)err.textContent='Le lien OF doit commencer par https://';return}
   try{
-    var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:model};
+    var row={model:model,slug:slug,of_url:of_url,preset:preset,display_name:model,photo_url:photo||null};
     if(id){var u=await sb.from('orbit_links').update(row).eq('id',id);if(u.error)throw u.error;}
     else{var r=await sb.from('orbit_links').insert(row);if(r.error)throw r.error;}
     toast('Lien enregistré ✓');closeModal();await loadOrbit();renderOrbit();
