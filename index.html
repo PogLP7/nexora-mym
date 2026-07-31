@@ -1243,7 +1243,7 @@ function renderOrbit(){
   var series14=seriesN(orbitClicks,14);
   var keys14=[];for(var ki=13;ki>=0;ki--){var kd=new Date();kd.setDate(kd.getDate()-ki);keys14.push(kd.toISOString().slice(0,10))}
   var html='';
-  html+='<div class="ohead"><div><h2 style="margin:0">Bonjour 👋</h2><p class="hint" style="margin:3px 0 0">Vue globale de tes liens Orbit — clics, clippeurs, géo. Gère tes cordes dans <b>Link Manager</b>.</p></div></div>';
+  html+='';
   html+='<div class="okpis">';
   html+='<div class="okpi"><div class="k">Clics total</div><div class="v" style="color:#25E8C3">'+tc+'</div>'+spark(series14,140,32,'#25E8C3')+'</div>';
   html+='<div class="okpi"><div class="k">Clics du jour</div><div class="v" style="color:#3FD07E">'+todayC+'</div>'+spark(seriesN(orbitClicks,7),140,32,'#3FD07E')+'</div>';
@@ -1273,7 +1273,7 @@ function renderLinkManager(){
   function seriesN(cl,n){var days={},order=[];for(var i=n-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.toISOString().slice(0,10);days[key]=0;order.push(key)}cl.forEach(function(c){var dd=(c.created_at||'').slice(0,10);if(dd in days)days[dd]++});return order.map(function(k){return days[k]})}
   function spark(arr,w,h,color){if(!arr||!arr.length)arr=[0];var mx=Math.max(1,Math.max.apply(null,arr));var n=arr.length;var pts=arr.map(function(v,i){var x=n>1?i/(n-1)*w:w/2;var y=h-(v/mx)*(h-3)-1.5;return x.toFixed(1)+','+y.toFixed(1)});var line=pts.join(' ');var area='0,'+h+' '+line+' '+w+','+h;return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" style="width:100%;height:'+h+'px;display:block"><polygon points="'+area+'" fill="'+color+'" opacity="0.14"></polygon><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>'}
   var html='';
-  html+='<div class="ohead"><div><h2 style="margin:0">Link Manager</h2><p class="hint" style="margin:3px 0 0">'+orbitLinks.length+' corde'+(orbitLinks.length>1?'s':'')+' · groupées par modèle</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="orbitImport">⤓ Importer GMS</button><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div></div>';
+  html+='<div class="ohead"><div><div class="label">'+orbitLinks.length+' corde'+(orbitLinks.length>1?'s':'')+' · '+Object.keys(orbitLinks.reduce(function(a,l){a[l.model]=1;return a},{})).length+' modèles</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="orbitImport">⤓ Importer GMS</button><button class="btn primary" id="orbitAdd">＋ Créer un lien</button></div></div>';
   if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucune corde. Clique « Créer un lien » ou « Importer GMS ».</p></div>';}
   else{var groups={};orbitLinks.forEach(function(l){(groups[l.model]=groups[l.model]||[]).push(l)});
     html+=Object.keys(groups).sort().map(function(m){var links=groups[m];var gc=links.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);
