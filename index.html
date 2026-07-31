@@ -34,6 +34,12 @@
   .orank b{color:var(--ink);font-variant-numeric:tabular-nums}
   .oin{flex:1;min-width:0;font-family:var(--fm);font-size:11px;padding:9px 10px;border:1px solid var(--line2);border-radius:8px;background:var(--bg2);color:var(--soft)}
   .fld select{width:100%;padding:12px 14px;border:1px solid var(--line2);border-radius:12px;background:var(--bg2);color:var(--ink);font-size:16px}
+  .obar{display:grid;grid-template-columns:1fr auto;gap:5px 10px;align-items:center;padding:7px 0}
+  .obar .nm{font-size:13px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .obar .ct{font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink);font-size:13.5px}
+  .obar .tr{grid-column:1/-1;height:6px;border-radius:6px;background:rgba(255,255,255,.05);overflow:hidden}
+  .obar .tr i{display:block;height:100%;border-radius:6px;transition:width .7s var(--eout)}
+  .opreset{font-family:var(--fm);font-size:9.5px;letter-spacing:.05em;padding:3px 9px;border-radius:7px;font-weight:700;vertical-align:middle}
   .logohero{text-align:center;margin:0 0 18px}
   .brand3d{perspective:900px;display:inline-block}
   .brand3d .inner{transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:.42em;filter:drop-shadow(0 6px 22px rgba(84,87,255,.42))}
@@ -992,6 +998,7 @@ async function delAide(id){
 var ORBIT_GO='https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go';
 var orbitLinks=[],orbitClicks=[];
 var ORBIT_PRESETS={hot:'Hot Bold',min:'Minimal',chr:'Chrome Y2K'};
+var OPCOL={hot:'rgba(255,61,139,.18)',min:'rgba(154,167,179,.18)',chr:'rgba(200,107,255,.18)'};
 async function loadOrbit(){try{
   var a=await sb.from('orbit_links').select('*').order('created_at',{ascending:false});if(!a.error)orbitLinks=a.data||[];
   var b=await sb.from('orbit_clicks').select('*').order('created_at',{ascending:false}).limit(1000);if(!b.error)orbitClicks=b.data||[];
@@ -1005,18 +1012,19 @@ function renderOrbit(){
   var byClip={},byCty={},byLink={};
   orbitClicks.forEach(function(c){var k=c.clipper||'—';byClip[k]=(byClip[k]||0)+1;var cc=c.country||'?';byCty[cc]=(byCty[cc]||0)+1;byLink[c.slug]=(byLink[c.slug]||0)+1});
   function topN(o,n){return Object.keys(o).map(function(k){return [k,o[k]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,n)}
+  function orankBars(o,n,grad,suffix){var arr=topN(o,n);if(!arr.length)return '<p class="hint">—</p>';var mx=Math.max(1,Math.max.apply(null,arr.map(function(r){return r[1]})));return arr.map(function(r){var w=Math.max(6,Math.round(r[1]/mx*100));return '<div class="obar"><div class="nm">'+esc(r[0])+'</div><div class="ct">'+r[1]+(suffix?suffix(r[1]):'')+'</div><div class="tr"><i style="width:'+w+'%;background:'+grad+'"></i></div></div>'}).join('')}
   var html='';
   html+='<div class="band" style="margin-bottom:16px">'
-    +'<div class="stat"><div class="v">'+orbitClicks.length+'</div><div class="k">Clics total</div></div>'
-    +'<div class="stat"><div class="v" style="color:var(--green)">'+todayC+'</div><div class="k">Clics aujourd\'hui</div></div>'
-    +'<div class="stat"><div class="v">'+orbitLinks.filter(function(l){return l.active!==false}).length+'</div><div class="k">Liens actifs</div></div>'
-    +'<div class="stat"><div class="v">'+Object.keys(byClip).filter(function(k){return k!=='—'}).length+'</div><div class="k">Clippeurs actifs</div></div>'
+    +'<div class="stat"><div class="v" style="color:#25E8C3">'+orbitClicks.length+'</div><div class="k">Clics total</div></div>'
+    +'<div class="stat"><div class="v" style="color:#3FD07E">'+todayC+'</div><div class="k">Clics aujourd\'hui</div></div>'
+    +'<div class="stat"><div class="v" style="color:#6172FF">'+orbitLinks.filter(function(l){return l.active!==false}).length+'</div><div class="k">Liens actifs</div></div>'
+    +'<div class="stat"><div class="v" style="color:#B197FC">'+Object.keys(byClip).filter(function(k){return k!=='—'}).length+'</div><div class="k">Clippeurs actifs</div></div>'
   +'</div>';
   html+='<button class="btn primary" id="orbitAdd" style="margin-bottom:14px">＋ Générer un lien</button>';
   if(!orbitLinks.length){html+='<div class="card"><p class="hint">Aucun lien pour l\'instant. Clique « Générer un lien ».</p></div>';}
   else{html+='<div class="grid g2">'+orbitLinks.map(function(l){
     var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug);
-    return '<div class="card"><div class="aidehead"><h3>'+esc(l.display_name||l.model)+' <span class="klabel">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span></h3><div class="aideact"><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Lien clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">Éditer</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'
+    return '<div class="card"><div class="aidehead"><h3>'+esc(l.display_name||l.model)+' <span class="opreset" style="background:'+(OPCOL[l.preset]||'rgba(255,255,255,.08)')+'">'+esc(ORBIT_PRESETS[l.preset]||l.preset||'')+'</span></h3><div class="aideact"><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Lien clippeur</button><button class="btn ghost oedit" data-id="'+l.id+'">Éditer</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'
       +'<div class="klabel" style="margin:4px 0 6px">'+esc(l.slug)+' · <b style="color:var(--teal)">'+clk+' clics</b></div>'
       +'<div style="font-size:12px;color:var(--mut);word-break:break-all">→ '+esc(l.of_url||'')+'</div>'
       +'<div style="display:flex;gap:6px;margin-top:10px"><input class="oin" readonly value="'+esc(u)+'"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button></div>'
@@ -1026,11 +1034,12 @@ function renderOrbit(){
   for(var di=6;di>=0;di--){var dt=new Date();dt.setDate(dt.getDate()-di);last7[dt.toISOString().slice(0,10)]=0}
   orbitClicks.forEach(function(c){var m=c.model||'?';byModel[m]=(byModel[m]||0)+1;var dv=c.device||'?';byDev[dv]=(byDev[dv]||0)+1;var dd=(c.created_at||'').slice(0,10);if(dd in last7)last7[dd]++});
   var l7k=Object.keys(last7),l7max=Math.max(1,Math.max.apply(null,l7k.map(function(k){return last7[k]})));
+  var tc=orbitClicks.length;
   html+='<div class="grid g2" style="margin-top:18px">';
-  html+='<div class="card"><div class="label">Top clippeurs</div>'+(topN(byClip,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
-  html+='<div class="card"><div class="label">Top pays</div>'+(topN(byCty,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
-  html+='<div class="card"><div class="label">Clics par modèle</div>'+(topN(byModel,8).map(function(r){return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+'</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
-  html+='<div class="card"><div class="label">Appareils</div>'+(topN(byDev,5).map(function(r){var pct=Math.round(r[1]/Math.max(1,orbitClicks.length)*100);return '<div class="orank"><span>'+esc(r[0])+'</span><b>'+r[1]+' · '+pct+'%</b></div>'}).join('')||'<p class="hint">—</p>')+'</div>';
+  html+='<div class="card"><div class="label">Top clippeurs</div>'+orankBars(byClip,8,'linear-gradient(90deg,#25E8C3,#6172FF)')+'</div>';
+  html+='<div class="card"><div class="label">Top pays</div>'+orankBars(byCty,8,'linear-gradient(90deg,#6172FF,#B197FC)')+'</div>';
+  html+='<div class="card"><div class="label">Clics par modèle</div>'+orankBars(byModel,8,'linear-gradient(90deg,#B197FC,#F3C24B)')+'</div>';
+  html+='<div class="card"><div class="label">Appareils</div>'+orankBars(byDev,5,'linear-gradient(90deg,#25E8C3,#3FD07E)',function(v){return ' · '+Math.round(v/Math.max(1,tc)*100)+'%'})+'</div>';
   html+='</div>';
   html+='<div class="card" style="margin-top:16px"><div class="label">7 derniers jours</div><div style="display:flex;align-items:flex-end;gap:6px;height:82px;margin-top:12px">'+l7k.map(function(k){var v=last7[k];var h=Math.round(v/l7max*66)+3;return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><div title="'+v+' clics" style="width:100%;height:'+h+'px;border-radius:5px;background:linear-gradient(180deg,var(--teal),var(--blue))"></div><div class="klabel" style="font-size:9px">'+k.slice(8,10)+'/'+k.slice(5,7)+'</div></div>'}).join('')+'</div></div>';
   html+='<div class="card" style="margin-top:16px"><div class="label">Clics récents</div>'+(orbitClicks.slice(0,12).map(function(c){return '<div class="orank"><span>'+esc(c.clipper||'—')+' · '+esc(c.city||c.country||'?')+' · '+esc(c.device||'')+'</span><b class="klabel">'+esc((c.created_at||'').slice(11,16))+'</b></div>'}).join('')||'<p class="hint">Aucun clic encore.</p>')+'</div>';
