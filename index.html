@@ -28,6 +28,7 @@
   .aideact{display:flex;gap:6px;flex-wrap:wrap}
   .aidebody{white-space:pre-wrap;line-height:1.7;color:var(--soft);font-size:14px;word-break:break-word}
   .btn.ok{color:var(--green);border-color:var(--green)}
+  .aidecard.pinned{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset,0 8px 24px rgba(97,114,255,.14)}
   .logohero{text-align:center;margin:0 0 18px}
   .brand3d{perspective:900px;display:inline-block}
   .brand3d .inner{transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:.42em;filter:drop-shadow(0 6px 22px rgba(84,87,255,.42))}
@@ -920,12 +921,12 @@ async function delContenu(id){if(!isAdmin)return;if(!confirm('Supprimer ce conte
 function aideSecs(){return contenu.filter(function(r){return r.model==='__aide__'}).sort(function(a,b){return (a.sort||0)-(b.sort||0)})}
 function renderAide(){
   var wrap=$('aideWrap');if(!wrap)return;
-  var secs=aideSecs();var html='';
+  var secs=aideSecs();secs.sort(function(a,b){return ((b.kind==='template'?1:0)-(a.kind==='template'?1:0))||((a.sort||0)-(b.sort||0))});var html='';
   if(isAdmin)html+='<button class="btn primary" id="aideAdd" style="margin-bottom:14px">＋ Ajouter une section</button>';
   if(!secs.length){html+='<div class="card"><p class="hint">Aucune section pour l\'instant.'+(isAdmin?' Clique « Ajouter une section » pour créer le guide.':'')+'</p></div>';}
   else{secs.forEach(function(s){
-    var canEdit=isAdmin||s.kind==='template';
-    html+='<div class="card aidecard"><div class="aidehead"><h2>'+esc(s.title||'Section')+'</h2><div class="aideact">'
+    var canEdit=isAdmin||s.kind==='template';var pin=s.kind==='template';
+    html+='<div class="card aidecard'+(pin?' pinned':'')+'"><div class="aidehead"><h2>'+(pin?'📌 ':'')+esc(s.title||'Section')+'</h2><div class="aideact">'
       +'<button class="btn ghost aicopy" data-id="'+s.id+'">Copier</button>'
       +(canEdit?'<button class="btn ghost aiedit" data-id="'+s.id+'">Éditer</button>':'')
       +(isAdmin?'<button class="btn ghost aidel" data-id="'+s.id+'">✕</button>':'')
