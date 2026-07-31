@@ -123,6 +123,19 @@
   .kcb .olclk{font-weight:800;font-variant-numeric:tabular-nums}
   .lmdot{width:8px;height:8px;border-radius:50%;background:#3fd07e;box-shadow:0 0 8px rgba(63,208,126,.6);flex:0 0 8px}
   .lmdot.low{background:#c99a3a;box-shadow:none}.lmdot.dead{background:#4a5568;box-shadow:none}
+  .lmav{width:34px;height:34px;border-radius:10px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;box-shadow:0 3px 12px rgba(0,0,0,.28)}
+  .lmmh{display:flex;align-items:center;gap:11px}
+  .lmmodel{transition:border-color .2s}
+  .lmmodel:hover{border-color:rgba(127,140,255,.28)}
+  .olink{transition:background .15s;border-radius:9px;padding-left:9px;padding-right:9px;margin-left:-9px;margin-right:-9px}
+  .olink:hover{background:rgba(127,140,255,.055)}
+  .olink:last-child{border-bottom:0}
+  .olclk.z{opacity:.32;font-weight:600}
+  .pole{background:linear-gradient(180deg,rgba(127,140,255,.05),transparent)}
+  .pole-head{padding-bottom:8px;border-bottom:1px solid var(--line2);margin-bottom:6px}
+  .kcard{transition:transform .12s,border-color .15s,box-shadow .15s}
+  .kcard:hover{border-color:rgba(127,140,255,.38);transform:translateY(-1px);box-shadow:0 6px 16px -8px rgba(0,0,0,.5)}
+  .kcol{transition:border-color .2s}
   .logohero{text-align:center;margin:0 0 18px}
   .brand3d{perspective:900px;display:inline-block}
   .brand3d .inner{transform-style:preserve-3d;will-change:transform;display:flex;flex-direction:column;align-items:center;gap:.42em;filter:drop-shadow(0 6px 22px rgba(84,87,255,.42))}
@@ -1301,6 +1314,9 @@ function renderOrbit(){
 var lmView='liste';
 var POLECOL={A:'linear-gradient(90deg,#6172ff,#8b97ff)',B:'linear-gradient(90deg,#25e8c3,#3fd07e)',C:'linear-gradient(90deg,#ffb85c,#ff8f5c)',D:'linear-gradient(90deg,#b197fc,#c86bff)'};
 function parsePole(name){var n=(name||'').toUpperCase();var pats=[/P[ÔO]LE\s*([A-Z])\b/,/#P?([A-Z])\b/,/\[([A-Z])\]/,/\bP([A-Z])\b/];for(var i=0;i<pats.length;i++){var m=n.match(pats[i]);if(m)return m[1]}return null}
+var MGRAD={'Alice':'linear-gradient(135deg,#ff8fb1,#c86bff)','Louise':'linear-gradient(135deg,#6172ff,#25e8c3)','Bethy OF':'linear-gradient(135deg,#ffb85c,#ff6b8f)','Amandine':'linear-gradient(135deg,#3fd07e,#25e8c3)','Margot':'linear-gradient(135deg,#b197fc,#6172ff)','Marion':'linear-gradient(135deg,#ff6b6b,#ffb85c)','Bethy MYM':'linear-gradient(135deg,#ff9a5c,#ff6b8f)','Milla MYM':'linear-gradient(135deg,#25e8c3,#6172ff)'};
+function modelGrad(m){return MGRAD[m]||'linear-gradient(135deg,#6172ff,#8b97ff)'}
+function modelInit(m){return esc((m||'?').replace(/\s*(OF|MYM)$/i,'').trim().charAt(0).toUpperCase())}
 function renderLinkManager(){
   var wrap=$('linksWrap');if(!wrap)return;
   var byLink={},lastClick={};
@@ -1320,19 +1336,19 @@ function renderLinkManager(){
     orbitLinks.forEach(function(l){var m=l.model||'—';var M=models[m]||(models[m]={poles:{},order:[],archived:[]});if(l.archived){M.archived.push(l);return}var key=l.pole?('Pôle '+l.pole):'Non assigné';if(!M.poles[key]){M.poles[key]=[];M.order.push(key)}M.poles[key].push(l)});
     var mk=Object.keys(models).sort();
     function cordeRow(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug,l.clipper);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);var inact=isInact(l);
-      return '<div class="olink'+(inact?' inact':'')+'"><div class="oli"><div class="olname">'+esc(l.clipper||l.display_name||l.model)+' <span class="opreset" style="background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);color:#fff">IG</span>'+(inact?' <span class="flag">inactif '+inactDays(l)+'j</span>':'')+'</div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button>'+(inact?'<button class="btn ghost oarch" data-id="'+l.id+'">Archiver</button>':'')+'<button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}
+      return '<div class="olink'+(inact?' inact':'')+'"><div class="oli"><div class="olname">'+esc(l.clipper||l.display_name||l.model)+' <span class="opreset" style="background:linear-gradient(90deg,#F58529,#DD2A7B,#8134AF);color:#fff">IG</span>'+(inact?' <span class="flag">inactif '+inactDays(l)+'j</span>':'')+'</div><div class="klabel">'+esc(l.slug)+'</div></div><div class="olspark tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="olclk'+(clk?'':' z')+'">'+clk+'</div><div class="olact"><button class="btn ghost ocopy" data-url="'+esc(u)+'">Copier</button><button class="btn ghost oclip" data-slug="'+esc(l.slug)+'">Clippeur</button>'+(inact?'<button class="btn ghost oarch" data-id="'+l.id+'">Archiver</button>':'')+'<button class="btn ghost oedit" data-id="'+l.id+'">✎</button><button class="btn ghost odel" data-id="'+l.id+'">✕</button></div></div>'}
     if(lmView==='liste'){
       html+=mk.map(function(m){var M=models[m];var gc=orbitLinks.filter(function(l){return l.model===m&&!l.archived}).reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var gs=seriesN(orbitClicks.filter(function(c){return c.model===m}),14);var np=M.order.filter(function(k){return k!=='Non assigné'}).length;var nc=M.order.reduce(function(a,k){return a+M.poles[k].length},0);
         var body=M.order.map(function(key){var pl=M.poles[key];var resp=(pl.filter(function(x){return x.responsable})[0]||{}).responsable;var pc=pl.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);var ps=seriesN(orbitClicks.filter(function(c){for(var i=0;i<pl.length;i++)if(pl[i].slug===c.slug)return true;return false}),14);
           return '<div class="pole"><div class="pole-head">'+poleChip(key)+(resp?'<span class="pole-mgr">Resp. <b>'+esc(resp)+'</b></span>':'')+'<span class="pole-stat"><span class="pnum">'+pl.length+' clipper'+(pl.length>1?'s':'')+' · '+pc+' clics</span>'+spark(ps,80,22,'#6172FF')+'</span></div>'+pl.map(cordeRow).join('')+'</div>'}).join('');
         var arch=M.archived.length?'<details class="lm-arch"><summary>🗄 Inactifs archivés ('+M.archived.length+')</summary>'+M.archived.map(function(l){return '<div class="archrow"><span>'+esc(l.clipper||l.display_name)+' <span class="klabel">'+esc(l.slug)+'</span></span><button class="btn ghost orest" data-id="'+l.id+'">↩︎ Restaurer</button></div>'}).join('')+'</details>':'';
-        return '<div class="ogroup lmmodel"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+np+' pôle'+(np>1?'s':'')+' · '+nc+' clippers · '+gc+' clics</div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'+body+arch+'</div>'}).join('');
+        return '<div class="ogroup lmmodel"><div class="ogh"><div class="lmmh"><div class="lmav" style="background:'+modelGrad(m)+'">'+modelInit(m)+'</div><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+np+' pôle'+(np>1?'s':'')+' · '+nc+' clippers · '+gc+' clics</div></div></div><div class="ogspark">'+spark(gs,130,30,'#6172FF')+'</div></div>'+body+arch+'</div>'}).join('');
     } else {
       html+=mk.map(function(m){var M=models[m];var gc=orbitLinks.filter(function(l){return l.model===m&&!l.archived}).reduce(function(a,l){return a+(byLink[l.slug]||0)},0);
         var cols=M.order.map(function(key){var pl=M.poles[key];var resp=(pl.filter(function(x){return x.responsable})[0]||{}).responsable;var pc=pl.reduce(function(a,l){return a+(byLink[l.slug]||0)},0);
-          return '<div class="kcol"><div class="kcol-head">'+poleChip(key)+'<span class="cnt">'+pl.length+'</span></div><div class="kmgr">'+(resp?'👤 <b>'+esc(resp)+'</b> · ':'')+pc+' clics</div>'+pl.map(function(l){var clk=byLink[l.slug]||0;var inact=isInact(l);return '<div class="kcard'+(inact?' dead':'')+'"><div class="kct"><span class="lmdot'+(inact?' dead':(clk?'':' low'))+'"></span><span class="kcn">'+esc(l.clipper||l.display_name)+'</span></div><div class="kcb"><button class="btn ghost ocopy" data-url="'+esc(orbitUrl(l.slug,l.clipper))+'" style="padding:3px 8px;font-size:10px">Copier</button><span class="olclk">'+clk+'</span></div></div>'}).join('')+'</div>'}).join('');
+          return '<div class="kcol"><div class="kcol-head">'+poleChip(key)+'<span class="cnt">'+pl.length+'</span></div><div class="kmgr">'+(resp?'👤 <b>'+esc(resp)+'</b> · ':'')+pc+' clics</div>'+pl.map(function(l){var clk=byLink[l.slug]||0;var inact=isInact(l);return '<div class="kcard'+(inact?' dead':'')+'"><div class="kct"><span class="lmdot'+(inact?' dead':(clk?'':' low'))+'"></span><span class="kcn">'+esc(l.clipper||l.display_name)+'</span></div><div class="kcb"><button class="btn ghost ocopy" data-url="'+esc(orbitUrl(l.slug,l.clipper))+'" style="padding:3px 8px;font-size:10px">Copier</button><span class="olclk'+(clk?'':' z')+'">'+clk+'</span></div></div>'}).join('')+'</div>'}).join('');
         var acol=M.archived.length?'<div class="kcol inact"><div class="kcol-head"><span class="pchip" style="background:rgba(255,184,92,.25);color:#ffb85c">INACTIFS</span><span class="cnt">'+M.archived.length+'</span></div><div class="kmgr">0 clic &gt; 15j</div>'+M.archived.map(function(l){return '<div class="kcard dead"><div class="kct"><span class="lmdot dead"></span><span class="kcn">'+esc(l.clipper||l.display_name)+'</span></div><div class="kcb"><button class="btn ghost orest" data-id="'+l.id+'" style="padding:3px 8px;font-size:10px">↩︎ Restaurer</button><span class="olclk">0</span></div></div>'}).join('')+'</div>':'';
-        return '<div class="ogroup lmmodel"><div class="ogh"><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+M.order.length+' colonne'+(M.order.length>1?'s':'')+' · '+gc+' clics</div></div></div><div class="kan">'+cols+acol+'</div></div>'}).join('');
+        return '<div class="ogroup lmmodel"><div class="ogh"><div class="lmmh"><div class="lmav" style="background:'+modelGrad(m)+'">'+modelInit(m)+'</div><div><div class="ogm">'+esc(m)+'</div><div class="klabel">'+M.order.length+' colonne'+(M.order.length>1?'s':'')+' · '+gc+' clics</div></div></div></div><div class="kan">'+cols+acol+'</div></div>'}).join('');
     }
   }
   wrap.innerHTML=html;
