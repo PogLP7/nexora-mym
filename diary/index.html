@@ -36,13 +36,16 @@
     --red: #ef4444;
     --gold: #fbbf24;
     --grad-brand: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 60%, #f472b6 100%);
+    --grad-brand-soft: linear-gradient(135deg, rgba(125,211,252,.16) 0%, rgba(167,139,250,.20) 60%, rgba(244,114,182,.14) 100%);
     --grad-panel: linear-gradient(160deg, #171d27 0%, #12171f 100%);
     --grad-success: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
-    --grad-header: radial-gradient(1200px 500px at 10% -10%, rgba(125,211,252,.10), transparent),
-                   radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,.08), transparent);
+    --grad-header: radial-gradient(1200px 600px at 8% -12%, rgba(125,211,252,.18), transparent 55%),
+                   radial-gradient(1000px 600px at 100% 10%, rgba(167,139,250,.15), transparent 55%),
+                   radial-gradient(900px 500px at 50% 100%, rgba(244,114,182,.10), transparent 55%);
     --shadow-sm: 0 2px 8px rgba(0,0,0,.25);
     --shadow: 0 8px 30px rgba(0,0,0,.35);
-    --shadow-glow: 0 0 30px rgba(125,211,252,.15);
+    --shadow-glow: 0 0 30px rgba(167,139,250,.22);
+    --shadow-aurora: 0 8px 30px -8px rgba(167,139,250,.35), 0 0 40px -12px rgba(244,114,182,.25);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
@@ -63,12 +66,12 @@
     padding: 12px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   header.top .brand { font-weight: 700; letter-spacing: .3px; font-size: 15px;
     background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  header.top .brand span.dot { color: var(--accent); }
+  header.top .brand span.dot { color: var(--violet); }
   header.top .spacer { flex: 1; }
   header.top .who { color: var(--muted); font-size: 13px; }
   header.top .btn-out { background: transparent; border: 1px solid var(--border); color: var(--muted);
     padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all .15s; }
-  header.top .btn-out:hover { color: var(--text); border-color: var(--accent); background: rgba(125,211,252,.06); }
+  header.top .btn-out:hover { color: var(--text); border-color: var(--violet); background: linear-gradient(135deg, rgba(125,211,252,.06), rgba(167,139,250,.10), rgba(244,114,182,.06)); }
 
   main { max-width: 960px; margin: 0 auto; padding: 20px; }
   h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -.2px; font-weight: 700; }
@@ -84,10 +87,12 @@
   .card:hover { border-color: var(--border-2); }
   .card.compact { padding: 14px 16px; }
   .card.hero { padding: 24px; background:
-    radial-gradient(600px 300px at 10% 0%, rgba(125,211,252,.14), transparent 60%),
-    radial-gradient(500px 300px at 100% 100%, rgba(167,139,250,.12), transparent 60%),
+    radial-gradient(700px 340px at 5% -5%, rgba(125,211,252,.22), transparent 55%),
+    radial-gradient(600px 360px at 100% 105%, rgba(244,114,182,.20), transparent 55%),
+    radial-gradient(500px 320px at 50% 50%, rgba(167,139,250,.18), transparent 60%),
     var(--grad-panel);
-    border: 1px solid rgba(125,211,252,.25); }
+    border: 1px solid rgba(167,139,250,.35);
+    box-shadow: var(--shadow-aurora); }
   .row { display: flex; gap: 10px; align-items: center; }
   .row.between { justify-content: space-between; }
   .row.wrap { flex-wrap: wrap; }
@@ -98,9 +103,9 @@
     background: var(--panel-2); color: var(--muted); cursor: pointer; white-space: nowrap;
     font-size: 14px; transition: all .15s; }
   .tab:hover { color: var(--text); border-color: var(--border-2); }
-  .tab.active { color: var(--text); border-color: var(--accent);
-    background: linear-gradient(180deg, rgba(125,211,252,.12), rgba(125,211,252,.04));
-    box-shadow: inset 0 0 0 1px rgba(125,211,252,.15); }
+  .tab.active { color: var(--text); border-color: transparent;
+    background: linear-gradient(135deg, rgba(125,211,252,.16), rgba(167,139,250,.22) 55%, rgba(244,114,182,.14));
+    box-shadow: inset 0 0 0 1px rgba(167,139,250,.35), 0 0 22px -8px rgba(167,139,250,.45); }
 
   /* HERO / STATS BAR (fiche du jour) */
   .day-hero { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center;
@@ -203,7 +208,7 @@
     width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
     border-radius: 10px; padding: 10px 12px; font: inherit; resize: vertical; transition: border-color .15s;
   }
-  textarea:focus, input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(125,211,252,.12); }
+  textarea:focus, input:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(167,139,250,.18), 0 0 24px -6px rgba(244,114,182,.25); }
   select {
     background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
     border-radius: 10px; padding: 10px 12px; font: inherit;
@@ -211,16 +216,16 @@
 
   /* BUTTONS */
   .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
-    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    background: var(--grad-brand);
     color: white; border: none; border-radius: 12px;
     font-weight: 600; cursor: pointer; font-size: 14px;
-    box-shadow: 0 4px 14px rgba(56,189,248,.25); transition: transform .15s, box-shadow .15s, filter .15s; }
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56,189,248,.35); filter: brightness(1.08); }
+    box-shadow: 0 6px 20px -6px rgba(167,139,250,.45), 0 0 30px -12px rgba(244,114,182,.35); transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s, filter .15s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px -6px rgba(167,139,250,.55), 0 0 40px -8px rgba(244,114,182,.45); filter: brightness(1.06) saturate(1.05); }
   .btn:active { transform: translateY(0); }
   .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
   .btn.ghost { background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
     box-shadow: none; }
-  .btn.ghost:hover { border-color: var(--accent); background: var(--panel-3); }
+  .btn.ghost:hover { border-color: var(--violet); background: linear-gradient(135deg, rgba(125,211,252,.08), rgba(167,139,250,.12), rgba(244,114,182,.08)); }
   .btn.success { background: var(--grad-success); box-shadow: 0 4px 14px rgba(34,197,94,.3); }
   .btn.success:hover { box-shadow: 0 6px 22px rgba(34,197,94,.4); }
   .btn.danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 14px rgba(239,68,68,.3); }
