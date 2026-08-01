@@ -1,7 +1,9 @@
-// Nexora Diary — service worker minimal.
-// Objectif : app installable + shell disponible offline (dernière version vue).
-// Le contenu dynamique (fiches, checks) passe toujours par le network via Supabase.
-const CACHE = 'nexora-diary-v7';
+// Nexora Diary — service worker.
+// Objectif : app installable + shell offline en secours, MAIS toujours servir la
+// dernière version fraîche du HTML quand le réseau est dispo (network-first).
+// Le CSS/JS étant inliné dans index.html, ça garantit que les changements de
+// design se propagent sans hard-refresh.
+const CACHE = 'nexora-diary-v8';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
@@ -18,14 +20,33 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
-  // Ne cache jamais Supabase (API + auth + realtime).
-  if (url.host.endsWith('supabase.co')) return;
-  // Ne cache pas les autres origines (CDN inclus).
-  if (url.origin !== location.origin) return;
-  // Ne cache que GET.
+  if (url.host.endsWith('supabase.co')) return;              // API/realtime : jamais cache
+  if (url.origin !== location.origin) return;                // Autres origines : passe direct
   if (e.request.method !== 'GET') return;
 
-  // Stale-while-revalidate pour le shell (HTML/manifest).
+  const dest = e.request.destination;
+  const isHtml = dest === 'document' || url.pathname.endsWith('/') || url.pathname.endsWith('.html');
+
+  if (isHtml) {
+    // Network-first : on tente le réseau, on retombe sur le cache SEULEMENT
+    // si offline. Comme ça, les updates HTML sont instantanées.
+    e.respondWith((async () => {
+      try {
+        const fresh = await fetch(e.request);
+        if (fresh && fresh.status === 200) {
+          const cache = await caches.open(CACHE);
+          cache.put(e.request, fresh.clone()).catch(() => {});
+        }
+        return fresh;
+      } catch {
+        const cache = await caches.open(CACHE);
+        return (await cache.match(e.request)) || (await cache.match('./index.html'));
+      }
+    })());
+    return;
+  }
+
+  // Autres GET même origine (manifest, sw.js éventuel) : stale-while-revalidate.
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const cached = await cache.match(e.request);
