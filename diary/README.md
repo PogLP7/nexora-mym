@@ -89,10 +89,47 @@ Puis crée le remote et push comme pour le CRM.
 
 Décocher le toggle résout automatiquement l'alerte (`resolved_at = now()`). Géré côté SQL par le trigger `diary_sync_alerts`.
 
+## Sync roster clippers (bot ↔ diary)
+
+Deux mécanismes complémentaires alimentent `diary_clippers` :
+
+### 1. Push depuis le bot Telegram (automatique)
+
+Le bot `bot-telegram-nexora` embarque un module `diary_sync.py` qui pousse
+un clipper dans `diary_clippers` à chaque `/attribu` (attribution de pôle
+au J7). Une commande `/diarysync` (admin only) permet de forcer un full
+sync + archivage des sortants.
+
+Pour activer, ajouter dans `~/bot-telegram-nexora/.env` :
+
+```env
+SUPABASE_URL=https://bvcnbtbdfkoiefuedxem.supabase.co
+SUPABASE_SERVICE_KEY=eyJ...   # Legacy service_role — Settings → API
+DIARY_RESP_EMAIL=pogona@gmx.fr
+```
+
+Puis relancer le bot. Vérifier au démarrage qu'aucune erreur `[DIARY-SYNC]`.
+Taper `/diarysync` dans un DM au bot pour un premier full sync.
+
+### 2. Trigger depuis le dashboard Ops (à la demande)
+
+Le tab Ops du diary a un bouton **« 📣 Demander une sync au bot »** qui
+appelle l'Edge Function `diary-request-sync` déployée à
+`https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/diary-request-sync`.
+Elle envoie un DM Telegram à l'admin lui demandant de taper `/diarysync`.
+
+Secrets à configurer une fois dans Supabase → Project Settings → Functions
+→ Secrets :
+
+- `TELEGRAM_BOT_TOKEN` = token du bot d'onboarding (celui du `.env` `BOT_TOKEN`)
+- `TELEGRAM_ADMIN_ID` = chat_id de l'admin (celui du `.env` `ADMIN_ID`)
+
+Le source de l'Edge Function est dans `supabase/functions/diary-request-sync/index.ts`.
+
 ## Roadmap (phase 2, hors MVP)
 
-- Sync Telegram bot pour tenir la liste des clippers à jour (arrivées/départs).
 - Envoi Telegram du récap à la clôture + push d'alertes rouges au RO.
+- Activation pg_cron pour l'auto-clôture 06h (fonction `diary_auto_submit_yesterday()` déjà présente dans `schema.sql`).
 - Fusion dans le repo CRM SFS (mêmes routes montées dans le CRM, header partagé).
 - Stats agrégées (% conformité par pôle/clipper, séries temporelles paliers GetMySocial).
 
