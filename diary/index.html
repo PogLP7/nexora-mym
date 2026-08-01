@@ -500,23 +500,23 @@ function progressRing(done, total, opts = {}) {
 
 // Ring segmentée : chaque item = un arc visible même quand vide.
 function segRing(items, opts = {}) {
-  const size = opts.size || 52;
+  const size = opts.size || 56;
   const stroke = opts.stroke || 4;
-  const r = (size - stroke) / 2;
+  const r = (size - stroke) / 2 - 1;
   const c = 2 * Math.PI * r;
   const n = items.length;
-  const gap = 3.5;                             // px entre segments
+  const gap = 4;                               // px entre segments
   const seg = (c - gap * n) / n;               // longueur d'un arc
   const half = size / 2;
   const parts = items.map((done, i) => {
     const offset = -i * (seg + gap);
     return `<circle cx="${half}" cy="${half}" r="${r}" fill="none"
-              stroke="${done ? 'url(#gradRingSuccess)' : 'var(--border)'}"
+              stroke="${done ? 'url(#gradRingSuccess)' : 'rgba(255,255,255,.14)'}"
               stroke-width="${stroke}" stroke-linecap="round"
               stroke-dasharray="${seg} ${c - seg}"
               stroke-dashoffset="${offset}"
               transform="rotate(-90 ${half} ${half})"
-              style="transition: stroke .3s;"/>`;
+              style="transition: stroke .35s;"/>`;
   }).join('');
   return `<svg class="ring seg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">${parts}</svg>`;
 }
@@ -1189,9 +1189,9 @@ function renderClipperCardHtml(clipper, cc, locked) {
   return `
     <div class="clipper-card ${isDone ? 'done' : ''} ${isDanger ? 'danger' : ''}" data-clipper="${clipper.id}">
       <div class="clipper-head">
-        <div class="ring-wrap" style="width:52px; height:52px;">
+        <div class="ring-wrap" style="width:56px; height:56px;">
           ${avatarHtml(clipper.nom)}
-          ${segRing(flags, { size: 52, stroke: 4 })}
+          ${segRing(flags, { size: 56, stroke: 4 })}
         </div>
         <div style="flex:1;">
           <div class="name">${clipper.nom}</div>
@@ -1387,7 +1387,7 @@ function updateClipperProgress(clipperId) {
   const clipper = (state.clippersByPole[state.currentPoleId] || []).find(c => c.id === clipperId);
   const ringWrap = $('.ring-wrap', card);
   if (ringWrap && clipper) {
-    ringWrap.innerHTML = avatarHtml(clipper.nom) + segRing(items.map(k => !!cc[k]), { size: 52, stroke: 4 });
+    ringWrap.innerHTML = avatarHtml(clipper.nom) + segRing(items.map(k => !!cc[k]), { size: 56, stroke: 4 });
   }
   const dim = $('.dim', card);
   if (dim) dim.textContent = `${done}/${items.length} contrôles`;
