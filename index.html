@@ -168,6 +168,29 @@
   .lm-mi{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;padding:9px 11px;border-radius:8px;cursor:pointer}
   .lm-mi:hover{background:rgba(124,92,255,.14)}
   .lm-mi.danger{color:#ff7a7a}.lm-mi.danger:hover{background:rgba(255,107,107,.13)}
+  /* ===== Dashboard v2 (période + style A/B + médailles + géo carré) ===== */
+  .odash-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .oseg-range,.ostyle-seg{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;align-items:center}
+  .oseg-range button,.ostyle-seg button{border:0;background:transparent;color:var(--soft);font:inherit;font-size:12px;font-weight:650;padding:6px 12px;border-radius:7px;cursor:pointer}
+  .oseg-range button.on{background:#7c5cff;color:#fff}
+  .ostyle-seg .lbl{font-family:var(--fm);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);padding:0 4px 0 8px}
+  .ostyle-seg button.on{background:linear-gradient(90deg,#7c5cff,#25e8c3);color:#051}
+  .med{font-size:15px;line-height:1;display:inline-block}
+  .med.g{filter:drop-shadow(0 0 5px rgba(255,205,70,.7))}
+  .gGeo{display:grid;grid-template-columns:1.25fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:860px){.gGeo{grid-template-columns:1fr}}
+  .ogeo-card.sq{margin-bottom:0}
+  .ogeo-card.sq .ogeo-view{height:300px}
+  .ogeo-side .card+.card{margin-top:14px}
+  #orbitWrap.dopa .card,#orbitWrap.dopa .okpi{box-shadow:0 0 0 1px rgba(124,92,255,.22),0 16px 46px -16px rgba(124,92,255,.42)}
+  #orbitWrap.dopa .okpi .v{text-shadow:0 0 22px currentColor;font-size:36px}
+  #orbitWrap.dopa .olive i{animation:opulse 1.1s ease-in-out infinite}
+  #orbitWrap.dopa .med{animation:oshine 2.2s ease-in-out infinite}
+  #orbitWrap.dopa .tlrow:hover,#orbitWrap.dopa .obar:hover{transform:translateX(2px)}
+  #orbitWrap.dopa .okpi .v{background:linear-gradient(90deg,currentColor,#fff);-webkit-background-clip:text;background-clip:text}
+  @keyframes opulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+  @keyframes oshine{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4) drop-shadow(0 0 8px rgba(255,205,70,.8))}}
+  @media(prefers-reduced-motion:reduce){#orbitWrap.dopa .olive i,#orbitWrap.dopa .med{animation:none}}
   .lmmh{display:flex;align-items:center;gap:11px}
   .lmmodel{transition:border-color .2s}
   .lmmodel:hover{border-color:rgba(127,140,255,.28)}
@@ -1316,42 +1339,52 @@ function orbitGlobe(){
   }
   oGlobeRAF=requestAnimationFrame(frame);
 }
+var orbitRange='7j',orbitStyle='sobre';
 function renderOrbit(){
   var wrap=$('orbitWrap');if(!wrap)return;
-  var today=new Date().toISOString().slice(0,10);
-  var todayC=orbitClicks.filter(function(c){return (c.created_at||'').slice(0,10)===today}).length;
-  var tc=orbitClicks.length;
+  wrap.className=(orbitStyle==='dopa'?'dopa':'');
+  var now=Date.now();
+  function rangeInfo(r){
+    if(r==='24h'){var b=[];for(var i=23;i>=0;i--){var d=new Date(now-i*3600000);var hh=d.getHours();b.push({k:d.toISOString().slice(0,13),lab:(hh<10?'0':'')+hh+'h'})}return{since:new Date(now-24*3600000).toISOString(),buckets:b,keyOf:function(s){return s.slice(0,13)},lab:'24 h'}}
+    var days=({'7j':7,'30j':30,'1an':365})[r]||7;var b=[];for(var i=days-1;i>=0;i--){var d=new Date(now-i*86400000);var k=d.toISOString().slice(0,10);b.push({k:k,lab:k.slice(8,10)+'/'+k.slice(5,7)})}
+    return{since:new Date(now-days*86400000).toISOString(),buckets:b,keyOf:function(s){return s.slice(0,10)},lab:({'7j':'7 jours','30j':'30 jours','1an':'12 mois'})[r]};
+  }
+  var ri=rangeInfo(orbitRange);
+  var clicks=orbitClicks.filter(function(c){return (c.created_at||'')>=ri.since});
+  var tc=clicks.length;
   var byClip={},byCty={},byLink={};
-  orbitClicks.forEach(function(c){var k=c.clipper||'—';byClip[k]=(byClip[k]||0)+1;var cc=c.country||'?';byCty[cc]=(byCty[cc]||0)+1;byLink[c.slug]=(byLink[c.slug]||0)+1});
+  clicks.forEach(function(c){var k=c.clipper||'—';byClip[k]=(byClip[k]||0)+1;var cc=c.country||'?';byCty[cc]=(byCty[cc]||0)+1;byLink[c.slug]=(byLink[c.slug]||0)+1});
+  function medalRaw(i){return i===0?'<span class="med g">🥇</span>':i===1?'<span class="med s">🥈</span>':i===2?'<span class="med b">🥉</span>':'<span class="rk">'+(i+1)+'</span>'}
   function topN(o,n){return Object.keys(o).map(function(k){return [k,o[k]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,n)}
-  function orankBars(o,n,grad,suf){var arr=topN(o,n);if(!arr.length)return '<p class="hint">—</p>';var mx=Math.max(1,Math.max.apply(null,arr.map(function(r){return r[1]})));return arr.map(function(r){var w=Math.max(6,Math.round(r[1]/mx*100));return '<div class="obar"><div class="nm">'+esc(r[0])+'</div><div class="ct">'+r[1]+(suf?suf(r[1]):'')+'</div><div class="tr"><i style="width:'+w+'%;background:'+grad+'"></i></div></div>'}).join('')}
-  function seriesN(cl,n){var days={},order=[];for(var i=n-1;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.toISOString().slice(0,10);days[key]=0;order.push(key)}cl.forEach(function(c){var dd=(c.created_at||'').slice(0,10);if(dd in days)days[dd]++});return order.map(function(k){return days[k]})}
+  function orankBars(o,n,grad,suf){var arr=topN(o,n);if(!arr.length)return '<p class="hint">—</p>';var mx=Math.max(1,Math.max.apply(null,arr.map(function(r){return r[1]})));return arr.map(function(r,i){var w=Math.max(6,Math.round(r[1]/mx*100));return '<div class="obar"><div class="nm">'+medalRaw(i)+' '+esc(r[0])+'</div><div class="ct">'+r[1]+(suf?suf(r[1]):'')+'</div><div class="tr"><i style="width:'+w+'%;background:'+grad+'"></i></div></div>'}).join('')}
   function spark(arr,w,h,color){if(!arr||!arr.length)arr=[0];var mx=Math.max(1,Math.max.apply(null,arr));var n=arr.length;var pts=arr.map(function(v,i){var x=n>1?i/(n-1)*w:w/2;var y=h-(v/mx)*(h-3)-1.5;return x.toFixed(1)+','+y.toFixed(1)});var line=pts.join(' ');var area='0,'+h+' '+line+' '+w+','+h;return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" style="width:100%;height:'+h+'px;display:block"><polygon points="'+area+'" fill="'+color+'" opacity="0.14"></polygon><polyline points="'+line+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>'}
-  function bigChart(series){var W=700,H=180,pad=10;var mx=Math.max(1,Math.max.apply(null,series));var n=series.length;var X=function(i){return pad+(n>1?i/(n-1):0)*(W-2*pad)};var Y=function(v){return H-pad-(v/mx)*(H-2*pad-6)};var pts=series.map(function(v,i){return X(i).toFixed(1)+' '+Y(v).toFixed(1)});var line='M'+pts.join(' L');var area=line+' L'+X(n-1).toFixed(1)+' '+(H-pad)+' L'+X(0).toFixed(1)+' '+(H-pad)+' Z';var grid='';for(var g=1;g<=3;g++){var gy=pad+(H-2*pad)*g/4;grid+='<line x1="'+pad+'" y1="'+gy.toFixed(1)+'" x2="'+(W-pad)+'" y2="'+gy.toFixed(1)+'" stroke="rgba(255,255,255,.05)"></line>'}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:180px;display:block"><defs><linearGradient id="ocg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6172FF" stop-opacity="0.32"></stop><stop offset="1" stop-color="#6172FF" stop-opacity="0"></stop></linearGradient></defs>'+grid+'<path d="'+area+'" fill="url(#ocg)"></path><path d="'+line+'" fill="none" stroke="#6172FF" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg>'}
-  var series14=seriesN(orbitClicks,14);
-  var keys14=[];for(var ki=13;ki>=0;ki--){var kd=new Date();kd.setDate(kd.getDate()-ki);keys14.push(kd.toISOString().slice(0,10))}
+  function bigChart(series,col){col=col||'#7c5cff';var W=700,H=170,pad=10;var mx=Math.max(1,Math.max.apply(null,series));var n=series.length;var X=function(i){return pad+(n>1?i/(n-1):0)*(W-2*pad)};var Y=function(v){return H-pad-(v/mx)*(H-2*pad-6)};var pts=series.map(function(v,i){return X(i).toFixed(1)+' '+Y(v).toFixed(1)});var line='M'+pts.join(' L');var area=line+' L'+X(n-1).toFixed(1)+' '+(H-pad)+' L'+X(0).toFixed(1)+' '+(H-pad)+' Z';var grid='';for(var g=1;g<=3;g++){var gy=pad+(H-2*pad)*g/4;grid+='<line x1="'+pad+'" y1="'+gy.toFixed(1)+'" x2="'+(W-pad)+'" y2="'+gy.toFixed(1)+'" stroke="rgba(255,255,255,.05)"></line>'}return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:170px;display:block"><defs><linearGradient id="ocg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+col+'" stop-opacity="0.32"></stop><stop offset="1" stop-color="'+col+'" stop-opacity="0"></stop></linearGradient></defs>'+grid+'<path d="'+area+'" fill="url(#ocg)"></path><path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg>'}
+  var counts={};ri.buckets.forEach(function(b){counts[b.k]=0});clicks.forEach(function(c){var k=ri.keyOf(c.created_at||'');if(k in counts)counts[k]++});
+  var series=ri.buckets.map(function(b){return counts[b.k]});
+  var last=series[series.length-1]||0;
   var html='';
-  html+='';
+  html+='<div class="odash-bar"><div class="oseg-range">'+['24h','7j','30j','1an'].map(function(r){return '<button data-r="'+r+'" class="'+(orbitRange===r?'on':'')+'">'+({'24h':'24 h','7j':'7 j','30j':'30 j','1an':'1 an'})[r]+'</button>'}).join('')+'</div><div class="ostyle-seg"><span class="lbl">Style</span><button data-s="sobre" class="'+(orbitStyle==='sobre'?'on':'')+'">Sobre</button><button data-s="dopa" class="'+(orbitStyle==='dopa'?'on':'')+'">Dopamine</button></div></div>';
   html+='<div class="okpis">';
-  html+='<div class="okpi"><div class="k">Clics total</div><div class="v" style="color:#25E8C3">'+tc+'</div>'+spark(series14,140,32,'#25E8C3')+'</div>';
-  html+='<div class="okpi"><div class="k">Clics du jour</div><div class="v" style="color:#3FD07E">'+todayC+'</div>'+spark(seriesN(orbitClicks,7),140,32,'#3FD07E')+'</div>';
-  html+='<div class="okpi"><div class="k">Liens actifs</div><div class="v" style="color:#6172FF">'+orbitLinks.filter(function(l){return l.active!==false}).length+'</div></div>';
-  html+='<div class="okpi"><div class="k">Clippeurs actifs</div><div class="v" style="color:#B197FC">'+Object.keys(byClip).filter(function(k){return k!=='—'}).length+'</div></div>';
+  html+='<div class="okpi"><div class="k">Clics · '+ri.lab+'</div><div class="v" style="color:#9b86ff">'+tc+'</div>'+spark(series,140,32,'#9b86ff')+'</div>';
+  html+='<div class="okpi"><div class="k">Dernier '+(orbitRange==='24h'?'h':'jour')+'</div><div class="v" style="color:#3FD07E">'+last+'</div></div>';
+  html+='<div class="okpi"><div class="k">Liens actifs</div><div class="v" style="color:#25E8C3">'+orbitLinks.filter(function(l){return !l.archived}).length+'</div></div>';
+  html+='<div class="okpi"><div class="k">Clippeurs actifs</div><div class="v" style="color:#ffb457">'+Object.keys(byClip).filter(function(k){return k!=='—'}).length+'</div></div>';
   html+='</div>';
-  html+='<div class="card" style="margin-top:16px"><div class="ocardh"><div class="label">Analytics · clics</div><span class="klabel">14 derniers jours</span></div>'+bigChart(series14)+'<div class="oxaxis">'+keys14.map(function(k,i){return '<span>'+((i%3===0)?(k.slice(8,10)+'/'+k.slice(5,7)):'')+'</span>'}).join('')+'</div></div>';
+  html+='<div class="card" style="margin-top:14px"><div class="ocardh"><div class="label">Activité · clics</div><span class="klabel">'+ri.lab+'</span></div>'+bigChart(series)+'<div class="oxaxis">'+ri.buckets.map(function(b,i){var step=Math.max(1,Math.ceil(ri.buckets.length/8));return '<span>'+((i%step===0)?b.lab:'')+'</span>'}).join('')+'</div></div>';
   var topLinks=orbitLinks.map(function(l){return {l:l,c:byLink[l.slug]||0}}).sort(function(a,b){return b.c-a.c}).slice(0,6);
-  var tlHtml=topLinks.length?topLinks.map(function(o,i){var ls=seriesN(orbitClicks.filter(function(c){return c.slug===o.l.slug}),14);return '<div class="tlrow"><div class="tlrank">'+(i+1)+'</div><div class="tlname"><div class="olname">'+esc(o.l.display_name||o.l.model)+'</div><div class="klabel">'+esc(o.l.slug)+'</div></div><div class="tlspark">'+spark(ls,80,24,'#25E8C3')+'</div><div class="tlc">'+o.c+'</div></div>'}).join(''):'<p class="hint">Aucun lien.</p>';
-  html+='<div class="grid g2" style="margin-top:16px">';
+  var tlHtml=topLinks.length?topLinks.map(function(o,i){var ls=ri.buckets.map(function(b){return 0});var lc={};ri.buckets.forEach(function(b){lc[b.k]=0});clicks.forEach(function(c){if(c.slug===o.l.slug){var k=ri.keyOf(c.created_at||'');if(k in lc)lc[k]++}});ls=ri.buckets.map(function(b){return lc[b.k]});return '<div class="tlrow"><div class="tlrank">'+medalRaw(i)+'</div><div class="tlname"><div class="olname">'+esc(o.l.clipper||o.l.display_name||o.l.model)+'</div><div class="klabel">'+esc(o.l.model)+' · '+esc(o.l.slug)+'</div></div><div class="tlspark">'+spark(ls,80,24,'#9b86ff')+'</div><div class="tlc" style="color:#9b86ff">'+o.c+'</div></div>'}).join(''):'<p class="hint">Aucun clic sur cette période.</p>';
+  html+='<div class="grid g2" style="margin-top:14px">';
   html+='<div class="card"><div class="label">Top liens</div><div class="tlwrap">'+tlHtml+'</div></div>';
-  html+='<div class="card"><div class="ocardh"><div class="label">En direct</div><span class="olive"><i></i>Live</span></div><div class="ofeed">'+(orbitClicks.slice(0,9).map(function(c){return '<div class="ofev"><span class="ofd"></span><div><div class="ofa">'+esc(c.clipper||'—')+'</div><div class="klabel">'+esc(c.city||c.country||'?')+' · '+esc(c.device||'')+' · '+esc((c.created_at||'').slice(11,16))+'</div></div></div>'}).join('')||'<p class="hint">Aucun clic encore.</p>')+'</div></div>';
+  html+='<div class="card"><div class="ocardh"><div class="label">Activité en direct</div><span class="olive"><i></i>Live</span></div><div class="ofeed">'+(orbitClicks.slice(0,9).map(function(c){return '<div class="ofev"><span class="ofd"></span><div><div class="ofa">'+esc(c.clipper||'—')+'</div><div class="klabel">'+esc(c.city||c.country||'?')+' · '+esc(c.device||'')+' · '+esc((c.created_at||'').slice(11,16))+'</div></div></div>'}).join('')||'<p class="hint">Aucun clic encore.</p>')+'</div></div>';
   html+='</div>';
   var regionCount=Object.keys(byCty).filter(function(k){return k&&k!=='?'}).length;
-  html+='<div class="ogeo-card" style="margin-top:16px"><div class="ogeoh"><div><div class="label">Géographie</div><div class="ogeosub">'+tc+' visite'+(tc>1?'s':'')+' · '+regionCount+' pays</div></div><div class="ogeo-toggle"><button data-mode="globe" id="ogGlobe">🌐 Globe</button><button data-mode="map" id="ogMap">🗺 Carte</button></div></div><div class="ogeo-body"><div class="ogeo-view" id="ogeoGlobe" style="display:none"><canvas id="oglobe"></canvas></div><div class="ogeo-view" id="ogeoMap"></div></div><div class="oglobe-legend"><span><i style="background:#3FD07E;box-shadow:0 0 8px #3FD07E"></i>Ciblé (FR/QC/BE/CH)</span><span><i style="background:#FF6060;box-shadow:0 0 8px #FF6060"></i>Hors cible</span></div></div>';
-  html+='<div class="grid g2" style="margin-top:16px">';
-  html+='<div class="card"><div class="label">Top pays</div>'+orankBars(byCty,8,'linear-gradient(90deg,#6172FF,#B197FC)')+'</div>';
-  html+='<div class="card"><div class="label">Top clippeurs</div>'+orankBars(byClip,8,'linear-gradient(90deg,#25E8C3,#6172FF)')+'</div>';
+  html+='<div class="gGeo">';
+  html+='<div class="ogeo-card sq"><div class="ogeoh"><div><div class="label">Géographie</div><div class="ogeosub">'+tc+' visite'+(tc>1?'s':'')+' · '+regionCount+' pays</div></div><div class="ogeo-toggle"><button data-mode="globe" id="ogGlobe">🌐 Globe</button><button data-mode="map" id="ogMap">🗺 Carte</button></div></div><div class="ogeo-body"><div class="ogeo-view" id="ogeoGlobe" style="display:none"><canvas id="oglobe"></canvas></div><div class="ogeo-view" id="ogeoMap"></div></div><div class="oglobe-legend"><span><i style="background:#3FD07E;box-shadow:0 0 8px #3FD07E"></i>Ciblé</span><span><i style="background:#FF6060;box-shadow:0 0 8px #FF6060"></i>Hors cible</span></div></div>';
+  html+='<div class="ogeo-side"><div class="card"><div class="label">Top pays</div>'+orankBars(byCty,6,'linear-gradient(90deg,#7c5cff,#B197FC)')+'</div><div class="card"><div class="label">Top clippeurs</div>'+orankBars(byClip,6,'linear-gradient(90deg,#25E8C3,#7c5cff)')+'</div></div>';
   html+='</div>';
   wrap.innerHTML=html;
+  wrap.querySelectorAll('.oseg-range button').forEach(function(b){b.onclick=function(){orbitRange=b.getAttribute('data-r');renderOrbit()}});
+  wrap.querySelectorAll('.ostyle-seg button').forEach(function(b){b.onclick=function(){orbitStyle=b.getAttribute('data-s');renderOrbit()}});
   var _bg=$('ogGlobe'),_bm=$('ogMap');if(_bg)_bg.onclick=function(){setOrbitGeo('globe')};if(_bm)_bm.onclick=function(){setOrbitGeo('map')};
   try{setOrbitGeo(orbitGeoMode)}catch(e){}
 }
