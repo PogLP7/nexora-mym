@@ -833,6 +833,84 @@ async function loadOrCreatePoleCheck(poleId) {
   return data;
 }
 
+// Précharge TOUS les pole_checks + clipper_checks + reels pour la fiche du jour,
+// tous pôles confondus. Nécessaire pour gater le bouton Clôturer sur la
+// completion globale (et pour l'insights des autres pôles).
+async function loadAllChecksForEntry() {
+  if (!state.entry) return;
+  // Assure d'abord qu'il y a une pole_check + N clipper_checks pour CHAQUE pôle
+  // (sinon les booleans "manquants" seraient impossibles à compter).
+  for (const p of state.poles) {
+    const { data: existing } = await sb.from('diary_pole_checks')
+      .select('id').eq('daily_entry_id', state.entry.id).eq('pole_id', p.id).maybeSingle();
+    if (!existing) {
+      await sb.from('diary_pole_checks').insert({ daily_entry_id: state.entry.id, pole_id: p.id });
+    }
+    const clippers = state.clippersByPole[p.id] || [];
+    if (clippers.length) {
+      const { data: existingCcs } = await sb.from('diary_clipper_checks')
+        .select('clipper_id').eq('daily_entry_id', state.entry.id).in('clipper_id', clippers.map(c => c.id));
+      const have = new Set((existingCcs||[]).map(x => x.clipper_id));
+      const missing = clippers.filter(c => !have.has(c.id));
+      if (missing.length) {
+        await sb.from('diary_clipper_checks').insert(missing.map(c => ({ daily_entry_id: state.entry.id, clipper_id: c.id })));
+      }
+    }
+  }
+  const [{ data: pcs }, { data: ccs }] = await Promise.all([
+    sb.from('diary_pole_checks').select('*').eq('daily_entry_id', state.entry.id),
+    sb.from('diary_clipper_checks').select('*').eq('daily_entry_id', state.entry.id),
+  ]);
+  state.allPoleChecks = Object.fromEntries((pcs||[]).map(x => [x.pole_id, x]));
+  state.allClipperChecks = Object.fromEntries((ccs||[]).map(x => [x.clipper_id, x]));
+}
+
+// Retourne la completion globale (tous pôles + tous clippers + alertes rouges).
+function computeGlobalCompletion() {
+  const poleKeys = ['posting','cadence','habillage','aucun_compte_banni','contenu_telegram_ok',
+                    'clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
+  const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  let done = 0, total = 0, redAlerts = 0;
+  state.poles.forEach(p => {
+    const pc = state.allPoleChecks?.[p.id];
+    poleKeys.forEach(k => { total++; if (pc && pc[k]) done++; });
+    (state.clippersByPole[p.id] || []).forEach(c => {
+      const cc = state.allClipperChecks?.[c.id];
+      clipperKeys.forEach(k => { total++; if (cc && cc[k]) done++; });
+      if (cc) {
+        if (cc.compte_banni) redAlerts++;
+        if (cc.contenu_manquant) redAlerts++;
+        if (cc.en_difficulte) redAlerts++;
+      }
+    });
+  });
+  return { done, total, missing: total - done, redAlerts, complete: (total - done === 0) && (redAlerts === 0) };
+}
+
+// Met à jour l'état du bouton Clôturer (visible en fin de fiche).
+function updateSubmitButtonState() {
+  const btn = $('#submitBtn');
+  const help = $('#submitHelp');
+  if (!btn) return;
+  const { missing, redAlerts, complete } = computeGlobalCompletion();
+  if (complete) {
+    btn.disabled = false;
+    btn.textContent = '✓ Clôturer la journée';
+    btn.classList.remove('ghost');
+    btn.classList.add('success');
+    if (help) help.textContent = 'Tout est OK. Clôture pour figer et notifier le RO.';
+  } else {
+    btn.disabled = true;
+    btn.classList.remove('success');
+    btn.classList.add('ghost');
+    const parts = [];
+    if (missing > 0) parts.push(`${missing} item${missing>1?'s':''} à cocher`);
+    if (redAlerts > 0) parts.push(`${redAlerts} alerte${redAlerts>1?'s':''} rouge${redAlerts>1?'s':''} à résoudre`);
+    btn.textContent = `🔒 Clôturer (${parts.join(' · ')})`;
+    if (help) help.textContent = 'Le bouton s\'active quand tout est complété et zéro alerte rouge en cours.';
+  }
+}
+
 async function loadOrCreateClipperChecks(poleId) {
   const clippers = state.clippersByPole[poleId] || [];
   if (!clippers.length) { state.clipperChecks = {}; state.reelsByCheck = {}; return; }
@@ -908,6 +986,8 @@ async function renderDiary(main, date = null) {
   const { count: openAlerts } = await sb.from('diary_alerts')
     .select('id', { count: 'exact', head: true })
     .eq('responsable_id', state.me.id).is('resolved_at', null);
+  // Fetch ALL pole_checks + clipper_checks pour la fiche du jour (tous pôles).
+  await loadAllChecksForEntry();
   // Fiche d'hier existe-t-elle et est-elle clôturée ? (pour bouton "Reprendre d'hier")
   const yester = (() => { const d = new Date(); d.setDate(d.getDate()-1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
   const canImportYesterday = !locked && !isPast && state.entry?.status === 'draft';
@@ -966,8 +1046,8 @@ async function renderDiary(main, date = null) {
 
     ${locked || isPast ? '' : `
       <div class="card" style="text-align:center; background: transparent; border-style: dashed;">
-        <button class="btn xl success" id="submitBtn">✓ Clôturer la journée</button>
-        <div class="sub" style="margin-top:8px;">Sauvegardée automatiquement. Clôture pour figer et notifier le RO.</div>
+        <button class="btn xl success" id="submitBtn" disabled>🔒 Clôturer (chargement…)</button>
+        <div class="sub" style="margin-top:8px;" id="submitHelp">Le bouton s'active quand tout est complété et zéro alerte rouge en cours.</div>
       </div>`}
   `;
 
@@ -984,6 +1064,7 @@ async function renderDiary(main, date = null) {
 
   await renderPoleContent(locked || isPast);
   updateHeroStats();
+  updateSubmitButtonState();
 }
 
 // Copie les checks du pôle + clippers d'hier dans la fiche du jour (brouillon).
@@ -1146,6 +1227,7 @@ async function toggleAllClipperChecks(clipperId) {
   const { error } = await sb.from('diary_clipper_checks').update(patch).eq('id', cc.id);
   if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
   keys.forEach(k => cc[k] = val);
+  if (state.allClipperChecks?.[clipperId]) keys.forEach(k => state.allClipperChecks[clipperId][k] = val);
   // Refléter visuellement chaque check
   const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
   $$('[data-clip-check]', card).forEach(inp => {
@@ -1154,6 +1236,7 @@ async function toggleAllClipperChecks(clipperId) {
   });
   updateClipperProgress(clipperId);
   updateHeroStats();
+  updateSubmitButtonState();
   setSaveState('saved');
   // Célébration si on vient de tout activer
   if (val && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte) {
@@ -1267,7 +1350,9 @@ async function savePoleField(key, val) {
   const { error } = await sb.from('diary_pole_checks').update({ [key]: val }).eq('id', state.poleCheck.id);
   if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
   state.poleCheck[key] = val;
+  if (state.allPoleChecks?.[state.currentPoleId]) state.allPoleChecks[state.currentPoleId][key] = val;
   setSaveState('saved');
+  updateSubmitButtonState();
 }
 
 async function onClipperCheckChange(clipperId, input) {
@@ -1281,10 +1366,12 @@ async function onClipperCheckChange(clipperId, input) {
   const { error } = await sb.from('diary_clipper_checks').update({ [key]: val }).eq('id', cc.id);
   if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
   cc[key] = val;
+  if (state.allClipperChecks?.[clipperId]) state.allClipperChecks[clipperId][key] = val;
   const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
   const wasCompleted = clipperKeys.every(k => cc[k]);
   updateClipperProgress(clipperId);
   updateHeroStats();
+  updateSubmitButtonState();
   setSaveState('saved');
   // Célébration quand un clipper vient d'atteindre 6/6
   if (val && wasCompleted && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte) {
@@ -1314,6 +1401,8 @@ async function toggleClipperRed(clipperId, key) {
   const { error } = await sb.from('diary_clipper_checks').update({ [key]: val }).eq('id', cc.id);
   if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
   cc[key] = val;
+  if (state.allClipperChecks?.[clipperId]) state.allClipperChecks[clipperId][key] = val;
+  updateSubmitButtonState();
   setSaveState('saved');
   // Ré-render la card pour màj badges/tgl visuel
   const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
@@ -1992,9 +2081,19 @@ async function requestSyncFromBot() {
 }
 
 // ----- PWA : install du service worker (offline shell + installable) -----
+// Auto-reload quand une nouvelle version du SW prend le contrôle → l'utilisateur
+// n'a plus jamais besoin de hard-refresh, la MAJ se propage seule.
 if ('serviceWorker' in navigator) {
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloading) return;
+    reloading = true;
+    location.reload();
+  });
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW register failed', err));
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      reg.update().catch(() => {});
+    }).catch(err => console.warn('SW register failed', err));
   });
 }
 </script>
