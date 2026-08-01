@@ -763,7 +763,7 @@ function spendOf(r){return r.subs>0?r.fans/r.subs*100:null}
 function gCVR(v){if(v>=66)return'A';if(v>=60)return'B';if(v>=56)return'C';if(v>=50)return'D';return'E'}
 function ym(d){var p=(d||'').split('-');return p.length>=2?p[0]+'-'+p[1]:''}
 function norm(s){return String(s||'').toUpperCase().replace(/[ÀÂÄ]/g,'A').replace(/[ÉÈÊË]/g,'E').replace(/[ÎÏ]/g,'I').replace(/[ÔÖ]/g,'O').replace(/[ÛÜÙ]/g,'U').replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim()}
-function money(n){return '$'+Math.round(n).toLocaleString('fr-FR')}
+function money(n){return Math.round(n).toLocaleString('fr-FR')+' €'}
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 // note /10 sur CVR + spend
 function scoreOf(r){if(!r.measured)return null;var c=cvrOf(r)||0,s=spendOf(r)||0;var n=Math.round(c/66*6+s/20*4);return Math.max(1,Math.min(10,n))}
@@ -1103,7 +1103,7 @@ function openPartner(name){
     '<div class="mstats">'+
       '<div class="ms"><div class="k">SFS</div><div class="v">'+(ag?ag.n:0)+'</div></div>'+
       '<div class="ms"><div class="k">CVR moy</div><div class="v">'+(ag&&ag.c?ag.cvr.toFixed(0)+'%':'—')+'</div></div>'+
-      '<div class="ms"><div class="k">Revenu</div><div class="v" style="color:var(--cash)">'+(ag?money(ag.e):'$0')+'</div></div>'+
+      '<div class="ms"><div class="k">Revenu</div><div class="v" style="color:var(--cash)">'+(ag?money(ag.e):'0 €')+'</div></div>'+
       '<div class="ms"><div class="k">Note moy</div><div class="v">'+(ag&&ag.avgNote?ag.avgNote.toFixed(1):'—')+'</div></div>'+
     '</div>'+
     '<button class="btn primary" id="pf_save">💾 Enregistrer la fiche</button>'+
