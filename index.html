@@ -1670,7 +1670,7 @@ function openClipLink(slug){
 /* export */
 window.exportCsv=function(){if(!data.length){toast('Rien à exporter.');return}var h=['Date','Modele','Partenaire','Contact','Statut','Lien','Clicks','Subs','Earnings','Fans','CVR','Note'];var L=[h.join(',')];data.forEach(r=>{var cvr=cvrOf(r),sc=scoreOf(r);L.push([r.date,r.model,'"'+(r.partner||'').replace(/"/g,'""')+'"','"'+(r.contact||'').replace(/"/g,'""')+'"',STL[r.status]||'','"'+(r.link_name||'').replace(/"/g,'""')+'"',r.clicks,r.subs,r.earnings,r.fans,cvr==null?'':cvr.toFixed(1),sc||''].join(','))});var s=L.join('\n');if(window.claude&&window.claude.downloads){window.claude.downloads.save({filename:'sfs.csv',data:s}).catch(()=>{})}else{var bl=new Blob([s],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='sfs.csv';a.click()}};
 
-sb.auth.getSession().then(s=>{if(s.data.session)showApp()});
+sb.auth.getSession().then(async s=>{if(s.data.session){try{await sb.auth.setSession({access_token:s.data.session.access_token,refresh_token:s.data.session.refresh_token})}catch(e){}showApp()}});
 </script>
 <script>
 /* logo 3D interactif — parallaxe souris + grossissement + scroll (style Apple/Porsche) */
