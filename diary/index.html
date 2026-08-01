@@ -238,9 +238,10 @@ async function route() {
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', route);
 
-sb.auth.onAuthStateChange((_evt, session) => {
+sb.auth.onAuthStateChange((evt, session) => {
   state.session = session;
-  if (session && (location.hash === '#/login' || !location.hash)) location.hash = '#/diary';
+  // Only redirect on explicit sign-in from the login page (not on INITIAL_SESSION/TOKEN_REFRESHED).
+  if (evt === 'SIGNED_IN' && location.hash === '#/login') location.hash = '#/diary';
 });
 
 // ----- Chrome (header) -----
