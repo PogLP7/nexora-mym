@@ -1383,6 +1383,7 @@ function renderLinkManager(){
   var models={};
   orbitLinks.forEach(function(l){var m=l.model||'—';var M=models[m]||(models[m]={poles:{},order:[],archived:[]});if(l.archived){M.archived.push(l);return}var key=l.pole?('Pôle '+l.pole):'Non assigné';if(!M.poles[key]){M.poles[key]=[];M.order.push(key)}M.poles[key].push(l)});
   var mk=Object.keys(models).sort();
+  mk.forEach(function(m){models[m].order.sort(function(a,b){var na=a==='Non assigné'?'~':a,nb=b==='Non assigné'?'~':b;return na<nb?-1:na>nb?1:0})});
   function rowListe(l){var clk=byLink[l.slug]||0;var u=orbitUrl(l.slug,l.clipper);var ls=seriesN(orbitClicks.filter(function(c){return c.slug===l.slug}),14);var inact=isInact(l);var nm=l.clipper||l.display_name||l.model;
     return '<div class="lmrow">'+clipAvatar(nm)+'<div class="lmrmain"><div class="lmrname">'+esc(nm)+' <span class="igb">IG</span>'+(inact?' <span class="lmflag">'+inactDays(l)+'j</span>':'')+'</div><div class="lmrsub">'+esc(l.slug)+'</div></div><div class="lmrspark">'+spark(ls,92,26,'#2fe0c0')+'</div><div class="lmtoday"><div class="n'+(clk?'':' z')+'">'+clk+'</div><div class="l">clics</div></div><div class="lmrdots" data-id="'+l.id+'" data-slug="'+esc(l.slug)+'" data-url="'+esc(u)+'" data-arch="'+(l.archived?1:0)+'">⋯</div></div>'}
   if(lmView==='liste'){
