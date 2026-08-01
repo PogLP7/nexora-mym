@@ -754,7 +754,7 @@ const PAY_PER_SFS=2,PRIME_MIN_SFS=45;
 const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.round(WEEK_GOAL/7));
 const RING_PALS=[['#25E8C3','#6172FF','#B197FC'],['#FF375F','#A6FF3A','#38E8E0'],['#FF784A','#FFC24B','#FF4D9D'],['#3FC8DE','#5B8CFF','#39D9A0']];
 const MO_FR=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-let data=[],parts={},showAll=false,isAdmin=true,chart=null,chMode='subs',contenu=[];
+let data=[],parts={},showAll=false,isAdmin=true,isTitouan=false,chart=null,chMode='subs',contenu=[];
 const $=id=>document.getElementById(id);
 (function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)})();
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -777,6 +777,7 @@ $('logout').onclick=async()=>{await sb.auth.signOut();location.reload()};
 async function showApp(){
   var s=await sb.auth.getSession();var u=s.data.session&&s.data.session.user;
   isAdmin=u?MOISE_EMAILS.indexOf((u.email||'').toLowerCase())<0:true;
+  isTitouan=u&&(u.email||'').toLowerCase()==='pogona@gmx.fr';
   document.querySelectorAll('.adminonly').forEach(el=>{el.style.display=isAdmin?'':'none'});
   if(!isAdmin){var bt=document.querySelector('.tab[data-tab="board"]');bt.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$('p-board').classList.add('active');}
   $('login').style.display='none';$('app').style.display='block';
@@ -786,7 +787,8 @@ async function showApp(){
 /* data */
 async function loadData(){var r=await window.sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
 async function loadParts(){var r=await window.sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
-async function syncInfloww(){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b){b.disabled=true;b.textContent='Sync…'}toast('Synchronisation Infloww…');try{var r=await sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){celebrate((d.updated||0)+' SFS synchronisés ✓',(d.updated||0)>0);loadData()}else{toast('Erreur sync : '+(d.error||'?'))}}catch(e){toast('Erreur sync : '+(e.message||e))}if(b){b.disabled=false;b.innerHTML=o}}
+async function syncInfloww(silent){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b&&!silent){b.disabled=true;b.textContent='Sync…'}if(!silent)toast('Synchronisation Infloww…');try{var r=await window.sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){var n=d.updated||0;if(silent){if(n>0){toast('🔄 '+n+' SFS mis à jour auto');loadParts();loadData()}}else{celebrate(n+' SFS synchronisés ✓',n>0);loadParts();loadData()}}else if(!silent){toast('Erreur sync : '+(d.error||'?'))}}catch(e){if(!silent)toast('Erreur sync : '+(e.message||e))}if(b&&!silent){b.disabled=false;b.innerHTML=o}}
+window.__autoSync=window.__autoSync||setInterval(function(){if(document.getElementById('app')&&getComputedStyle(document.getElementById('app')).display!=='none')syncInfloww(true)},60000);
 function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe()}
 
 /* xlsx */
@@ -832,7 +834,20 @@ async function onImport(e){var f=e.target.files[0];if(!f)return;var rd=new FileR
 
 var STL={prog:'Programmé',sent:'Envoyé',done:'Mesuré'},STC={prog:'b-prog',sent:'b-sent',done:'b-done'};
 var RC={attente:{lbl:'Retour ?',cls:'r-wait'},rendu:{lbl:'Rendu ✓',cls:'r-ok'},jamais:{lbl:'Jamais rendu',cls:'r-no'}};
-async function setRecipro(id,cur){var next={attente:'rendu',rendu:'jamais',jamais:'attente'}[cur]||'rendu';var r=await sb.from('sfs').update({recipro:next}).eq('id',id);if(r.error){toast('Erreur : '+r.error.message+(r.error.message.indexOf('recipro')>=0?' — colonne à créer (SQL)':''));return}if(next==='jamais'){var row=data.find(x=>String(x.id)===String(id));if(row){var k=norm(row.partner);parts[k]={partner_key:k,partner:row.partner,reliability:'black'};await sb.from('partner_contacts').upsert({partner_key:k,partner:row.partner,reliability:'black'});toast(row.partner+' → Blacklist (jamais rendu)')}}else if(next==='rendu'){try{ding([660,880])}catch(e){}}loadData()}
+async function setRecipro(id,cur){var next={attente:'rendu',rendu:'jamais',jamais:'attente'}[cur]||'rendu';
+  if(next==='jamais'){
+    if(isTitouan){toast('🔒 Blacklist réservé à Moïse (évite les accidents). Passe la main ou demande à Moïse de le faire.');return}
+    var rowP=data.find(x=>String(x.id)===String(id));
+    if(!confirm('⚠️ Blacklister '+(rowP?rowP.partner:'ce partenaire')+' ?\n\nUne fois blacklisté, il sera exclu des SFS suivants. Confirme uniquement si le partenaire n\'a JAMAIS rendu (relance déjà faite).'))return;
+  }
+  if(next==='attente'&&cur==='jamais'){
+    var rowU=data.find(x=>String(x.id)===String(id));
+    if(rowU){var kU=norm(rowU.partner);if(parts[kU]&&parts[kU].reliability==='black'){await window.sb.from('partner_contacts').update({reliability:null}).eq('partner_key',kU);parts[kU].reliability=null;toast('🟢 '+rowU.partner+' retiré du blacklist')}}
+  }
+  var r=await window.sb.from('sfs').update({recipro:next}).eq('id',id);if(r.error){toast('Erreur : '+r.error.message+(r.error.message.indexOf('recipro')>=0?' — colonne à créer (SQL)':''));return}
+  if(next==='jamais'){var row=data.find(x=>String(x.id)===String(id));if(row){var k=norm(row.partner);parts[k]={partner_key:k,partner:row.partner,reliability:'black'};await window.sb.from('partner_contacts').upsert({partner_key:k,partner:row.partner,reliability:'black'});toast(row.partner+' → Blacklist (jamais rendu)')}}
+  else if(next==='rendu'){try{ding([660,880])}catch(e){}}
+  loadData();loadParts()}
 /* aggregate partners */
 function partnerAgg(){var a={};data.filter(r=>r.measured).forEach(r=>{var k=norm(r.partner);if(!k)return;a[k]=a[k]||{key:k,name:r.partner,c:0,s:0,e:0,f:0,n:0,notes:[]};var x=a[k];x.c+=r.clicks;x.s+=r.subs;x.e+=Number(r.earnings)||0;x.f+=r.fans;x.n++;var sc=scoreOf(r);if(sc)x.notes.push(sc)});Object.values(a).forEach(x=>{x.cvr=x.c>0?x.s/x.c*100:0;x.spend=x.s>0?x.f/x.s*100:0;x.avgNote=x.notes.length?x.notes.reduce((p,q)=>p+q,0)/x.notes.length:null});return a}
 
