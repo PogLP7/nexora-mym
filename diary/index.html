@@ -226,6 +226,36 @@
   .btn.danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 14px rgba(239,68,68,.3); }
   .btn.xl { padding: 14px 28px; font-size: 15px; border-radius: 14px; }
 
+  /* CLIPPER AVATAR (gradient + initiale) inside ring-wrap */
+  .clipper-avatar {
+    position: absolute; inset: 8px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 15px;
+    letter-spacing: -.3px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.15);
+    text-shadow: 0 1px 2px rgba(0,0,0,.25);
+  }
+  .clipper-head .ring-wrap { position: relative; flex-shrink: 0; }
+  .clipper-head .ring-wrap svg { position: absolute; inset: 0; }
+
+  /* Cascade d'entrée */
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .stagger > * { animation: slide-in .35s cubic-bezier(.34,1.56,.64,1) both; }
+  .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger > *:nth-child(7) { animation-delay: 240ms; }
+  .stagger > *:nth-child(8) { animation-delay: 280ms; }
+  .stagger > *:nth-child(9) { animation-delay: 320ms; }
+  .stagger > *:nth-child(n+10) { animation-delay: 360ms; }
+
   /* CLIPPER CARDS */
   .clipper-card { border: 1px solid var(--border); border-radius: 14px;
     background: var(--grad-panel); margin-bottom: 10px; overflow: hidden;
@@ -466,6 +496,65 @@ function progressRing(done, total, opts = {}) {
       <circle class="fill" cx="${size/2}" cy="${size/2}" r="${r}"
               stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
     </svg>`;
+}
+
+// Ring segmentée : chaque item = un arc visible même quand vide.
+function segRing(items, opts = {}) {
+  const size = opts.size || 52;
+  const stroke = opts.stroke || 4;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const n = items.length;
+  const gap = 3.5;                             // px entre segments
+  const seg = (c - gap * n) / n;               // longueur d'un arc
+  const half = size / 2;
+  const parts = items.map((done, i) => {
+    const offset = -i * (seg + gap);
+    return `<circle cx="${half}" cy="${half}" r="${r}" fill="none"
+              stroke="${done ? 'url(#gradRingSuccess)' : 'var(--border)'}"
+              stroke-width="${stroke}" stroke-linecap="round"
+              stroke-dasharray="${seg} ${c - seg}"
+              stroke-dashoffset="${offset}"
+              transform="rotate(-90 ${half} ${half})"
+              style="transition: stroke .3s;"/>`;
+  }).join('');
+  return `<svg class="ring seg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">${parts}</svg>`;
+}
+
+// Couleur déterministe pour un clipper (palette girly-blue).
+const AVATAR_PALETTE = [
+  ['#7dd3fc', '#38bdf8'], // sky
+  ['#a78bfa', '#8b5cf6'], // violet
+  ['#f472b6', '#ec4899'], // pink
+  ['#60a5fa', '#3b82f6'], // blue
+  ['#c084fc', '#a855f7'], // purple
+  ['#f9a8d4', '#f472b6'], // rose
+  ['#818cf8', '#6366f1'], // indigo
+  ['#67e8f9', '#22d3ee'], // cyan
+  ['#e879f9', '#d946ef'], // fuchsia
+];
+function avatarColors(nom) {
+  let h = 0;
+  const s = nom || '';
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return AVATAR_PALETTE[Math.abs(h) % AVATAR_PALETTE.length];
+}
+function avatarHtml(nom) {
+  const [c1, c2] = avatarColors(nom);
+  const init = (nom || '?').trim().charAt(0).toUpperCase();
+  return `<div class="clipper-avatar" style="background: linear-gradient(135deg, ${c1}, ${c2});">${init}</div>`;
+}
+
+// Message d'accueil selon l'heure du jour.
+function greeting(nom) {
+  const h = new Date().getHours();
+  const first = (nom || '').split(' ')[0];
+  if (h < 6)  return `Nuit calme, ${first}. La journée d'hier est en clôture auto à 6h.`;
+  if (h < 11) return `Bonjour ${first} ☀️ · cible du jour : 100%`;
+  if (h < 14) return `Bon midi ${first} 🥗 · point de mi-parcours`;
+  if (h < 18) return `Bel après-midi ${first} 🚀 · on pousse`;
+  if (h < 22) return `Bonsoir ${first} 🌙 · dernière ligne droite`;
+  return `Fin de journée ${first} · clôture bientôt`;
 }
 
 // ----- Confetti (petit moteur canvas, aucune dépendance) -----
@@ -831,9 +920,10 @@ async function renderDiary(main, date = null) {
       </div>
       <div class="title-block">
         <h1>${fmtDate(state.entry.date)}${isPast ? ' <span class="dim" style="font-size:14px;">(consultation)</span>' : ''}</h1>
-        <div class="sub">${state.me.nom} · ${state.poles.length} pôle${state.poles.length>1?'s':''} · ${totalClippers} clipper${totalClippers>1?'s':''}</div>
+        <div class="sub">${isPast ? `${state.me.nom} · ${state.poles.length} pôle${state.poles.length>1?'s':''} · ${totalClippers} clipper${totalClippers>1?'s':''}` : greeting(state.me.nom)}</div>
         <div class="row wrap" style="margin-top:10px; gap:8px;">
           ${streak > 0 && !isPast ? `<span class="streak ${streak>=3?'hot':''}">🔥 ${streak} jour${streak>1?'s':''} d'affilée</span>` : ''}
+          <span class="streak" style="background:linear-gradient(135deg, rgba(125,211,252,.18), rgba(167,139,250,.12)); border-color:rgba(125,211,252,.35); color:#bae6fd;" id="clippersDoneChip">✨ 0 / ${totalClippers} complets</span>
           ${openAlerts > 0 && !isPast ? `<span class="streak" style="background:linear-gradient(135deg, rgba(239,68,68,.2), rgba(239,68,68,.08)); border-color:rgba(239,68,68,.4); color:#fecaca;">⚠ ${openAlerts} alerte${openAlerts>1?'s':''} rouge${openAlerts>1?'s':''}</span>` : ''}
           <span id="savePill" class="save-pill"></span>
         </div>
@@ -953,10 +1043,13 @@ function updateHeroStats() {
                     'clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
   const poleDone = poleKeys.filter(k => pc[k]).length;
   const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
-  let cDone = 0, cTotal = 0;
+  let cDone = 0, cTotal = 0, clippersFull = 0, clippersTotal = 0;
   Object.values(state.clipperChecks || {}).forEach(cc => {
     cTotal += clipperKeys.length;
-    cDone  += clipperKeys.filter(k => cc[k]).length;
+    const localDone = clipperKeys.filter(k => cc[k]).length;
+    cDone += localDone;
+    clippersTotal++;
+    if (localDone === clipperKeys.length && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte) clippersFull++;
   });
   const total = poleKeys.length + cTotal;
   const done  = poleDone + cDone;
@@ -966,6 +1059,8 @@ function updateHeroStats() {
     heroRing.innerHTML = `${progressRing(done, total, { size: 88 })}
       <div class="center"><span id="heroPct">${pct}%</span><small>Aujourd'hui</small></div>`;
   }
+  const chip = $('#clippersDoneChip');
+  if (chip) chip.textContent = `✨ ${clippersFull} / ${clippersTotal} complets`;
 }
 
 async function renderPoleContent(locked) {
@@ -1008,7 +1103,7 @@ async function renderPoleContent(locked) {
     <h2>Clippers du pôle (${clippers.length})</h2>
     ${clippers.length === 0
       ? `<div class="card empty">Aucun clipper actif dans ce pôle.</div>`
-      : clippers.map(c => renderClipperCardHtml(c, state.clipperChecks[c.id], locked)).join('')}
+      : `<div class="stagger">${clippers.map(c => renderClipperCardHtml(c, state.clipperChecks[c.id], locked)).join('')}</div>`}
   `;
 
   // Bindings pole check
@@ -1035,7 +1130,38 @@ async function renderPoleContent(locked) {
       debounce(`note-${clipperId}`, 500, () => saveClipperField(clipperId, 'note_libre', e.target.value));
     });
     $('[data-add-reel]', card)?.addEventListener('click', (e) => { e.stopPropagation(); addReel(clipperId); });
+    $('[data-check-all]', card)?.addEventListener('click', (e) => { e.stopPropagation(); toggleAllClipperChecks(clipperId); });
   });
+}
+
+// Toggle all 6 checks pour un clipper d'un coup.
+async function toggleAllClipperChecks(clipperId) {
+  const cc = state.clipperChecks[clipperId];
+  const keys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  const allDone = keys.every(k => cc[k]);
+  const val = !allDone;
+  setSaveState('saving');
+  const patch = {};
+  keys.forEach(k => patch[k] = val);
+  const { error } = await sb.from('diary_clipper_checks').update(patch).eq('id', cc.id);
+  if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
+  keys.forEach(k => cc[k] = val);
+  // Refléter visuellement chaque check
+  const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
+  $$('[data-clip-check]', card).forEach(inp => {
+    inp.checked = val;
+    inp.closest('.check').classList.toggle('checked', val);
+  });
+  updateClipperProgress(clipperId);
+  updateHeroStats();
+  setSaveState('saved');
+  // Célébration si on vient de tout activer
+  if (val && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte) {
+    card.classList.add('celebrate');
+    setTimeout(() => card.classList.remove('celebrate'), 900);
+    const rect = card.getBoundingClientRect();
+    confetti({ count: 60, originX: rect.left + rect.width/2, originY: rect.top + 30, spread: Math.PI });
+  }
 }
 
 function renderClipperCardHtml(clipper, cc, locked) {
@@ -1059,10 +1185,14 @@ function renderClipperCardHtml(clipper, cc, locked) {
 
   const reels = state.reelsByCheck[cc.id] || [];
 
+  const flags = items.map(([k]) => !!cc[k]);
   return `
     <div class="clipper-card ${isDone ? 'done' : ''} ${isDanger ? 'danger' : ''}" data-clipper="${clipper.id}">
       <div class="clipper-head">
-        <div class="ring-wrap" style="width:44px; height:44px;">${progressRing(done, total, { size: 44, stroke: 6 })}</div>
+        <div class="ring-wrap" style="width:52px; height:52px;">
+          ${avatarHtml(clipper.nom)}
+          ${segRing(flags, { size: 52, stroke: 4 })}
+        </div>
         <div style="flex:1;">
           <div class="name">${clipper.nom}</div>
           <div class="dim">${done}/${total} contrôles</div>
@@ -1071,6 +1201,12 @@ function renderClipperCardHtml(clipper, cc, locked) {
         <div class="chev">▶</div>
       </div>
       <div class="clipper-body">
+        ${locked ? '' : `
+          <div class="row" style="margin-bottom:10px; justify-content:flex-end;">
+            <button class="btn ghost" data-check-all style="padding:6px 12px; font-size:13px;">
+              ${done === total ? '↺ Tout décocher' : '✓ Tout cocher'}
+            </button>
+          </div>`}
         <div class="checklist">
           ${items.map(([k, label]) => `
             <label class="check ${cc[k] ? 'checked' : ''}">
@@ -1248,10 +1384,15 @@ function updateClipperProgress(clipperId) {
   const done = items.filter(k => cc[k]).length;
   const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
   if (!card) return;
+  const clipper = (state.clippersByPole[state.currentPoleId] || []).find(c => c.id === clipperId);
   const ringWrap = $('.ring-wrap', card);
-  if (ringWrap) ringWrap.innerHTML = progressRing(done, items.length, { size: 44, stroke: 6 });
+  if (ringWrap && clipper) {
+    ringWrap.innerHTML = avatarHtml(clipper.nom) + segRing(items.map(k => !!cc[k]), { size: 52, stroke: 4 });
+  }
   const dim = $('.dim', card);
   if (dim) dim.textContent = `${done}/${items.length} contrôles`;
+  const btn = $('[data-check-all]', card);
+  if (btn) btn.textContent = done === items.length ? '↺ Tout décocher' : '✓ Tout cocher';
   card.classList.toggle('done', done === items.length && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte);
 }
 
