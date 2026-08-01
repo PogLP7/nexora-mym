@@ -147,7 +147,10 @@ drop trigger if exists trg_diary_clipper_touch on diary_clipper_checks;
 create trigger trg_diary_clipper_touch before update on diary_clipper_checks
   for each row execute function diary_touch_updated_at();
 
--- Génère/résout les alertes automatiquement en fonction des toggles rouges
+-- Génère/résout les alertes automatiquement en fonction des toggles rouges.
+-- SECURITY DEFINER : le trigger insère dans diary_alerts en bypassant la RLS
+-- (sinon un responsable ne peut pas déclencher une alerte car aucune policy
+-- INSERT n'est ouverte, seulement SELECT).
 create or replace function diary_sync_alerts() returns trigger as $$
 declare
   resp_id uuid;
@@ -186,7 +189,7 @@ begin
 
   return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql security definer;
 
 drop trigger if exists trg_diary_alerts_sync on diary_clipper_checks;
 create trigger trg_diary_alerts_sync after insert or update on diary_clipper_checks
