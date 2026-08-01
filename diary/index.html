@@ -3,9 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://bvcnbtbdfkoiefuedxem.supabase.co wss://bvcnbtbdfkoiefuedxem.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; worker-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; connect-src 'self' https://bvcnbtbdfkoiefuedxem.supabase.co wss://bvcnbtbdfkoiefuedxem.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a0d14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Diary">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0d14'/><text x='16' y='23' text-anchor='middle' font-family='ui-sans-serif,system-ui,-apple-system' font-size='20' font-weight='700' fill='%237dd3fc'>D</text></svg>">
 <title>Diary · Nexora</title>
 <style>
   :root {
@@ -546,10 +552,17 @@ const routes = {
   '#/history': renderHistory,
   '#/ops':     renderOps,
 };
+// Route dynamique : `#/diary/YYYY-MM-DD` → renderDiary avec date passée en context
+function resolveRoute(hash) {
+  if (!hash) return { view: renderDiary, arg: null };
+  const m = hash.match(/^#\/diary\/(\d{4}-\d{2}-\d{2})$/);
+  if (m) return { view: renderDiary, arg: m[1] };
+  return { view: routes[hash] || renderDiary, arg: null };
+}
 
 async function route() {
   const hash = location.hash || '#/diary';
-  const view = routes[hash] || routes['#/diary'];
+  const { view, arg } = resolveRoute(hash);
 
   // Auth gate
   if (hash !== '#/login') {
@@ -562,7 +575,7 @@ async function route() {
   updateChrome();
   const main = $('#app');
   main.innerHTML = '';
-  try { await view(main); }
+  try { await view(main, arg); }
   catch (err) { console.error(err); main.innerHTML = `<div class="banner error">Erreur : ${err.message || err}</div>`; }
 }
 
@@ -629,11 +642,11 @@ async function loadPolesAndClippers() {
   if (!state.currentPoleId && poles[0]) state.currentPoleId = poles[0].id;
 }
 
-async function loadOrCreateEntry(date = todayIso()) {
+async function loadOrCreateEntry(date = todayIso(), createIfMissing = true) {
   let { data: entry, error } = await sb.from('diary_daily_entries')
     .select('*').eq('responsable_id', state.me.id).eq('date', date).maybeSingle();
   if (error) throw error;
-  if (!entry) {
+  if (!entry && createIfMissing) {
     const { data: created, error: ce } = await sb.from('diary_daily_entries')
       .insert({ responsable_id: state.me.id, date }).select().single();
     if (ce) throw ce;
@@ -706,18 +719,35 @@ async function renderLogin(main) {
   });
 }
 
-async function renderDiary(main) {
+async function renderDiary(main, date = null) {
   await loadPolesAndClippers();
-  await loadOrCreateEntry();
+  const targetDate = date || todayIso();
+  const isPast = date && date < todayIso();
+  await loadOrCreateEntry(targetDate, !isPast);
 
   if (!state.poles.length) {
     main.innerHTML = `<div class="card empty">Aucun pôle n'est rattaché à ton compte. Contacte l'admin.</div>`;
+    return;
+  }
+  if (isPast && !state.entry) {
+    main.innerHTML = `
+      <div class="card empty">
+        Pas de fiche pour le ${fmtDate(targetDate)}.
+        <div style="margin-top:12px;"><a href="#/history">← Retour à l'historique</a></div>
+      </div>`;
     return;
   }
 
   const locked = state.entry.status === 'submitted';
   const streak = await computeStreak();
   const totalClippers = state.poles.reduce((n, p) => n + (state.clippersByPole[p.id]?.length || 0), 0);
+  // Compte des alertes rouges ouvertes pour ce responsable (aujourd'hui + tous jours).
+  const { count: openAlerts } = await sb.from('diary_alerts')
+    .select('id', { count: 'exact', head: true })
+    .eq('responsable_id', state.me.id).is('resolved_at', null);
+  // Fiche d'hier existe-t-elle et est-elle clôturée ? (pour bouton "Reprendre d'hier")
+  const yester = (() => { const d = new Date(); d.setDate(d.getDate()-1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
+  const canImportYesterday = !locked && !isPast && state.entry?.status === 'draft';
 
   main.innerHTML = `
     <div class="card hero day-hero">
@@ -726,25 +756,30 @@ async function renderDiary(main) {
         <div class="center"><span id="heroPct">0%</span><small>Aujourd'hui</small></div>
       </div>
       <div class="title-block">
-        <h1>${fmtDate(state.entry.date)}</h1>
+        <h1>${fmtDate(state.entry.date)}${isPast ? ' <span class="dim" style="font-size:14px;">(consultation)</span>' : ''}</h1>
         <div class="sub">${state.me.nom} · ${state.poles.length} pôle${state.poles.length>1?'s':''} · ${totalClippers} clipper${totalClippers>1?'s':''}</div>
         <div class="row wrap" style="margin-top:10px; gap:8px;">
-          ${streak > 0 ? `<span class="streak ${streak>=3?'hot':''}">🔥 ${streak} jour${streak>1?'s':''} d'affilée</span>` : ''}
+          ${streak > 0 && !isPast ? `<span class="streak ${streak>=3?'hot':''}">🔥 ${streak} jour${streak>1?'s':''} d'affilée</span>` : ''}
+          ${openAlerts > 0 && !isPast ? `<span class="streak" style="background:linear-gradient(135deg, rgba(239,68,68,.2), rgba(239,68,68,.08)); border-color:rgba(239,68,68,.4); color:#fecaca;">⚠ ${openAlerts} alerte${openAlerts>1?'s':''} rouge${openAlerts>1?'s':''}</span>` : ''}
           <span id="savePill" class="save-pill"></span>
         </div>
       </div>
-      <div style="align-self:flex-start;">
+      <div style="align-self:flex-start; display:flex; flex-direction:column; gap:6px;">
+        ${isPast ? `<a href="#/diary" class="btn ghost" style="padding:6px 12px;">← Aujourd'hui</a>` : ''}
         ${locked
           ? `<button class="btn ghost" id="reopenBtn">↺ Rouvrir</button>`
           : ``}
+        ${canImportYesterday ? `<button class="btn ghost" id="importYesterdayBtn" style="padding:6px 12px;">↩ Reprendre d'hier</button>` : ''}
       </div>
     </div>
 
     ${locked
       ? `<div class="banner locked">✓ Clôturée${state.entry.auto_submitted ? ' automatiquement à 06h' : ''} le ${new Date(state.entry.submitted_at).toLocaleString('fr-FR')}. Lecture seule.</div>`
-      : state.entry.reopened_count > 0
-        ? `<div class="banner draft">Brouillon (rouverte ${state.entry.reopened_count}×). Termine puis clôture en bas.</div>`
-        : ``}
+      : isPast
+        ? `<div class="banner draft">Fiche du passé — lecture seule. <a href="#/diary" style="color:inherit; text-decoration:underline;">Retour à aujourd'hui</a>.</div>`
+        : state.entry.reopened_count > 0
+          ? `<div class="banner draft">Brouillon (rouverte ${state.entry.reopened_count}×). Termine puis clôture en bas.</div>`
+          : ``}
 
     <div class="tabs" id="poleTabs">
       ${state.poles.map(p => `<button class="tab ${p.id === state.currentPoleId ? 'active' : ''}" data-pole="${p.id}">${p.nom}</button>`).join('')}
@@ -752,7 +787,7 @@ async function renderDiary(main) {
 
     <div id="poleContent"></div>
 
-    ${locked ? '' : `
+    ${locked || isPast ? '' : `
       <div class="card" style="text-align:center; background: transparent; border-style: dashed;">
         <button class="btn xl success" id="submitBtn">✓ Clôturer la journée</button>
         <div class="sub" style="margin-top:8px;">Sauvegardée automatiquement. Clôture pour figer et notifier le RO.</div>
@@ -761,17 +796,66 @@ async function renderDiary(main) {
 
   $$('#poleTabs .tab').forEach(b => b.addEventListener('click', () => {
     state.currentPoleId = b.dataset.pole;
-    renderDiary(main);
+    renderDiary(main, date);
   }));
 
-  if (!locked) {
+  if (!locked && !isPast) {
     $('#submitBtn').addEventListener('click', submitEntry);
-  } else {
-    $('#reopenBtn')?.addEventListener('click', reopenEntry);
   }
+  if (locked) $('#reopenBtn')?.addEventListener('click', reopenEntry);
+  if (canImportYesterday) $('#importYesterdayBtn')?.addEventListener('click', () => importFromYesterday(main));
 
-  await renderPoleContent(locked);
+  await renderPoleContent(locked || isPast);
   updateHeroStats();
+}
+
+// Copie les checks du pôle + clippers d'hier dans la fiche du jour (brouillon).
+async function importFromYesterday(main) {
+  const d = new Date(); d.setDate(d.getDate() - 1);
+  const yester = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  if (!confirm(`Reprendre les cases cochées du ${fmtDate(yester)} pour toutes les fiches d'aujourd'hui ?\n\nÇa écrase ce que tu as déjà coché aujourd'hui.`)) return;
+  toast('Import en cours…', 'ok');
+  try {
+    // 1) Récupère la fiche d'hier + ses checks
+    const { data: yEntry } = await sb.from('diary_daily_entries')
+      .select('id').eq('responsable_id', state.me.id).eq('date', yester).maybeSingle();
+    if (!yEntry) { toast('Pas de fiche hier', 'err'); return; }
+    const [{ data: yPoleChecks }, { data: yClipperChecks }] = await Promise.all([
+      sb.from('diary_pole_checks').select('*').eq('daily_entry_id', yEntry.id),
+      sb.from('diary_clipper_checks').select('*').eq('daily_entry_id', yEntry.id),
+    ]);
+    const poleKeys = ['posting','cadence','habillage','aucun_compte_banni','contenu_telegram_ok','clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
+    const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+    // 2) Assure que les pole_checks + clipper_checks existent pour tous les pôles/clippers d'aujourd'hui
+    for (const p of state.poles) {
+      state.currentPoleId = p.id;
+      await loadOrCreatePoleCheck(p.id);
+      await loadOrCreateClipperChecks(p.id);
+    }
+    // 3) Applique le mapping pole → pole (par pole_id)
+    const yPoleByPoleId = Object.fromEntries((yPoleChecks||[]).map(pc => [pc.pole_id, pc]));
+    for (const p of state.poles) {
+      const src = yPoleByPoleId[p.id];
+      if (!src) continue;
+      const patch = {};
+      poleKeys.forEach(k => patch[k] = src[k]);
+      await sb.from('diary_pole_checks').update(patch)
+        .eq('daily_entry_id', state.entry.id).eq('pole_id', p.id);
+    }
+    // 4) Applique le mapping clipper → clipper (par clipper_id)
+    const yClipByClipId = Object.fromEntries((yClipperChecks||[]).map(cc => [cc.clipper_id, cc]));
+    for (const [clipId, cc] of Object.entries(state.clipperChecks || {})) {
+      const src = yClipByClipId[clipId];
+      if (!src) continue;
+      const patch = {};
+      clipperKeys.forEach(k => patch[k] = src[k]);
+      await sb.from('diary_clipper_checks').update(patch).eq('id', cc.id);
+    }
+    toast('Repris d\'hier ✓', 'ok');
+    await renderDiary(main);
+  } catch (e) {
+    toast(`Erreur : ${e.message || e}`, 'err');
+  }
 }
 
 // Recalcule la ring globale + %  affichée dans le hero.
@@ -1126,7 +1210,7 @@ async function renderHistory(main) {
 
   main.innerHTML = `
     <h1>Historique</h1>
-    <div class="sub" style="margin-bottom:12px;">Tes 60 dernières fiches.</div>
+    <div class="sub" style="margin-bottom:12px;">Tes 60 dernières fiches. Clique pour consulter.</div>
     <div class="card compact">
       ${!data.length
         ? `<div class="empty">Aucune fiche encore.</div>`
@@ -1134,7 +1218,7 @@ async function renderHistory(main) {
             <thead><tr><th>Date</th><th>Statut</th><th>Clôturée</th></tr></thead>
             <tbody>
               ${data.map(e => `
-                <tr>
+                <tr style="cursor:pointer;" onclick="location.hash='#/diary/${e.date}'">
                   <td>${fmtDate(e.date)}</td>
                   <td><span class="pill ${e.status}">${e.status === 'draft' ? 'Brouillon' : 'Clôturée'}</span></td>
                   <td>${e.submitted_at ? new Date(e.submitted_at).toLocaleString('fr-FR') : '—'}</td>
@@ -1294,6 +1378,18 @@ async function renderOps(main) {
   $('#rosterSyncReq', main).addEventListener('click', requestSyncFromBot);
   $('#expBtn', main).addEventListener('click', doExport);
 
+  // Live : re-render dès qu'une alerte est créée / résolue / une fiche mise à jour.
+  if (state.opsChannel) sb.removeChannel(state.opsChannel);
+  state.opsChannel = sb.channel('ops-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'diary_alerts' }, () => {
+      toast('Alerte mise à jour — refresh', 'ok');
+      renderOps(main);
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'diary_daily_entries' }, () => {
+      renderOps(main);
+    })
+    .subscribe();
+
   $$('[data-resolve]', main).forEach(btn => btn.addEventListener('click', async () => {
     const id = btn.dataset.resolve;
     const { error } = await sb.from('diary_alerts')
@@ -1439,6 +1535,13 @@ async function requestSyncFromBot() {
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '📣 Demander une sync au bot'; }
   }
+}
+
+// ----- PWA : install du service worker (offline shell + installable) -----
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW register failed', err));
+  });
 }
 </script>
 </body>
