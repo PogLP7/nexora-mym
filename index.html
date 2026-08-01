@@ -799,7 +799,7 @@ function initUI(){
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');setBrandPole(t.dataset.tab);if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}if(t.dataset.tab==='links'){loadOrbit().then(renderLinkManager)}if(t.dataset.tab==='social')renderSocial()});
   ['f_model','f_partner','f_date','f_time'].forEach(id=>$(id).oninput=upLn);
   $('f_partner').addEventListener('blur',()=>{var k=norm($('f_partner').value),c=parts[k];if(c&&c.contact&&!$('f_contact').value)$('f_contact').value=c.contact});
-  $('newBtn').onclick=()=>{$('addForm').classList.toggle('open');upLn()};
+  $('newBtn').onclick=()=>{var bt=document.querySelector('.tab[data-tab="board"]');if(bt&&!$('p-board').classList.contains('active'))bt.click();var af=$('addForm');if(af){af.classList.add('open');upLn();af.scrollIntoView({behavior:'smooth',block:'center'});var fp=$('f_partner');if(fp)setTimeout(function(){fp.focus()},60)}};
   $('addBtn').onclick=addSfs;
   var kfb=$('kitFormBtn');if(kfb)kfb.onclick=function(){var m=$('f_model').value;if(m)openModelView(m)};
   $('monthSel').onchange=()=>{showAll=false;render()};
