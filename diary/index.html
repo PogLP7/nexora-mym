@@ -67,11 +67,35 @@
   .check .hint { color: var(--muted); font-size: 12px; margin-top: 2px; }
   .toggles-red { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
   .tgl-red {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 10px; border-radius: 999px; font-size: 13px; cursor: pointer;
-    border: 1px solid var(--border); background: var(--panel-2); color: var(--muted);
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px 7px 9px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    border: 1.5px solid rgba(239,68,68,.45);
+    background: rgba(239,68,68,.07); color: #fca5a5;
+    font-weight: 500;
+    transition: border-color .15s, background .15s, color .15s, transform .1s;
   }
-  .tgl-red.on { border-color: var(--red); color: #fecaca; background: rgba(239,68,68,.12); }
+  .tgl-red::before {
+    content: ''; width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid #fca5a5;
+    background: transparent center/12px 12px no-repeat;
+    flex-shrink: 0; transition: all .15s;
+  }
+  .tgl-red:hover { border-color: rgba(239,68,68,.75); background: rgba(239,68,68,.14); color: #fecaca; }
+  .tgl-red:hover::before { border-color: #fecaca; }
+  .tgl-red:active { transform: scale(.97); }
+  .tgl-red:focus { outline: none; }
+  .tgl-red:focus-visible { box-shadow: 0 0 0 3px rgba(239,68,68,.32); }
+  .tgl-red.on {
+    border-color: var(--red);
+    background: rgba(239,68,68,.22);
+    color: #fff; font-weight: 600;
+  }
+  .tgl-red.on::before {
+    background-color: var(--red); border-color: var(--red);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='4 10 8 14 16 6'/></svg>");
+  }
+  .tgl-red:disabled { opacity: .5; cursor: not-allowed; }
+  .tgl-red:disabled:hover { border-color: rgba(239,68,68,.45); background: rgba(239,68,68,.07); color: #fca5a5; }
   textarea, input[type=text], input[type=email], input[type=url] {
     width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
     border-radius: 10px; padding: 10px 12px; font: inherit; resize: vertical;
