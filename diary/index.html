@@ -158,56 +158,44 @@
   .check .label { flex: 1; }
   .check .hint { color: var(--muted); font-size: 12px; margin-top: 2px; }
 
-  /* RED TOGGLES — Variante D : dot pulsant heartbeat + ripple radar (survit au scan visuel du responsable) */
-  .toggles-red { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+  /* RED TOGGLES (chip + checkbox visible) */
+  .toggles-red { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
   .tgl-red {
-    position: relative;
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 7px 14px 7px 12px; border-radius: 10px; font-size: 13px; cursor: pointer;
-    border: 1px solid var(--border); background: var(--panel-2); color: var(--muted);
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 9px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    border: 1.5px solid rgba(239,68,68,.45);
+    background: rgba(239,68,68,.07); color: #fca5a5;
     font-weight: 500;
-    transition: border-color .18s, background .18s, color .18s, transform .1s;
-    user-select: none;
+    transition: border-color .15s, background .15s, color .15s, transform .1s, box-shadow .2s;
   }
   .tgl-red::before {
-    content: ''; width: 9px; height: 9px; border-radius: 50%;
-    background: transparent; border: 1.5px solid #6b7280;
-    flex-shrink: 0; transition: all .18s;
+    content: ''; width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid #fca5a5;
+    background: transparent center/12px 12px no-repeat;
+    flex-shrink: 0; transition: all .15s;
   }
-  .tgl-red::after {
-    content: ''; position: absolute; left: 12px; top: 50%;
-    width: 9px; height: 9px; border-radius: 50%;
-    border: 2px solid var(--red);
-    transform: translateY(-50%) scale(1);
-    opacity: 0; pointer-events: none;
-  }
-  .tgl-red:hover { border-color: #37414f; color: var(--text); }
-  .tgl-red:active { transform: scale(.98); }
-  .tgl-red:focus { outline: none; }
-  .tgl-red:focus-visible { box-shadow: 0 0 0 3px rgba(239,68,68,.28); }
+  .tgl-red:hover { border-color: rgba(239,68,68,.75); background: rgba(239,68,68,.14); color: #fecaca; }
+  .tgl-red:hover::before { border-color: #fecaca; }
+  .tgl-red:active { transform: scale(.97); }
+  .tgl-red:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(239,68,68,.32); }
   .tgl-red.on {
     border-color: var(--red);
-    background: linear-gradient(180deg, rgba(239,68,68,.15), rgba(239,68,68,.08));
+    background: linear-gradient(135deg, rgba(239,68,68,.28), rgba(239,68,68,.14));
     color: #fff; font-weight: 600;
+    box-shadow: 0 0 0 3px rgba(239,68,68,.08);
+    animation: shake .4s ease;
   }
   .tgl-red.on::before {
-    background: var(--red); border-color: var(--red);
-    animation: tglRed-heartbeat 1.4s ease-in-out infinite;
-  }
-  .tgl-red.on::after { animation: tglRed-ripple 1.4s ease-out infinite; }
-  @keyframes tglRed-heartbeat {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239,68,68,.55); }
-    50% { transform: scale(1.25); box-shadow: 0 0 0 6px rgba(239,68,68,0); }
-  }
-  @keyframes tglRed-ripple {
-    0% { transform: translateY(-50%) scale(1); opacity: .8; }
-    100% { transform: translateY(-50%) scale(2.4); opacity: 0; }
+    background-color: var(--red); border-color: var(--red);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='4 10 8 14 16 6'/></svg>");
   }
   .tgl-red:disabled { opacity: .5; cursor: not-allowed; }
-  .tgl-red:disabled:hover { border-color: var(--border); color: var(--muted); }
-  @media (prefers-reduced-motion: reduce) {
-    .tgl-red.on::before, .tgl-red.on::after { animation: none; }
-    .tgl-red.on::before { box-shadow: 0 0 0 4px rgba(239,68,68,.3); }
+  .tgl-red:disabled:hover { border-color: rgba(239,68,68,.45); background: rgba(239,68,68,.07); color: #fca5a5; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    80% { transform: translateX(-1px); }
   }
 
   /* FORMS */
@@ -328,6 +316,22 @@
   .toast.err { border-color: rgba(239,68,68,.5); box-shadow: 0 4px 20px rgba(239,68,68,.15); }
   @keyframes toast-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); }
                         to   { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+  /* HEATMAP (historique) */
+  .hm-months { display: grid; gap: 3px; margin-left: 22px; margin-bottom: 4px; }
+  .hm-month { font-size: 10px; color: var(--muted); text-align: left; grid-row: 1;
+    text-transform: capitalize; }
+  .hm-grid { display: grid; gap: 3px; margin-left: 22px; position: relative; }
+  .hm-grid::before { content: "L\A M\A M\A J\A V\A S\A D";
+    white-space: pre; position: absolute; left: -18px; top: 0;
+    font-size: 9px; color: var(--muted); line-height: 17px; letter-spacing: 0; }
+  .hm-col { display: grid; grid-template-rows: repeat(7, 14px); gap: 3px; }
+  .hm-cell { width: 14px; height: 14px; border-radius: 3px; cursor: pointer;
+    transition: transform .12s, box-shadow .12s; }
+  .hm-cell:hover { transform: scale(1.35); z-index: 2; box-shadow: 0 0 0 1px var(--accent); }
+  .hm-cell.hm-future { background: transparent !important; border: 1px dashed var(--border);
+    box-sizing: border-box; cursor: default; }
+  .hm-cell.hm-future:hover { transform: none; box-shadow: none; }
 
   /* CONFETTI CANVAS */
   #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
@@ -1203,24 +1207,107 @@ async function reopenEntry() {
 // ----- Historique -----
 async function renderHistory(main) {
   const { data, error } = await sb.from('diary_daily_entries')
-    .select('id, date, status, submitted_at')
+    .select('id, date, status, submitted_at, auto_submitted')
     .eq('responsable_id', state.me.id)
-    .order('date', { ascending: false }).limit(60);
+    .order('date', { ascending: false }).limit(120);
   if (error) throw error;
+
+  // Compute conformité par entrée pour colorer les cellules
+  const ids = data.map(e => e.id);
+  const [{ data: poleChecks }, { data: clipperChecks }] = await Promise.all([
+    ids.length ? sb.from('diary_pole_checks').select('daily_entry_id, posting,cadence,habillage,aucun_compte_banni,contenu_telegram_ok,clics_suivis,reels_performants_remontes,clipper_aide,retour_envoye').in('daily_entry_id', ids) : Promise.resolve({data:[]}),
+    ids.length ? sb.from('diary_clipper_checks').select('daily_entry_id, habillage_complet,lien_ok,trois_reels_postes,story_postee,voyants_verts,contenu_telegram_dispo').in('daily_entry_id', ids) : Promise.resolve({data:[]}),
+  ]);
+  const poleKeys = ['posting','cadence','habillage','aucun_compte_banni','contenu_telegram_ok','clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
+  const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  const pctByEntry = {};
+  ids.forEach(id => pctByEntry[id] = { done: 0, total: 0 });
+  (poleChecks||[]).forEach(pc => { poleKeys.forEach(k => { pctByEntry[pc.daily_entry_id].total++; if (pc[k]) pctByEntry[pc.daily_entry_id].done++; }); });
+  (clipperChecks||[]).forEach(cc => { clipperKeys.forEach(k => { pctByEntry[cc.daily_entry_id].total++; if (cc[k]) pctByEntry[cc.daily_entry_id].done++; }); });
+  const entryByDate = {};
+  data.forEach(e => { entryByDate[e.date] = { ...e, pct: pctByEntry[e.id]?.total ? Math.round(pctByEntry[e.id].done*100/pctByEntry[e.id].total) : 0 }; });
+
+  // Heatmap 12 semaines (84 jours). Colonnes = semaines, lignes = jours (Lun→Dim).
+  const NB_SEM = 12;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dow = (today.getDay() + 6) % 7; // 0 = lundi
+  // Fin = dimanche de cette semaine, début = fin - 12*7 + 1
+  const end = new Date(today); end.setDate(end.getDate() + (6 - dow));
+  const start = new Date(end); start.setDate(start.getDate() - NB_SEM * 7 + 1);
+  const cells = [];
+  for (let w = 0; w < NB_SEM; w++) {
+    const col = [];
+    for (let d = 0; d < 7; d++) {
+      const dt = new Date(start); dt.setDate(dt.getDate() + w*7 + d);
+      const iso = `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+      const e = entryByDate[iso];
+      col.push({ iso, e, future: dt > today });
+    }
+    cells.push(col);
+  }
+  const cellHtml = (c) => {
+    const label = c.iso;
+    let cls = 'hm-cell', bg = 'var(--border)';
+    if (c.future) { cls += ' hm-future'; }
+    else if (c.e) {
+      const p = c.e.pct;
+      const alpha = 0.15 + (p/100)*0.85;
+      bg = c.e.status === 'submitted'
+        ? `rgba(34,197,94,${alpha.toFixed(2)})`
+        : `rgba(245,158,11,${alpha.toFixed(2)})`;
+    }
+    const title = c.e
+      ? `${label} · ${c.e.status === 'submitted' ? 'Clôturée' : 'Brouillon'} · ${c.e.pct}%`
+      : `${label} · pas de fiche`;
+    const click = c.e ? `onclick="location.hash='#/diary/${c.iso}'"` : '';
+    return `<div class="${cls}" ${click} title="${title}" style="background:${bg};"></div>`;
+  };
+  const monthLabels = cells.map((col, i) => {
+    const first = new Date(col[0].iso);
+    if (first.getDate() <= 7) {
+      const m = first.toLocaleDateString('fr-FR', { month: 'short' });
+      return `<div class="hm-month" style="grid-column:${i+1};">${m}</div>`;
+    }
+    return '';
+  }).join('');
 
   main.innerHTML = `
     <h1>Historique</h1>
-    <div class="sub" style="margin-bottom:12px;">Tes 60 dernières fiches. Clique pour consulter.</div>
+    <div class="sub" style="margin-bottom:12px;">12 dernières semaines — clique un jour pour ouvrir la fiche.</div>
+
+    <div class="card">
+      <div class="hm-months" style="grid-template-columns: repeat(${NB_SEM}, 14px);">${monthLabels}</div>
+      <div class="hm-grid" style="grid-template-columns: repeat(${NB_SEM}, 14px);">
+        ${cells.map(col => `<div class="hm-col">${col.map(cellHtml).join('')}</div>`).join('')}
+      </div>
+      <div class="row" style="margin-top:14px; gap:12px; align-items:center; font-size:12px; color:var(--muted);">
+        <span>Moins</span>
+        <div style="display:flex; gap:3px;">
+          <div class="hm-cell" style="background:var(--border);"></div>
+          <div class="hm-cell" style="background:rgba(34,197,94,.20);"></div>
+          <div class="hm-cell" style="background:rgba(34,197,94,.45);"></div>
+          <div class="hm-cell" style="background:rgba(34,197,94,.70);"></div>
+          <div class="hm-cell" style="background:rgba(34,197,94,1);"></div>
+        </div>
+        <span>Plus</span>
+        <div style="width:12px;"></div>
+        <div class="hm-cell" style="background:rgba(245,158,11,.5);"></div><span>Brouillon</span>
+        <div class="hm-cell" style="background:rgba(34,197,94,.7);"></div><span>Clôturée</span>
+      </div>
+    </div>
+
+    <h2>Détail des fiches</h2>
     <div class="card compact">
       ${!data.length
         ? `<div class="empty">Aucune fiche encore.</div>`
         : `<table class="table">
-            <thead><tr><th>Date</th><th>Statut</th><th>Clôturée</th></tr></thead>
+            <thead><tr><th>Date</th><th>Statut</th><th>Conformité</th><th>Clôturée</th></tr></thead>
             <tbody>
               ${data.map(e => `
                 <tr style="cursor:pointer;" onclick="location.hash='#/diary/${e.date}'">
                   <td>${fmtDate(e.date)}</td>
-                  <td><span class="pill ${e.status}">${e.status === 'draft' ? 'Brouillon' : 'Clôturée'}</span></td>
+                  <td><span class="pill ${e.status}">${e.status === 'draft' ? 'Brouillon' : (e.auto_submitted ? 'Clôturée (auto)' : 'Clôturée')}</span></td>
+                  <td>${entryByDate[e.date]?.pct ?? 0}%</td>
                   <td>${e.submitted_at ? new Date(e.submitted_at).toLocaleString('fr-FR') : '—'}</td>
                 </tr>`).join('')}
             </tbody>
@@ -1303,6 +1390,11 @@ async function renderOps(main) {
            </table>`}
     </div>
 
+    <h2>Analytics · 30 derniers jours</h2>
+    <div class="card" id="analyticsCard">
+      <div class="empty">Chargement…</div>
+    </div>
+
     <h2>Export data</h2>
     <div class="card">
       <div class="row wrap" style="gap:12px; align-items:end;">
@@ -1377,6 +1469,7 @@ async function renderOps(main) {
   $('#rosterReload', main).addEventListener('click', () => renderOps(main));
   $('#rosterSyncReq', main).addEventListener('click', requestSyncFromBot);
   $('#expBtn', main).addEventListener('click', doExport);
+  renderAnalytics().catch(e => console.error('analytics', e));
 
   // Live : re-render dès qu'une alerte est créée / résolue / une fiche mise à jour.
   if (state.opsChannel) sb.removeChannel(state.opsChannel);
@@ -1398,6 +1491,143 @@ async function renderOps(main) {
     toast('Alerte résolue', 'ok');
     renderOps(main);
   }));
+}
+
+// ----- Analytics (dashboard Ops) -----
+async function renderAnalytics() {
+  const wrap = $('#analyticsCard');
+  if (!wrap) return;
+  const to = new Date(); const from = new Date(); from.setDate(from.getDate() - 29);
+  const isoFrom = from.toISOString().slice(0, 10);
+  const isoTo   = to.toISOString().slice(0, 10);
+  const { data: entries, error: ee } = await sb.from('diary_daily_entries')
+    .select('id, date').gte('date', isoFrom).lte('date', isoTo);
+  if (ee) { wrap.innerHTML = `<div class="banner error">${ee.message}</div>`; return; }
+  if (!entries.length) { wrap.innerHTML = `<div class="empty">Pas encore de données sur cette période.</div>`; return; }
+  const ids = entries.map(e => e.id);
+  const [{ data: poleChecks }, { data: clipperChecks }, { data: clippers }] = await Promise.all([
+    sb.from('diary_pole_checks').select('*').in('daily_entry_id', ids),
+    sb.from('diary_clipper_checks').select('*').in('daily_entry_id', ids),
+    sb.from('diary_clippers').select('id, nom'),
+  ]);
+  const clipName = Object.fromEntries((clippers||[]).map(c => [c.id, c.nom]));
+  const dateOf = Object.fromEntries(entries.map(e => [e.id, e.date]));
+  const poleKeys = ['posting','cadence','habillage','aucun_compte_banni','contenu_telegram_ok','clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
+  const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+
+  // Aggrégat par jour
+  const byDay = {};   // date → {done, total}
+  for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+    const iso = d.toISOString().slice(0, 10);
+    byDay[iso] = { done: 0, total: 0 };
+  }
+  (poleChecks||[]).forEach(pc => {
+    const iso = dateOf[pc.daily_entry_id]; if (!iso || !byDay[iso]) return;
+    poleKeys.forEach(k => { byDay[iso].total++; if (pc[k]) byDay[iso].done++; });
+  });
+  (clipperChecks||[]).forEach(cc => {
+    const iso = dateOf[cc.daily_entry_id]; if (!iso || !byDay[iso]) return;
+    clipperKeys.forEach(k => { byDay[iso].total++; if (cc[k]) byDay[iso].done++; });
+  });
+
+  // Aggrégat par clipper (30j)
+  const byClip = {};  // clipper_id → {done, total}
+  (clipperChecks||[]).forEach(cc => {
+    if (!dateOf[cc.daily_entry_id]) return;
+    const b = byClip[cc.clipper_id] ||= { done: 0, total: 0, nom: clipName[cc.clipper_id] || '?' };
+    clipperKeys.forEach(k => { b.total++; if (cc[k]) b.done++; });
+  });
+  const clipRanking = Object.entries(byClip)
+    .filter(([, v]) => v.total >= 6)   // au moins 1 fiche
+    .map(([, v]) => ({ ...v, pct: v.done / v.total * 100 }))
+    .sort((a, b) => b.pct - a.pct);
+  const top3  = clipRanking.slice(0, 3);
+  const flop3 = clipRanking.slice(-3).reverse();
+
+  // Chart : point pour chaque jour où total > 0
+  const days = Object.entries(byDay).map(([d, v]) => ({ d, pct: v.total ? v.done / v.total * 100 : null }));
+  const daysNonNull = days.filter(x => x.pct !== null);
+  const avg = daysNonNull.length ? Math.round(daysNonNull.reduce((s, x) => s + x.pct, 0) / daysNonNull.length) : 0;
+  const best = daysNonNull.length ? Math.round(Math.max(...daysNonNull.map(x => x.pct))) : 0;
+  const nbFiches = entries.length;
+  const nbClot = (await sb.from('diary_daily_entries').select('id',{count:'exact', head:true}).in('id', ids).eq('status','submitted')).count || 0;
+
+  // Build SVG line chart
+  const W = 720, H = 180, PAD = { l: 34, r: 12, t: 14, b: 22 };
+  const iw = W - PAD.l - PAD.r, ih = H - PAD.t - PAD.b;
+  const n = days.length;
+  const xOf = (i) => PAD.l + (n > 1 ? (i * iw / (n - 1)) : iw / 2);
+  const yOf = (p) => PAD.t + ih - (p / 100) * ih;
+  // Ligne + area (segments : si null, on saute)
+  let pathD = '', areaD = '', prevX = null;
+  days.forEach((x, i) => {
+    if (x.pct === null) { prevX = null; return; }
+    const px = xOf(i), py = yOf(x.pct);
+    if (prevX === null) { pathD += `M ${px} ${py} `; areaD += `M ${px} ${yOf(0)} L ${px} ${py} `; }
+    else { pathD += `L ${px} ${py} `; areaD += `L ${px} ${py} `; }
+    prevX = px;
+  });
+  // Fermer l'area jusqu'à la ligne 0
+  if (areaD) {
+    const lastIdxWithVal = days.map((x,i)=>x.pct!==null?i:-1).filter(i=>i>=0).pop();
+    const lastX = xOf(lastIdxWithVal);
+    areaD += `L ${lastX} ${yOf(0)} Z`;
+  }
+  const dots = days.map((x, i) => x.pct !== null
+    ? `<circle cx="${xOf(i)}" cy="${yOf(x.pct)}" r="3" fill="#a78bfa"/>` : '').join('');
+  const xLabels = [0, Math.floor(n/2), n-1].filter(i => days[i]).map(i =>
+    `<text x="${xOf(i)}" y="${H-6}" text-anchor="middle" fill="#8a94a4" font-size="10">${days[i].d.slice(5)}</text>`
+  ).join('');
+  const yLabels = [0, 50, 100].map(p =>
+    `<text x="${PAD.l-6}" y="${yOf(p)+3}" text-anchor="end" fill="#8a94a4" font-size="10">${p}%</text>
+     <line x1="${PAD.l}" y1="${yOf(p)}" x2="${W-PAD.r}" y2="${yOf(p)}" stroke="#232a35" stroke-dasharray="2,3"/>`
+  ).join('');
+
+  wrap.innerHTML = `
+    <div class="stats-row">
+      <div class="stat accent"><div class="k">Conformité moyenne</div><div class="v">${avg}%</div></div>
+      <div class="stat"><div class="k">Meilleur jour</div><div class="v">${best}%</div></div>
+      <div class="stat"><div class="k">Fiches remplies</div><div class="v">${nbFiches}</div></div>
+      <div class="stat"><div class="k">Clôturées</div><div class="v">${nbClot}<span class="dim" style="font-size:14px; font-weight:500;"> / ${nbFiches}</span></div></div>
+    </div>
+    <div style="margin-top:14px; overflow-x:auto;">
+      <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" style="max-width:100%;">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#a78bfa" stop-opacity=".35"/>
+            <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        ${yLabels}
+        ${areaD ? `<path d="${areaD}" fill="url(#areaGrad)"/>` : ''}
+        ${pathD ? `<path d="${pathD}" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
+        ${dots}
+        ${xLabels}
+      </svg>
+    </div>
+    <div class="row wrap" style="gap:20px; margin-top:14px;">
+      <div style="flex:1; min-width:240px;">
+        <div class="sub" style="margin-bottom:6px; font-weight:600; color:#bbf7d0;">🏆 Top 3 clippers</div>
+        ${!top3.length ? `<div class="dim">—</div>` : `<div class="checklist">
+          ${top3.map(c => `
+            <div class="row between" style="padding:8px 12px; background:var(--panel-2); border:1px solid rgba(34,197,94,.3); border-radius:10px;">
+              <span>${c.nom}</span>
+              <b style="color:#86efac;">${Math.round(c.pct)}%</b>
+            </div>`).join('')}
+        </div>`}
+      </div>
+      <div style="flex:1; min-width:240px;">
+        <div class="sub" style="margin-bottom:6px; font-weight:600; color:#fecaca;">⚠ Flop 3 clippers</div>
+        ${!flop3.length ? `<div class="dim">—</div>` : `<div class="checklist">
+          ${flop3.map(c => `
+            <div class="row between" style="padding:8px 12px; background:var(--panel-2); border:1px solid rgba(239,68,68,.3); border-radius:10px;">
+              <span>${c.nom}</span>
+              <b style="color:#fca5a5;">${Math.round(c.pct)}%</b>
+            </div>`).join('')}
+        </div>`}
+      </div>
+    </div>
+  `;
 }
 
 // ----- Export data -----
