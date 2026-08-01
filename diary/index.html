@@ -9,128 +9,328 @@
 <title>Diary · Nexora</title>
 <style>
   :root {
-    --bg: #0b0d10;
-    --panel: #12161c;
-    --panel-2: #171c24;
+    --bg: #0a0d14;
+    --bg-2: #0e1218;
+    --panel: #12171f;
+    --panel-2: #171d27;
+    --panel-3: #1c2330;
     --border: #232a35;
-    --text: #e7ecf3;
+    --border-2: #2b3341;
+    --text: #eaf0f7;
     --muted: #8a94a4;
+    --dim: #5e6675;
     --accent: #7dd3fc;
     --accent-2: #38bdf8;
+    --accent-3: #6366f1;
+    --violet: #a78bfa;
+    --pink: #f472b6;
     --green: #22c55e;
+    --green-glow: rgba(34,197,94,.4);
     --amber: #f59e0b;
     --red: #ef4444;
-    --shadow: 0 8px 24px rgba(0,0,0,.35);
+    --gold: #fbbf24;
+    --grad-brand: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 60%, #f472b6 100%);
+    --grad-panel: linear-gradient(160deg, #171d27 0%, #12171f 100%);
+    --grad-success: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+    --grad-header: radial-gradient(1200px 500px at 10% -10%, rgba(125,211,252,.10), transparent),
+                   radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,.08), transparent);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.25);
+    --shadow: 0 8px 30px rgba(0,0,0,.35);
+    --shadow-glow: 0 0 30px rgba(125,211,252,.15);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
     font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", Segoe UI, Roboto, sans-serif;
-    font-size: 15px; line-height: 1.45; }
+    font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; background: var(--grad-header);
+    pointer-events: none;
+  }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  header.top { position: sticky; top: 0; z-index: 10; background: rgba(11,13,16,.85);
-    backdrop-filter: blur(8px); border-bottom: 1px solid var(--border);
+  code { background: rgba(255,255,255,.06); padding: 1px 6px; border-radius: 5px; font-size: 90%; }
+
+  /* HEADER */
+  header.top { position: sticky; top: 0; z-index: 10; background: rgba(10,13,20,.85);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
     padding: 12px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  header.top .brand { font-weight: 700; letter-spacing: .3px; }
+  header.top .brand { font-weight: 700; letter-spacing: .3px; font-size: 15px;
+    background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
   header.top .brand span.dot { color: var(--accent); }
   header.top .spacer { flex: 1; }
   header.top .who { color: var(--muted); font-size: 13px; }
   header.top .btn-out { background: transparent; border: 1px solid var(--border); color: var(--muted);
-    padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-  header.top .btn-out:hover { color: var(--text); border-color: var(--accent); }
+    padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all .15s; }
+  header.top .btn-out:hover { color: var(--text); border-color: var(--accent); background: rgba(125,211,252,.06); }
+
   main { max-width: 960px; margin: 0 auto; padding: 20px; }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  h2 { font-size: 17px; margin: 24px 0 10px; color: var(--accent); letter-spacing: .3px; }
-  h3 { font-size: 15px; margin: 0; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -.2px; font-weight: 700; }
+  h2 { font-size: 15px; margin: 24px 0 10px; color: var(--muted); letter-spacing: 1px;
+    text-transform: uppercase; font-weight: 600; }
+  h3 { font-size: 15px; margin: 0; font-weight: 600; }
   .sub { color: var(--muted); font-size: 13px; }
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
-    padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
-  .card.compact { padding: 12px 14px; }
+  .dim { color: var(--dim); font-size: 12px; }
+
+  /* CARDS */
+  .card { background: var(--grad-panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 20px; margin-bottom: 14px; box-shadow: var(--shadow); transition: border-color .2s; }
+  .card:hover { border-color: var(--border-2); }
+  .card.compact { padding: 14px 16px; }
+  .card.hero { padding: 24px; background:
+    radial-gradient(600px 300px at 10% 0%, rgba(125,211,252,.14), transparent 60%),
+    radial-gradient(500px 300px at 100% 100%, rgba(167,139,250,.12), transparent 60%),
+    var(--grad-panel);
+    border: 1px solid rgba(125,211,252,.25); }
   .row { display: flex; gap: 10px; align-items: center; }
   .row.between { justify-content: space-between; }
+  .row.wrap { flex-wrap: wrap; }
+
+  /* TABS (nav + pole) */
   .tabs { display: flex; gap: 6px; margin: 6px 0 12px; overflow-x: auto; }
   .tab { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border);
-    background: var(--panel-2); color: var(--muted); cursor: pointer; white-space: nowrap; font-size: 14px; }
-  .tab.active { color: var(--text); border-color: var(--accent); background: rgba(125,211,252,.08); }
-  .tab.warn { border-color: var(--red); color: #fecaca; }
-  .checklist { display: grid; gap: 6px; }
+    background: var(--panel-2); color: var(--muted); cursor: pointer; white-space: nowrap;
+    font-size: 14px; transition: all .15s; }
+  .tab:hover { color: var(--text); border-color: var(--border-2); }
+  .tab.active { color: var(--text); border-color: var(--accent);
+    background: linear-gradient(180deg, rgba(125,211,252,.12), rgba(125,211,252,.04));
+    box-shadow: inset 0 0 0 1px rgba(125,211,252,.15); }
+
+  /* HERO / STATS BAR (fiche du jour) */
+  .day-hero { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center;
+    padding: 20px 24px; }
+  .day-hero .ring-wrap { position: relative; width: 88px; height: 88px; }
+  .day-hero .ring-wrap .center { position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; font-weight: 700; font-size: 20px; line-height: 1;
+    color: var(--text); }
+  .day-hero .ring-wrap .center small { font-size: 10px; color: var(--muted); font-weight: 500;
+    margin-top: 2px; letter-spacing: .5px; text-transform: uppercase; }
+  .day-hero .title-block h1 { font-size: 24px; }
+  .day-hero .streak { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(251,191,36,.15), rgba(244,114,182,.15));
+    border: 1px solid rgba(251,191,36,.35); border-radius: 999px;
+    font-size: 12px; font-weight: 600; color: #fde68a; }
+  .day-hero .streak.hot { animation: pulse-gold 2s ease-in-out infinite; }
+  @keyframes pulse-gold {
+    0%,100% { box-shadow: 0 0 0 0 rgba(251,191,36,0); }
+    50% { box-shadow: 0 0 0 6px rgba(251,191,36,.08); }
+  }
+
+  /* Progress RING */
+  .ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring circle { fill: none; }
+  .ring .track { stroke: var(--border); stroke-width: 8; }
+  .ring .fill { stroke: url(#gradRing); stroke-width: 8; stroke-linecap: round;
+    transition: stroke-dashoffset .5s cubic-bezier(.4,0,.2,1); }
+  .ring.small { width: 44px; height: 44px; }
+  .ring.small .track, .ring.small .fill { stroke-width: 6; }
+  .ring.full .fill { stroke: url(#gradRingSuccess); }
+
+  /* CHECKS */
+  .checklist { display: grid; gap: 8px; }
   .check {
     display: flex; align-items: flex-start; gap: 12px;
-    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px;
     background: var(--panel-2); cursor: pointer; user-select: none;
-    transition: border-color .15s, background .15s;
+    transition: transform .15s cubic-bezier(.4,0,.2,1), border-color .15s, background .2s, box-shadow .2s;
   }
-  .check:hover { border-color: #37414f; }
-  .check input { margin-top: 3px; width: 20px; height: 20px; accent-color: var(--accent-2); cursor: pointer; }
-  .check.checked { border-color: rgba(34,197,94,.6); background: rgba(34,197,94,.06); }
+  .check:hover { border-color: var(--border-2); background: var(--panel-3); }
+  .check:active { transform: scale(.985); }
+  .check input { margin-top: 3px; width: 20px; height: 20px; accent-color: var(--green); cursor: pointer; }
+  .check.checked {
+    border-color: rgba(34,197,94,.5);
+    background: linear-gradient(180deg, rgba(34,197,94,.08), rgba(34,197,94,.02));
+    box-shadow: inset 0 0 0 1px rgba(34,197,94,.08);
+  }
+  .check.checked .label { color: var(--text); }
+  .check.just-checked { animation: check-pop .35s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes check-pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.03); box-shadow: 0 0 0 8px rgba(34,197,94,.12); }
+    100% { transform: scale(1); box-shadow: inset 0 0 0 1px rgba(34,197,94,.08); }
+  }
   .check .label { flex: 1; }
   .check .hint { color: var(--muted); font-size: 12px; margin-top: 2px; }
-  .toggles-red { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+
+  /* RED TOGGLES */
+  .toggles-red { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
   .tgl-red {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 10px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    padding: 7px 12px; border-radius: 999px; font-size: 13px; cursor: pointer;
     border: 1px solid var(--border); background: var(--panel-2); color: var(--muted);
+    transition: all .15s;
   }
-  .tgl-red.on { border-color: var(--red); color: #fecaca; background: rgba(239,68,68,.12); }
-  textarea, input[type=text], input[type=email], input[type=url] {
+  .tgl-red:hover { color: var(--text); border-color: #55606f; }
+  .tgl-red.on { border-color: var(--red); color: #fecaca;
+    background: linear-gradient(135deg, rgba(239,68,68,.18), rgba(239,68,68,.06));
+    box-shadow: 0 0 0 3px rgba(239,68,68,.08);
+    animation: shake .4s ease; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    80% { transform: translateX(-1px); }
+  }
+
+  /* FORMS */
+  textarea, input[type=text], input[type=email], input[type=url], input[type=date] {
     width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 12px; font: inherit; resize: vertical;
+    border-radius: 10px; padding: 10px 12px; font: inherit; resize: vertical; transition: border-color .15s;
   }
-  textarea:focus, input:focus { outline: none; border-color: var(--accent); }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px;
-    background: var(--accent-2); color: #0b0d10; border: none; border-radius: 10px;
-    font-weight: 600; cursor: pointer; font-size: 14px; }
-  .btn:hover { filter: brightness(1.05); }
-  .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
-  .btn.danger { background: var(--red); color: white; }
-  .clipper-card { border: 1px solid var(--border); border-radius: 12px; background: var(--panel);
-    margin-bottom: 10px; overflow: hidden; }
-  .clipper-head { padding: 12px 14px; display: flex; align-items: center; gap: 10px;
-    cursor: pointer; background: var(--panel-2); }
-  .clipper-head .chev { color: var(--muted); font-size: 14px; transition: transform .15s; }
+  textarea:focus, input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(125,211,252,.12); }
+  select {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; font: inherit;
+  }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    color: white; border: none; border-radius: 12px;
+    font-weight: 600; cursor: pointer; font-size: 14px;
+    box-shadow: 0 4px 14px rgba(56,189,248,.25); transition: transform .15s, box-shadow .15s, filter .15s; }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56,189,248,.35); filter: brightness(1.08); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn.ghost { background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    box-shadow: none; }
+  .btn.ghost:hover { border-color: var(--accent); background: var(--panel-3); }
+  .btn.success { background: var(--grad-success); box-shadow: 0 4px 14px rgba(34,197,94,.3); }
+  .btn.success:hover { box-shadow: 0 6px 22px rgba(34,197,94,.4); }
+  .btn.danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 14px rgba(239,68,68,.3); }
+  .btn.xl { padding: 14px 28px; font-size: 15px; border-radius: 14px; }
+
+  /* CLIPPER CARDS */
+  .clipper-card { border: 1px solid var(--border); border-radius: 14px;
+    background: var(--grad-panel); margin-bottom: 10px; overflow: hidden;
+    transition: border-color .2s, box-shadow .2s, transform .15s; }
+  .clipper-card:hover { border-color: var(--border-2); box-shadow: var(--shadow-sm); }
+  .clipper-card.done { border-color: rgba(34,197,94,.35);
+    background: linear-gradient(160deg, rgba(34,197,94,.06) 0%, var(--panel-2) 60%); }
+  .clipper-card.danger { border-color: rgba(239,68,68,.4);
+    background: linear-gradient(160deg, rgba(239,68,68,.05) 0%, var(--panel-2) 60%); }
+  .clipper-card.celebrate { animation: celebrate .8s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes celebrate {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(34,197,94,.15); }
+    100% { transform: scale(1); }
+  }
+  .clipper-head { padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    cursor: pointer; }
+  .clipper-head .chev { color: var(--muted); font-size: 14px; transition: transform .2s;
+    display: inline-block; }
   .clipper-card.open .clipper-head .chev { transform: rotate(90deg); }
-  .clipper-head .progress { color: var(--muted); font-size: 13px; }
-  .clipper-head .badges { display: flex; gap: 6px; }
-  .badge { font-size: 11px; padding: 2px 8px; border-radius: 999px;
-    background: rgba(239,68,68,.15); color: #fecaca; border: 1px solid rgba(239,68,68,.4); }
-  .clipper-body { display: none; padding: 12px 14px; border-top: 1px solid var(--border); }
-  .clipper-card.open .clipper-body { display: block; }
+  .clipper-head .name { font-weight: 600; font-size: 15px; }
+  .clipper-head .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 999px;
+    background: rgba(239,68,68,.15); color: #fecaca; border: 1px solid rgba(239,68,68,.4); font-weight: 500; }
+  .badge.done { background: rgba(34,197,94,.15); color: #bbf7d0; border-color: rgba(34,197,94,.4); }
+  .clipper-body { display: none; padding: 14px 16px; border-top: 1px solid var(--border); }
+  .clipper-card.open .clipper-body { display: block; animation: expand .25s ease-out; }
+  @keyframes expand { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* REELS */
   .reels-list { display: grid; gap: 8px; margin-top: 8px; }
   .reel-row { display: grid; grid-template-columns: 2fr 3fr auto; gap: 8px; align-items: center; }
   .reel-row .btn.icon { padding: 8px 10px; }
-  .save-pill { font-size: 12px; color: var(--muted); }
-  .save-pill.saved::before { content: "●"; color: var(--green); margin-right: 5px; }
-  .save-pill.saving::before { content: "●"; color: var(--amber); margin-right: 5px; }
-  .save-pill.error::before { content: "●"; color: var(--red); margin-right: 5px; }
-  .banner { padding: 10px 14px; border-radius: 10px; margin-bottom: 14px;
-    display: flex; gap: 10px; align-items: center; }
-  .banner.draft { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.4); color: #fde68a; }
-  .banner.locked { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.4); color: #bbf7d0; }
-  .banner.error { background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.4); color: #fecaca; }
+
+  /* SAVE INDICATOR */
+  .save-pill { font-size: 12px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+  .save-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--dim); transition: background .2s, box-shadow .2s; }
+  .save-pill.saved::before { background: var(--green); box-shadow: 0 0 8px rgba(34,197,94,.5); }
+  .save-pill.saving::before { background: var(--amber); animation: pulse-dot .8s ease-in-out infinite; }
+  .save-pill.error::before { background: var(--red); }
+  @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+  /* BANNERS */
+  .banner { padding: 12px 16px; border-radius: 12px; margin-bottom: 14px;
+    display: flex; gap: 10px; align-items: center; font-size: 14px; }
+  .banner.draft { background: linear-gradient(135deg, rgba(245,158,11,.10), rgba(245,158,11,.03));
+    border: 1px solid rgba(245,158,11,.35); color: #fde68a; }
+  .banner.locked { background: linear-gradient(135deg, rgba(34,197,94,.10), rgba(34,197,94,.03));
+    border: 1px solid rgba(34,197,94,.35); color: #bbf7d0; }
+  .banner.error { background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(239,68,68,.04));
+    border: 1px solid rgba(239,68,68,.4); color: #fecaca; }
+
+  /* TABLES */
   .table { width: 100%; border-collapse: collapse; }
-  .table th, .table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .table th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+  .table th, .table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .table th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
+  .table tr:hover td { background: rgba(255,255,255,.02); }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
   .pill.draft { background: rgba(245,158,11,.15); color: #fde68a; }
   .pill.submitted { background: rgba(34,197,94,.15); color: #bbf7d0; }
   .empty { color: var(--muted); text-align: center; padding: 40px 20px; }
-  .login-wrap { max-width: 380px; margin: 60px auto; }
-  .login-wrap .card { padding: 28px; }
-  .login-wrap .brand-big { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-  .login-wrap .sub { margin-bottom: 20px; }
-  .login-wrap input { margin-bottom: 12px; }
-  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
-    padding: 10px 16px; box-shadow: var(--shadow); font-size: 14px; z-index: 50; }
-  .toast.ok { border-color: rgba(34,197,94,.6); }
-  .toast.err { border-color: rgba(239,68,68,.6); }
+
+  /* KPI STAT TILES */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; margin: 4px 0 14px; }
+  .stat { padding: 14px 16px; background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 12px; }
+  .stat .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; }
+  .stat .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
+  .stat.accent .v { background: var(--grad-brand); -webkit-background-clip: text;
+    background-clip: text; color: transparent; }
+
+  /* LOGIN */
+  .login-wrap { max-width: 400px; margin: 80px auto; }
+  .login-wrap .card { padding: 32px; }
+  .login-wrap .brand-big { font-size: 28px; font-weight: 700; margin-bottom: 6px;
+    background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .login-wrap .sub { margin-bottom: 24px; font-size: 14px; }
+  .login-wrap input { margin-bottom: 14px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 18px; box-shadow: var(--shadow); font-size: 14px; z-index: 100;
+    animation: toast-in .25s cubic-bezier(.34,1.56,.64,1); }
+  .toast.ok { border-color: rgba(34,197,94,.5); box-shadow: 0 4px 20px rgba(34,197,94,.15); }
+  .toast.err { border-color: rgba(239,68,68,.5); box-shadow: 0 4px 20px rgba(239,68,68,.15); }
+  @keyframes toast-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+                        to   { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+  /* CONFETTI CANVAS */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
+
+  /* CELEBRATION OVERLAY */
+  .celebrate-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    z-index: 150; pointer-events: none; animation: overlay-in .3s ease; }
+  @keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
+  .celebrate-overlay .msg { padding: 24px 40px; border-radius: 20px;
+    background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(16,185,129,.9));
+    color: white; font-size: 22px; font-weight: 700; letter-spacing: -.2px;
+    box-shadow: 0 20px 60px rgba(34,197,94,.4); animation: bounce-in .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes bounce-in { 0% { transform: scale(.3); opacity: 0; }
+                         60% { transform: scale(1.05); opacity: 1; }
+                         100% { transform: scale(1); } }
+
   @media (max-width: 640px) {
     main { padding: 12px; }
+    header.top { padding: 10px 12px; }
+    header.top .tabs { order: 5; width: 100%; }
+    .day-hero { grid-template-columns: auto 1fr; padding: 16px; gap: 14px; }
+    .day-hero .streak { grid-column: 1 / -1; justify-self: start; }
     .reel-row { grid-template-columns: 1fr; }
-    .clipper-head .progress { display: none; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    h1 { font-size: 22px; }
   }
 </style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gradRing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#7dd3fc"/>
+      <stop offset="60%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#f472b6"/>
+    </linearGradient>
+    <linearGradient id="gradRingSuccess" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+</svg>
 </head>
 <body>
 
@@ -148,6 +348,7 @@
 
 <main id="app"></main>
 
+<canvas id="confetti"></canvas>
 <div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
@@ -207,6 +408,104 @@ const setSaveState = (s) => {
   pill.className = `save-pill ${s}`;
   pill.textContent = s === 'saving' ? 'Enregistrement…' : s === 'saved' ? 'Enregistré' : s === 'error' ? 'Erreur' : '';
 };
+
+// ----- Progress ring SVG -----
+function progressRing(done, total, opts = {}) {
+  const size = opts.size || 88;
+  const stroke = opts.stroke || 8;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const pct = total ? Math.min(1, done / total) : 0;
+  const off = c * (1 - pct);
+  const fullClass = pct >= 1 ? 'full' : '';
+  return `
+    <svg class="ring ${fullClass}" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+      <circle class="track" cx="${size/2}" cy="${size/2}" r="${r}"/>
+      <circle class="fill" cx="${size/2}" cy="${size/2}" r="${r}"
+              stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+    </svg>`;
+}
+
+// ----- Confetti (petit moteur canvas, aucune dépendance) -----
+function confetti(opts = {}) {
+  const cv = $('#confetti');
+  const ctx = cv.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  cv.width  = innerWidth  * dpr;
+  cv.height = innerHeight * dpr;
+  cv.style.width  = innerWidth + 'px';
+  cv.style.height = innerHeight + 'px';
+  ctx.scale(dpr, dpr);
+  const colors = opts.colors || ['#7dd3fc','#a78bfa','#f472b6','#fbbf24','#22c55e','#38bdf8'];
+  const count = opts.count || 140;
+  const originX = opts.originX ?? innerWidth / 2;
+  const originY = opts.originY ?? innerHeight / 3;
+  const spread = opts.spread || Math.PI * 1.6;
+  const startAngle = -Math.PI/2 - spread/2;
+  const particles = Array.from({length: count}).map((_, i) => {
+    const a = startAngle + Math.random() * spread;
+    const speed = 6 + Math.random() * 8;
+    return {
+      x: originX, y: originY,
+      vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
+      w: 6 + Math.random() * 6, h: 8 + Math.random() * 8,
+      c: colors[i % colors.length],
+      rot: Math.random() * Math.PI, vr: (Math.random() - .5) * .3,
+      alpha: 1,
+    };
+  });
+  let raf;
+  const start = performance.now();
+  function tick(t) {
+    const elapsed = t - start;
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    particles.forEach(p => {
+      p.vy += 0.22; p.vx *= 0.995;
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      p.alpha = Math.max(0, 1 - elapsed / 2600);
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha = p.alpha; ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    if (elapsed < 2600) raf = requestAnimationFrame(tick);
+    else ctx.clearRect(0, 0, innerWidth, innerHeight);
+  }
+  raf = requestAnimationFrame(tick);
+}
+
+function celebrate(msg, opts = {}) {
+  confetti(opts);
+  if (msg) {
+    const overlay = el(`<div class="celebrate-overlay"><div class="msg">${msg}</div></div>`);
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.remove(), 1800);
+  }
+}
+
+// ----- Streak (jours consécutifs avec fiche clôturée) -----
+async function computeStreak() {
+  const { data } = await sb.from('diary_daily_entries')
+    .select('date, status')
+    .eq('responsable_id', state.me.id)
+    .eq('status', 'submitted')
+    .order('date', { ascending: false })
+    .limit(60);
+  if (!data || !data.length) return 0;
+  const set = new Set(data.map(r => r.date));
+  const d = new Date();
+  let streak = 0;
+  // On tolère : si aujourd'hui pas encore clôturée, on démarre à hier.
+  const today = todayIso();
+  if (!set.has(today)) d.setDate(d.getDate() - 1);
+  for (;;) {
+    const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (!set.has(iso)) break;
+    streak++;
+    d.setDate(d.getDate() - 1);
+  }
+  return streak;
+}
 
 // ----- Router -----
 const routes = {
@@ -385,24 +684,35 @@ async function renderDiary(main) {
   }
 
   const locked = state.entry.status === 'submitted';
+  const streak = await computeStreak();
+  const totalClippers = state.poles.reduce((n, p) => n + (state.clippersByPole[p.id]?.length || 0), 0);
 
   main.innerHTML = `
-    <div class="row between" style="margin-bottom:8px;">
-      <div>
-        <h1>Fiche du ${fmtDate(state.entry.date)}</h1>
-        <div class="sub">Responsable de pôle · ${state.me.nom}</div>
+    <div class="card hero day-hero">
+      <div class="ring-wrap" id="heroRing">
+        ${progressRing(0, 1, { size: 88 })}
+        <div class="center"><span id="heroPct">0%</span><small>Aujourd'hui</small></div>
       </div>
-      <div class="row">
-        <span id="savePill" class="save-pill"></span>
+      <div class="title-block">
+        <h1>${fmtDate(state.entry.date)}</h1>
+        <div class="sub">${state.me.nom} · ${state.poles.length} pôle${state.poles.length>1?'s':''} · ${totalClippers} clipper${totalClippers>1?'s':''}</div>
+        <div class="row wrap" style="margin-top:10px; gap:8px;">
+          ${streak > 0 ? `<span class="streak ${streak>=3?'hot':''}">🔥 ${streak} jour${streak>1?'s':''} d'affilée</span>` : ''}
+          <span id="savePill" class="save-pill"></span>
+        </div>
+      </div>
+      <div style="align-self:flex-start;">
+        ${locked
+          ? `<button class="btn ghost" id="reopenBtn">↺ Rouvrir</button>`
+          : ``}
       </div>
     </div>
 
     ${locked
-      ? `<div class="banner locked row between">
-           <div>Fiche clôturée${state.entry.auto_submitted ? ' automatiquement à 06h' : ''} le ${new Date(state.entry.submitted_at).toLocaleString('fr-FR')}. Lecture seule.</div>
-           <button class="btn ghost" id="reopenBtn" style="padding:6px 12px;">Rouvrir</button>
-         </div>`
-      : `<div class="banner draft">Brouillon. Complète tes contrôles puis clique sur <b>Clôturer la journée</b> en bas.${state.entry.reopened_count > 0 ? ` <span class="sub">(rouverte ${state.entry.reopened_count}×)</span>` : ''}</div>`}
+      ? `<div class="banner locked">✓ Clôturée${state.entry.auto_submitted ? ' automatiquement à 06h' : ''} le ${new Date(state.entry.submitted_at).toLocaleString('fr-FR')}. Lecture seule.</div>`
+      : state.entry.reopened_count > 0
+        ? `<div class="banner draft">Brouillon (rouverte ${state.entry.reopened_count}×). Termine puis clôture en bas.</div>`
+        : ``}
 
     <div class="tabs" id="poleTabs">
       ${state.poles.map(p => `<button class="tab ${p.id === state.currentPoleId ? 'active' : ''}" data-pole="${p.id}">${p.nom}</button>`).join('')}
@@ -411,8 +721,9 @@ async function renderDiary(main) {
     <div id="poleContent"></div>
 
     ${locked ? '' : `
-      <div class="card" style="text-align:center;">
-        <button class="btn" id="submitBtn">Clôturer la journée</button>
+      <div class="card" style="text-align:center; background: transparent; border-style: dashed;">
+        <button class="btn xl success" id="submitBtn">✓ Clôturer la journée</button>
+        <div class="sub" style="margin-top:8px;">Sauvegardée automatiquement. Clôture pour figer et notifier le RO.</div>
       </div>`}
   `;
 
@@ -428,6 +739,30 @@ async function renderDiary(main) {
   }
 
   await renderPoleContent(locked);
+  updateHeroStats();
+}
+
+// Recalcule la ring globale + %  affichée dans le hero.
+function updateHeroStats() {
+  const pc = state.poleCheck;
+  if (!pc) return;
+  const poleKeys = ['posting','cadence','habillage','aucun_compte_banni','contenu_telegram_ok',
+                    'clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
+  const poleDone = poleKeys.filter(k => pc[k]).length;
+  const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  let cDone = 0, cTotal = 0;
+  Object.values(state.clipperChecks || {}).forEach(cc => {
+    cTotal += clipperKeys.length;
+    cDone  += clipperKeys.filter(k => cc[k]).length;
+  });
+  const total = poleKeys.length + cTotal;
+  const done  = poleDone + cDone;
+  const pct = total ? Math.round(done * 100 / total) : 0;
+  const heroRing = $('#heroRing');
+  if (heroRing) {
+    heroRing.innerHTML = `${progressRing(done, total, { size: 88 })}
+      <div class="center"><span id="heroPct">${pct}%</span><small>Aujourd'hui</small></div>`;
+  }
 }
 
 async function renderPoleContent(locked) {
@@ -509,22 +844,28 @@ function renderClipperCardHtml(clipper, cc, locked) {
     ['voyants_verts', 'Voyants au vert (aucun orange/rouge)'],
     ['contenu_telegram_dispo', 'Contenu disponible dans les sous-canaux Telegram'],
   ];
-  const done = items.filter(([k]) => cc[k]).length;
+  const done  = items.filter(([k]) => cc[k]).length;
+  const total = items.length;
+  const isDone = done === total && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte;
+  const isDanger = cc.compte_banni || cc.contenu_manquant || cc.en_difficulte;
   const badges = [];
-  if (cc.compte_banni) badges.push('<span class="badge">Banni</span>');
-  if (cc.contenu_manquant) badges.push('<span class="badge">Contenu manquant</span>');
-  if (cc.en_difficulte) badges.push('<span class="badge">Difficulté</span>');
+  if (isDone) badges.push('<span class="badge done">✓ Complet</span>');
+  if (cc.compte_banni) badges.push('<span class="badge">⚠ Banni</span>');
+  if (cc.contenu_manquant) badges.push('<span class="badge">⚠ Contenu manquant</span>');
+  if (cc.en_difficulte) badges.push('<span class="badge">⚠ Difficulté</span>');
 
   const reels = state.reelsByCheck[cc.id] || [];
 
   return `
-    <div class="clipper-card" data-clipper="${clipper.id}">
+    <div class="clipper-card ${isDone ? 'done' : ''} ${isDanger ? 'danger' : ''}" data-clipper="${clipper.id}">
       <div class="clipper-head">
-        <div class="chev">▶</div>
-        <h3>${clipper.nom}</h3>
+        <div class="ring-wrap" style="width:44px; height:44px;">${progressRing(done, total, { size: 44, stroke: 6 })}</div>
+        <div style="flex:1;">
+          <div class="name">${clipper.nom}</div>
+          <div class="dim">${done}/${total} contrôles</div>
+        </div>
         <div class="badges">${badges.join('')}</div>
-        <div style="flex:1;"></div>
-        <div class="progress">${done}/6</div>
+        <div class="chev">▶</div>
       </div>
       <div class="clipper-body">
         <div class="checklist">
@@ -575,8 +916,11 @@ function renderReelRow(r, locked) {
 async function onPoleCheckChange(input) {
   const key = input.dataset.poleCheck;
   const val = input.checked;
-  input.closest('.check').classList.toggle('checked', val);
+  const chk = input.closest('.check');
+  chk.classList.toggle('checked', val);
+  if (val) { chk.classList.add('just-checked'); setTimeout(() => chk.classList.remove('just-checked'), 400); }
   await savePoleField(key, val);
+  updateHeroStats();
 }
 
 async function savePoleField(key, val) {
@@ -591,13 +935,28 @@ async function onClipperCheckChange(clipperId, input) {
   const cc = state.clipperChecks[clipperId];
   const key = input.dataset.clipCheck;
   const val = input.checked;
-  input.closest('.check').classList.toggle('checked', val);
+  const chk = input.closest('.check');
+  chk.classList.toggle('checked', val);
+  if (val) { chk.classList.add('just-checked'); setTimeout(() => chk.classList.remove('just-checked'), 400); }
   setSaveState('saving');
   const { error } = await sb.from('diary_clipper_checks').update({ [key]: val }).eq('id', cc.id);
   if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
   cc[key] = val;
+  const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  const wasCompleted = clipperKeys.every(k => cc[k]);
   updateClipperProgress(clipperId);
+  updateHeroStats();
   setSaveState('saved');
+  // Célébration quand un clipper vient d'atteindre 6/6
+  if (val && wasCompleted && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte) {
+    const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
+    if (card) {
+      card.classList.add('done', 'celebrate');
+      setTimeout(() => card.classList.remove('celebrate'), 900);
+      const rect = card.getBoundingClientRect();
+      confetti({ count: 60, originX: rect.left + rect.width/2, originY: rect.top + 30, spread: Math.PI });
+    }
+  }
 }
 
 async function saveClipperField(clipperId, key, val) {
@@ -685,7 +1044,12 @@ function updateClipperProgress(clipperId) {
   const items = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
   const done = items.filter(k => cc[k]).length;
   const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
-  if (card) $('.progress', card).textContent = `${done}/6`;
+  if (!card) return;
+  const ringWrap = $('.ring-wrap', card);
+  if (ringWrap) ringWrap.innerHTML = progressRing(done, items.length, { size: 44, stroke: 6 });
+  const dim = $('.dim', card);
+  if (dim) dim.textContent = `${done}/${items.length} contrôles`;
+  card.classList.toggle('done', done === items.length && !cc.compte_banni && !cc.contenu_manquant && !cc.en_difficulte);
 }
 
 async function submitEntry() {
@@ -694,7 +1058,15 @@ async function submitEntry() {
     .update({ status: 'submitted', submitted_at: new Date().toISOString(), auto_submitted: false })
     .eq('id', state.entry.id);
   if (error) { toast(error.message, 'err'); return; }
-  toast('Fiche clôturée ✓', 'ok');
+  const streak = await computeStreak();
+  const msg = streak >= 7
+    ? `🔥 ${streak+1} jours d'affilée !`
+    : streak >= 3
+    ? `🚀 ${streak+1} jours de série !`
+    : streak >= 1
+    ? `✅ Fiche du jour bouclée !`
+    : `✅ Bien joué !`;
+  celebrate(msg, { count: 180 });
   await renderDiary($('#app'));
 }
 
@@ -815,6 +1187,42 @@ async function renderOps(main) {
            </table>`}
     </div>
 
+    <h2>Export data</h2>
+    <div class="card">
+      <div class="row wrap" style="gap:12px; align-items:end;">
+        <div>
+          <div class="sub" style="margin-bottom:4px;">Du</div>
+          <input type="date" id="expFrom" value="${(() => { const d=new Date(); d.setDate(d.getDate()-30); return d.toISOString().slice(0,10); })()}">
+        </div>
+        <div>
+          <div class="sub" style="margin-bottom:4px;">Au</div>
+          <input type="date" id="expTo" value="${todayIso()}">
+        </div>
+        <div>
+          <div class="sub" style="margin-bottom:4px;">Format</div>
+          <select id="expFormat">
+            <option value="csv">CSV (par contrôle clipper)</option>
+            <option value="csv_pole">CSV (par contrôle pôle)</option>
+            <option value="json">JSON complet (fiches + checks + alertes)</option>
+          </select>
+        </div>
+        <div>
+          <div class="sub" style="margin-bottom:4px;">Statut</div>
+          <select id="expStatus">
+            <option value="all">Toutes</option>
+            <option value="submitted">Clôturées seulement</option>
+            <option value="draft">Brouillons seulement</option>
+          </select>
+        </div>
+        <button class="btn" id="expBtn">⬇ Télécharger</button>
+      </div>
+      <div class="sub" style="margin-top:10px; font-size:12px;">
+        Le CSV inclut date, responsable, pôle, clipper, chacun des contrôles (OUI/NON),
+        note libre, toggles rouges, reels perfs. Idéal pour ouvrir dans Excel/Sheets ou
+        alimenter un dashboard externe.
+      </div>
+    </div>
+
     <h2>Roster clippers (${totalActif} actifs)</h2>
     <div class="card">
       <div class="row between" style="margin-bottom:10px;">
@@ -852,6 +1260,7 @@ async function renderOps(main) {
 
   $('#rosterReload', main).addEventListener('click', () => renderOps(main));
   $('#rosterSyncReq', main).addEventListener('click', requestSyncFromBot);
+  $('#expBtn', main).addEventListener('click', doExport);
 
   $$('[data-resolve]', main).forEach(btn => btn.addEventListener('click', async () => {
     const id = btn.dataset.resolve;
@@ -861,6 +1270,121 @@ async function renderOps(main) {
     toast('Alerte résolue', 'ok');
     renderOps(main);
   }));
+}
+
+// ----- Export data -----
+async function doExport() {
+  const btn = $('#expBtn');
+  const from = $('#expFrom').value;
+  const to   = $('#expTo').value;
+  const fmt  = $('#expFormat').value;
+  const status = $('#expStatus').value;
+  if (!from || !to) { toast('Renseigne les 2 dates', 'err'); return; }
+  btn.disabled = true; const oldLabel = btn.textContent; btn.textContent = 'Préparation…';
+  try {
+    // 1) Fiches sur la période
+    let entriesQ = sb.from('diary_daily_entries')
+      .select('id, responsable_id, date, status, submitted_at, auto_submitted, reopened_count')
+      .gte('date', from).lte('date', to).order('date');
+    if (status !== 'all') entriesQ = entriesQ.eq('status', status);
+    const { data: entries, error: ee } = await entriesQ;
+    if (ee) throw ee;
+    if (!entries.length) { toast('Aucune fiche sur cette période', 'ok'); return; }
+    const entryIds = entries.map(e => e.id);
+    const respIds  = Array.from(new Set(entries.map(e => e.responsable_id)));
+
+    // 2) Nommages + checks + reels + alertes en parallèle
+    const [{ data: resps }, { data: poleChecks }, { data: clipperChecks }, { data: allClippers }, { data: allPoles }, { data: allReels }, { data: allAlerts }] = await Promise.all([
+      sb.from('diary_responsables').select('id, nom, email').in('id', respIds),
+      sb.from('diary_pole_checks').select('*').in('daily_entry_id', entryIds),
+      sb.from('diary_clipper_checks').select('*').in('daily_entry_id', entryIds),
+      sb.from('diary_clippers').select('id, nom, pole_id'),
+      sb.from('diary_poles').select('id, nom'),
+      sb.from('diary_reels_perf').select('*'),
+      sb.from('diary_alerts').select('*').in('daily_entry_id', entryIds),
+    ]);
+    const rN = Object.fromEntries((resps||[]).map(r => [r.id, r.nom]));
+    const cN = Object.fromEntries((allClippers||[]).map(c => [c.id, c.nom]));
+    const pN = Object.fromEntries((allPoles||[]).map(p => [p.id, p.nom]));
+    const eDate = Object.fromEntries(entries.map(e => [e.id, { date: e.date, resp: rN[e.responsable_id] || '', status: e.status }]));
+    const reelsByCheck = {};
+    (allReels||[]).forEach(r => (reelsByCheck[r.clipper_check_id] ||= []).push(r));
+
+    let filename, blob;
+    if (fmt === 'json') {
+      const payload = {
+        exported_at: new Date().toISOString(),
+        from, to, status,
+        counts: { entries: entries.length, pole_checks: poleChecks.length, clipper_checks: clipperChecks.length, alerts: allAlerts.length },
+        entries: entries.map(e => ({
+          ...e,
+          responsable: rN[e.responsable_id],
+          pole_checks: (poleChecks||[]).filter(pc => pc.daily_entry_id === e.id)
+            .map(pc => ({ ...pc, pole: pN[pc.pole_id] })),
+          clipper_checks: (clipperChecks||[]).filter(cc => cc.daily_entry_id === e.id)
+            .map(cc => ({
+              ...cc,
+              clipper: cN[cc.clipper_id],
+              reels_perf: reelsByCheck[cc.id] || [],
+            })),
+          alerts: (allAlerts||[]).filter(a => a.daily_entry_id === e.id)
+            .map(a => ({ ...a, clipper: cN[a.clipper_id] })),
+        })),
+      };
+      blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      filename = `nexora-diary_${from}_${to}.json`;
+    } else if (fmt === 'csv_pole') {
+      const keys = ['posting','cadence','habillage','aucun_compte_banni','contenu_telegram_ok','clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
+      const headers = ['date','responsable','pole','statut', ...keys, 'retour_ro','updated_at'];
+      const rows = [headers];
+      (poleChecks||[]).forEach(pc => {
+        const e = eDate[pc.daily_entry_id]; if (!e) return;
+        rows.push([e.date, e.resp, pN[pc.pole_id] || '', e.status,
+          ...keys.map(k => pc[k] ? 'OUI' : 'NON'),
+          (pc.retour_ro || '').replace(/\r?\n/g,' '), pc.updated_at || '']);
+      });
+      blob = new Blob(['﻿' + toCsv(rows)], { type: 'text/csv;charset=utf-8' });
+      filename = `nexora-diary-pole_${from}_${to}.csv`;
+    } else {
+      const keys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+      const headers = ['date','responsable','pole','clipper','statut', ...keys,
+                       'compte_banni','contenu_manquant','en_difficulte','note_libre','nb_reels_perf','urls_reels_perf'];
+      const rows = [headers];
+      (clipperChecks||[]).forEach(cc => {
+        const e = eDate[cc.daily_entry_id]; if (!e) return;
+        const clip = (allClippers||[]).find(c => c.id === cc.clipper_id);
+        const pole = clip ? pN[clip.pole_id] || '' : '';
+        const reels = reelsByCheck[cc.id] || [];
+        rows.push([e.date, e.resp, pole, cN[cc.clipper_id] || '', e.status,
+          ...keys.map(k => cc[k] ? 'OUI' : 'NON'),
+          cc.compte_banni ? 'OUI' : 'NON',
+          cc.contenu_manquant ? 'OUI' : 'NON',
+          cc.en_difficulte ? 'OUI' : 'NON',
+          (cc.note_libre || '').replace(/\r?\n/g,' '),
+          reels.length,
+          reels.map(r => r.url).filter(Boolean).join(' | '),
+        ]);
+      });
+      blob = new Blob(['﻿' + toCsv(rows)], { type: 'text/csv;charset=utf-8' });
+      filename = `nexora-diary-clippers_${from}_${to}.csv`;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    toast(`Export ${filename} téléchargé ✓`, 'ok');
+  } catch (e) {
+    toast(`Erreur : ${e.message || e}`, 'err');
+  } finally {
+    btn.disabled = false; btn.textContent = oldLabel;
+  }
+}
+
+function toCsv(rows) {
+  return rows.map(r => r.map(cell => {
+    const s = cell === null || cell === undefined ? '' : String(cell);
+    return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }).join(',')).join('\n');
 }
 
 async function requestSyncFromBot() {
