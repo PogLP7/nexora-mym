@@ -191,6 +191,10 @@
   @keyframes opulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
   @keyframes oshine{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4) drop-shadow(0 0 8px rgba(255,205,70,.8))}}
   @media(prefers-reduced-motion:reduce){#orbitWrap.dopa .olive i,#orbitWrap.dopa .med{animation:none}}
+  .loomgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .loomcard{display:flex;align-items:center;gap:11px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-decoration:none;color:var(--ink);font-weight:600;font-size:13.5px;transition:.15s}
+  .loomcard:hover{border-color:#7c5cff;transform:translateY(-1px);box-shadow:0 8px 20px -10px rgba(124,92,255,.5)}
+  .loomplay{width:30px;height:30px;flex:0 0 30px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#25e8c3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
   .lmmh{display:flex;align-items:center;gap:11px}
   .lmmodel{transition:border-color .2s}
   .lmmodel:hover{border-color:rgba(127,140,255,.28)}
@@ -977,6 +981,19 @@ function renderCockpit(){
   }
   ck.querySelectorAll('.ck-mfill').forEach(function(f){requestAnimationFrame(function(){f.style.width=f.getAttribute('data-w')+'%'})});
   ck.querySelectorAll('.ck-mcard').forEach(function(card){card.onclick=function(){var m=card.getAttribute('data-m'),af=$('addForm');if(af){af.classList.add('open');var ms=$('f_model');if(ms)ms.value=m;upLn();var fp=$('f_partner');if(fp)fp.focus();af.scrollIntoView({behavior:'smooth',block:'nearest'})}}});
+  (function(){var mymModels=MODELS.filter(function(m){return PLAT[m]==='MYM'});if(!mymModels.length)return;
+    var wdays=[];for(var wi=0;wi<7;wi++){var wd=new Date(mon);wd.setDate(mon.getDate()+wi);wdays.push(wd.toISOString().slice(0,10))}
+    var dl=['L','M','M','J','V','S','D'];var totP=0;
+    var rows=mymModels.map(function(m){
+      var ds={};mine.forEach(function(r){if(r.model===m&&wdays.indexOf(r.date)>=0)ds[r.date]=1});
+      var done=Object.keys(ds).length;var pr=done>=7?20:done>=6?10:done>=5?5:0;totP+=pr;
+      var grid=wdays.map(function(d,i){var on=ds[d],fut=d>todayStr,tod=d===todayStr;
+        return '<div title="'+d+'" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:11px;font-weight:700;font-family:var(--fm);'+(on?'background:linear-gradient(135deg,#25e8c3,#3fd07e);color:#052':'background:var(--card);color:var(--mut)'+(fut?';opacity:.45':''))+(tod?';box-shadow:inset 0 0 0 2px #7c5cff':'')+'">'+dl[i]+(on?' ✓':'')+'</div>'}).join('');
+      var col=pr>=20?'#25e8c3':pr>=10?'#3fd07e':pr>=5?'#ffb457':'var(--mut)';
+      return '<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line2);flex-wrap:wrap"><div style="display:flex;align-items:center;gap:10px;min-width:150px">'+modelAvatar(m)+'<div><div style="font-weight:700">'+esc(m)+'</div><div class="klabel">'+done+'/7 jours</div></div></div><div style="flex:1;min-width:220px;display:flex;gap:5px">'+grid+'</div><div style="text-align:right;min-width:66px"><div style="font-weight:800;font-size:19px;color:'+col+'">'+pr+' €</div><div class="klabel">prime</div></div></div>'}).join('');
+    var html='<div class="card" style="margin-top:16px"><div class="ocardh"><div class="label">💎 Prime MYM · série de la semaine</div><span class="klabel">7/7 = 20€ · 6/7 = 10€ · 5/7 = 5€</span></div>'+rows+'<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="hint">1 abo-SFS par jour = série complète (en plus des 2€/SFS).</span><span style="font-weight:800">Total prime MYM : <b style="color:#25e8c3">'+totP+' €</b></span></div></div>';
+    ck.insertAdjacentHTML('beforeend',html);
+  })();
 }
 function animateStats(){
   if(!$('p-dash')||!$('p-dash').classList.contains('active'))return;
@@ -1143,6 +1160,8 @@ function renderAide(){
   var wrap=$('aideWrap');if(!wrap)return;
   var secs=aideSecs();secs.sort(function(a,b){return ((b.kind==='template'?1:0)-(a.kind==='template'?1:0))||((a.sort||0)-(b.sort||0))});var html='';
   if(isAdmin)html+='<button class="btn primary" id="aideAdd" style="margin-bottom:14px">＋ Ajouter une section</button>';
+  var LOOMS=[{t:'Créer un lien SFS sur Infloww',u:'https://www.loom.com/share/2ff3f01fe8ad44da969ded3198249c42'},{t:'Unsend un SFS',u:'https://www.loom.com/share/d815a8c195c24ec59887cc5cb783e1e4'},{t:'Faire un SFS MYM',u:'https://www.loom.com/share/f20f23b4dbf74d4f8fd423d5ba85f821'},{t:'Qui exclure des SFS',u:'https://www.loom.com/share/dd6a26722cb14aa38afa899e43e6a68b'},{t:'Les KPI',u:'https://www.loom.com/share/f3cb30221acf434c99ab0eb2749fef11'},{t:'Modifier les chiffres de la template SFS',u:'https://www.loom.com/share/b7b64052106b4b2ea3dc91726955da45'}];
+  html+='<div class="card aidecard pinned" style="margin-bottom:14px"><div class="aidehead"><h2>🎥 Tutos vidéo</h2></div><p class="hint" style="margin:-2px 0 12px">Les tutos de Titouan — clique pour regarder.</p><div class="loomgrid">'+LOOMS.map(function(L,i){return '<a class="loomcard" href="'+L.u+'" target="_blank" rel="noopener"><span class="loomplay">▶</span><span class="loomt">'+esc(L.t)+'</span></a>'}).join('')+'</div></div>';
   if(!secs.length){html+='<div class="card"><p class="hint">Aucune section pour l\'instant.'+(isAdmin?' Clique « Ajouter une section » pour créer le guide.':'')+'</p></div>';}
   else{secs.forEach(function(s){
     var canEdit=isAdmin||s.kind==='template';var pin=s.kind==='template';
