@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://bvcnbtbdfkoiefuedxem.supabase.co wss://bvcnbtbdfkoiefuedxem.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<title>Diary · Nexora</title>
+<style>
+  :root {
+    --bg: #0b0d10;
+    --panel: #12161c;
+    --panel-2: #171c24;
+    --border: #232a35;
+    --text: #e7ecf3;
+    --muted: #8a94a4;
+    --accent: #7dd3fc;
+    --accent-2: #38bdf8;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", Segoe UI, Roboto, sans-serif;
+    font-size: 15px; line-height: 1.45; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  header.top { position: sticky; top: 0; z-index: 10; background: rgba(11,13,16,.85);
+    backdrop-filter: blur(8px); border-bottom: 1px solid var(--border);
+    padding: 12px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  header.top .brand { font-weight: 700; letter-spacing: .3px; }
+  header.top .brand span.dot { color: var(--accent); }
+  header.top .spacer { flex: 1; }
+  header.top .who { color: var(--muted); font-size: 13px; }
+  header.top .btn-out { background: transparent; border: 1px solid var(--border); color: var(--muted);
+    padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+  header.top .btn-out:hover { color: var(--text); border-color: var(--accent); }
+  main { max-width: 960px; margin: 0 auto; padding: 20px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 17px; margin: 24px 0 10px; color: var(--accent); letter-spacing: .3px; }
+  h3 { font-size: 15px; margin: 0; }
+  .sub { color: var(--muted); font-size: 13px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card.compact { padding: 12px 14px; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .row.between { justify-content: space-between; }
+  .tabs { display: flex; gap: 6px; margin: 6px 0 12px; overflow-x: auto; }
+  .tab { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--panel-2); color: var(--muted); cursor: pointer; white-space: nowrap; font-size: 14px; }
+  .tab.active { color: var(--text); border-color: var(--accent); background: rgba(125,211,252,.08); }
+  .tab.warn { border-color: var(--red); color: #fecaca; }
+  .checklist { display: grid; gap: 6px; }
+  .check {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--panel-2); cursor: pointer; user-select: none;
+    transition: border-color .15s, background .15s;
+  }
+  .check:hover { border-color: #37414f; }
+  .check input { margin-top: 3px; width: 20px; height: 20px; accent-color: var(--accent-2); cursor: pointer; }
+  .check.checked { border-color: rgba(34,197,94,.6); background: rgba(34,197,94,.06); }
+  .check .label { flex: 1; }
+  .check .hint { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .toggles-red { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .tgl-red {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--panel-2); color: var(--muted);
+  }
+  .tgl-red.on { border-color: var(--red); color: #fecaca; background: rgba(239,68,68,.12); }
+  textarea, input[type=text], input[type=email], input[type=url] {
+    width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; font: inherit; resize: vertical;
+  }
+  textarea:focus, input:focus { outline: none; border-color: var(--accent); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px;
+    background: var(--accent-2); color: #0b0d10; border: none; border-radius: 10px;
+    font-weight: 600; cursor: pointer; font-size: 14px; }
+  .btn:hover { filter: brightness(1.05); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn.danger { background: var(--red); color: white; }
+  .clipper-card { border: 1px solid var(--border); border-radius: 12px; background: var(--panel);
+    margin-bottom: 10px; overflow: hidden; }
+  .clipper-head { padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+    cursor: pointer; background: var(--panel-2); }
+  .clipper-head .chev { color: var(--muted); font-size: 14px; transition: transform .15s; }
+  .clipper-card.open .clipper-head .chev { transform: rotate(90deg); }
+  .clipper-head .progress { color: var(--muted); font-size: 13px; }
+  .clipper-head .badges { display: flex; gap: 6px; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    background: rgba(239,68,68,.15); color: #fecaca; border: 1px solid rgba(239,68,68,.4); }
+  .clipper-body { display: none; padding: 12px 14px; border-top: 1px solid var(--border); }
+  .clipper-card.open .clipper-body { display: block; }
+  .reels-list { display: grid; gap: 8px; margin-top: 8px; }
+  .reel-row { display: grid; grid-template-columns: 2fr 3fr auto; gap: 8px; align-items: center; }
+  .reel-row .btn.icon { padding: 8px 10px; }
+  .save-pill { font-size: 12px; color: var(--muted); }
+  .save-pill.saved::before { content: "●"; color: var(--green); margin-right: 5px; }
+  .save-pill.saving::before { content: "●"; color: var(--amber); margin-right: 5px; }
+  .save-pill.error::before { content: "●"; color: var(--red); margin-right: 5px; }
+  .banner { padding: 10px 14px; border-radius: 10px; margin-bottom: 14px;
+    display: flex; gap: 10px; align-items: center; }
+  .banner.draft { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.4); color: #fde68a; }
+  .banner.locked { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.4); color: #bbf7d0; }
+  .banner.error { background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.4); color: #fecaca; }
+  .table { width: 100%; border-collapse: collapse; }
+  .table th, .table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .table th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+  .pill.draft { background: rgba(245,158,11,.15); color: #fde68a; }
+  .pill.submitted { background: rgba(34,197,94,.15); color: #bbf7d0; }
+  .empty { color: var(--muted); text-align: center; padding: 40px 20px; }
+  .login-wrap { max-width: 380px; margin: 60px auto; }
+  .login-wrap .card { padding: 28px; }
+  .login-wrap .brand-big { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .login-wrap .sub { margin-bottom: 20px; }
+  .login-wrap input { margin-bottom: 12px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 16px; box-shadow: var(--shadow); font-size: 14px; z-index: 50; }
+  .toast.ok { border-color: rgba(34,197,94,.6); }
+  .toast.err { border-color: rgba(239,68,68,.6); }
+  @media (max-width: 640px) {
+    main { padding: 12px; }
+    .reel-row { grid-template-columns: 1fr; }
+    .clipper-head .progress { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top" id="topbar" style="display:none;">
+  <div class="brand">Diary <span class="dot">·</span> Nexora</div>
+  <nav class="tabs" style="margin:0;">
+    <button class="tab" data-nav="#/diary">Ma fiche du jour</button>
+    <button class="tab" data-nav="#/history">Historique</button>
+    <button class="tab ops-only" data-nav="#/ops" style="display:none;">Ops</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="who" id="who"></div>
+  <button class="btn-out" id="logoutBtn">Déconnexion</button>
+</header>
+
+<main id="app"></main>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+<script>
+/* =========================================================================
+ * Nexora Diary — single-file SPA
+ * ========================================================================= */
+
+const CONFIG = {
+  // À remplir : URL et anon key du projet Supabase.
+  supabaseUrl: 'https://bvcnbtbdfkoiefuedxem.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2Y25idGJkZmtvaWVmdWVkeGVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTk0ODAsImV4cCI6MjEwMDg5NTQ4MH0.RKyZuuYbEQpliXxfIc33ESwUx_jOj5xx_rPrpqgI9mU',
+};
+
+const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+});
+
+// ----- State -----
+const state = {
+  session: null,
+  me: null,                // { id, email, nom, role }
+  poles: [],               // [{ id, nom }]
+  clippersByPole: {},      // { poleId: [{id, nom, actif}] }
+  currentPoleId: null,
+  entry: null,             // diary_daily_entries row for today
+  poleCheck: null,         // pole_check row for currentPoleId+today
+  clipperChecks: {},       // { clipperId: row }
+  reelsByCheck: {},        // { clipperCheckId: [rows] }
+  saveTimers: {},          // debounced save timers
+  saveState: 'idle',       // idle | saving | saved | error
+};
+
+// ----- Utils -----
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const el = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; };
+const todayIso = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+};
+const fmtDate = (iso) => new Date(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' });
+const debounce = (key, ms, fn) => {
+  clearTimeout(state.saveTimers[key]);
+  state.saveTimers[key] = setTimeout(fn, ms);
+};
+const toast = (msg, kind = 'ok') => {
+  const wrap = $('#toast');
+  const t = el(`<div class="toast ${kind}">${msg}</div>`);
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+};
+const setSaveState = (s) => {
+  state.saveState = s;
+  const pill = $('#savePill');
+  if (!pill) return;
+  pill.className = `save-pill ${s}`;
+  pill.textContent = s === 'saving' ? 'Enregistrement…' : s === 'saved' ? 'Enregistré' : s === 'error' ? 'Erreur' : '';
+};
+
+// ----- Router -----
+const routes = {
+  '#/login':   renderLogin,
+  '#/diary':   renderDiary,
+  '#/history': renderHistory,
+  '#/ops':     renderOps,
+};
+
+async function route() {
+  const hash = location.hash || '#/diary';
+  const view = routes[hash] || routes['#/diary'];
+
+  // Auth gate
+  if (hash !== '#/login') {
+    const { data } = await sb.auth.getSession();
+    state.session = data.session;
+    if (!state.session) { location.hash = '#/login'; return; }
+    if (!state.me) await loadMe();
+  }
+
+  updateChrome();
+  const main = $('#app');
+  main.innerHTML = '';
+  try { await view(main); }
+  catch (err) { console.error(err); main.innerHTML = `<div class="banner error">Erreur : ${err.message || err}</div>`; }
+}
+
+window.addEventListener('hashchange', route);
+window.addEventListener('DOMContentLoaded', route);
+
+sb.auth.onAuthStateChange((_evt, session) => {
+  state.session = session;
+  if (session && (location.hash === '#/login' || !location.hash)) location.hash = '#/diary';
+});
+
+// ----- Chrome (header) -----
+function updateChrome() {
+  const bar = $('#topbar');
+  if (!state.session) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  $('#who').textContent = state.me ? `${state.me.nom} · ${state.me.email}` : '';
+  $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.nav === location.hash));
+  $$('.ops-only').forEach(el => el.style.display = state.me?.role === 'ops' || state.me?.role === 'admin' ? '' : 'none');
+}
+
+$$('[data-nav]', document).forEach(b => b.addEventListener('click', () => location.hash = b.dataset.nav));
+$('#logoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  state.me = null; state.session = null;
+  location.hash = '#/login';
+});
+
+// ----- Data loading -----
+async function loadMe() {
+  const email = state.session.user.email;
+  const { data, error } = await sb.from('diary_responsables')
+    .select('id, email, nom, role').eq('auth_user_id', state.session.user.id).maybeSingle();
+  if (error) throw error;
+  if (!data) {
+    // Fallback : chercher par email et lier auth_user_id
+    const { data: byEmail } = await sb.from('diary_responsables')
+      .select('id, email, nom, role').eq('email', email).maybeSingle();
+    if (!byEmail) throw new Error(`Aucun responsable configuré pour ${email}. Contacte l'admin.`);
+    await sb.from('diary_responsables').update({ auth_user_id: state.session.user.id }).eq('id', byEmail.id);
+    state.me = byEmail;
+  } else {
+    state.me = data;
+  }
+}
+
+async function loadPolesAndClippers() {
+  const { data: poles, error: pe } = await sb.from('diary_poles')
+    .select('id, nom').eq('responsable_id', state.me.id).is('archived_at', null).order('nom');
+  if (pe) throw pe;
+  state.poles = poles;
+
+  const poleIds = poles.map(p => p.id);
+  state.clippersByPole = Object.fromEntries(poleIds.map(id => [id, []]));
+
+  if (poleIds.length) {
+    const { data: clippers, error: ce } = await sb.from('diary_clippers')
+      .select('id, nom, pole_id, actif').in('pole_id', poleIds).eq('actif', true).is('archived_at', null).order('nom');
+    if (ce) throw ce;
+    clippers.forEach(c => state.clippersByPole[c.pole_id].push(c));
+  }
+
+  if (!state.currentPoleId && poles[0]) state.currentPoleId = poles[0].id;
+}
+
+async function loadOrCreateEntry(date = todayIso()) {
+  let { data: entry, error } = await sb.from('diary_daily_entries')
+    .select('*').eq('responsable_id', state.me.id).eq('date', date).maybeSingle();
+  if (error) throw error;
+  if (!entry) {
+    const { data: created, error: ce } = await sb.from('diary_daily_entries')
+      .insert({ responsable_id: state.me.id, date }).select().single();
+    if (ce) throw ce;
+    entry = created;
+  }
+  state.entry = entry;
+  return entry;
+}
+
+async function loadOrCreatePoleCheck(poleId) {
+  let { data, error } = await sb.from('diary_pole_checks')
+    .select('*').eq('daily_entry_id', state.entry.id).eq('pole_id', poleId).maybeSingle();
+  if (error) throw error;
+  if (!data) {
+    const { data: created, error: ce } = await sb.from('diary_pole_checks')
+      .insert({ daily_entry_id: state.entry.id, pole_id: poleId }).select().single();
+    if (ce) throw ce;
+    data = created;
+  }
+  state.poleCheck = data;
+  return data;
+}
+
+async function loadOrCreateClipperChecks(poleId) {
+  const clippers = state.clippersByPole[poleId] || [];
+  if (!clippers.length) { state.clipperChecks = {}; state.reelsByCheck = {}; return; }
+  const clipperIds = clippers.map(c => c.id);
+  const { data: existing, error } = await sb.from('diary_clipper_checks')
+    .select('*').eq('daily_entry_id', state.entry.id).in('clipper_id', clipperIds);
+  if (error) throw error;
+  const byClip = Object.fromEntries(existing.map(r => [r.clipper_id, r]));
+  const missing = clippers.filter(c => !byClip[c.id]);
+  if (missing.length) {
+    const rows = missing.map(c => ({ daily_entry_id: state.entry.id, clipper_id: c.id }));
+    const { data: created, error: ce } = await sb.from('diary_clipper_checks').insert(rows).select();
+    if (ce) throw ce;
+    created.forEach(r => byClip[r.clipper_id] = r);
+  }
+  state.clipperChecks = byClip;
+
+  const checkIds = Object.values(byClip).map(r => r.id);
+  const { data: reels } = await sb.from('diary_reels_perf').select('*').in('clipper_check_id', checkIds).order('created_at');
+  state.reelsByCheck = {};
+  checkIds.forEach(id => state.reelsByCheck[id] = []);
+  (reels || []).forEach(r => state.reelsByCheck[r.clipper_check_id].push(r));
+}
+
+// ----- Views -----
+async function renderLogin(main) {
+  main.innerHTML = `
+    <div class="login-wrap">
+      <div class="card">
+        <div class="brand-big">Diary <span style="color:var(--accent)">·</span> Nexora</div>
+        <div class="sub">Reçois un lien magique par email pour te connecter.</div>
+        <form id="loginForm">
+          <input type="email" name="email" placeholder="ton.email@nexora.fr" required autocomplete="email">
+          <button class="btn" type="submit" style="width:100%; justify-content:center;">Envoyer le lien</button>
+        </form>
+        <div id="loginMsg" class="sub" style="margin-top:12px;"></div>
+      </div>
+    </div>`;
+  $('#loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = new FormData(e.target).get('email').trim().toLowerCase();
+    $('#loginMsg').textContent = 'Envoi en cours…';
+    const { error } = await sb.auth.signInWithOtp({
+      email, options: { emailRedirectTo: `${location.origin}${location.pathname}#/diary` },
+    });
+    $('#loginMsg').textContent = error ? `Erreur : ${error.message}` : `Lien envoyé à ${email}. Vérifie ta boîte.`;
+  });
+}
+
+async function renderDiary(main) {
+  await loadPolesAndClippers();
+  await loadOrCreateEntry();
+
+  if (!state.poles.length) {
+    main.innerHTML = `<div class="card empty">Aucun pôle n'est rattaché à ton compte. Contacte l'admin.</div>`;
+    return;
+  }
+
+  const locked = state.entry.status === 'submitted';
+
+  main.innerHTML = `
+    <div class="row between" style="margin-bottom:8px;">
+      <div>
+        <h1>Fiche du ${fmtDate(state.entry.date)}</h1>
+        <div class="sub">Responsable de pôle · ${state.me.nom}</div>
+      </div>
+      <div class="row">
+        <span id="savePill" class="save-pill"></span>
+      </div>
+    </div>
+
+    ${locked
+      ? `<div class="banner locked row between">
+           <div>Fiche clôturée${state.entry.auto_submitted ? ' automatiquement à 06h' : ''} le ${new Date(state.entry.submitted_at).toLocaleString('fr-FR')}. Lecture seule.</div>
+           <button class="btn ghost" id="reopenBtn" style="padding:6px 12px;">Rouvrir</button>
+         </div>`
+      : `<div class="banner draft">Brouillon. Complète tes contrôles puis clique sur <b>Clôturer la journée</b> en bas.${state.entry.reopened_count > 0 ? ` <span class="sub">(rouverte ${state.entry.reopened_count}×)</span>` : ''}</div>`}
+
+    <div class="tabs" id="poleTabs">
+      ${state.poles.map(p => `<button class="tab ${p.id === state.currentPoleId ? 'active' : ''}" data-pole="${p.id}">${p.nom}</button>`).join('')}
+    </div>
+
+    <div id="poleContent"></div>
+
+    ${locked ? '' : `
+      <div class="card" style="text-align:center;">
+        <button class="btn" id="submitBtn">Clôturer la journée</button>
+      </div>`}
+  `;
+
+  $$('#poleTabs .tab').forEach(b => b.addEventListener('click', () => {
+    state.currentPoleId = b.dataset.pole;
+    renderDiary(main);
+  }));
+
+  if (!locked) {
+    $('#submitBtn').addEventListener('click', submitEntry);
+  } else {
+    $('#reopenBtn')?.addEventListener('click', reopenEntry);
+  }
+
+  await renderPoleContent(locked);
+}
+
+async function renderPoleContent(locked) {
+  await loadOrCreatePoleCheck(state.currentPoleId);
+  await loadOrCreateClipperChecks(state.currentPoleId);
+
+  const wrap = $('#poleContent');
+  const pc = state.poleCheck;
+  const clippers = state.clippersByPole[state.currentPoleId] || [];
+
+  const poleChecklist = [
+    ['posting', 'Posting : 3 reels par compte public (+ carrousel si c\'est le jour) + story.'],
+    ['cadence', 'Cadence respectée (nombre de reels, horaires, comptes).'],
+    ['habillage', 'Habillage : bio, photo de profil, à la une, lien sur compte privé.'],
+    ['aucun_compte_banni', 'Aucun compte banni (sinon recréer + prévenir le RO).'],
+    ['contenu_telegram_ok', 'Contenu Telegram complet (sinon signaler au RO).'],
+    ['clics_suivis', 'Clics / paliers suivis via GetMySocial, clipper motivé à monter.'],
+    ['reels_performants_remontes', 'Reels performants repérés et remontés.'],
+    ['clipper_aide', 'Clipper en difficulté aidé (sous-canal Général).'],
+    ['retour_envoye', 'Retour du jour envoyé au Responsable des Opérations.'],
+  ];
+
+  wrap.innerHTML = `
+    <div class="card">
+      <h2>Contrôles du pôle</h2>
+      <div class="checklist">
+        ${poleChecklist.map(([k, label]) => `
+          <label class="check ${pc[k] ? 'checked' : ''}">
+            <input type="checkbox" data-pole-check="${k}" ${pc[k] ? 'checked' : ''} ${locked ? 'disabled' : ''}>
+            <div class="label">${label}</div>
+          </label>
+        `).join('')}
+      </div>
+      <div style="margin-top:14px;">
+        <div class="sub" style="margin-bottom:4px;">Retour du jour au Responsable des Opérations</div>
+        <textarea data-pole-text rows="3" ${locked ? 'disabled' : ''} placeholder="Ce qui a marché, ce qui a coincé, actions en cours…">${pc.retour_ro || ''}</textarea>
+      </div>
+    </div>
+
+    <h2>Clippers du pôle (${clippers.length})</h2>
+    ${clippers.length === 0
+      ? `<div class="card empty">Aucun clipper actif dans ce pôle.</div>`
+      : clippers.map(c => renderClipperCardHtml(c, state.clipperChecks[c.id], locked)).join('')}
+  `;
+
+  // Bindings pole check
+  $$('[data-pole-check]', wrap).forEach(inp => {
+    inp.addEventListener('change', () => onPoleCheckChange(inp));
+  });
+  $('[data-pole-text]', wrap).addEventListener('input', (e) => {
+    debounce('poleText', 500, () => savePoleField('retour_ro', e.target.value));
+  });
+
+  // Bindings clippers
+  $$('.clipper-card', wrap).forEach(card => {
+    const clipperId = card.dataset.clipper;
+    $('.clipper-head', card).addEventListener('click', () => card.classList.toggle('open'));
+    $$('[data-clip-check]', card).forEach(inp => {
+      inp.addEventListener('click', (e) => e.stopPropagation());
+      inp.addEventListener('change', () => onClipperCheckChange(clipperId, inp));
+    });
+    $$('[data-clip-red]', card).forEach(btn => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); toggleClipperRed(clipperId, btn.dataset.clipRed); });
+    });
+    $('[data-clip-note]', card)?.addEventListener('input', (e) => {
+      e.stopPropagation();
+      debounce(`note-${clipperId}`, 500, () => saveClipperField(clipperId, 'note_libre', e.target.value));
+    });
+    $('[data-add-reel]', card)?.addEventListener('click', (e) => { e.stopPropagation(); addReel(clipperId); });
+  });
+}
+
+function renderClipperCardHtml(clipper, cc, locked) {
+  const items = [
+    ['habillage_complet', 'Habillage complet (bio, photo, à la une FAQ · ME · LIFESTYLE)'],
+    ['lien_ok', 'Lien présent et fonctionnel sur le compte privé'],
+    ['trois_reels_postes', '3 reels postés (+ carrousel si c\'est le jour)'],
+    ['story_postee', 'Story postée'],
+    ['voyants_verts', 'Voyants au vert (aucun orange/rouge)'],
+    ['contenu_telegram_dispo', 'Contenu disponible dans les sous-canaux Telegram'],
+  ];
+  const done = items.filter(([k]) => cc[k]).length;
+  const badges = [];
+  if (cc.compte_banni) badges.push('<span class="badge">Banni</span>');
+  if (cc.contenu_manquant) badges.push('<span class="badge">Contenu manquant</span>');
+  if (cc.en_difficulte) badges.push('<span class="badge">Difficulté</span>');
+
+  const reels = state.reelsByCheck[cc.id] || [];
+
+  return `
+    <div class="clipper-card" data-clipper="${clipper.id}">
+      <div class="clipper-head">
+        <div class="chev">▶</div>
+        <h3>${clipper.nom}</h3>
+        <div class="badges">${badges.join('')}</div>
+        <div style="flex:1;"></div>
+        <div class="progress">${done}/6</div>
+      </div>
+      <div class="clipper-body">
+        <div class="checklist">
+          ${items.map(([k, label]) => `
+            <label class="check ${cc[k] ? 'checked' : ''}">
+              <input type="checkbox" data-clip-check="${k}" ${cc[k] ? 'checked' : ''} ${locked ? 'disabled' : ''}>
+              <div class="label">${label}</div>
+            </label>
+          `).join('')}
+        </div>
+
+        <div class="toggles-red">
+          <button class="tgl-red ${cc.compte_banni ? 'on' : ''}" data-clip-red="compte_banni" ${locked ? 'disabled' : ''}>⚠ Compte banni</button>
+          <button class="tgl-red ${cc.contenu_manquant ? 'on' : ''}" data-clip-red="contenu_manquant" ${locked ? 'disabled' : ''}>⚠ Contenu manquant</button>
+          <button class="tgl-red ${cc.en_difficulte ? 'on' : ''}" data-clip-red="en_difficulte" ${locked ? 'disabled' : ''}>⚠ En difficulté</button>
+        </div>
+
+        <div style="margin-top:10px;">
+          <div class="sub" style="margin-bottom:4px;">Note du jour</div>
+          <textarea data-clip-note rows="2" ${locked ? 'disabled' : ''} placeholder="Contexte, blocages, objectifs…">${cc.note_libre || ''}</textarea>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div class="row between" style="margin-bottom:6px;">
+            <div class="sub">Reels performants à remonter</div>
+            ${locked ? '' : `<button class="btn ghost" data-add-reel style="padding:6px 10px; font-size:13px;">+ Ajouter</button>`}
+          </div>
+          <div class="reels-list" data-reels="${cc.id}">
+            ${reels.map(r => renderReelRow(r, locked)).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderReelRow(r, locked) {
+  return `
+    <div class="reel-row" data-reel="${r.id}">
+      <input type="url" data-reel-url placeholder="https://…" value="${(r.url||'').replace(/"/g,'&quot;')}" ${locked ? 'disabled' : ''}>
+      <input type="text" data-reel-note placeholder="Pourquoi ça performe" value="${(r.note||'').replace(/"/g,'&quot;')}" ${locked ? 'disabled' : ''}>
+      ${locked ? '' : `<button class="btn ghost icon" data-reel-del>✕</button>`}
+    </div>
+  `;
+}
+
+// ----- Save handlers -----
+async function onPoleCheckChange(input) {
+  const key = input.dataset.poleCheck;
+  const val = input.checked;
+  input.closest('.check').classList.toggle('checked', val);
+  await savePoleField(key, val);
+}
+
+async function savePoleField(key, val) {
+  setSaveState('saving');
+  const { error } = await sb.from('diary_pole_checks').update({ [key]: val }).eq('id', state.poleCheck.id);
+  if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
+  state.poleCheck[key] = val;
+  setSaveState('saved');
+}
+
+async function onClipperCheckChange(clipperId, input) {
+  const cc = state.clipperChecks[clipperId];
+  const key = input.dataset.clipCheck;
+  const val = input.checked;
+  input.closest('.check').classList.toggle('checked', val);
+  setSaveState('saving');
+  const { error } = await sb.from('diary_clipper_checks').update({ [key]: val }).eq('id', cc.id);
+  if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
+  cc[key] = val;
+  updateClipperProgress(clipperId);
+  setSaveState('saved');
+}
+
+async function saveClipperField(clipperId, key, val) {
+  const cc = state.clipperChecks[clipperId];
+  setSaveState('saving');
+  const { error } = await sb.from('diary_clipper_checks').update({ [key]: val }).eq('id', cc.id);
+  if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
+  cc[key] = val;
+  setSaveState('saved');
+}
+
+async function toggleClipperRed(clipperId, key) {
+  const cc = state.clipperChecks[clipperId];
+  const val = !cc[key];
+  setSaveState('saving');
+  const { error } = await sb.from('diary_clipper_checks').update({ [key]: val }).eq('id', cc.id);
+  if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
+  cc[key] = val;
+  setSaveState('saved');
+  // Ré-render la card pour màj badges/tgl visuel
+  const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
+  const wasOpen = card.classList.contains('open');
+  const clipper = (state.clippersByPole[state.currentPoleId] || []).find(c => c.id === clipperId);
+  const html = renderClipperCardHtml(clipper, cc, state.entry.status === 'submitted');
+  const fresh = el(html);
+  if (wasOpen) fresh.classList.add('open');
+  card.replaceWith(fresh);
+  bindClipperCard(fresh);
+}
+
+function bindClipperCard(card) {
+  const clipperId = card.dataset.clipper;
+  $('.clipper-head', card).addEventListener('click', () => card.classList.toggle('open'));
+  $$('[data-clip-check]', card).forEach(inp => {
+    inp.addEventListener('click', (e) => e.stopPropagation());
+    inp.addEventListener('change', () => onClipperCheckChange(clipperId, inp));
+  });
+  $$('[data-clip-red]', card).forEach(btn => {
+    btn.addEventListener('click', (e) => { e.stopPropagation(); toggleClipperRed(clipperId, btn.dataset.clipRed); });
+  });
+  $('[data-clip-note]', card)?.addEventListener('input', (e) => {
+    e.stopPropagation();
+    debounce(`note-${clipperId}`, 500, () => saveClipperField(clipperId, 'note_libre', e.target.value));
+  });
+  $('[data-add-reel]', card)?.addEventListener('click', (e) => { e.stopPropagation(); addReel(clipperId); });
+  bindReelRows(card);
+}
+
+function bindReelRows(card) {
+  const clipperId = card.dataset.clipper;
+  const cc = state.clipperChecks[clipperId];
+  $$('.reel-row', card).forEach(row => {
+    const id = row.dataset.reel;
+    $('[data-reel-url]', row)?.addEventListener('input', (e) => {
+      debounce(`reel-url-${id}`, 500, () => sb.from('diary_reels_perf').update({ url: e.target.value }).eq('id', id));
+    });
+    $('[data-reel-note]', row)?.addEventListener('input', (e) => {
+      debounce(`reel-note-${id}`, 500, () => sb.from('diary_reels_perf').update({ note: e.target.value }).eq('id', id));
+    });
+    $('[data-reel-del]', row)?.addEventListener('click', async () => {
+      await sb.from('diary_reels_perf').delete().eq('id', id);
+      state.reelsByCheck[cc.id] = (state.reelsByCheck[cc.id] || []).filter(r => r.id !== id);
+      row.remove();
+    });
+  });
+}
+
+async function addReel(clipperId) {
+  const cc = state.clipperChecks[clipperId];
+  const { data, error } = await sb.from('diary_reels_perf')
+    .insert({ clipper_check_id: cc.id, url: '', note: '' }).select().single();
+  if (error) { toast(error.message, 'err'); return; }
+  state.reelsByCheck[cc.id] = state.reelsByCheck[cc.id] || [];
+  state.reelsByCheck[cc.id].push(data);
+  const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
+  const list = $(`[data-reels="${cc.id}"]`, card);
+  const row = el(renderReelRow(data, false));
+  list.appendChild(row);
+  bindReelRows(card);
+  $('[data-reel-url]', row).focus();
+}
+
+function updateClipperProgress(clipperId) {
+  const cc = state.clipperChecks[clipperId];
+  const items = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  const done = items.filter(k => cc[k]).length;
+  const card = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
+  if (card) $('.progress', card).textContent = `${done}/6`;
+}
+
+async function submitEntry() {
+  if (!confirm('Clôturer la fiche du jour ? Tu pourras la rouvrir plus tard si besoin.')) return;
+  const { error } = await sb.from('diary_daily_entries')
+    .update({ status: 'submitted', submitted_at: new Date().toISOString(), auto_submitted: false })
+    .eq('id', state.entry.id);
+  if (error) { toast(error.message, 'err'); return; }
+  toast('Fiche clôturée ✓', 'ok');
+  await renderDiary($('#app'));
+}
+
+async function reopenEntry() {
+  if (!confirm('Rouvrir la fiche pour la modifier ?')) return;
+  const { error } = await sb.from('diary_daily_entries')
+    .update({
+      status: 'draft',
+      reopened_at: new Date().toISOString(),
+      reopened_count: (state.entry.reopened_count || 0) + 1,
+    })
+    .eq('id', state.entry.id);
+  if (error) { toast(error.message, 'err'); return; }
+  toast('Fiche rouverte', 'ok');
+  await renderDiary($('#app'));
+}
+
+// ----- Historique -----
+async function renderHistory(main) {
+  const { data, error } = await sb.from('diary_daily_entries')
+    .select('id, date, status, submitted_at')
+    .eq('responsable_id', state.me.id)
+    .order('date', { ascending: false }).limit(60);
+  if (error) throw error;
+
+  main.innerHTML = `
+    <h1>Historique</h1>
+    <div class="sub" style="margin-bottom:12px;">Tes 60 dernières fiches.</div>
+    <div class="card compact">
+      ${!data.length
+        ? `<div class="empty">Aucune fiche encore.</div>`
+        : `<table class="table">
+            <thead><tr><th>Date</th><th>Statut</th><th>Clôturée</th></tr></thead>
+            <tbody>
+              ${data.map(e => `
+                <tr>
+                  <td>${fmtDate(e.date)}</td>
+                  <td><span class="pill ${e.status}">${e.status === 'draft' ? 'Brouillon' : 'Clôturée'}</span></td>
+                  <td>${e.submitted_at ? new Date(e.submitted_at).toLocaleString('fr-FR') : '—'}</td>
+                </tr>`).join('')}
+            </tbody>
+           </table>`}
+    </div>`;
+}
+
+// ----- Ops dashboard -----
+async function renderOps(main) {
+  if (state.me.role !== 'ops' && state.me.role !== 'admin') {
+    main.innerHTML = `<div class="card empty">Accès réservé au Responsable des Opérations.</div>`;
+    return;
+  }
+  const today = todayIso();
+  const [{ data: alerts }, { data: entries }] = await Promise.all([
+    sb.from('diary_alerts')
+      .select('id, type, created_at, clipper_id, responsable_id, resolved_at')
+      .is('resolved_at', null).order('created_at', { ascending: false }),
+    sb.from('diary_daily_entries')
+      .select('id, date, status, submitted_at, responsable_id')
+      .eq('date', today).order('submitted_at', { ascending: false, nullsFirst: false }),
+  ]);
+
+  // Résoudre nommages (batch)
+  const respIds = Array.from(new Set([...(alerts||[]).map(a => a.responsable_id), ...(entries||[]).map(e => e.responsable_id)]));
+  const clipperIds = Array.from(new Set((alerts||[]).map(a => a.clipper_id).filter(Boolean)));
+  const [{ data: resps }, { data: clips }] = await Promise.all([
+    respIds.length ? sb.from('diary_responsables').select('id, nom').in('id', respIds) : Promise.resolve({ data: [] }),
+    clipperIds.length ? sb.from('diary_clippers').select('id, nom').in('id', clipperIds) : Promise.resolve({ data: [] }),
+  ]);
+  const respName = Object.fromEntries((resps||[]).map(r => [r.id, r.nom]));
+  const clipName = Object.fromEntries((clips||[]).map(c => [c.id, c.nom]));
+
+  main.innerHTML = `
+    <h1>Dashboard Ops</h1>
+    <div class="sub" style="margin-bottom:14px;">Fiches du jour et alertes ouvertes.</div>
+
+    <h2>Alertes ouvertes (${(alerts||[]).length})</h2>
+    ${!(alerts||[]).length
+      ? `<div class="card empty">Aucune alerte 🎉</div>`
+      : `<div class="card compact"><table class="table">
+          <thead><tr><th>Type</th><th>Clipper</th><th>Responsable</th><th>Depuis</th><th></th></tr></thead>
+          <tbody>
+            ${alerts.map(a => `
+              <tr>
+                <td><span class="badge">${a.type}</span></td>
+                <td>${clipName[a.clipper_id] || '—'}</td>
+                <td>${respName[a.responsable_id] || '—'}</td>
+                <td>${new Date(a.created_at).toLocaleString('fr-FR')}</td>
+                <td><button class="btn ghost" data-resolve="${a.id}" style="padding:4px 10px; font-size:13px;">Résoudre</button></td>
+              </tr>`).join('')}
+          </tbody>
+         </table></div>`}
+
+    <h2>Fiches du jour (${(entries||[]).length})</h2>
+    <div class="card compact">
+      ${!(entries||[]).length
+        ? `<div class="empty">Aucune fiche remplie aujourd'hui.</div>`
+        : `<table class="table">
+            <thead><tr><th>Responsable</th><th>Statut</th><th>Clôturée</th></tr></thead>
+            <tbody>
+              ${entries.map(e => `
+                <tr>
+                  <td>${respName[e.responsable_id] || '—'}</td>
+                  <td><span class="pill ${e.status}">${e.status === 'draft' ? 'Brouillon' : 'Clôturée'}</span></td>
+                  <td>${e.submitted_at ? new Date(e.submitted_at).toLocaleString('fr-FR') : '—'}</td>
+                </tr>`).join('')}
+            </tbody>
+           </table>`}
+    </div>
+  `;
+
+  $$('[data-resolve]', main).forEach(btn => btn.addEventListener('click', async () => {
+    const id = btn.dataset.resolve;
+    const { error } = await sb.from('diary_alerts')
+      .update({ resolved_at: new Date().toISOString(), resolved_by: state.me.id }).eq('id', id);
+    if (error) return toast(error.message, 'err');
+    toast('Alerte résolue', 'ok');
+    renderOps(main);
+  }));
+}
+</script>
+</body>
+</html>
