@@ -744,7 +744,7 @@
 const SUPABASE_URL='https://bvcnbtbdfkoiefuedxem.supabase.co';
 const SUPABASE_KEY='sb_publishable__X2Z5ELAvPpQ2CK7CKoXpQ_J2F2ZxEP';
 const MOISE_EMAILS=[]; // emails en minuscule qui voient la version simplifiée (sans Dashboard ni Import)
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Marion:{cvr:50,spend:13},'Bethy OF':{cvr:60,spend:13},'Bethy MYM':{cvr:60,spend:13},'Milla MYM':{cvr:60,spend:15}};
 const MODELS=Object.keys(CIBLES);
 const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF','Bethy OF':'OF','Bethy MYM':'MYM','Milla MYM':'MYM'};
@@ -1670,7 +1670,7 @@ function openClipLink(slug){
 /* export */
 window.exportCsv=function(){if(!data.length){toast('Rien à exporter.');return}var h=['Date','Modele','Partenaire','Contact','Statut','Lien','Clicks','Subs','Earnings','Fans','CVR','Note'];var L=[h.join(',')];data.forEach(r=>{var cvr=cvrOf(r),sc=scoreOf(r);L.push([r.date,r.model,'"'+(r.partner||'').replace(/"/g,'""')+'"','"'+(r.contact||'').replace(/"/g,'""')+'"',STL[r.status]||'','"'+(r.link_name||'').replace(/"/g,'""')+'"',r.clicks,r.subs,r.earnings,r.fans,cvr==null?'':cvr.toFixed(1),sc||''].join(','))});var s=L.join('\n');if(window.claude&&window.claude.downloads){window.claude.downloads.save({filename:'sfs.csv',data:s}).catch(()=>{})}else{var bl=new Blob([s],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='sfs.csv';a.click()}};
 
-sb.auth.getSession().then(async s=>{if(s.data.session){try{await sb.auth.setSession({access_token:s.data.session.access_token,refresh_token:s.data.session.refresh_token})}catch(e){}showApp()}});
+sb.auth.getSession().then(s=>{if(s.data.session){sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);showApp()}});
 </script>
 <script>
 /* logo 3D interactif — parallaxe souris + grossissement + scroll (style Apple/Porsche) */
