@@ -525,6 +525,76 @@ function celebrate(msg, opts = {}) {
   }
 }
 
+// ----- Insights / coaching (14 derniers jours) -----
+async function computeInsights() {
+  const to = new Date(); const from = new Date(); from.setDate(from.getDate() - 13);
+  const isoFrom = from.toISOString().slice(0,10);
+  const isoTo = to.toISOString().slice(0,10);
+  const { data: entries } = await sb.from('diary_daily_entries')
+    .select('id, date').eq('responsable_id', state.me.id).gte('date', isoFrom).lte('date', isoTo);
+  if (!entries || !entries.length) return [];
+  const ids = entries.map(e => e.id);
+  const dateOf = Object.fromEntries(entries.map(e => [e.id, e.date]));
+  const [{ data: poleChecks }, { data: clipperChecks }, { data: clippers }] = await Promise.all([
+    sb.from('diary_pole_checks').select('*').in('daily_entry_id', ids),
+    sb.from('diary_clipper_checks').select('*').in('daily_entry_id', ids),
+    sb.from('diary_clippers').select('id, nom, actif').eq('actif', true),
+  ]);
+  const clipName = Object.fromEntries((clippers||[]).map(c => [c.id, c.nom]));
+  const poleKeys = [['posting','Posting'],['cadence','Cadence'],['habillage','Habillage'],['aucun_compte_banni','Aucun banni'],['contenu_telegram_ok','Contenu Telegram'],['clics_suivis','Clics/paliers'],['reels_performants_remontes','Reels perfs remontés'],['clipper_aide','Aider clipper'],['retour_envoye','Retour RO']];
+  const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  const in7 = (iso) => { const d = new Date(iso); const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-7); return d >= cutoff; };
+  const in14prev = (iso) => { const d = new Date(iso); const start = new Date(); start.setDate(start.getDate()-13); const mid = new Date(); mid.setDate(mid.getDate()-7); return d >= start && d < mid; };
+
+  const insights = [];
+
+  // 1) Contrôles pôle jamais cochés ces 7 derniers jours (parmi ceux avec au moins 1 pole_check dans les 7j)
+  const pcInLast7 = (poleChecks||[]).filter(pc => in7(dateOf[pc.daily_entry_id]));
+  if (pcInLast7.length >= 3) {
+    for (const [k, label] of poleKeys) {
+      const oui = pcInLast7.filter(pc => pc[k]).length;
+      if (oui === 0) {
+        insights.push({ kind: 'warn', text: `Tu n'as jamais coché <b>« ${label} »</b> ces 7 derniers jours — tu le fais vraiment ?` });
+        break; // 1 seul max pour pas noyer
+      }
+    }
+  }
+
+  // 2) Clipper à moins de 40% sur 7 derniers jours
+  const ccByClipper7 = {};
+  (clipperChecks||[]).forEach(cc => {
+    if (!in7(dateOf[cc.daily_entry_id])) return;
+    const b = ccByClipper7[cc.clipper_id] ||= { done: 0, total: 0 };
+    clipperKeys.forEach(k => { b.total++; if (cc[k]) b.done++; });
+  });
+  const strugglers = Object.entries(ccByClipper7)
+    .filter(([, v]) => v.total >= 12) // au moins 2 jours
+    .map(([id, v]) => ({ id, pct: Math.round(v.done*100/v.total), nom: clipName[id] || '?' }))
+    .filter(x => x.pct < 40)
+    .sort((a, b) => a.pct - b.pct);
+  if (strugglers.length) {
+    const s = strugglers[0];
+    insights.push({ kind: 'warn', text: `<b>${s.nom}</b> à seulement <b>${s.pct}%</b> cette semaine — appel/message à passer ?` });
+  }
+
+  // 3) Comparaison semaine actuelle vs précédente
+  const sumRange = (fn) => {
+    let d = 0, t = 0;
+    (poleChecks||[]).forEach(pc => { if (fn(dateOf[pc.daily_entry_id])) poleKeys.forEach(([k]) => { t++; if (pc[k]) d++; }); });
+    (clipperChecks||[]).forEach(cc => { if (fn(dateOf[cc.daily_entry_id])) clipperKeys.forEach(k => { t++; if (cc[k]) d++; }); });
+    return t ? d*100/t : null;
+  };
+  const p7 = sumRange(in7);
+  const p14 = sumRange(in14prev);
+  if (p7 !== null && p14 !== null && Math.abs(p7 - p14) >= 3) {
+    const delta = Math.round(p7 - p14);
+    if (delta > 0) insights.push({ kind: 'good', text: `🚀 Semaine à <b>${Math.round(p7)}%</b> — <b>+${delta}pts</b> vs la précédente. Bien joué !` });
+    else insights.push({ kind: 'warn', text: `📉 Semaine à <b>${Math.round(p7)}%</b> — <b>${delta}pts</b> vs la précédente. À redresser.` });
+  }
+
+  return insights.slice(0, 3);
+}
+
 // ----- Streak (jours consécutifs avec fiche clôturée) -----
 async function computeStreak() {
   const { data } = await sb.from('diary_daily_entries')
@@ -743,7 +813,7 @@ async function renderDiary(main, date = null) {
   }
 
   const locked = state.entry.status === 'submitted';
-  const streak = await computeStreak();
+  const [streak, insights] = await Promise.all([computeStreak(), isPast ? Promise.resolve([]) : computeInsights()]);
   const totalClippers = state.poles.reduce((n, p) => n + (state.clippersByPole[p.id]?.length || 0), 0);
   // Compte des alertes rouges ouvertes pour ce responsable (aujourd'hui + tous jours).
   const { count: openAlerts } = await sb.from('diary_alerts')
@@ -784,6 +854,19 @@ async function renderDiary(main, date = null) {
         : state.entry.reopened_count > 0
           ? `<div class="banner draft">Brouillon (rouverte ${state.entry.reopened_count}×). Termine puis clôture en bas.</div>`
           : ``}
+
+    ${insights.length ? `
+      <div class="card" style="padding:14px 18px;">
+        <div class="sub" style="margin-bottom:8px; font-weight:600; letter-spacing:.3px;">💡 Insights de la semaine</div>
+        <div style="display:grid; gap:6px;">
+          ${insights.map(i => `
+            <div class="row" style="gap:10px; padding:8px 12px; border-radius:10px;
+                                    background:${i.kind==='good'?'rgba(34,197,94,.08)':'rgba(245,158,11,.08)'};
+                                    border:1px solid ${i.kind==='good'?'rgba(34,197,94,.3)':'rgba(245,158,11,.3)'};">
+              <div style="flex:1; font-size:14px; color:${i.kind==='good'?'#bbf7d0':'#fde68a'};">${i.text}</div>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
 
     <div class="tabs" id="poleTabs">
       ${state.poles.map(p => `<button class="tab ${p.id === state.currentPoleId ? 'active' : ''}" data-pole="${p.id}">${p.nom}</button>`).join('')}
