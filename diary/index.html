@@ -747,16 +747,19 @@ async function renderOps(main) {
     return;
   }
   const today = todayIso();
-  const [{ data: alerts }, { data: entries }] = await Promise.all([
+  const [{ data: alerts }, { data: entries }, { data: clippersRaw }, { data: polesRaw }] = await Promise.all([
     sb.from('diary_alerts')
       .select('id, type, created_at, clipper_id, responsable_id, resolved_at')
       .is('resolved_at', null).order('created_at', { ascending: false }),
     sb.from('diary_daily_entries')
       .select('id, date, status, submitted_at, responsable_id')
       .eq('date', today).order('submitted_at', { ascending: false, nullsFirst: false }),
+    sb.from('diary_clippers')
+      .select('id, nom, pole_id, actif, updated_at, archived_at')
+      .eq('actif', true).order('nom'),
+    sb.from('diary_poles').select('id, nom').is('archived_at', null).order('nom'),
   ]);
 
-  // Résoudre nommages (batch)
   const respIds = Array.from(new Set([...(alerts||[]).map(a => a.responsable_id), ...(entries||[]).map(e => e.responsable_id)]));
   const clipperIds = Array.from(new Set((alerts||[]).map(a => a.clipper_id).filter(Boolean)));
   const [{ data: resps }, { data: clips }] = await Promise.all([
@@ -766,9 +769,17 @@ async function renderOps(main) {
   const respName = Object.fromEntries((resps||[]).map(r => [r.id, r.nom]));
   const clipName = Object.fromEntries((clips||[]).map(c => [c.id, c.nom]));
 
+  const clippersByPole = {};
+  (polesRaw||[]).forEach(p => clippersByPole[p.id] = { pole: p, clippers: [] });
+  (clippersRaw||[]).forEach(c => {
+    if (clippersByPole[c.pole_id]) clippersByPole[c.pole_id].clippers.push(c);
+  });
+  const lastSync = (clippersRaw||[]).reduce((m, c) => c.updated_at > m ? c.updated_at : m, '');
+  const totalActif = (clippersRaw||[]).length;
+
   main.innerHTML = `
     <h1>Dashboard Ops</h1>
-    <div class="sub" style="margin-bottom:14px;">Fiches du jour et alertes ouvertes.</div>
+    <div class="sub" style="margin-bottom:14px;">Fiches du jour, alertes ouvertes, état du roster.</div>
 
     <h2>Alertes ouvertes (${(alerts||[]).length})</h2>
     ${!(alerts||[]).length
@@ -803,7 +814,44 @@ async function renderOps(main) {
             </tbody>
            </table>`}
     </div>
+
+    <h2>Roster clippers (${totalActif} actifs)</h2>
+    <div class="card">
+      <div class="row between" style="margin-bottom:10px;">
+        <div class="sub">
+          ${lastSync
+            ? `Dernière MAJ : ${new Date(lastSync).toLocaleString('fr-FR')}`
+            : 'Aucune sync encore.'}
+        </div>
+        <div class="row" style="gap:8px;">
+          <button class="btn ghost" id="rosterReload" style="padding:6px 12px; font-size:13px;">🔄 Recharger</button>
+          <button class="btn" id="rosterSyncReq" style="padding:6px 12px; font-size:13px;">📣 Demander une sync au bot</button>
+        </div>
+      </div>
+      ${!Object.values(clippersByPole).some(x => x.clippers.length)
+        ? `<div class="empty">Aucun clipper actif rattaché à un pôle.</div>`
+        : `<table class="table">
+            <thead><tr><th>Pôle</th><th>Nb</th><th>Clippers</th></tr></thead>
+            <tbody>
+              ${Object.values(clippersByPole).map(({pole, clippers}) => `
+                <tr>
+                  <td><b>${pole.nom}</b></td>
+                  <td>${clippers.length}</td>
+                  <td class="sub">${clippers.map(c => c.nom).join(', ') || '—'}</td>
+                </tr>`).join('')}
+            </tbody>
+           </table>`}
+      <div class="sub" style="margin-top:10px; font-size:12px;">
+        Le bot Telegram pousse automatiquement les clippers à chaque
+        <code>/attribu</code>. Pour resync manuel (rattraper ancien roster
+        ou déclencher un archivage), tape <code>/diarysync</code> dans le bot,
+        ou clique sur le bouton ci-dessus pour recevoir un rappel Telegram.
+      </div>
+    </div>
   `;
+
+  $('#rosterReload', main).addEventListener('click', () => renderOps(main));
+  $('#rosterSyncReq', main).addEventListener('click', requestSyncFromBot);
 
   $$('[data-resolve]', main).forEach(btn => btn.addEventListener('click', async () => {
     const id = btn.dataset.resolve;
@@ -813,6 +861,28 @@ async function renderOps(main) {
     toast('Alerte résolue', 'ok');
     renderOps(main);
   }));
+}
+
+async function requestSyncFromBot() {
+  const btn = $('#rosterSyncReq');
+  if (btn) { btn.disabled = true; btn.textContent = 'Envoi…'; }
+  try {
+    const { data, error } = await sb.functions.invoke('diary-request-sync', { body: {} });
+    if (error) {
+      const detail = error?.context?.body ? JSON.stringify(error.context.body).slice(0, 200) : (error.message || String(error));
+      toast(`Erreur : ${detail}`, 'err');
+      return;
+    }
+    if (data?.ok) {
+      toast(`Ping envoyé à Titouan sur Telegram ✓`, 'ok');
+    } else {
+      toast(data?.error ? `Erreur : ${data.error}` : 'Réponse inattendue', 'err');
+    }
+  } catch (e) {
+    toast(`Erreur : ${e.message || e}`, 'err');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📣 Demander une sync au bot'; }
+  }
 }
 </script>
 </body>
