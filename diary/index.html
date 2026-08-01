@@ -352,6 +352,108 @@
   @keyframes toast-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); }
                         to   { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
+  /* B - Big % pulsant dans le hero */
+  .day-hero .ring-wrap .center { color: var(--text); }
+  .day-hero .ring-wrap .center span#heroPct {
+    font-size: 26px; font-weight: 800; letter-spacing: -.5px;
+    background: var(--grad-brand); -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    animation: pct-pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes pct-pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%     { opacity: .85; transform: scale(1.04); }
+  }
+  .day-hero .ring-wrap .center small { font-size: 9px; }
+  /* Avatar hero (A) : initiale au fond du gros anneau */
+  .day-hero .ring-wrap .hero-avatar {
+    position: absolute; inset: 12px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800; font-size: 28px;
+    letter-spacing: -.5px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.14);
+    z-index: 0;
+  }
+  .day-hero .ring-wrap .center { z-index: 1; position: relative; }
+
+  /* C - Glow vert lumineux sur cards clipper complètes */
+  .clipper-card.done {
+    box-shadow: 0 0 40px -8px rgba(34,197,94,.4), 0 4px 14px rgba(0,0,0,.3);
+  }
+  .clipper-card.done .clipper-avatar {
+    box-shadow: 0 0 20px -2px rgba(34,197,94,.5), 0 2px 10px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.15);
+  }
+
+  /* E - Focus mode modal */
+  .focus-backdrop {
+    position: fixed; inset: 0; background: rgba(6,8,12,.72);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    z-index: 90; animation: fade-in .2s ease;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  .focus-backdrop .focus-close {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-size: 18px; z-index: 2;
+  }
+  .focus-backdrop .clipper-card {
+    max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto;
+    animation: focus-in .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes focus-in {
+    from { opacity: 0; transform: scale(.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* H - Mini heatmap 7j dans card clipper */
+  .clip-heatmap { display: flex; gap: 4px; margin-top: 4px; }
+  .clip-heatmap .day {
+    width: 20px; height: 20px; border-radius: 4px; background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--muted);
+  }
+  .clip-heatmap .day.today { border: 1px solid var(--accent); }
+
+  /* Settings menu */
+  .settings-btn { background: transparent; border: 1px solid var(--border); color: var(--muted);
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; }
+  .settings-btn:hover { color: var(--text); border-color: var(--accent); }
+  .settings-popover {
+    position: absolute; top: 44px; right: 12px; z-index: 20;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px; min-width: 220px; box-shadow: var(--shadow);
+  }
+  .settings-popover label { display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+  .settings-popover label:hover { background: var(--panel-2); }
+
+  /* K - Emoji réaction du RO */
+  .ops-emoji {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px;
+    background: linear-gradient(135deg, rgba(251,191,36,.15), rgba(244,114,182,.15));
+    border: 1px solid rgba(251,191,36,.35);
+    font-size: 15px; color: #fde68a; animation: float-emoji 3s ease-in-out infinite;
+  }
+  @keyframes float-emoji {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-3px); }
+  }
+  .emoji-picker { display: flex; gap: 4px; flex-wrap: wrap; }
+  .emoji-picker button {
+    background: transparent; border: 1px solid var(--border); border-radius: 8px;
+    width: 34px; height: 34px; font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .1s, border-color .15s;
+  }
+  .emoji-picker button:hover { transform: scale(1.15); border-color: var(--accent); }
+  .emoji-picker button.selected { border-color: var(--gold); background: rgba(251,191,36,.15); }
+
   /* HEATMAP (historique) */
   .hm-months { display: grid; gap: 3px; margin-left: 22px; margin-bottom: 4px; }
   .hm-month { font-size: 10px; color: var(--muted); text-align: left; grid-row: 1;
@@ -420,6 +522,15 @@
   </nav>
   <div class="spacer"></div>
   <div class="who" id="who"></div>
+  <div style="position:relative;">
+    <button class="settings-btn" id="settingsBtn" title="Réglages">⚙</button>
+    <div class="settings-popover" id="settingsPop" style="display:none;">
+      <div class="sub" style="margin-bottom:6px; font-weight:600;">Réglages</div>
+      <label><input type="checkbox" id="setSound"> Son sur les checks</label>
+      <label><input type="checkbox" id="setHaptic"> Vibration (mobile)</label>
+      <div class="dim" style="margin-top:8px; font-size:11px;">Aussi : <code>J</code>/<code>K</code> pour naviguer les clippers, <code>Espace</code> pour toggle, <code>⌘/Ctrl+Enter</code> pour clôturer.</div>
+    </div>
+  </div>
   <button class="btn-out" id="logoutBtn">Déconnexion</button>
 </header>
 
@@ -550,16 +661,91 @@ function avatarHtml(nom) {
   return `<div class="clipper-avatar" style="background: linear-gradient(135deg, ${c1}, ${c2});">${init}</div>`;
 }
 
-// Message d'accueil selon l'heure du jour.
+// Message d'accueil selon l'heure du jour + emoji vibe rotatif.
+const VIBE_EMOJIS = ['✨','🚀','💪','🎯','🔥','⚡','🌟','💫','🎨','🌈','☘️','🦄'];
+function pickVibe() {
+  return VIBE_EMOJIS[Math.floor(Math.random() * VIBE_EMOJIS.length)];
+}
 function greeting(nom) {
   const h = new Date().getHours();
   const first = (nom || '').split(' ')[0];
-  if (h < 6)  return `Nuit calme, ${first}. La journée d'hier est en clôture auto à 6h.`;
-  if (h < 11) return `Bonjour ${first} ☀️ · cible du jour : 100%`;
-  if (h < 14) return `Bon midi ${first} 🥗 · point de mi-parcours`;
-  if (h < 18) return `Bel après-midi ${first} 🚀 · on pousse`;
-  if (h < 22) return `Bonsoir ${first} 🌙 · dernière ligne droite`;
+  const vibe = pickVibe();
+  if (h < 6)  return `Nuit calme, ${first} 🌙 · clôture auto à 6h`;
+  if (h < 11) return `Bonjour ${first} ${vibe} · cible du jour : 100%`;
+  if (h < 14) return `Bon midi ${first} ${vibe} · point de mi-parcours`;
+  if (h < 18) return `Bel après-midi ${first} ${vibe} · on pousse`;
+  if (h < 22) return `Bonsoir ${first} ${vibe} · dernière ligne droite`;
   return `Fin de journée ${first} · clôture bientôt`;
+}
+
+// ----- Settings (G : sound + haptic opt-in, stored in localStorage) -----
+const SETTINGS_KEY = 'nexora-diary-settings';
+const settings = (() => {
+  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || { sound: false, haptic: true }; }
+  catch { return { sound: false, haptic: true }; }
+})();
+function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
+
+// Petit "pop" via WebAudio (silent by default). Tone descendante courte, doux.
+let _audioCtx = null;
+function popSound() {
+  if (!settings.sound) return;
+  try {
+    _audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+    const t = _audioCtx.currentTime;
+    const osc = _audioCtx.createOscillator();
+    const gain = _audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, t);
+    osc.frequency.exponentialRampToValueAtTime(440, t + 0.08);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.16, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+    osc.connect(gain).connect(_audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.16);
+  } catch {}
+}
+function haptic(ms = 12) {
+  if (!settings.haptic) return;
+  try { navigator.vibrate?.(ms); } catch {}
+}
+function checkFeedback() { popSound(); haptic(10); }
+
+// ----- I : Comparaison temporelle (hier même heure + semaine dernière) -----
+async function computeComparison() {
+  // "% hier à la même heure" — approximation : on prend la fiche d'hier et on
+  // regarde son état à l'heure H actuelle en interpolant sur les timestamps de
+  // updated_at des checks. Simple : on renvoie le % actuel de la fiche d'hier.
+  const now = new Date();
+  const yester = new Date(now); yester.setDate(yester.getDate() - 1);
+  const isoYester = yester.toISOString().slice(0, 10);
+  const lastWeekStart = new Date(now); lastWeekStart.setDate(lastWeekStart.getDate() - 14);
+  const lastWeekEnd = new Date(now); lastWeekEnd.setDate(lastWeekEnd.getDate() - 8);
+  const isoLWS = lastWeekStart.toISOString().slice(0, 10);
+  const isoLWE = lastWeekEnd.toISOString().slice(0, 10);
+
+  const [{ data: yEntry }, { data: lastWEntries }] = await Promise.all([
+    sb.from('diary_daily_entries').select('id').eq('responsable_id', state.me.id).eq('date', isoYester).maybeSingle(),
+    sb.from('diary_daily_entries').select('id').eq('responsable_id', state.me.id).gte('date', isoLWS).lte('date', isoLWE),
+  ]);
+  const poleKeys = ['posting','cadence','habillage','aucun_compte_banni','contenu_telegram_ok','clics_suivis','reels_performants_remontes','clipper_aide','retour_envoye'];
+  const clipperKeys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  const pctOf = async (entryIds) => {
+    if (!entryIds.length) return null;
+    const [{ data: pcs }, { data: ccs }] = await Promise.all([
+      sb.from('diary_pole_checks').select('*').in('daily_entry_id', entryIds),
+      sb.from('diary_clipper_checks').select('*').in('daily_entry_id', entryIds),
+    ]);
+    let d = 0, t = 0;
+    (pcs||[]).forEach(pc => poleKeys.forEach(k => { t++; if (pc[k]) d++; }));
+    (ccs||[]).forEach(cc => clipperKeys.forEach(k => { t++; if (cc[k]) d++; }));
+    return t ? Math.round(d * 100 / t) : null;
+  };
+  const [pctYester, pctLastWeek] = await Promise.all([
+    yEntry ? pctOf([yEntry.id]) : null,
+    (lastWEntries||[]).length ? pctOf(lastWEntries.map(e => e.id)) : null,
+  ]);
+  return { yester: pctYester, lastWeek: pctLastWeek };
 }
 
 // ----- Confetti (petit moteur canvas, aucune dépendance) -----
@@ -771,6 +957,53 @@ $('#logoutBtn').addEventListener('click', async () => {
   await sb.auth.signOut();
   state.me = null; state.session = null;
   location.hash = '#/login';
+});
+
+// Settings popover
+const _sPop = $('#settingsPop');
+$('#settingsBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  _sPop.style.display = _sPop.style.display === 'block' ? 'none' : 'block';
+  $('#setSound').checked = settings.sound;
+  $('#setHaptic').checked = settings.haptic;
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#settingsPop') && !e.target.closest('#settingsBtn')) _sPop.style.display = 'none';
+});
+$('#setSound').addEventListener('change', (e) => { settings.sound = e.target.checked; saveSettings(); if (settings.sound) popSound(); });
+$('#setHaptic').addEventListener('change', (e) => { settings.haptic = e.target.checked; saveSettings(); if (settings.haptic) haptic(20); });
+
+// Global keyboard shortcuts (L)
+document.addEventListener('keydown', (e) => {
+  // Ne pas capturer dans les input/textarea
+  const tag = (e.target.tagName || '').toUpperCase();
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+  // ⌘/Ctrl+Enter → clôturer
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    const b = $('#submitBtn'); if (b && !b.disabled) { e.preventDefault(); b.click(); }
+    return;
+  }
+  const cards = $$('.clipper-card');
+  if (!cards.length) return;
+  let idx = cards.findIndex(c => c.classList.contains('open'));
+  if (e.key === 'j' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    cards.forEach(c => c.classList.remove('open'));
+    const next = cards[(idx + 1 + cards.length) % cards.length] || cards[0];
+    next.classList.add('open');
+    next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (e.key === 'k' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    cards.forEach(c => c.classList.remove('open'));
+    const prev = cards[(idx - 1 + cards.length) % cards.length] || cards[cards.length - 1];
+    prev.classList.add('open');
+    prev.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (e.key === ' ' && idx >= 0) {
+    // Space : toggle "tout cocher" du clipper ouvert
+    e.preventDefault();
+    const clipperId = cards[idx].dataset.clipper;
+    if (clipperId) toggleAllClipperChecks(clipperId);
+  }
 });
 
 // ----- Data loading -----
@@ -985,7 +1218,11 @@ async function renderDiary(main, date = null) {
   }
 
   const locked = state.entry.status === 'submitted';
-  const [streak, insights] = await Promise.all([computeStreak(), isPast ? Promise.resolve([]) : computeInsights()]);
+  const [streak, insights, cmp] = await Promise.all([
+    computeStreak(),
+    isPast ? Promise.resolve([]) : computeInsights(),
+    isPast ? Promise.resolve({}) : computeComparison(),
+  ]);
   const totalClippers = state.poles.reduce((n, p) => n + (state.clippersByPole[p.id]?.length || 0), 0);
   // Compte des alertes rouges ouvertes pour ce responsable (aujourd'hui + tous jours).
   const { count: openAlerts } = await sb.from('diary_alerts')
@@ -993,13 +1230,17 @@ async function renderDiary(main, date = null) {
     .eq('responsable_id', state.me.id).is('resolved_at', null);
   // Fetch ALL pole_checks + clipper_checks pour la fiche du jour (tous pôles).
   await loadAllChecksForEntry();
+  const meColors = avatarColors(state.me.nom);
+  const meInit  = (state.me.nom || '?').trim().charAt(0).toUpperCase();
+  const opsEmoji = state.entry?.ops_emoji;
   // Fiche d'hier existe-t-elle et est-elle clôturée ? (pour bouton "Reprendre d'hier")
   const yester = (() => { const d = new Date(); d.setDate(d.getDate()-1); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
   const canImportYesterday = !locked && !isPast && state.entry?.status === 'draft';
 
   main.innerHTML = `
     <div class="card hero day-hero">
-      <div class="ring-wrap" id="heroRing">
+      <div class="ring-wrap" id="heroRing" style="width:88px; height:88px;">
+        <div class="hero-avatar" style="background: linear-gradient(135deg, ${meColors[0]}, ${meColors[1]});">${meInit}</div>
         ${progressRing(0, 1, { size: 88 })}
         <div class="center"><span id="heroPct">0%</span><small>Aujourd'hui</small></div>
       </div>
@@ -1010,6 +1251,8 @@ async function renderDiary(main, date = null) {
           ${streak > 0 && !isPast ? `<span class="streak ${streak>=3?'hot':''}">🔥 ${streak} jour${streak>1?'s':''} d'affilée</span>` : ''}
           <span class="streak" style="background:linear-gradient(135deg, rgba(125,211,252,.18), rgba(167,139,250,.12)); border-color:rgba(125,211,252,.35); color:#bae6fd;" id="clippersDoneChip">✨ 0 / ${totalClippers} complets</span>
           ${openAlerts > 0 && !isPast ? `<span class="streak" style="background:linear-gradient(135deg, rgba(239,68,68,.2), rgba(239,68,68,.08)); border-color:rgba(239,68,68,.4); color:#fecaca;">⚠ ${openAlerts} alerte${openAlerts>1?'s':''} rouge${openAlerts>1?'s':''}</span>` : ''}
+          ${!isPast && (cmp.yester != null || cmp.lastWeek != null) ? `<span class="streak" style="background:rgba(167,139,250,.12); border-color:rgba(167,139,250,.35); color:#e9d5ff;">📊 ${cmp.yester != null ? `hier ${cmp.yester}%` : ''}${cmp.yester != null && cmp.lastWeek != null ? ' · ' : ''}${cmp.lastWeek != null ? `sem. der. ${cmp.lastWeek}%` : ''}</span>` : ''}
+          ${opsEmoji ? `<span class="ops-emoji" title="Réaction du RO">${opsEmoji}</span>` : ''}
           <span id="savePill" class="save-pill"></span>
         </div>
       </div>
@@ -1070,6 +1313,119 @@ async function renderDiary(main, date = null) {
   await renderPoleContent(locked || isPast);
   updateHeroStats();
   updateSubmitButtonState();
+}
+
+// E : Focus mode — clone la card clipper dans un backdrop plein écran flouté.
+function openFocusMode(clipperId) {
+  const orig = document.querySelector(`.clipper-card[data-clipper="${clipperId}"]`);
+  if (!orig) return;
+  const backdrop = el(`<div class="focus-backdrop">
+    <button class="focus-close">✕</button>
+  </div>`);
+  const clone = orig.cloneNode(true);
+  clone.classList.add('open');
+  backdrop.appendChild(clone);
+  document.body.appendChild(backdrop);
+  const close = () => { backdrop.remove(); };
+  $('.focus-close', backdrop).addEventListener('click', close);
+  backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+  document.addEventListener('keydown', function onEsc(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', onEsc); }
+  });
+  // Ré-bind les événements sur la copie (checks + toggles + boutons) — on
+  // redirige tout vers l'original, plus simple : le clone est en lecture-visuelle
+  // et on ferme quand l'utilisateur veut modifier.
+  $$('input, button, textarea', clone).forEach(el => el.addEventListener('click', close));
+}
+
+// H : Charge l'historique 7 derniers jours d'un clipper.
+async function loadClipperHeatmap(clipperId, card) {
+  const wrap = $('[data-clip-heatmap]', card);
+  if (!wrap || wrap.dataset.loaded) return;
+  wrap.dataset.loaded = '1';
+  const to = new Date(); const from = new Date(); from.setDate(from.getDate() - 6);
+  const isoFrom = from.toISOString().slice(0,10); const isoTo = to.toISOString().slice(0,10);
+  const { data: entries } = await sb.from('diary_daily_entries')
+    .select('id, date').eq('responsable_id', state.me.id).gte('date', isoFrom).lte('date', isoTo);
+  const ids = (entries||[]).map(e => e.id);
+  const dateOf = Object.fromEntries((entries||[]).map(e => [e.id, e.date]));
+  const { data: ccs } = ids.length ? await sb.from('diary_clipper_checks').select('*').eq('clipper_id', clipperId).in('daily_entry_id', ids) : { data: [] };
+  const keys = ['habillage_complet','lien_ok','trois_reels_postes','story_postee','voyants_verts','contenu_telegram_dispo'];
+  const pctByDate = {};
+  (ccs||[]).forEach(cc => {
+    const iso = dateOf[cc.daily_entry_id];
+    if (!iso) return;
+    const done = keys.filter(k => cc[k]).length;
+    pctByDate[iso] = Math.round(done * 100 / keys.length);
+  });
+  const cellsHtml = [];
+  const today = todayIso();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const p = pctByDate[iso];
+    const alpha = p != null ? 0.15 + (p/100) * 0.85 : 0;
+    const bg = p != null ? `rgba(34,197,94,${alpha.toFixed(2)})` : 'var(--border)';
+    const label = ['L','M','M','J','V','S','D'][(d.getDay()+6)%7];
+    const cls = 'day' + (iso === today ? ' today' : '');
+    cellsHtml.push(`<div class="${cls}" title="${iso}${p!=null?` · ${p}%`:''}" style="background:${bg};">${label}</div>`);
+  }
+  wrap.innerHTML = cellsHtml.join('');
+}
+
+// F : Swipe horizontal pour changer de pôle (mobile-first mais marche aussi trackpad).
+function bindSwipeNavigation(wrap) {
+  if (!state.poles || state.poles.length < 2) return;
+  let startX = 0, startY = 0, tracking = false;
+  wrap.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY; tracking = true;
+  }, { passive: true });
+  wrap.addEventListener('touchend', (e) => {
+    if (!tracking) return; tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX; const dy = t.clientY - startY;
+    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return;
+    // Ne pas swiper si le geste part d'un textarea/input/button
+    const src = e.target;
+    if (src.closest('textarea, input, button, .check')) return;
+    const idx = state.poles.findIndex(p => p.id === state.currentPoleId);
+    const next = dx < 0 ? (idx + 1) % state.poles.length : (idx - 1 + state.poles.length) % state.poles.length;
+    state.currentPoleId = state.poles[next].id;
+    haptic(15);
+    renderDiary($('#app'));
+  }, { passive: true });
+}
+
+// M : Menu contextuel copier note vers un autre clipper.
+function openCopyNoteMenu(fromId, x, y) {
+  const cc = state.clipperChecks[fromId];
+  const note = cc?.note_libre?.trim();
+  if (!note) { toast('Note vide, rien à copier', 'err'); return; }
+  const clippers = state.clippersByPole[state.currentPoleId] || [];
+  const others = clippers.filter(c => c.id !== fromId);
+  if (!others.length) { toast('Aucun autre clipper dans ce pôle', 'err'); return; }
+  const menu = el(`<div style="position:fixed; z-index:200; top:${y}px; left:${x}px; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:8px; box-shadow:var(--shadow); min-width:200px;">
+    <div class="sub" style="padding:4px 8px; font-weight:600;">Copier vers…</div>
+    ${others.map(c => `<button class="btn ghost" data-copy-to="${c.id}" style="width:100%; justify-content:flex-start; margin:2px 0; padding:6px 8px; font-size:13px;">${c.nom}</button>`).join('')}
+  </div>`);
+  document.body.appendChild(menu);
+  const close = () => menu.remove();
+  setTimeout(() => document.addEventListener('click', close, { once: true }), 0);
+  $$('[data-copy-to]', menu).forEach(b => b.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const toId = b.dataset.copyTo;
+    const targetCc = state.clipperChecks[toId];
+    if (targetCc) {
+      await sb.from('diary_clipper_checks').update({ note_libre: note }).eq('id', targetCc.id);
+      targetCc.note_libre = note;
+      const targetCard = document.querySelector(`.clipper-card[data-clipper="${toId}"]`);
+      const ta = $('[data-clip-note]', targetCard);
+      if (ta) ta.value = note;
+      toast(`Note copiée vers ${b.textContent} ✓`, 'ok');
+    }
+    close();
+  }));
 }
 
 // Copie les checks du pôle + clippers d'hier dans la fiche du jour (brouillon).
@@ -1142,7 +1498,11 @@ function updateHeroStats() {
   const pct = total ? Math.round(done * 100 / total) : 0;
   const heroRing = $('#heroRing');
   if (heroRing) {
-    heroRing.innerHTML = `${progressRing(done, total, { size: 88 })}
+    const meColors = avatarColors(state.me.nom);
+    const meInit = (state.me.nom || '?').trim().charAt(0).toUpperCase();
+    heroRing.innerHTML = `
+      <div class="hero-avatar" style="background: linear-gradient(135deg, ${meColors[0]}, ${meColors[1]});">${meInit}</div>
+      ${progressRing(done, total, { size: 88 })}
       <div class="center"><span id="heroPct">${pct}%</span><small>Aujourd'hui</small></div>`;
   }
   const chip = $('#clippersDoneChip');
@@ -1200,10 +1560,34 @@ async function renderPoleContent(locked) {
     debounce('poleText', 500, () => savePoleField('retour_ro', e.target.value));
   });
 
+  // F : Swipe horizontal sur poleContent → change de pôle
+  bindSwipeNavigation(wrap);
+
   // Bindings clippers
   $$('.clipper-card', wrap).forEach(card => {
     const clipperId = card.dataset.clipper;
-    $('.clipper-head', card).addEventListener('click', () => card.classList.toggle('open'));
+    let pressTimer = null, longPressed = false;
+    const startPress = (e) => {
+      longPressed = false;
+      pressTimer = setTimeout(() => {
+        longPressed = true;
+        openFocusMode(clipperId);
+        haptic(30);
+      }, 600);
+    };
+    const cancelPress = () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } };
+    const head = $('.clipper-head', card);
+    head.addEventListener('mousedown', startPress);
+    head.addEventListener('touchstart', startPress, { passive: true });
+    head.addEventListener('mouseup', cancelPress);
+    head.addEventListener('mouseleave', cancelPress);
+    head.addEventListener('touchend', cancelPress);
+    head.addEventListener('touchcancel', cancelPress);
+    head.addEventListener('click', (e) => {
+      if (longPressed) { e.preventDefault(); e.stopPropagation(); return; }
+      card.classList.toggle('open');
+      if (card.classList.contains('open')) loadClipperHeatmap(clipperId, card);
+    });
     $$('[data-clip-check]', card).forEach(inp => {
       inp.addEventListener('click', (e) => e.stopPropagation());
       inp.addEventListener('change', () => onClipperCheckChange(clipperId, inp));
@@ -1214,6 +1598,10 @@ async function renderPoleContent(locked) {
     $('[data-clip-note]', card)?.addEventListener('input', (e) => {
       e.stopPropagation();
       debounce(`note-${clipperId}`, 500, () => saveClipperField(clipperId, 'note_libre', e.target.value));
+    });
+    $('[data-clip-note]', card)?.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      openCopyNoteMenu(clipperId, e.clientX, e.clientY);
     });
     $('[data-add-reel]', card)?.addEventListener('click', (e) => { e.stopPropagation(); addReel(clipperId); });
     $('[data-check-all]', card)?.addEventListener('click', (e) => { e.stopPropagation(); toggleAllClipperChecks(clipperId); });
@@ -1311,8 +1699,18 @@ function renderClipperCardHtml(clipper, cc, locked) {
         </div>
 
         <div style="margin-top:10px;">
-          <div class="sub" style="margin-bottom:4px;">Note du jour</div>
+          <div class="row between" style="margin-bottom:4px;">
+            <div class="sub">Note du jour</div>
+            <div class="sub" style="font-size:11px;">Clic droit pour copier vers un autre clipper</div>
+          </div>
           <textarea data-clip-note rows="2" ${locked ? 'disabled' : ''} placeholder="Contexte, blocages, objectifs…">${cc.note_libre || ''}</textarea>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="sub" style="margin-bottom:4px; font-size:11px;">Historique 7 derniers jours</div>
+          <div class="clip-heatmap" data-clip-heatmap>
+            ${Array.from({length: 7}).map(() => `<div class="day" style="opacity:.5;">…</div>`).join('')}
+          </div>
         </div>
 
         <div style="margin-top:14px;">
@@ -1345,7 +1743,7 @@ async function onPoleCheckChange(input) {
   const val = input.checked;
   const chk = input.closest('.check');
   chk.classList.toggle('checked', val);
-  if (val) { chk.classList.add('just-checked'); setTimeout(() => chk.classList.remove('just-checked'), 400); }
+  if (val) { chk.classList.add('just-checked'); setTimeout(() => chk.classList.remove('just-checked'), 400); checkFeedback(); }
   await savePoleField(key, val);
   updateHeroStats();
 }
@@ -1366,7 +1764,7 @@ async function onClipperCheckChange(clipperId, input) {
   const val = input.checked;
   const chk = input.closest('.check');
   chk.classList.toggle('checked', val);
-  if (val) { chk.classList.add('just-checked'); setTimeout(() => chk.classList.remove('just-checked'), 400); }
+  if (val) { chk.classList.add('just-checked'); setTimeout(() => chk.classList.remove('just-checked'), 400); checkFeedback(); }
   setSaveState('saving');
   const { error } = await sb.from('diary_clipper_checks').update({ [key]: val }).eq('id', cc.id);
   if (error) { setSaveState('error'); toast(error.message, 'err'); return; }
@@ -1645,7 +2043,7 @@ async function renderOps(main) {
       .select('id, type, created_at, clipper_id, responsable_id, resolved_at')
       .is('resolved_at', null).order('created_at', { ascending: false }),
     sb.from('diary_daily_entries')
-      .select('id, date, status, submitted_at, responsable_id')
+      .select('id, date, status, submitted_at, responsable_id, ops_emoji')
       .eq('date', today).order('submitted_at', { ascending: false, nullsFirst: false }),
     sb.from('diary_clippers')
       .select('id, nom, pole_id, actif, updated_at, archived_at')
@@ -1696,13 +2094,21 @@ async function renderOps(main) {
       ${!(entries||[]).length
         ? `<div class="empty">Aucune fiche remplie aujourd'hui.</div>`
         : `<table class="table">
-            <thead><tr><th>Responsable</th><th>Statut</th><th>Clôturée</th></tr></thead>
+            <thead><tr><th>Responsable</th><th>Statut</th><th>Clôturée</th><th>Réaction</th></tr></thead>
             <tbody>
               ${entries.map(e => `
                 <tr>
                   <td>${respName[e.responsable_id] || '—'}</td>
                   <td><span class="pill ${e.status}">${e.status === 'draft' ? 'Brouillon' : 'Clôturée'}</span></td>
                   <td>${e.submitted_at ? new Date(e.submitted_at).toLocaleString('fr-FR') : '—'}</td>
+                  <td>
+                    <div class="emoji-picker" data-entry="${e.id}">
+                      ${['👍','🔥','❤️','🎯','💪','⭐'].map(em => `
+                        <button data-emoji="${em}" class="${e.ops_emoji===em?'selected':''}">${em}</button>
+                      `).join('')}
+                      ${e.ops_emoji ? `<button data-emoji="" title="Retirer" style="font-size:12px;">✕</button>` : ''}
+                    </div>
+                  </td>
                 </tr>`).join('')}
             </tbody>
            </table>`}
@@ -1787,6 +2193,22 @@ async function renderOps(main) {
   $('#rosterReload', main).addEventListener('click', () => renderOps(main));
   $('#rosterSyncReq', main).addEventListener('click', requestSyncFromBot);
   $('#expBtn', main).addEventListener('click', doExport);
+
+  // K : Emoji picker sur chaque fiche du jour
+  $$('.emoji-picker', main).forEach(picker => {
+    const entryId = picker.dataset.entry;
+    $$('button', picker).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const em = btn.dataset.emoji || null;
+        const { error } = await sb.from('diary_daily_entries')
+          .update({ ops_emoji: em, ops_emoji_at: new Date().toISOString(), ops_emoji_by: state.me.id })
+          .eq('id', entryId);
+        if (error) return toast(error.message, 'err');
+        toast(em ? `Réaction ${em} envoyée ✓` : 'Réaction retirée', 'ok');
+        renderOps(main);
+      });
+    });
+  });
   renderAnalytics().catch(e => console.error('analytics', e));
 
   // Live : re-render dès qu'une alerte est créée / résolue / une fiche mise à jour.

@@ -1,7 +1,7 @@
 // Nexora Diary — service worker minimal.
 // Objectif : app installable + shell disponible offline (dernière version vue).
 // Le contenu dynamique (fiches, checks) passe toujours par le network via Supabase.
-const CACHE = 'nexora-diary-v4';
+const CACHE = 'nexora-diary-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
