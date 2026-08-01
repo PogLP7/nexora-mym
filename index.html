@@ -1670,8 +1670,12 @@ function openClipLink(slug){
 /* export */
 window.exportCsv=function(){if(!data.length){toast('Rien à exporter.');return}var h=['Date','Modele','Partenaire','Contact','Statut','Lien','Clicks','Subs','Earnings','Fans','CVR','Note'];var L=[h.join(',')];data.forEach(r=>{var cvr=cvrOf(r),sc=scoreOf(r);L.push([r.date,r.model,'"'+(r.partner||'').replace(/"/g,'""')+'"','"'+(r.contact||'').replace(/"/g,'""')+'"',STL[r.status]||'','"'+(r.link_name||'').replace(/"/g,'""')+'"',r.clicks,r.subs,r.earnings,r.fans,cvr==null?'':cvr.toFixed(1),sc||''].join(','))});var s=L.join('\n');if(window.claude&&window.claude.downloads){window.claude.downloads.save({filename:'sfs.csv',data:s}).catch(()=>{})}else{var bl=new Blob([s],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='sfs.csv';a.click()}};
 
-/* Fix boot race supabase-js v2 : recreate sb + attend getUser (valide token côté serveur AVANT queries) */
-(async function(){var s=await sb.auth.getSession();if(!s.data||!s.data.session)return;sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);try{await sb.auth.getUser()}catch(e){}showApp()})();
+/* Fix boot race supabase-js v2 : le sb créé au parse time renvoie r.error sur select() malgré JWT valide. Workaround : recréer sb + getUser + expose window.sb pour debug. */
+window.sb=sb;
+(async function(){var s=await sb.auth.getSession();if(!s.data||!s.data.session)return;sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);window.sb=sb;try{await sb.auth.getUser()}catch(e){}showApp();
+/* Safety net : si contenu ou data restent vides 1.5s après boot, on retry via un nouveau client fresh */
+setTimeout(async function(){if((window.contenu||[]).length===0||(window.data||[]).length===0){sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);window.sb=sb;if(typeof loadParts==='function')await loadParts();if(typeof loadData==='function')await loadData();if(typeof loadContenu==='function')await loadContenu();if(typeof renderAide==='function'&&document.getElementById('p-help'))renderAide();if(typeof render==='function')render()}},1500);
+})();
 </script>
 <script>
 /* logo 3D interactif — parallaxe souris + grossissement + scroll (style Apple/Porsche) */
