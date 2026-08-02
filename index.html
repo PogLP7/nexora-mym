@@ -1073,7 +1073,7 @@ function drawChart(){
   $('chTitle').textContent=chMode==='subs'?'Subs SFS dans le temps':chMode==='earn'?'Revenu SFS dans le temps':'CVR SFS dans le temps';
   var ctx=cv.getContext('2d');var grad=ctx.createLinearGradient(0,0,0,260);grad.addColorStop(0,'rgba(97,114,255,.35)');grad.addColorStop(1,'rgba(97,114,255,0)');
   if(chart)chart.destroy();
-  chart=new Chart(ctx,{type:'line',data:{labels:days.map(d=>d.slice(5)),datasets:[{data:vals,borderColor:'#6172FF',backgroundColor:grad,fill:true,tension:.35,borderWidth:2,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#6172FF'}]},
+  chart=new Chart(ctx,{type:'line',data:{labels:days.map(d=>d.slice(5)),datasets:[{data:vals,borderColor:'#6172FF',backgroundColor:grad,fill:true,tension:.35,borderWidth:2,pointRadius:days.length<=7?4:0,pointHoverRadius:5,pointBackgroundColor:'#6172FF',pointBorderColor:'#0B0D10',pointBorderWidth:1.5,pointHoverBackgroundColor:'#8A98FF'}]},
     options:{responsive:true,maintainAspectRatio:false,animation:{duration:900,easing:'easeOutQuart'},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0F151C',borderColor:'#2C3742',borderWidth:1,titleColor:'#EAF0F5',bodyColor:'#8EA0FF',callbacks:{label:c=>chMode==='earn'?money(c.parsed.y):chMode==='cvr'?c.parsed.y.toFixed(0)+'%':c.parsed.y+' subs'}}},
       scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#66727D',maxRotation:0,autoSkip:true,maxTicksLimit:8}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#66727D'}}}}});
 }
