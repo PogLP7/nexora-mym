@@ -1131,26 +1131,25 @@ function computeGlobalCompletion() {
 }
 
 // Met à jour l'état du bouton Clôturer (visible en fin de fiche).
+// Sémantique : le RO clôture quand IL a fini SON contrôle, peu importe si les
+// clippers ont tout fait. Une case non cochée = manquement du clipper, retranscrit
+// dans le rapport quotidien. Le bouton reste toujours activable.
 function updateSubmitButtonState() {
   const btn = $('#submitBtn');
   const help = $('#submitHelp');
   if (!btn) return;
-  const { missing, redAlerts, complete } = computeGlobalCompletion();
-  if (complete) {
-    btn.disabled = false;
-    btn.textContent = '✓ Clôturer la journée';
-    btn.classList.remove('ghost');
-    btn.classList.add('success');
-    if (help) help.textContent = 'Tout est OK. Clôture pour figer et notifier le RO.';
-  } else {
-    btn.disabled = true;
-    btn.classList.remove('success');
-    btn.classList.add('ghost');
+  const { missing, redAlerts } = computeGlobalCompletion();
+  btn.disabled = false;
+  btn.classList.remove('ghost');
+  btn.classList.add('success');
+  btn.textContent = '✓ Clôturer la journée';
+  if (help) {
     const parts = [];
-    if (missing > 0) parts.push(`${missing} item${missing>1?'s':''} à cocher`);
-    if (redAlerts > 0) parts.push(`${redAlerts} alerte${redAlerts>1?'s':''} rouge${redAlerts>1?'s':''} à résoudre`);
-    btn.textContent = `🔒 Clôturer (${parts.join(' · ')})`;
-    if (help) help.textContent = 'Le bouton s\'active quand tout est complété et zéro alerte rouge en cours.';
+    if (missing > 0) parts.push(`${missing} manquement${missing>1?'s':''} clipper${missing>1?'s':''}`);
+    if (redAlerts > 0) parts.push(`${redAlerts} alerte${redAlerts>1?'s':''} rouge${redAlerts>1?'s':''}`);
+    help.textContent = parts.length
+      ? `Prêt à clôturer. ${parts.join(' · ')} seront visibles dans le rapport quotidien.`
+      : 'Tout est bon, aucun manquement. Clôture pour figer.';
   }
 }
 
@@ -1918,7 +1917,12 @@ function updateClipperProgress(clipperId) {
 }
 
 async function submitEntry() {
-  if (!confirm('Clôturer la fiche du jour ? Tu pourras la rouvrir plus tard si besoin.')) return;
+  const { missing, redAlerts } = computeGlobalCompletion();
+  const parts = [];
+  if (missing > 0) parts.push(`${missing} case${missing>1?'s':''} non cochée${missing>1?'s':''} (manquement clipper)`);
+  if (redAlerts > 0) parts.push(`${redAlerts} alerte${redAlerts>1?'s':''} rouge${redAlerts>1?'s':''} en cours`);
+  const suffix = parts.length ? `\n\n${parts.join(' · ')} apparaîtra dans le rapport quotidien.` : '';
+  if (!confirm(`Clôturer la fiche du jour ?${suffix}\n\nTu pourras la rouvrir plus tard si besoin.`)) return;
   const { error } = await sb.from('diary_daily_entries')
     .update({ status: 'submitted', submitted_at: new Date().toISOString(), auto_submitted: false })
     .eq('id', state.entry.id);
