@@ -3,7 +3,7 @@
 // dernière version fraîche du HTML quand le réseau est dispo (network-first).
 // Le CSS/JS étant inliné dans index.html, ça garantit que les changements de
 // design se propagent sans hard-refresh.
-const CACHE = 'nexora-diary-v8';
+const CACHE = 'nexora-diary-v9';
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {

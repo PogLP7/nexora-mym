@@ -1184,22 +1184,46 @@ async function renderLogin(main) {
     <div class="login-wrap">
       <div class="card">
         <div class="brand-big">Diary <span style="color:var(--accent)">·</span> Nexora</div>
-        <div class="sub">Reçois un lien magique par email pour te connecter.</div>
+        <div class="sub">Entre ton email pour recevoir un lien magique ou un code à 6 chiffres.</div>
         <form id="loginForm">
           <input type="email" name="email" placeholder="ton.email@nexora.fr" required autocomplete="email">
           <button class="btn" type="submit" style="width:100%; justify-content:center;">Envoyer le lien</button>
         </form>
         <div id="loginMsg" class="sub" style="margin-top:12px;"></div>
+
+        <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+          <div class="sub" style="margin-bottom:8px;">
+            Tu as reçu un <b>code à 6 chiffres</b> ? Colle-le ici :
+          </div>
+          <form id="otpForm" style="display:flex; gap:8px;">
+            <input type="text" name="token" placeholder="000000" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" style="flex:1; text-align:center; font-size:18px; letter-spacing:6px; font-weight:600;">
+            <button class="btn ghost" type="submit">Valider</button>
+          </form>
+          <div id="otpMsg" class="sub" style="margin-top:8px;"></div>
+        </div>
       </div>
     </div>`;
   $('#loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = new FormData(e.target).get('email').trim().toLowerCase();
+    sessionStorage.setItem('nx-diary-login-email', email);
     $('#loginMsg').textContent = 'Envoi en cours…';
     const { error } = await sb.auth.signInWithOtp({
       email, options: { emailRedirectTo: `${location.origin}${location.pathname}#/diary` },
     });
-    $('#loginMsg').textContent = error ? `Erreur : ${error.message}` : `Lien envoyé à ${email}. Vérifie ta boîte.`;
+    $('#loginMsg').textContent = error ? `Erreur : ${error.message}` : `Lien + code envoyés à ${email}. Tu peux cliquer le lien OU coller le code juste en dessous.`;
+  });
+  $('#otpForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let email = ($('#loginForm input[name=email]').value || sessionStorage.getItem('nx-diary-login-email') || '').trim().toLowerCase();
+    const token = new FormData(e.target).get('token').trim();
+    if (!email) { $('#otpMsg').textContent = 'Renseigne d\'abord ton email en haut.'; return; }
+    if (!/^\d{6}$/.test(token)) { $('#otpMsg').textContent = 'Le code fait 6 chiffres.'; return; }
+    $('#otpMsg').textContent = 'Vérification…';
+    const { error } = await sb.auth.verifyOtp({ email, token, type: 'email' });
+    if (error) { $('#otpMsg').textContent = `Erreur : ${error.message}`; return; }
+    $('#otpMsg').textContent = 'Connectée ✓';
+    location.hash = '#/diary';
   });
 }
 
