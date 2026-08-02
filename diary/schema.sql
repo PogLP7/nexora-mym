@@ -199,16 +199,20 @@ create trigger trg_diary_alerts_sync after insert or update on diary_clipper_che
 -- 4. Helpers RLS
 -- =========================================================================
 
+-- SECURITY DEFINER : les helpers sont appelés depuis les RLS policies de
+-- diary_responsables → sans DEFINER, chaque appel re-trigger la policy qui
+-- appelle le helper → récursion infinie ("stack depth limit exceeded" pour
+-- tout user non-admin qui charge sa fiche).
 create or replace function diary_current_responsable_id() returns uuid as $$
   select id from diary_responsables where auth_user_id = auth.uid() limit 1;
-$$ language sql stable;
+$$ language sql stable security definer;
 
 create or replace function diary_is_ops() returns boolean as $$
   select exists (
     select 1 from diary_responsables
     where auth_user_id = auth.uid() and role in ('ops', 'admin')
   );
-$$ language sql stable;
+$$ language sql stable security definer;
 
 -- =========================================================================
 -- 5. Row Level Security
