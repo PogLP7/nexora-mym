@@ -837,9 +837,13 @@ async function checkDiaryAccess(u){
 /* data */
 async function loadData(){var r=await window.sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
 async function loadParts(){var r=await window.sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
-async function syncInfloww(silent){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b&&!silent){b.disabled=true;b.textContent='Sync…'}if(!silent)toast('Synchronisation Infloww…');try{var r=await window.sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){var n=d.updated||0;if(silent){if(n>0){toast('🔄 '+n+' SFS mis à jour auto');loadParts();loadData()}}else{celebrate(n+' SFS synchronisés ✓',n>0);loadParts();loadData()}}else if(!silent){toast('Erreur sync : '+(d.error||'?'))}}catch(e){if(!silent)toast('Erreur sync : '+(e.message||e))}if(b&&!silent){b.disabled=false;b.innerHTML=o}}
-/* auto-sync réactivée le 02/08 après re-deploy de la Edge Function infloww-sync avec fix earnings /100 (cents Infloww → euros). Toast silencieux, seulement si updates>0 ou erreur. */
+async function syncInfloww(silent){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b&&!silent){b.disabled=true;b.textContent='Sync…'}if(!silent)toast('Synchronisation Infloww…');try{var r=await window.sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){var n=d.updated||0;if(silent){loadParts();loadData();if(n>0)toast('🔄 '+n+' SFS mis à jour auto')}else{celebrate(n+' SFS synchronisés ✓',n>0);loadParts();loadData()}}else if(!silent){toast('Erreur sync : '+(d.error||'?'))}}catch(e){if(!silent)toast('Erreur sync : '+(e.message||e))}if(b&&!silent){b.disabled=false;b.innerHTML=o}}
+/* auto-sync 60s : Edge Function Infloww + reload local systématique (garde-fou anti-drift realtime) */
 window.__autoSync=window.__autoSync||setInterval(function(){if(document.getElementById('app')&&getComputedStyle(document.getElementById('app')).display!=='none')syncInfloww(true)},60000);
+/* heartbeat 5 min : re-fetch data pur si realtime rate un event ou onglet stale */
+window.__heartbeat=window.__heartbeat||setInterval(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&typeof loadData==='function'){loadParts();loadData();if(typeof loadContenu==='function')loadContenu()}},300000);
+/* safety net au boot : si après 4s l'app est visible mais data vide, force un reload (protection contre load silencieux échoué) */
+setTimeout(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&(window.data||[]).length===0&&typeof loadData==='function'){loadData();loadParts();if(typeof loadContenu==='function')loadContenu()}},4000);
 function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe()}
 
 /* xlsx */
@@ -1092,14 +1096,14 @@ function animateStats(){
 function renderDash(){
   var mez=data.filter(r=>r.measured),nowM=new Date().toISOString().slice(0,7);
   var tc=mez.reduce((a,r)=>a+r.clicks,0),ts=mez.reduce((a,r)=>a+r.subs,0),te=mez.reduce((a,r)=>a+(Number(r.earnings)||0),0);
-  var moisSfs=data.filter(r=>ym(r.date)===nowM&&r.status!=='prog').length;
+  var moisSfsAll=data.filter(r=>ym(r.date)===nowM),moisSfs=moisSfsAll.length,moisSent=moisSfsAll.filter(r=>r.status!=='prog').length,moisProg=moisSfs-moisSent;
   var moisSubs=mez.filter(r=>ym(r.date)===nowM).reduce((a,r)=>a+r.subs,0);
   var cvr=tc>0?ts/tc*100:0;
   var cards=[
     ['Revenu SFS',te,'money','c-cash','rgba(243,194,75,.14)','#F3C24B','rgba(243,194,75,.16)','à vie · mesurés'],
     ['Subs SFS',ts,'int','c-blue','rgba(97,114,255,.14)','#6172FF','rgba(97,114,255,.16)','depuis le début'],
     ['CVR moyen',cvr,'pct1','c-cvr','rgba(63,200,222,.14)','#3FC8DE','rgba(63,200,222,.16)','subs ÷ clics'],
-    ['SFS ce mois',moisSfs,'int','c-violet','rgba(177,151,252,.14)','#B197FC','rgba(177,151,252,.16)','envoyés'],
+    ['SFS ce mois',moisSfs,'int','c-violet','rgba(177,151,252,.14)','#B197FC','rgba(177,151,252,.16)',(moisProg>0?moisSent+' envoyés · '+moisProg+' à venir':'envoyés')],
     ['Sub/day (mois)',moisSubs/30,'dec1','c-green','rgba(57,217,160,.14)','#39D9A0','rgba(57,217,160,.16)','subs mesurés ÷ 30']];
   $('statCards').innerHTML=cards.map((c,i)=>'<div class="stat" style="--i:'+i+';--glow:'+c[4]+';--vc:'+c[5]+';--vcbg:'+c[6]+'"><div class="k"><span class="ic">◆</span>'+c[0]+'</div><div class="v '+c[3]+'" data-to="'+c[1]+'" data-fmt="'+c[2]+'">'+fmtStat(c[1],c[2])+'</div><div class="d">'+c[7]+'</div></div>').join('');
   animateStats();
