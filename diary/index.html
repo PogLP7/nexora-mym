@@ -1196,7 +1196,7 @@ async function renderLogin(main) {
             Tu as reçu un <b>code à 6 chiffres</b> ? Colle-le ici :
           </div>
           <form id="otpForm" style="display:flex; gap:8px;">
-            <input type="text" name="token" placeholder="000000" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" style="flex:1; text-align:center; font-size:18px; letter-spacing:6px; font-weight:600;">
+            <input type="text" name="token" placeholder="00000000" inputmode="numeric" pattern="[0-9]{6,10}" maxlength="10" autocomplete="one-time-code" style="flex:1; text-align:center; font-size:18px; letter-spacing:4px; font-weight:600;">
             <button class="btn ghost" type="submit">Valider</button>
           </form>
           <div id="otpMsg" class="sub" style="margin-top:8px;"></div>
@@ -1218,7 +1218,7 @@ async function renderLogin(main) {
     let email = ($('#loginForm input[name=email]').value || sessionStorage.getItem('nx-diary-login-email') || '').trim().toLowerCase();
     const token = new FormData(e.target).get('token').trim();
     if (!email) { $('#otpMsg').textContent = 'Renseigne d\'abord ton email en haut.'; return; }
-    if (!/^\d{6}$/.test(token)) { $('#otpMsg').textContent = 'Le code fait 6 chiffres.'; return; }
+    if (!/^\d{6,10}$/.test(token)) { $('#otpMsg').textContent = 'Le code fait 6 à 10 chiffres.'; return; }
     $('#otpMsg').textContent = 'Vérification…';
     const { error } = await sb.auth.verifyOtp({ email, token, type: 'email' });
     if (error) { $('#otpMsg').textContent = `Erreur : ${error.message}`; return; }
