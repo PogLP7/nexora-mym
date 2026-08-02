@@ -669,7 +669,7 @@
     </div>
     <div class="card">
       <div class="label">Par modèle</div><h2>Performance des modèles</h2>
-      <div class="tbl-scroll"><table><thead><tr><th>Modèle</th><th>SFS ce mois</th><th>Mesurés</th><th>CVR</th><th>cible</th><th>Spend</th><th>Note moy</th><th>État</th></tr></thead><tbody id="dashBody"></tbody></table></div>
+      <div class="tbl-scroll"><table><thead><tr><th>Modèle</th><th>SFS ce mois</th><th>Mesurés</th><th>Subs/SFS</th><th>€/SFS</th><th>CVR</th><th>cible</th><th>Spend</th><th>Note moy</th><th>État</th></tr></thead><tbody id="dashBody"></tbody></table></div>
     </div>
   </div>
 
@@ -1110,13 +1110,15 @@ function renderDash(){
   var db=$('dashBody');db.innerHTML='';var pa=partnerAgg();
   MODELS.forEach(m=>{
     var rows=data.filter(r=>r.model===m&&r.measured);
-    var c=rows.reduce((a,r)=>a+r.clicks,0),s=rows.reduce((a,r)=>a+r.subs,0),f=rows.reduce((a,r)=>a+r.fans,0);
+    var c=rows.reduce((a,r)=>a+r.clicks,0),s=rows.reduce((a,r)=>a+r.subs,0),f=rows.reduce((a,r)=>a+r.fans,0),e=rows.reduce((a,r)=>a+(Number(r.earnings)||0),0);
     var mois=data.filter(r=>r.model===m&&ym(r.date)===nowM&&r.status!=='prog').length;
     var cv=c>0?s/c*100:null,sp=s>0?f/s*100:null,ct=CIBLES[m],dot='—';
     if(cv!=null){var okC=cv>=ct.cvr,okS=(sp!=null&&sp>=ct.spend);dot=(okC&&okS)?'🟢':(okC||okS)?'🟠':'🔴'}
     var notes=rows.map(scoreOf).filter(x=>x);var an=notes.length?(notes.reduce((p,q)=>p+q,0)/notes.length):null;
     var cc=mois>=15?'var(--green)':(mois>0?'var(--amber)':'var(--mut)');
-    var tr=document.createElement('tr');tr.innerHTML='<td><b>'+m+'</b></td><td class="num" style="color:'+cc+';font-weight:700">'+mois+'</td><td class="num" style="color:var(--mut)">'+rows.length+'</td><td class="num">'+(cv==null?'—':cv.toFixed(0)+'%')+'</td><td class="num" style="color:var(--mut)">'+ct.cvr+'%</td><td class="num">'+(sp==null?'—':sp.toFixed(0)+'%')+'</td><td class="num">'+(an==null?'—':an.toFixed(1)+'/10')+'</td><td class="num"><span class="dot">'+dot+'</span></td>';db.appendChild(tr);
+    var avgSubs=rows.length?Math.round(s/rows.length):null,avgEarn=rows.length?e/rows.length:null;
+    var bs=MODEL_BASELINES[m];var subsColor='var(--ink)';if(avgSubs!=null&&bs){subsColor=avgSubs>=bs.subs?'var(--green)':(avgSubs>=bs.subs*0.6?'var(--amber)':'var(--red)')}
+    var tr=document.createElement('tr');tr.innerHTML='<td><b>'+m+'</b></td><td class="num" style="color:'+cc+';font-weight:700">'+mois+'</td><td class="num" style="color:var(--mut)">'+rows.length+'</td><td class="num" style="color:'+subsColor+'">'+(avgSubs==null?'—':avgSubs+(bs?' <span style="color:var(--mut);font-weight:400">/ '+bs.subs+'</span>':''))+'</td><td class="num" style="color:var(--cash)">'+(avgEarn==null?'—':money(avgEarn))+'</td><td class="num">'+(cv==null?'—':cv.toFixed(0)+'%')+'</td><td class="num" style="color:var(--mut)">'+ct.cvr+'%</td><td class="num">'+(sp==null?'—':sp.toFixed(0)+'%')+'</td><td class="num">'+(an==null?'—':an.toFixed(1)+'/10')+'</td><td class="num"><span class="dot">'+dot+'</span></td>';db.appendChild(tr);
   });
   drawChart();
 }
