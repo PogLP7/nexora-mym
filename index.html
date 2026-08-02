@@ -787,7 +787,25 @@ function norm(s){return String(s||'').toUpperCase().replace(/[ÀÂÄ]/g,'A').rep
 function money(n){return Math.round(n).toLocaleString('fr-FR')+' €'}
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 // note /10 sur CVR + spend
-function scoreOf(r){if(!r.measured)return null;if(PLAT[r.model]==='MYM')return null;/* SFS MYM non trackables (pas d'API stats côté MYM) → pas de note /10 */var c=cvrOf(r)||0,s=spendOf(r)||0;var n=Math.round(c/66*6+s/20*4);return Math.max(1,Math.min(10,n))}
+/* Baselines historiques Nexora — extraites de l'export Infloww 29/07/2026 (218 SFS actifs sur 6 modèles OF).
+   subs = médiane des subs par SFS (le "SFS attendu" habituel pour ce modèle).
+   cvr = CVR moyen historique en %.
+   n = nombre de SFS pris en compte.
+   NE PAS SURFACER dans l'UI Moïse — c'est un pool de référence pour normaliser la note /10 uniquement.
+   À rafraîchir tous les 3-6 mois avec un nouvel export Infloww. */
+var MODEL_BASELINES={'Alice':{subs:83,cvr:59,n:62},'Amandine':{subs:153,cvr:68,n:17},'Bethy OF':{subs:175,cvr:64,n:14},'Louise':{subs:72,cvr:55,n:54},'Margot':{subs:111,cvr:69,n:33},'Marion':{subs:39,cvr:52,n:42}};
+function scoreOf(r){
+  if(!r.measured)return null;
+  if(PLAT[r.model]==='MYM')return null;/* SFS MYM non trackables (pas d'API stats côté MYM) → pas de note /10 */
+  if((r.clicks||0)===0&&(r.subs||0)===0)return null;/* anomalie technique (link Infloww pas créé) — ne pas pénaliser Moïse à 1/10 */
+  var b=MODEL_BASELINES[r.model],cvr=cvrOf(r)||0;
+  if(!b){/* nouveau modèle sans historique → CVR seul, max à 50% */
+    return Math.max(1,Math.min(10,Math.round(cvr/50*10)));
+  }
+  var cvrPts=Math.min(6,cvr/(b.cvr*1.1)*6);/* 6 pts si CVR ≥ 110% baseline modèle */
+  var subsPts=Math.min(4,(r.subs||0)/(b.subs*1.5)*4);/* 4 pts si subs ≥ 150% médiane modèle */
+  return Math.max(1,Math.min(10,Math.round(cvrPts+subsPts)));
+}
 function scoreColor(n){if(n>=9)return['#053b30','#34D399'];if(n>=7)return['#093a3a','#2FE0C4'];if(n>=5)return['#3a2f0a','#F5B841'];if(n>=3)return['#3a1c14','#F0885E'];return['#3a1210','#F0736A']}
 function relKey(v){v=v||'';if(v==='fiable')return'white';if(v==='scammer')return'black';if(v==='surveiller'||v==='none')return'';return v}
 
