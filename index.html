@@ -820,7 +820,7 @@ function initUI(){
   $('allMonths').onclick=()=>{showAll=!showAll;$('allMonths').textContent=showAll?'Ce mois':'Historique';render()};
   $('q').oninput=render;$('fModel').onchange=render;$('fStatus').onchange=render;$('pq').oninput=render;
   $('impFile').onchange=onImport;
-  var syb=$('syncBtn');if(syb)syb.onclick=syncInfloww;
+  var syb=$('syncBtn');if(syb){if(localStorage.getItem('autoSyncOn')==='1'){syb.onclick=syncInfloww}else{syb.onclick=function(){toast('🔒 Sync Infloww suspendue — bug earnings côté Edge Function. Ré-active via localStorage.setItem(\"autoSyncOn\",\"1\") une fois le fix déployé.');};syb.style.opacity='.5';syb.title='Sync suspendue tant que le bug earnings n\'est pas corrigé côté Edge Function';}}
   var ts=$('themeSel');if(ts){ts.value=localStorage.getItem('theme')||'';ts.onchange=function(){var v=ts.value;if(v)document.documentElement.setAttribute('data-theme',v);else document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme',v)}}
   var cf=$('cModelFilter');if(cf&&cf.options.length<2){MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;cf.appendChild(o)});cf.onchange=renderContenu}
   $('chSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{chMode=b.dataset.m;$('chSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawChart()});
