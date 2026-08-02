@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0d14">
+<meta name="robots" content="noindex,nofollow">
+<title>Guide Diary · Responsable de Pôle · Nexora</title>
+<style>
+  :root {
+    --bg: #0a0d14;
+    --bg-2: #0e1218;
+    --panel: #12171f;
+    --panel-2: #171d27;
+    --panel-3: #1c2330;
+    --border: #232a35;
+    --border-2: #2b3341;
+    --text: #eaf0f7;
+    --muted: #8a94a4;
+    --dim: #5e6675;
+    --accent: #7dd3fc;
+    --violet: #a78bfa;
+    --pink: #f472b6;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --grad-brand: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 60%, #f472b6 100%);
+    --grad-panel: linear-gradient(160deg, #171d27 0%, #12171f 100%);
+    --grad-header: radial-gradient(1200px 500px at 10% -10%, rgba(125,211,252,.14), transparent),
+                   radial-gradient(900px 500px at 100% 0%, rgba(167,139,250,.10), transparent),
+                   radial-gradient(600px 400px at 50% 100%, rgba(244,114,182,.08), transparent);
+    --shadow: 0 8px 30px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", Segoe UI, Roboto, sans-serif;
+    font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1;
+    background: var(--grad-header); pointer-events: none; }
+
+  a { color: var(--accent); }
+  code { background: rgba(255,255,255,.06); padding: 2px 7px; border-radius: 6px; font-size: 90%; }
+  kbd { background: var(--panel-2); border: 1px solid var(--border-2);
+    padding: 2px 8px; border-radius: 6px; font-family: inherit; font-size: 85%;
+    box-shadow: 0 1px 0 var(--border); }
+
+  /* HEADER STICKY */
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,13,20,.85);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  header.top .brand {
+    font-weight: 700; letter-spacing: .3px; font-size: 15px;
+    background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  header.top .spacer { flex: 1; }
+  header.top .open-app {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 10px;
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+    color: white; font-weight: 600; font-size: 14px; text-decoration: none;
+    box-shadow: 0 4px 14px rgba(56,189,248,.3);
+    transition: transform .15s, box-shadow .15s;
+  }
+  header.top .open-app:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(56,189,248,.4); }
+
+  main { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* HERO */
+  .hero {
+    text-align: center; margin: 20px 0 50px; padding: 40px 20px 20px;
+  }
+  .hero .eyebrow {
+    display: inline-block; padding: 6px 14px; border-radius: 999px;
+    background: linear-gradient(135deg, rgba(125,211,252,.16), rgba(167,139,250,.14));
+    border: 1px solid rgba(125,211,252,.35);
+    font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #bae6fd; margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 44px); margin: 0 0 12px; line-height: 1.1; letter-spacing: -.8px;
+    font-weight: 800;
+  }
+  .hero h1 span {
+    background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lead { font-size: 18px; color: var(--muted); margin: 0 auto; max-width: 560px; line-height: 1.5; }
+  .hero .meta {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    margin-top: 24px; font-size: 13px; color: var(--muted);
+  }
+  .hero .meta span::before { content: "·"; margin-right: 8px; opacity: .5; }
+  .hero .meta span:first-child::before { content: none; margin: 0; }
+
+  /* TL;DR */
+  .tldr {
+    background: linear-gradient(135deg, rgba(167,139,250,.10), rgba(244,114,182,.06));
+    border: 1px solid rgba(167,139,250,.28); border-radius: 16px;
+    padding: 24px 28px; margin-bottom: 40px;
+  }
+  .tldr .label {
+    font-size: 11px; letter-spacing: 2px; font-weight: 700; text-transform: uppercase;
+    color: #c4b5fd; margin-bottom: 8px;
+  }
+  .tldr p { margin: 0; font-size: 17px; line-height: 1.55; }
+
+  /* STEPS */
+  h2 {
+    margin: 60px 0 20px; font-size: 26px; font-weight: 700; letter-spacing: -.4px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  h2 .num {
+    width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--grad-brand); color: white; font-weight: 800; font-size: 18px;
+    box-shadow: 0 4px 14px rgba(167,139,250,.35);
+  }
+  h3 { margin: 28px 0 10px; font-size: 18px; font-weight: 600; }
+
+  .card {
+    background: var(--grad-panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px 28px; margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  .card p:first-child { margin-top: 0; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* CHECK LIST STYLED */
+  .checklist { display: grid; gap: 8px; margin: 16px 0; }
+  .checkrow {
+    display: grid; grid-template-columns: 28px 1fr auto; gap: 14px; align-items: center;
+    padding: 12px 16px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 12px;
+  }
+  .checkrow .check {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: linear-gradient(135deg, #22c55e, #10b981);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 14px; font-weight: 700;
+  }
+  .checkrow .label { font-weight: 500; }
+  .checkrow .hint { color: var(--muted); font-size: 13px; text-align: right; }
+
+  /* RED CHIPS */
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+  .chip-red {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 16px 10px 12px; border-radius: 999px;
+    border: 1.5px solid rgba(239,68,68,.5);
+    background: linear-gradient(135deg, rgba(239,68,68,.20), rgba(239,68,68,.08));
+    color: #fecaca; font-weight: 600; font-size: 14px;
+  }
+  .chip-red::before {
+    content: ''; width: 18px; height: 18px; border-radius: 5px;
+    background: var(--red);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='4 10 8 14 16 6'/></svg>");
+    background-repeat: no-repeat; background-position: center; background-size: 12px;
+    flex-shrink: 0;
+  }
+
+  /* TIP BOX */
+  .tip {
+    display: flex; gap: 14px;
+    background: linear-gradient(135deg, rgba(125,211,252,.10), rgba(56,189,248,.04));
+    border: 1px solid rgba(125,211,252,.28); border-radius: 12px;
+    padding: 14px 18px; margin: 14px 0;
+  }
+  .tip .icon { font-size: 22px; flex-shrink: 0; }
+  .tip .body { flex: 1; }
+  .tip .body strong { color: #bae6fd; }
+
+  /* WARN BOX (règle d'or) */
+  .warn {
+    background: linear-gradient(135deg, rgba(251,191,36,.10), rgba(244,114,182,.06));
+    border: 1px solid rgba(251,191,36,.35); border-radius: 16px;
+    padding: 24px 28px; margin: 32px 0;
+  }
+  .warn h3 { color: #fde68a; margin-top: 0; font-size: 20px; }
+
+  /* CTA BLOCK */
+  .cta-final {
+    text-align: center; padding: 40px 24px; margin-top: 50px;
+    background: linear-gradient(135deg, rgba(125,211,252,.12), rgba(167,139,250,.10) 60%, rgba(244,114,182,.10));
+    border: 1px solid rgba(125,211,252,.30); border-radius: 20px;
+  }
+  .cta-final h2 { justify-content: center; margin: 0 0 12px; }
+  .cta-final h2 .num { display: none; }
+  .cta-final p { color: var(--muted); margin: 0 0 24px; }
+  .cta-final .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 28px; border-radius: 14px;
+    background: linear-gradient(135deg, #38bdf8, #6366f1);
+    color: white; font-weight: 700; font-size: 16px; text-decoration: none;
+    box-shadow: 0 6px 20px rgba(56,189,248,.35);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .cta-final .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(56,189,248,.45); }
+
+  /* Mini mockup fiche */
+  .mockup {
+    background: #0d1218; border: 1px solid var(--border-2); border-radius: 14px;
+    padding: 16px; margin: 20px 0;
+    font-size: 14px;
+  }
+  .mockup-hero {
+    display: grid; grid-template-columns: 72px 1fr; gap: 14px; align-items: center;
+    padding-bottom: 14px; border-bottom: 1px solid var(--border);
+  }
+  .mockup-ring {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: conic-gradient(from -90deg, #7dd3fc 0%, #a78bfa 45%, #f472b6 60%, var(--border) 60%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .mockup-ring::before {
+    content: ""; position: absolute; inset: 8px; border-radius: 50%;
+    background: #0d1218;
+  }
+  .mockup-ring::after {
+    content: "60%"; position: relative; z-index: 1; font-weight: 800;
+    background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-size: 18px;
+  }
+  .mockup-title h4 { margin: 0 0 4px; font-size: 15px; }
+  .mockup-title .sub { color: var(--muted); font-size: 12px; }
+  .mockup-clipper {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px;
+    margin-top: 8px;
+  }
+  .mockup-clipper.done { border-color: rgba(34,197,94,.4);
+    background: linear-gradient(160deg, rgba(34,197,94,.08), var(--panel-2) 60%); }
+  .mockup-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 13px;
+  }
+  .mockup-clipper .info { flex: 1; }
+  .mockup-clipper .name { font-weight: 600; font-size: 14px; }
+  .mockup-clipper .score { color: var(--muted); font-size: 12px; }
+  .mockup-clipper .badge {
+    background: rgba(34,197,94,.16); color: #86efac;
+    padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  }
+
+  ul.plain { padding-left: 22px; }
+  ul.plain li { margin-bottom: 6px; }
+  strong { color: var(--text); font-weight: 600; }
+
+  @media (max-width: 640px) {
+    main { padding: 20px 16px 60px; }
+    header.top { padding: 12px 16px; }
+    h2 { font-size: 22px; }
+    .hero { padding: 20px 12px; }
+    .checkrow { grid-template-columns: 24px 1fr; }
+    .checkrow .hint { grid-column: 2; text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">Diary · Nexora</div>
+  <div class="spacer"></div>
+  <a class="open-app" href="https://getsnexora.com/diary/">Ouvrir l'app →</a>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="eyebrow">Guide Responsable de Pôle</div>
+    <h1>Ta routine du <span>soir</span> en 5 minutes</h1>
+    <p class="lead">Chaque jour, tu ouvres ta fiche, tu coches ce qui a été fait pour chacun de tes clippers, et tu clôtures. Voilà comment.</p>
+    <div class="meta">
+      <span>⏱ 3 min de lecture</span>
+      <span>🎯 5 min / jour à utiliser</span>
+      <span>📱 Marche sur mobile</span>
+    </div>
+  </div>
+
+  <div class="tldr">
+    <div class="label">En 2 phrases</div>
+    <p>Chaque soir, tu ouvres <strong>ta fiche du jour</strong>, tu coches ce qui a été fait pour chacun de tes clippers, et tu clôtures. Le lendemain à 6h la fiche est figée et le RO la reçoit automatiquement — tu n'as rien à envoyer.</p>
+  </div>
+
+  <h2><span class="num">1</span>Te connecter</h2>
+  <div class="card">
+    <ol>
+      <li>Ouvre <a href="https://getsnexora.com/diary/"><strong>getsnexora.com/diary</strong></a> dans ton navigateur.</li>
+      <li>Entre ton email → tu reçois un <strong>lien magique</strong> par mail.</li>
+      <li>Clique le lien → tu es connectée pour des semaines. <strong>Aucun mot de passe à retenir.</strong></li>
+    </ol>
+    <div class="tip">
+      <div class="icon">📱</div>
+      <div class="body"><strong>Sur téléphone :</strong> après la connexion, Safari ou Chrome te propose <em>« Ajouter à l'écran d'accueil »</em>. Accepte — ça devient une vraie app comme Instagram.</div>
+    </div>
+  </div>
+
+  <h2><span class="num">2</span>Ta fiche du jour</h2>
+  <div class="card">
+    <p>Elle s'ouvre par défaut sur ton <strong>premier pôle</strong>. Deux blocs à remplir :</p>
+
+    <div class="mockup" aria-hidden="true">
+      <div class="mockup-hero">
+        <div class="mockup-ring"></div>
+        <div class="mockup-title">
+          <h4>samedi 02 août</h4>
+          <div class="sub">Bonsoir Jade ✨ · dernière ligne droite</div>
+        </div>
+      </div>
+      <div class="mockup-clipper done">
+        <div class="mockup-avatar" style="background: linear-gradient(135deg, #7dd3fc, #38bdf8);">A</div>
+        <div class="info"><div class="name">Abigaelle</div><div class="score">6/6 contrôles</div></div>
+        <span class="badge">✓ Complet</span>
+      </div>
+      <div class="mockup-clipper">
+        <div class="mockup-avatar" style="background: linear-gradient(135deg, #f472b6, #ec4899);">R</div>
+        <div class="info"><div class="name">Ria</div><div class="score">2/6 contrôles</div></div>
+      </div>
+    </div>
+
+    <h3>A · Les 9 contrôles du pôle</h3>
+    <p>Ce que tu as vérifié pour <strong>le pôle entier</strong> aujourd'hui :</p>
+    <div class="checklist">
+      <div class="checkrow"><div class="check">✓</div><div class="label">Posting</div><div class="hint">3 reels + story par compte public</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Cadence</div><div class="hint">Horaires + rythme respectés</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Habillage</div><div class="hint">Bio, photo, à la une, lien</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Aucun compte banni</div><div class="hint">Tous les comptes vivants</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Contenu Telegram OK</div><div class="hint">Les clippers ont matière à poster</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Clics suivis</div><div class="hint">Tu as regardé GetMySocial</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Reels performants remontés</div><div class="hint">Tu les as signalés dans le Général</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Clipper aidé</div><div class="hint">Tu as répondu à ceux qui coincent</div></div>
+      <div class="checkrow"><div class="check">✓</div><div class="label">Retour envoyé</div><div class="hint">Ta note du jour est remplie</div></div>
+    </div>
+    <p><strong>Case texte « Retour du jour au RO »</strong> — 1 à 3 phrases libres. « Ras » suffit. Sinon : ce qui a coincé, ce qui décolle, une décision que tu attends de lui.</p>
+
+    <h3>B · Une carte par clipper (6 cases chacune)</h3>
+    <p>Ouvre chaque carte, coche ce qui a été fait :</p>
+    <ul class="plain">
+      <li><strong>Habillage complet</strong> — bio, photo, à la une (FAQ · ME · LIFESTYLE)</li>
+      <li><strong>Lien OK</strong> — lien fonctionnel sur le compte privé</li>
+      <li><strong>3 reels postés</strong> — carrousel si c'est le jour</li>
+      <li><strong>Story postée</strong></li>
+      <li><strong>Voyants au vert</strong> — aucun orange/rouge</li>
+      <li><strong>Contenu Telegram dispo</strong> — les sous-canaux ont ce qu'il faut</li>
+    </ul>
+    <div class="tip">
+      <div class="icon">⚡</div>
+      <div class="body">Bouton <strong>« ✓ Tout cocher »</strong> en haut de chaque carte quand tout est bon d'un coup. Grosse célébration confetti au 6/6.</div>
+    </div>
+
+    <h3>C · Les 3 chips rouges ⚠️</h3>
+    <p>En dessous des 6 cases de chaque clipper :</p>
+    <div class="chips">
+      <span class="chip-red">Compte banni</span>
+      <span class="chip-red">Contenu manquant</span>
+      <span class="chip-red">En difficulté</span>
+    </div>
+    <p>Coche = <strong>alerte envoyée en LIVE au RO</strong> (il la voit apparaître sur son dashboard). Décoche quand c'est résolu = alerte fermée automatiquement.</p>
+    <ul class="plain">
+      <li><strong>Compte banni</strong> : un compte est mort</li>
+      <li><strong>Contenu manquant</strong> : le clipper n'a plus rien à poster</li>
+      <li><strong>En difficulté</strong> : il stagne, décroche, se démotive</li>
+    </ul>
+    <p><strong>Note libre</strong> en bas de la carte : contexte, ex. <em>« m'a écrit à 22h, je la relance demain matin »</em>. <br><strong>Reels perfs à remonter</strong> : URL + une phrase. Le RO les voit tout de suite.</p>
+  </div>
+
+  <h2><span class="num">3</span>Clôturer</h2>
+  <div class="card">
+    <p>En bas de la fiche : bouton <strong>« ✓ Clôturer la journée »</strong> (vert). Il n'est actif QUE si :</p>
+    <ul class="plain">
+      <li>Les 9 cases pôle sont cochées, <strong>et</strong></li>
+      <li>Toutes les cases de tous les clippers sont cochées, <strong>et</strong></li>
+      <li>Aucune alerte rouge active</li>
+    </ul>
+    <p>Sinon, il te dit exactement combien il reste à faire.</p>
+    <div class="tip">
+      <div class="icon">🌙</div>
+      <div class="body"><strong>Tu peux la laisser en brouillon</strong> — elle sera <strong>auto-clôturée à 6h le lendemain</strong> dans tous les cas. Rien ne se perd.</div>
+    </div>
+  </div>
+
+  <h2><span class="num">4</span>Le lendemain</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>📬 Le rapport de la veille arrive au RO (Telegram + dossier partagé).</li>
+      <li>🔥 Ton <strong>streak</strong> augmente : chaque jour rempli = flamme en haut de la fiche.</li>
+      <li>💡 Les <strong>insights</strong> te disent ce qui coince (<em>« Tu n'as jamais coché Posting ces 7 derniers jours — tu le fais vraiment ? »</em>).</li>
+    </ul>
+  </div>
+
+  <h2><span class="num">5</span>Petits plus qui te font gagner du temps</h2>
+  <div class="card">
+    <ul class="plain">
+      <li><strong>↩ Reprendre d'hier</strong> — bouton en haut à droite. Pré-remplit la fiche avec ce que tu avais coché hier. Tu ajustes juste les différences.</li>
+      <li><strong>Historique</strong> — onglet en haut. Heatmap de tes 12 dernières semaines, chaque case = un jour. Vert plein = 100 %. Clique une case pour rouvrir un jour passé.</li>
+      <li><strong>⚙ Réglages</strong> — active le <strong>son</strong> ou la <strong>vibration</strong> à chaque check si tu aimes le feedback tactile.</li>
+      <li><strong>Long press</strong> sur une carte clipper (mobile) → plein écran focus. Utile pour se concentrer sur un seul.</li>
+      <li><strong>Swipe</strong> gauche/droite (mobile) pour passer de Pôle A à Pôle B.</li>
+      <li><strong>Clic droit</strong> sur une note → « Copier vers un autre clipper ».</li>
+    </ul>
+  </div>
+
+  <div class="warn">
+    <h3>⭐ La règle qui rend l'outil utile</h3>
+    <p><strong>Coche honnête, pas coche automatique.</strong></p>
+    <p>Si tu coches sans avoir vraiment vérifié, l'outil devient inutile et tes clippers coulent sans qu'on s'en rende compte. Prends 5 vraies minutes chaque soir plutôt que 30 secondes de faux positifs.</p>
+    <p>Le RO ne lit <strong>pas</strong> ta fiche pour te fliquer — il la lit pour <strong>t'aider</strong> quand ça coince (chips rouges) et repérer qui pousse plus fort que la moyenne (top clippers).</p>
+  </div>
+
+  <h2><span class="num">6</span>Si tu bloques</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>La fiche ne s'affiche pas → recharge la page (<kbd>Cmd</kbd>+<kbd>R</kbd> sur ordi, tire vers le bas sur mobile).</li>
+      <li>Un clipper manque dans ta liste → il n'a pas encore été attribué à ton pôle. Ping Titouan, il fait <code>/diarysync</code> dans le bot.</li>
+      <li>Un chip rouge ne se coche pas → recharge une fois.</li>
+      <li>Tout autre bug → screen + WhatsApp à Titouan.</li>
+    </ul>
+  </div>
+
+  <div class="cta-final">
+    <h2>Prête ? Ouvre l'app.</h2>
+    <p>Bookmark le lien sur ton téléphone et ton ordi — tu vas y aller tous les jours.</p>
+    <a class="btn" href="https://getsnexora.com/diary/">Ouvrir Diary · Nexora →</a>
+  </div>
+
+</main>
+
+</body>
+</html>
