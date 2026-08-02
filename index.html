@@ -793,7 +793,7 @@ function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTi
    n = nombre de SFS pris en compte.
    NE PAS SURFACER dans l'UI Moïse — c'est un pool de référence pour normaliser la note /10 uniquement.
    À rafraîchir tous les 3-6 mois avec un nouvel export Infloww. */
-var MODEL_BASELINES={'Alice':{subs:83,cvr:59,n:62},'Amandine':{subs:153,cvr:68,n:17},'Bethy OF':{subs:175,cvr:64,n:14},'Louise':{subs:72,cvr:55,n:54},'Margot':{subs:111,cvr:69,n:33},'Marion':{subs:39,cvr:52,n:42}};
+var MODEL_BASELINES={'Alice':{subs:85,cvr:59,n:62},'Amandine':{subs:60,cvr:68,n:17},'Bethy OF':{subs:65,cvr:64,n:14},'Louise':{subs:55,cvr:55,n:54},'Margot':{subs:37,cvr:69,n:33},'Marion':{subs:30,cvr:52,n:42}};/* subs ajustées par Titouan 02/08 (objectifs réalistes actuels, plus bas que la médiane historique qui datait d'un pic de volume) */
 function scoreOf(r){
   if(!r.measured)return null;
   if(PLAT[r.model]==='MYM')return null;/* SFS MYM non trackables (pas d'API stats côté MYM) → pas de note /10 */
