@@ -787,7 +787,7 @@ function norm(s){return String(s||'').toUpperCase().replace(/[ÀÂÄ]/g,'A').rep
 function money(n){return Math.round(n).toLocaleString('fr-FR')+' €'}
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
 // note /10 sur CVR + spend
-function scoreOf(r){if(!r.measured)return null;var c=cvrOf(r)||0,s=spendOf(r)||0;var n=Math.round(c/66*6+s/20*4);return Math.max(1,Math.min(10,n))}
+function scoreOf(r){if(!r.measured)return null;if(PLAT[r.model]==='MYM')return null;/* SFS MYM non trackables (pas d'API stats côté MYM) → pas de note /10 */var c=cvrOf(r)||0,s=spendOf(r)||0;var n=Math.round(c/66*6+s/20*4);return Math.max(1,Math.min(10,n))}
 function scoreColor(n){if(n>=9)return['#053b30','#34D399'];if(n>=7)return['#093a3a','#2FE0C4'];if(n>=5)return['#3a2f0a','#F5B841'];if(n>=3)return['#3a1c14','#F0885E'];return['#3a1210','#F0736A']}
 function relKey(v){v=v||'';if(v==='fiable')return'white';if(v==='scammer')return'black';if(v==='surveiller'||v==='none')return'';return v}
 
