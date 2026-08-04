@@ -1322,8 +1322,8 @@ async function renderDiary(main, date = null) {
 
     ${locked || isPast ? '' : `
       <div class="card" style="text-align:center; background: transparent; border-style: dashed;">
-        <button class="btn xl success" id="submitBtn" disabled>🔒 Clôturer (chargement…)</button>
-        <div class="sub" style="margin-top:8px;" id="submitHelp">Le bouton s'active quand tout est complété et zéro alerte rouge en cours.</div>
+        <button class="btn xl success" id="submitBtn">✓ Clôturer la journée</button>
+        <div class="sub" style="margin-top:8px;" id="submitHelp">Coche uniquement ce qui a vraiment été fait. Les cases non cochées sont comptées comme manquements dans le rapport quotidien envoyé au RO.</div>
       </div>`}
   `;
 
