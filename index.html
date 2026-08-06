@@ -344,10 +344,14 @@
   .grade{font-family:var(--fm);font-weight:700;font-size:11px;padding:2px 8px;border-radius:6px}
   /* partner list + fiche */
   .plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-  .pcard{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px 15px;cursor:pointer;transition:.15s}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 14px;cursor:pointer;transition:.15s;display:flex;gap:11px;align-items:center}
   .pcard:hover{border-color:var(--mint)}
-  .pcard .n{font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .pcard .m{font-family:var(--fm);font-size:11px;color:var(--mut);margin-top:6px}
+  .pcard .pav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;font-family:var(--fm);letter-spacing:.02em}
+  .pcard .pinfo{flex:1;min-width:0}
+  .pcard .n{font-weight:600;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .pcard .m{font-family:var(--fm);font-size:10.5px;color:var(--mut);margin-top:2px}
+  .pcard .prev{font-weight:600;font-size:14px;color:var(--ink);flex-shrink:0}
+  .pcard.blk{opacity:.72}
   .rel{font-family:var(--fm);font-size:9.5px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:6px}
   .rel-ok{background:rgba(52,211,153,.14);color:var(--green)} .rel-watch{background:rgba(245,184,65,.14);color:var(--amber)} .rel-scam{background:rgba(240,115,106,.14);color:var(--red)} .rel-none{background:var(--card2);color:var(--mut)}
   .scard.blk{border-color:rgba(240,115,106,.5)}
@@ -1149,12 +1153,25 @@ function drawChart(){
     options:{responsive:true,maintainAspectRatio:false,animation:{duration:900,easing:'easeOutQuart'},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0F151C',borderColor:'#2C3742',borderWidth:1,titleColor:'#EAF0F5',bodyColor:'#8EA0FF',callbacks:{label:c=>chMode==='earn'?money(c.parsed.y):chMode==='cvr'?c.parsed.y.toFixed(0)+'%':c.parsed.y+' subs'}}},
       scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#66727D',maxRotation:0,autoSkip:true,maxTicksLimit:8}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#66727D'}}}}});
 }
+function pInit(n){var w=(n||'').trim().split(/\s+/).filter(Boolean);var a=(w[0]||' ').charAt(0),b=(w[1]||w[0]||' ').charAt(w[1]?0:1);return (a+b).toUpperCase().slice(0,2)}
+function pAvColor(note){if(note==null)return['#2C3742','#8EA0A8'];if(note>=8)return['#4CD964','#173404'];if(note>=6)return['#94BE3B','#173404'];if(note>=4)return['#F5B23F','#412402'];if(note>=2)return['#E85A2B','#fff'];return['#B62A2A','#fff']}
 function renderParts(){
   var pa=partnerAgg(),q=($('pq').value||'').toLowerCase();
   var arr=Object.values(pa).filter(p=>!q||p.name.toLowerCase().indexOf(q)>=0).sort((a,b)=>b.e-a.e);
   var relCls={white:'rel-ok',black:'rel-scam'},relLbl={white:'Whitelist',black:'Blacklist'};
-  $('partList').innerHTML=arr.length?arr.map((p,i)=>{var rel=relKey((parts[p.key]||{}).reliability);var badge=rel?('<span class="rel '+relCls[rel]+'">'+relLbl[rel]+'</span>'):'';
-    return '<div class="pcard" style="--i:'+i+'" data-p="'+esc(p.name)+'"><div class="n">'+esc(p.name)+' '+badge+'</div><div class="m">'+p.n+' SFS · CVR '+p.cvr.toFixed(0)+'% · '+money(p.e)+(p.avgNote?' · note '+p.avgNote.toFixed(1)+'/10':'')+'</div></div>'}).join(''):'<div class="colempty">Aucun partenaire (importe d\'abord les stats).</div>';
+  $('partList').innerHTML=arr.length?arr.map(function(p,i){
+    var rel=relKey((parts[p.key]||{}).reliability);
+    var badge=rel?('<span class="rel '+relCls[rel]+'">'+relLbl[rel]+'</span>'):'';
+    var av=pAvColor(p.avgNote);
+    var isTop=(i===0&&p.e>0);
+    var revColor=rel==='black'?'var(--mut)':(isTop?'var(--green)':'var(--ink)');
+    var meta=p.n+' SFS · CVR '+p.cvr.toFixed(0)+'%'+(p.avgNote?' · note '+p.avgNote.toFixed(1):'');
+    return '<div class="pcard'+(rel==='black'?' blk':'')+'" style="--i:'+i+'" data-p="'+esc(p.name)+'">'+
+      '<div class="pav" style="background:'+av[0]+';color:'+av[1]+'">'+pInit(p.name)+'</div>'+
+      '<div class="pinfo"><div class="n">'+esc(p.name)+' '+badge+'</div><div class="m">'+meta+'</div></div>'+
+      '<div class="prev" style="color:'+revColor+'">'+money(p.e)+'</div>'+
+    '</div>';
+  }).join(''):'<div class="colempty">Aucun partenaire (importe d\'abord les stats).</div>';
   $('partList').querySelectorAll('.pcard').forEach(c=>c.onclick=()=>openPartner(c.dataset.p));
 }
 
