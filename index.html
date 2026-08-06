@@ -752,7 +752,7 @@ const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF','Bethy 
 const WK_TARGET={Alice:4,Louise:4,Amandine:4,Margot:4,Marion:4,'Bethy OF':4,'Bethy MYM':7,'Milla MYM':7};
 /* gamification / dopamine Moïse */
 const PAY_PER_SFS=2,PRIME_MIN_SFS=45;
-const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.round(WEEK_GOAL/7));
+const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.ceil(WEEK_GOAL/7));
 const RING_PALS=[['#25E8C3','#6172FF','#B197FC'],['#FF375F','#A6FF3A','#38E8E0'],['#FF784A','#FFC24B','#FF4D9D'],['#3FC8DE','#5B8CFF','#39D9A0']];
 const MO_FR=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 let data=[],parts={},showAll=false,isAdmin=true,isTitouan=false,chart=null,chMode='subs',contenu=[];
@@ -804,7 +804,29 @@ async function showApp(){
   await loadParts();await loadData();await loadContenu();initUI();subscribe();monthlyRecap();
 }
 /* data */
-async function loadData(){var r=await window.sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
+async function loadData(){var r=await window.sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];await autoAdvance();render()}
+/* Auto-passage prog→sent (≥1 clic) puis sent/prog→done+mesuré (≥15 subs). Une seule passe par loadData, guard anti-boucle. */
+var __autoAdvanceRunning=false;
+async function autoAdvance(){
+  if(__autoAdvanceRunning)return 0;__autoAdvanceRunning=true;
+  try{
+    var ups=[];
+    data.forEach(function(r){
+      var subs=Number(r.subs)||0,clicks=Number(r.clicks)||0,next=null,meas=r.measured;
+      if((r.status==='prog'||r.status==='sent')&&subs>=15){next='done';meas=true;}
+      else if(r.status==='prog'&&clicks>0){next='sent';}
+      if(next&&next!==r.status){ups.push({id:r.id,status:next,measured:meas});}
+    });
+    if(!ups.length)return 0;
+    for(var i=0;i<ups.length;i++){
+      var u=ups[i];
+      await sb.from('sfs').update({status:u.status,measured:u.measured}).eq('id',u.id);
+      var row=data.find(function(x){return x.id===u.id});if(row){row.status=u.status;row.measured=u.measured;}
+    }
+    if(ups.length)toast('🔄 '+ups.length+' SFS auto-avancé'+(ups.length>1?'s':''));
+    return ups.length;
+  }finally{__autoAdvanceRunning=false;}
+}
 async function loadParts(){var r=await window.sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
 async function syncInfloww(silent){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b&&!silent){b.disabled=true;b.textContent='Sync…'}if(!silent)toast('Synchronisation Infloww…');try{var r=await window.sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){window.__lastSync=Date.now();renderSyncBadge();var n=d.updated||0;if(silent){loadParts();loadData();if(n>0)toast('🔄 '+n+' SFS mis à jour auto')}else{celebrate(n+' SFS synchronisés ✓',n>0);loadParts();loadData()}}else if(!silent){toast('Erreur sync : '+(d.error||'?'))}}catch(e){if(!silent)toast('Erreur sync : '+(e.message||e))}if(b&&!silent){b.disabled=false;b.innerHTML=o}}
 /* auto-sync 60s : Edge Function Infloww + reload local systématique (garde-fou anti-drift realtime) */
@@ -896,7 +918,7 @@ function render(){
   var board=$('board');board.innerHTML='';
   MODELS.filter(m=>!fM||m===fM).forEach((m,ci)=>{
     var cards=data.filter(r=>r.model===m&&(showAll||ym(r.date)===mo)&&(!fS||r.status===fS)&&(!q||(r.partner||'').toLowerCase().indexOf(q)>=0));
-    cards.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    cards.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
     var col=document.createElement('div');col.className='col';col.style.setProperty('--ci',ci);
     col.innerHTML='<div class="col-h"><span class="nm">'+m+'</span><button class="kitbtn" data-m="'+esc(m)+'">Kit</button><span class="ct" style="margin-left:auto">'+cards.length+' SFS</span></div>';
     if(!cards.length)col.innerHTML+='<div class="colempty">—</div>';
@@ -1104,10 +1126,10 @@ function renderDash(){
     var mois=data.filter(r=>r.model===m&&ym(r.date)===nowM&&r.status!=='prog').length;
     var moisProg=data.filter(r=>r.model===m&&ym(r.date)===nowM&&r.status==='prog').length;
     var cv=c>0?s/c*100:null,sp=s>0?f/s*100:null,ct=CIBLES[m];
-    var score=cv==null?null:(Math.min(1,cv/ct.cvr)+(sp!=null&&ct.spend>0?Math.min(1,sp/ct.spend):0))*50;
     var lastRow=rows.length?rows.reduce(function(a,b){return (!a||(b.date||'')>(a.date||''))?b:a},null):null;
     var lastDate=(lastRow&&lastRow.date)?lastRow.date.slice(8,10)+'/'+lastRow.date.slice(5,7):'—';
     var notes=rows.map(scoreOf).filter(x=>x);var an=notes.length?(notes.reduce((p,q)=>p+q,0)/notes.length):null;
+    var score=an==null?null:an*10;
     var cc=mois>=15?'var(--green)':(mois>0?'var(--amber)':'var(--mut)');
     var avgSubs=rows.length?Math.round(s/rows.length):null,avgEarn=rows.length?e/rows.length:null;
     var bs=MODEL_BASELINES[m];var subsColor='var(--ink)';if(avgSubs!=null&&bs){subsColor=avgSubs>=bs.subs?'var(--green)':(avgSubs>=bs.subs*0.6?'var(--amber)':'var(--red)')}
@@ -1237,6 +1259,18 @@ async function saveModelContent(m){
 async function delContenu(id){if(!isAdmin)return;if(!confirm('Supprimer ce contenu ?'))return;var r=await sb.from('contenu').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast('Contenu supprimé');closeModal();await loadContenu();renderContenu()}
 
 /* ===== Aide ===== */
+async function replaceMymStats(){
+  var input=document.createElement('input');input.type='file';input.accept='image/png,image/jpeg,image/jpg';
+  input.onchange=async function(e){
+    var f=e.target.files[0];if(!f)return;
+    toast('Upload en cours…');
+    var r=await sb.storage.from('preuves').upload('mym-stats.png',f,{upsert:true,contentType:f.type||'image/png',cacheControl:'0'});
+    if(r.error){toast('Erreur : '+r.error.message+' (vérifie que le bucket public "preuves" existe côté Supabase)');return}
+    toast('✓ Screen remplacé');setTimeout(function(){renderAide()},300);
+  };
+  input.click();
+}
+window.replaceMymStats=replaceMymStats;
 function aideSecs(){return contenu.filter(function(r){return r.model==='__aide__'}).sort(function(a,b){return (a.sort||0)-(b.sort||0)})}
 function renderAide(){
   var wrap=$('aideWrap');if(!wrap)return;
@@ -1246,7 +1280,8 @@ function renderAide(){
   function loomCap(t,k){var i=t.toLowerCase().indexOf(k.toLowerCase());if(i<0)return esc(t);return esc(t.slice(0,i))+'<span class="loomkw">'+esc(t.slice(i,i+k.length))+'</span>'+esc(t.slice(i+k.length))}
   html+='<div class="card aidecard pinned" style="margin-bottom:14px"><div class="aidehead"><h2>🎥 Tutos vidéo</h2></div><p class="hint" style="margin:-2px 0 12px">Les tutos de Titouan — clique une vidéo, elle se lance ici sans quitter la page.</p><div class="loomgrid">'+LOOMS.map(function(L,i){var lid=(L.u.split('/share/')[1]||'').split('?')[0],n=(i+1<10?'0':'')+(i+1);return '<div class="loomcard" data-lid="'+esc(lid)+'"><div class="loomframe"><div class="loomstep">STEP '+n+'</div><div class="loomplay">▶</div><div class="loomcap">'+loomCap(L.t,L.k)+'</div></div><span class="loomt">'+esc(L.t)+'</span></div>'}).join('')+'</div></div>';
   html+='<div class="card aidecard pinned" style="margin-bottom:14px;border-color:var(--acc)"><div class="aidehead"><h2>📋 Format des tracking links Infloww</h2></div><p class="hint" style="margin:-2px 0 12px">La règle d\'or : le nom du lien côté <b>CRM</b> doit être <b>IDENTIQUE</b> au nom côté <b>Infloww</b>. Sinon les stats ne remontent pas et la card reste à 0.</p><div style="background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-family:var(--fm);text-align:center;font-size:17px;letter-spacing:.5px;margin-bottom:12px"><b style="color:var(--acc)">SFS &lt;MODÈLE&gt; &lt;PARTENAIRE&gt; JJ/MM HHhMM</b></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px" class="fmtGrid"><div><div class="lnlabel" style="color:var(--green);margin-bottom:8px">✅ Corrects</div><ul style="list-style:none;padding:0;margin:0;font-family:var(--fm);font-size:13px;color:var(--ink);line-height:2"><li>SFS ALICE NOTO 01/08 18H30</li><li>SFS BETHY OF BENJAMIN 01/08 20H30</li><li>SFS MARGOT MAX DA 05/08 14H00</li><li>SFS BETHY MYM GABRIEL 01/08 22H30</li></ul></div><div><div class="lnlabel" style="color:var(--red);margin-bottom:8px">❌ À éviter</div><ul style="list-style:none;padding:0;margin:0;font-family:var(--fm);font-size:13px;color:var(--soft);line-height:2"><li>SFS NOTO LOUISE… <span style="color:var(--red)">← inversé</span></li><li>SFS BETHY BENJAMIN… <span style="color:var(--red)">← manque OF</span></li><li>sfs alice noto <span style="color:var(--red)">← pas MAJ</span></li><li>SFS ALICE NOTO 1-8 18:30 <span style="color:var(--red)">← mauvais séparateurs</span></li></ul></div></div><p class="hint" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px"><b>Réflexe zéro erreur</b> : quand tu crées un SFS dans le CRM (＋ Nouveau SFS), le nom exact apparaît en dessous du formulaire avec un bouton <b style="color:var(--acc)">📋 Copier</b>. Clique-le, va sur Infloww, colle. Fini les 0/0.</p></div>';
-  html+='<div class="card aidecard pinned" style="margin-bottom:14px"><div class="aidehead"><h2>📸 Preuve stats MYM</h2><div class="aideact"><a class="btn ghost" href="preuves/mym-stats.png" download="Nexora-MYM-stats.png">Télécharger</a></div></div><p class="hint" style="margin:-2px 0 12px">Si un partenaire demande des preuves des stats MYM (Bethystory · Milaricci), envoie-lui cette capture (ou télécharge-la puis renvoie-la dans le chat).</p><a href="preuves/mym-stats.png" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--card2)"><img src="preuves/mym-stats.png" alt="Preuve stats MYM — Bethystory &amp; Milaricci" style="width:100%;display:block" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<div style=&quot;padding:24px;text-align:center;color:var(--soft);font-size:13px&quot;>Image non déployée. Titouan doit uploader <code>preuves/mym-stats.png</code>.</div>\'"></a></div>';
+  var mymSupaUrl=sb.storage.from('preuves').getPublicUrl('mym-stats.png').data.publicUrl+'?t='+Date.now();
+  html+='<div class="card aidecard pinned" style="margin-bottom:14px"><div class="aidehead"><h2>📸 Preuve stats MYM</h2><div class="aideact"><button class="btn ghost" onclick="replaceMymStats()">🖼️ Remplacer</button><a class="btn ghost" href="'+mymSupaUrl+'" download="Nexora-MYM-stats.png">Télécharger</a></div></div><p class="hint" style="margin:-2px 0 12px">Si un partenaire demande des preuves des stats MYM (Bethystory · Milaricci), envoie-lui cette capture. Clique <b>Remplacer</b> pour mettre à jour le screen (visible aussitôt).</p><a href="'+mymSupaUrl+'" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--card2)"><img src="'+mymSupaUrl+'" alt="Preuve stats MYM — Bethystory &amp; Milaricci" style="width:100%;display:block" onerror="this.onerror=null;this.src=\'preuves/mym-stats.png\'"></a></div>';
   if(!secs.length){html+='<div class="card"><p class="hint">Aucune section pour l\'instant.'+(isAdmin?' Clique « Ajouter une section » pour créer le guide.':'')+'</p></div>';}
   else{secs.forEach(function(s){
     var canEdit=isAdmin||s.kind==='template';var pin=s.kind==='template';
