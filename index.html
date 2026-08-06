@@ -663,8 +663,8 @@
       <div style="height:280px"><canvas id="chart"></canvas></div>
     </div>
     <div class="card">
-      <div class="label">Par modèle</div><h2>Performance des modèles</h2>
-      <div class="tbl-scroll"><table><thead><tr><th>Modèle</th><th>SFS ce mois</th><th>Mesurés</th><th>Subs/SFS</th><th>€/SFS</th><th>CVR</th><th>cible</th><th>Spend</th><th>Note moy</th><th>État</th></tr></thead><tbody id="dashBody"></tbody></table></div>
+      <div class="label">Par modèle</div><h2>Performance des modèles <span style="color:var(--mut);font-weight:400;font-size:.55em;letter-spacing:.02em">· 30 derniers jours glissants</span></h2>
+      <div class="tbl-scroll"><table><thead><tr><th>Modèle</th><th>SFS ce mois</th><th>Mesurés</th><th>Dernier</th><th>Subs/SFS</th><th>€/SFS</th><th>CVR</th><th>cible</th><th>Spend</th><th>Note moy</th><th>État</th></tr></thead><tbody id="dashBody"></tbody></table></div>
     </div>
   </div>
 
@@ -806,9 +806,10 @@ async function showApp(){
 /* data */
 async function loadData(){var r=await window.sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];render()}
 async function loadParts(){var r=await window.sb.from('partner_contacts').select('*');parts={};(r.data||[]).forEach(c=>parts[c.partner_key]=c)}
-async function syncInfloww(silent){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b&&!silent){b.disabled=true;b.textContent='Sync…'}if(!silent)toast('Synchronisation Infloww…');try{var r=await window.sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){var n=d.updated||0;if(silent){loadParts();loadData();if(n>0)toast('🔄 '+n+' SFS mis à jour auto')}else{celebrate(n+' SFS synchronisés ✓',n>0);loadParts();loadData()}}else if(!silent){toast('Erreur sync : '+(d.error||'?'))}}catch(e){if(!silent)toast('Erreur sync : '+(e.message||e))}if(b&&!silent){b.disabled=false;b.innerHTML=o}}
+async function syncInfloww(silent){var b=$('syncBtn'),o=b?b.innerHTML:'';if(b&&!silent){b.disabled=true;b.textContent='Sync…'}if(!silent)toast('Synchronisation Infloww…');try{var r=await window.sb.functions.invoke('infloww-sync');if(r.error)throw r.error;var d=r.data||{};if(d.ok){window.__lastSync=Date.now();renderSyncBadge();var n=d.updated||0;if(silent){loadParts();loadData();if(n>0)toast('🔄 '+n+' SFS mis à jour auto')}else{celebrate(n+' SFS synchronisés ✓',n>0);loadParts();loadData()}}else if(!silent){toast('Erreur sync : '+(d.error||'?'))}}catch(e){if(!silent)toast('Erreur sync : '+(e.message||e))}if(b&&!silent){b.disabled=false;b.innerHTML=o}}
 /* auto-sync 60s : Edge Function Infloww + reload local systématique (garde-fou anti-drift realtime) */
 window.__autoSync=window.__autoSync||setInterval(function(){if(document.getElementById('app')&&getComputedStyle(document.getElementById('app')).display!=='none')syncInfloww(true)},60000);
+window.__syncBadgeTick=window.__syncBadgeTick||setInterval(function(){if(typeof renderSyncBadge==='function')renderSyncBadge()},30000);
 /* heartbeat 5 min : re-fetch data pur si realtime rate un event ou onglet stale */
 window.__heartbeat=window.__heartbeat||setInterval(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&typeof loadData==='function'){loadParts();loadData();if(typeof loadContenu==='function')loadContenu()}},300000);
 /* safety net au boot : si après 4s l'app est visible mais data vide, force un reload (protection contre load silencieux échoué) */
@@ -880,9 +881,16 @@ async function setRecipro(id,cur){var next={attente:'rendu',rendu:'jamais',jamai
 /* aggregate partners */
 function partnerAgg(){var a={};data.filter(r=>r.measured).forEach(r=>{var k=norm(r.partner);if(!k)return;a[k]=a[k]||{key:k,name:r.partner,c:0,s:0,e:0,f:0,n:0,notes:[]};var x=a[k];x.c+=r.clicks;x.s+=r.subs;x.e+=Number(r.earnings)||0;x.f+=r.fans;x.n++;var sc=scoreOf(r);if(sc)x.notes.push(sc)});Object.values(a).forEach(x=>{x.cvr=x.c>0?x.s/x.c*100:0;x.spend=x.s>0?x.f/x.s*100:0;x.avgNote=x.notes.length?x.notes.reduce((p,q)=>p+q,0)/x.notes.length:null});return a}
 
+function renderSyncBadge(){
+  var s=$('sync');if(!s)return;
+  var base=data.length?('<b style="color:var(--green)">'+data.filter(d=>d.measured).length+'</b> mesurés · '+data.length+' au total'):'';
+  var ago='';
+  if(window.__lastSync){var m=Math.round((Date.now()-window.__lastSync)/60000);ago=' <span style="color:var(--mut)">· sync '+(m<1?'à l\'instant':'il y a '+m+' min')+'</span>';}
+  s.innerHTML=base+ago;
+}
 function render(){
   if($('app').style.display==='none')return;
-  $('sync').innerHTML=data.length?('<b style="color:var(--green)">'+data.filter(d=>d.measured).length+'</b> mesurés · '+data.length+' au total'):'';
+  renderSyncBadge();
   var mo=$('monthSel').value,q=($('q').value||'').toLowerCase(),fM=$('fModel').value,fS=$('fStatus').value;
   // board
   var board=$('board');board.innerHTML='';
@@ -1066,6 +1074,14 @@ function animateStats(){
     requestAnimationFrame(step);
   });
 }
+function speedo(score){
+  if(score==null)return '<svg width="30" height="20" viewBox="0 0 40 24"><path d="M4 20 A16 16 0 0 1 36 20" stroke="rgba(255,255,255,.15)" stroke-width="3" fill="none" stroke-linecap="round"/><line x1="20" y1="20" x2="4" y2="20" stroke="var(--mut)" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="20" r="1.7" fill="var(--mut)"/></svg>';
+  var s=Math.max(0,Math.min(99.5,score)),theta=Math.PI*(1-s/100);
+  var ex=(20+16*Math.cos(theta)).toFixed(1),ey=(20-16*Math.sin(theta)).toFixed(1);
+  var nx=(20+12*Math.cos(theta)).toFixed(1),ny=(20-12*Math.sin(theta)).toFixed(1);
+  var col=s<25?'#B62A2A':s<50?'#E85A2B':s<70?'#F5B23F':s<85?'#94BE3B':'#4CD964';
+  return '<svg width="30" height="20" viewBox="0 0 40 24"><path d="M4 20 A16 16 0 0 1 36 20" stroke="rgba(255,255,255,.15)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M4 20 A16 16 0 0 1 '+ex+' '+ey+'" stroke="'+col+'" stroke-width="3" fill="none" stroke-linecap="round"/><line x1="20" y1="20" x2="'+nx+'" y2="'+ny+'" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="20" r="1.7" fill="var(--ink)"/></svg>';
+}
 function renderDash(){
   var mez=data.filter(r=>r.measured),nowM=new Date().toISOString().slice(0,7);
   var tc=mez.reduce((a,r)=>a+r.clicks,0),ts=mez.reduce((a,r)=>a+r.subs,0),te=mez.reduce((a,r)=>a+(Number(r.earnings)||0),0);
@@ -1081,17 +1097,21 @@ function renderDash(){
   $('statCards').innerHTML=cards.map((c,i)=>'<div class="stat" style="--i:'+i+';--glow:'+c[4]+';--vc:'+c[5]+';--vcbg:'+c[6]+'"><div class="k"><span class="ic">◆</span>'+c[0]+'</div><div class="v '+c[3]+'" data-to="'+c[1]+'" data-fmt="'+c[2]+'">'+fmtStat(c[1],c[2])+'</div><div class="d">'+c[7]+'</div></div>').join('');
   animateStats();
   var db=$('dashBody');db.innerHTML='';var pa=partnerAgg();
+  var d30=new Date();d30.setDate(d30.getDate()-30);var d30s=d30.toISOString().slice(0,10);
   MODELS.forEach(m=>{
-    var rows=data.filter(r=>r.model===m&&r.measured);
+    var rows=data.filter(r=>r.model===m&&r.measured&&r.date&&r.date>=d30s);
     var c=rows.reduce((a,r)=>a+r.clicks,0),s=rows.reduce((a,r)=>a+r.subs,0),f=rows.reduce((a,r)=>a+r.fans,0),e=rows.reduce((a,r)=>a+(Number(r.earnings)||0),0);
     var mois=data.filter(r=>r.model===m&&ym(r.date)===nowM&&r.status!=='prog').length;
-    var cv=c>0?s/c*100:null,sp=s>0?f/s*100:null,ct=CIBLES[m],dot='—';
-    if(cv!=null){var okC=cv>=ct.cvr,okS=(sp!=null&&sp>=ct.spend);dot=(okC&&okS)?'🟢':(okC||okS)?'🟠':'🔴'}
+    var moisProg=data.filter(r=>r.model===m&&ym(r.date)===nowM&&r.status==='prog').length;
+    var cv=c>0?s/c*100:null,sp=s>0?f/s*100:null,ct=CIBLES[m];
+    var score=cv==null?null:(Math.min(1,cv/ct.cvr)+(sp!=null&&ct.spend>0?Math.min(1,sp/ct.spend):0))*50;
+    var lastRow=rows.length?rows.reduce(function(a,b){return (!a||(b.date||'')>(a.date||''))?b:a},null):null;
+    var lastDate=(lastRow&&lastRow.date)?lastRow.date.slice(8,10)+'/'+lastRow.date.slice(5,7):'—';
     var notes=rows.map(scoreOf).filter(x=>x);var an=notes.length?(notes.reduce((p,q)=>p+q,0)/notes.length):null;
     var cc=mois>=15?'var(--green)':(mois>0?'var(--amber)':'var(--mut)');
     var avgSubs=rows.length?Math.round(s/rows.length):null,avgEarn=rows.length?e/rows.length:null;
     var bs=MODEL_BASELINES[m];var subsColor='var(--ink)';if(avgSubs!=null&&bs){subsColor=avgSubs>=bs.subs?'var(--green)':(avgSubs>=bs.subs*0.6?'var(--amber)':'var(--red)')}
-    var tr=document.createElement('tr');tr.innerHTML='<td><b>'+m+'</b></td><td class="num" style="color:'+cc+';font-weight:700">'+mois+'</td><td class="num" style="color:var(--mut)">'+rows.length+'</td><td class="num" style="color:'+subsColor+'">'+(avgSubs==null?'—':avgSubs+(bs?' <span style="color:var(--mut);font-weight:400">/ '+bs.subs+'</span>':''))+'</td><td class="num" style="color:var(--cash)">'+(avgEarn==null?'—':money(avgEarn))+'</td><td class="num">'+(cv==null?'—':cv.toFixed(0)+'%')+'</td><td class="num" style="color:var(--mut)">'+ct.cvr+'%</td><td class="num">'+(sp==null?'—':sp.toFixed(0)+'%')+'</td><td class="num">'+(an==null?'—':an.toFixed(1)+'/10')+'</td><td class="num"><span class="dot">'+dot+'</span></td>';db.appendChild(tr);
+    var tr=document.createElement('tr');tr.innerHTML='<td><b>'+m+'</b></td><td class="num" style="color:'+cc+';font-weight:700">'+mois+(moisProg>0?' <span style="color:var(--mut);font-weight:400;font-size:.85em">+'+moisProg+'</span>':'')+'</td><td class="num" style="color:var(--mut)">'+rows.length+'</td><td class="num" style="color:var(--mut)">'+lastDate+'</td><td class="num" style="color:'+subsColor+'">'+(avgSubs==null?'—':avgSubs+(bs?' <span style="color:var(--mut);font-weight:400">/ '+bs.subs+'</span>':''))+'</td><td class="num" style="color:var(--cash)">'+(avgEarn==null?'—':money(avgEarn))+'</td><td class="num">'+(cv==null?'—':cv.toFixed(0)+'%')+'</td><td class="num" style="color:var(--mut)">'+ct.cvr+'%</td><td class="num">'+(sp==null?'—':sp.toFixed(0)+'%')+'</td><td class="num">'+(an==null?'—':an.toFixed(1)+'/10')+'</td><td class="num">'+speedo(score)+'</td>';db.appendChild(tr);
   });
   drawChart();
 }
