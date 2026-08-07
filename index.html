@@ -402,12 +402,18 @@
   .kitbtn:hover{background:var(--acc);color:#fff}
   .pgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
   .pgal img{width:100%;height:88px;object-fit:cover;border-radius:8px;display:block}
-  .pedit{position:relative}
-  .pedit .pdel{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:12px;line-height:1}
-  .pedit .pmv{position:absolute;bottom:4px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1;padding:0;transition:.15s}
-  .pedit .pmv:hover{background:rgba(97,114,255,.8)}
-  .pedit .pmv:disabled{opacity:.25;cursor:not-allowed}
-  .pedit .pmvL{left:4px} .pedit .pmvR{left:34px}
+  .pedit{position:relative;cursor:grab;transition:.15s;user-select:none}
+  .pedit:active{cursor:grabbing}
+  .pedit.dragging{opacity:.4}
+  .pedit.dragover{outline:3px dashed #6172FF;outline-offset:-3px;transform:scale(1.03)}
+  .pedit .pdel{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:12px;line-height:1;z-index:2}
+  .pedit .ppos{position:absolute;top:4px;left:4px;background:rgba(97,114,255,.95);color:#fff;border-radius:6px;padding:2px 8px;font-family:var(--fm);font-size:11px;font-weight:700;z-index:2;pointer-events:none}
+  .pedit .pmv{position:absolute;bottom:4px;background:rgba(0,0,0,.75);color:#fff;border:none;border-radius:6px;width:30px;height:30px;cursor:pointer;font-size:18px;line-height:1;padding:0;transition:.15s;z-index:2}
+  .pedit .pmv:hover{background:#6172FF}
+  .pedit .pmv:disabled{opacity:.2;cursor:not-allowed}
+  .pedit .pmvL{left:4px} .pedit .pmvR{right:4px}
+  .pgal.edit{gap:14px}
+  .peditHint{font-family:var(--fm);font-size:11px;color:var(--mut);margin:-4px 0 8px;letter-spacing:.02em;text-transform:uppercase}
   .overlay{position:fixed;inset:0;background:rgba(4,8,12,.7);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
   .overlay.open{display:flex}
   .modal{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line2);border-radius:20px;max-width:640px;width:100%;box-shadow:var(--sh);padding:24px 26px}
@@ -1250,9 +1256,12 @@ function openModelView(m){
 }
 function openModelEditor(m){
   if(!isAdmin)return;var b=modelBundle(m);
+  var photosHint=b.photos.length>1?'<div class="peditHint">Glisse une photo pour la déplacer, ou utilise les flèches ‹ ›</div>':'';
   var photos=b.photos.map(function(p,i){
     var first=(i===0),last=(i===b.photos.length-1);
-    return '<div class="pedit" data-pid="'+p.id+'"><img src="'+esc(p.media_url)+'" alt="">'+
+    return '<div class="pedit" draggable="true" data-pid="'+p.id+'" data-idx="'+i+'">'+
+      '<img src="'+esc(p.media_url)+'" alt="" draggable="false" style="pointer-events:none">'+
+      '<span class="ppos">'+(i+1)+'</span>'+
       '<button class="pdel" data-pid="'+p.id+'" title="Supprimer">✕</button>'+
       '<button class="pmv pmvL" data-pid="'+p.id+'" data-dir="-1" title="Décaler à gauche"'+(first?' disabled':'')+'>‹</button>'+
       '<button class="pmv pmvR" data-pid="'+p.id+'" data-dir="1" title="Décaler à droite"'+(last?' disabled':'')+'>›</button>'+
@@ -1263,13 +1272,36 @@ function openModelEditor(m){
     '<div class="fld" style="margin-bottom:12px"><label>Textes SFS — plusieurs variantes possibles, sépare-les par une ligne <b>---</b> (Moïse en reçoit une au hasard à chaque copie)</label><textarea id="ce_body" rows="8" placeholder="Variante 1&#10;---&#10;Variante 2&#10;---&#10;Variante 3">'+esc((b.texts||[]).map(function(t){return t.body}).join('\n---\n'))+'</textarea></div>'+
     '<div class="fld" style="margin-bottom:12px"><label>Vidéo de présentation '+(b.video?'(en choisir une remplace l\'actuelle)':'')+'</label><input type="file" id="ce_video" accept="video/*">'+(b.video?' <a href="'+esc(b.video.media_url)+'" target="_blank" style="font-size:12px;color:var(--acc)">vidéo actuelle</a>':'')+'</div>'+
     '<div class="fld" style="margin-bottom:8px"><label>Photos — ajoute-en (plusieurs à la fois possible)</label><input type="file" id="ce_photos" accept="image/*" multiple></div>'+
-    (photos?'<div class="pgal edit">'+photos+'</div>':'')+
+    (photos?photosHint+'<div class="pgal edit" id="pgalEdit">'+photos+'</div>':'')+
     '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn primary" id="ce_save">💾 Enregistrer</button><button class="btn ghost" id="ce_back">Retour</button></div><div class="lerr" id="ce_err"></div>';
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;
   $('ce_back').onclick=()=>openModelView(m);
   $('ce_save').onclick=()=>saveModelContent(m);
   document.querySelectorAll('#modal .pdel').forEach(x=>x.onclick=async()=>{if(!confirm('Supprimer cette photo ?'))return;await sb.from('contenu').delete().eq('id',x.getAttribute('data-pid'));await loadContenu();openModelEditor(m)});
   document.querySelectorAll('#modal .pmv').forEach(x=>x.onclick=()=>movePhoto(m,x.getAttribute('data-pid'),parseInt(x.getAttribute('data-dir'),10)));
+  var dragPid=null;
+  document.querySelectorAll('#modal .pedit').forEach(function(el){
+    el.addEventListener('dragstart',function(e){dragPid=el.getAttribute('data-pid');el.classList.add('dragging');try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',dragPid)}catch(er){}});
+    el.addEventListener('dragend',function(){el.classList.remove('dragging');document.querySelectorAll('#modal .pedit').forEach(function(x){x.classList.remove('dragover')})});
+    el.addEventListener('dragover',function(e){e.preventDefault();try{e.dataTransfer.dropEffect='move'}catch(er){}if(el.getAttribute('data-pid')!==dragPid)el.classList.add('dragover')});
+    el.addEventListener('dragleave',function(){el.classList.remove('dragover')});
+    el.addEventListener('drop',function(e){e.preventDefault();var toPid=el.getAttribute('data-pid');el.classList.remove('dragover');if(dragPid&&toPid&&dragPid!==toPid)reorderPhotoTo(m,dragPid,toPid);dragPid=null});
+  });
+}
+async function reorderPhotoTo(m,fromId,toId){
+  if(!isAdmin)return;
+  var photos=modelBundle(m).photos.slice();
+  var fromIdx=photos.findIndex(function(p){return String(p.id)===String(fromId)});
+  var toIdx=photos.findIndex(function(p){return String(p.id)===String(toId)});
+  if(fromIdx<0||toIdx<0||fromIdx===toIdx)return;
+  var moved=photos.splice(fromIdx,1)[0];
+  photos.splice(toIdx,0,moved);
+  var ups=[];
+  for(var i=0;i<photos.length;i++){if(photos[i].sort!==i)ups.push(sb.from('contenu').update({sort:i}).eq('id',photos[i].id))}
+  var res=await Promise.all(ups);
+  var err=res.find(function(r){return r.error});
+  if(err){toast('Erreur : '+err.error.message);return}
+  await loadContenu();openModelEditor(m);
 }
 async function movePhoto(m,id,dir){
   if(!isAdmin)return;
