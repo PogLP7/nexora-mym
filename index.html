@@ -760,10 +760,10 @@ const SUPABASE_URL='https://bvcnbtbdfkoiefuedxem.supabase.co';
 const SUPABASE_KEY='sb_publishable__X2Z5ELAvPpQ2CK7CKoXpQ_J2F2ZxEP';
 const MOISE_EMAILS=[]; // emails en minuscule qui voient la version simplifiée (sans Dashboard ni Import)
 let sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Marion:{cvr:50,spend:13},'Bethy OF':{cvr:60,spend:13},'Bethy MYM':{cvr:60,spend:13},'Milla MYM':{cvr:60,spend:15}};
+const CIBLES={Alice:{cvr:60,spend:17},Louise:{cvr:56,spend:16},Amandine:{cvr:66,spend:17},Margot:{cvr:62,spend:13},Marion:{cvr:50,spend:13},'Bethy OF':{cvr:60,spend:13},'Bethy MYM':{cvr:60,spend:13},'Milla MYM':{cvr:60,spend:15},'Amandine MYM':{cvr:60,spend:13}};
 const MODELS=Object.keys(CIBLES);
-const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF','Bethy OF':'OF','Bethy MYM':'MYM','Milla MYM':'MYM'};
-const WK_TARGET={Alice:4,Louise:4,Amandine:4,Margot:4,Marion:4,'Bethy OF':4,'Bethy MYM':7,'Milla MYM':7};
+const PLAT={Alice:'OF',Louise:'OF',Amandine:'OF',Margot:'OF',Marion:'OF','Bethy OF':'OF','Bethy MYM':'MYM','Milla MYM':'MYM','Amandine MYM':'MYM'};
+const WK_TARGET={Alice:4,Louise:4,Amandine:4,Margot:4,Marion:4,'Bethy OF':4,'Bethy MYM':7,'Milla MYM':7,'Amandine MYM':7};
 /* gamification / dopamine Moïse */
 const PAY_PER_SFS=2,PRIME_MIN_SFS=45;
 const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.ceil(WEEK_GOAL/7));
@@ -1633,7 +1633,7 @@ function renderOrbit(){
 var lmView='liste';
 var POLECOL={A:'linear-gradient(90deg,#6172ff,#8b97ff)',B:'linear-gradient(90deg,#25e8c3,#3fd07e)',C:'linear-gradient(90deg,#ffb85c,#ff8f5c)',D:'linear-gradient(90deg,#b197fc,#c86bff)'};
 function parsePole(name){var n=(name||'').toUpperCase();var pats=[/P[ÔO]LE\s*([A-Z])\b/,/#P?([A-Z])\b/,/\[([A-Z])\]/,/\bP([A-Z])\b/];for(var i=0;i<pats.length;i++){var m=n.match(pats[i]);if(m)return m[1]}return null}
-var MGRAD={'Alice':'linear-gradient(135deg,#ff8fb1,#c86bff)','Louise':'linear-gradient(135deg,#6172ff,#25e8c3)','Bethy OF':'linear-gradient(135deg,#ffb85c,#ff6b8f)','Amandine':'linear-gradient(135deg,#3fd07e,#25e8c3)','Margot':'linear-gradient(135deg,#b197fc,#6172ff)','Marion':'linear-gradient(135deg,#ff6b6b,#ffb85c)','Bethy MYM':'linear-gradient(135deg,#ff9a5c,#ff6b8f)','Milla MYM':'linear-gradient(135deg,#25e8c3,#6172ff)'};
+var MGRAD={'Alice':'linear-gradient(135deg,#ff8fb1,#c86bff)','Louise':'linear-gradient(135deg,#6172ff,#25e8c3)','Bethy OF':'linear-gradient(135deg,#ffb85c,#ff6b8f)','Amandine':'linear-gradient(135deg,#3fd07e,#25e8c3)','Margot':'linear-gradient(135deg,#b197fc,#6172ff)','Marion':'linear-gradient(135deg,#ff6b6b,#ffb85c)','Bethy MYM':'linear-gradient(135deg,#ff9a5c,#ff6b8f)','Milla MYM':'linear-gradient(135deg,#25e8c3,#6172ff)','Amandine MYM':'linear-gradient(135deg,#3fd07e,#b197fc)'};
 function modelGrad(m){return MGRAD[m]||'linear-gradient(135deg,#6172ff,#8b97ff)'}
 function modelInit(m){return esc((m||'?').replace(/\s*(OF|MYM)$/i,'').trim().charAt(0).toUpperCase())}
 var MODELPICS={'Alice':'photos/alice.jpg','Louise':'photos/louise.jpg','Marion':'photos/marion.jpg','Margot':'photos/margot.jpg','Bethy OF':'photos/bethy.jpg'};
