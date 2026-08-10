@@ -826,8 +826,8 @@ async function autoAdvance(){
   try{
     var ups=[];
     data.forEach(function(r){
-      var subs=Number(r.subs)||0,clicks=Number(r.clicks)||0,next=null,meas=r.measured;
-      if((r.status==='prog'||r.status==='sent')&&subs>=15){next='done';meas=true;}
+      var subs=Number(r.subs)||0,clicks=Number(r.clicks)||0,earn=Number(r.earnings)||0,next=null,meas=r.measured;
+      if((r.status==='prog'||r.status==='sent')&&subs>=15&&earn>0){next='done';meas=true;}
       else if(r.status==='prog'&&clicks>0){next='sent';}
       if(next&&next!==r.status){ups.push({id:r.id,status:next,measured:meas});}
     });
