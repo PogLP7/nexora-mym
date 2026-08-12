@@ -1089,10 +1089,14 @@ function renderCockpit(){
     var wdays=[];for(var wi=0;wi<7;wi++){var wd=new Date(mon);wd.setDate(mon.getDate()+wi);wdays.push(wd.toISOString().slice(0,10))}
     var dl=['L','M','M','J','V','S','D'];var totP=0;
     var rows=mymModels.map(function(m){
-      var ds={};mine.forEach(function(r){if(r.model===m&&r.date&&r.date<=todayStr&&wdays.indexOf(r.date)>=0)ds[r.date]=1});
-      var done=Object.keys(ds).length;var pr=done>=7?15:done>=6?10:done>=5?5:0;totP+=pr;
-      var grid=wdays.map(function(d,i){var on=ds[d],fut=d>todayStr,tod=d===todayStr;
-        return '<div title="'+d+'" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:11px;font-weight:700;font-family:var(--fm);'+(on?'background:linear-gradient(135deg,#25e8c3,#3fd07e);color:#052':'background:var(--card);color:var(--mut)'+(fut?';opacity:.45':''))+(tod?';box-shadow:inset 0 0 0 2px #7c5cff':'')+'">'+dl[i]+(on?' ✓':'')+'</div>'}).join('');
+      var ds={};mine.forEach(function(r){if(r.model===m&&r.date&&wdays.indexOf(r.date)>=0){var st=(r.status==='prog')?'prog':'sent';if(!ds[r.date]||(ds[r.date]==='prog'&&st==='sent'))ds[r.date]=st}});
+      var done=Object.values(ds).filter(function(v){return v==='sent'}).length;var pr=done>=7?15:done>=6?10:done>=5?5:0;totP+=pr;
+      var grid=wdays.map(function(d,i){var st=ds[d],fut=d>todayStr,tod=d===todayStr;
+        var bg,fg;
+        if(st==='sent'){bg='linear-gradient(135deg,#25e8c3,#3fd07e)';fg='#052';}
+        else if(st==='prog'){bg='linear-gradient(135deg,#ffb457,#ff8a3d)';fg='#3a1a05';}
+        else{bg='var(--card)';fg='var(--mut)';}
+        return '<div title="'+d+(st?' — '+(st==='sent'?'envoyé':'programmé'):'')+'" style="flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:11px;font-weight:700;font-family:var(--fm);background:'+bg+';color:'+fg+(!st&&fut?';opacity:.45':'')+(tod?';box-shadow:inset 0 0 0 2px #7c5cff':'')+'">'+dl[i]+(st==='sent'?' ✓':st==='prog'?' ⋯':'')+'</div>'}).join('');
       var col=pr>=15?'#25e8c3':pr>=10?'#3fd07e':pr>=5?'#ffb457':'var(--mut)';
       return '<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line2);flex-wrap:wrap"><div style="display:flex;align-items:center;gap:10px;min-width:150px">'+modelAvatar(m)+'<div><div style="font-weight:700">'+esc(m)+'</div><div class="klabel">'+done+'/7 jours</div></div></div><div style="flex:1;min-width:220px;display:flex;gap:5px">'+grid+'</div><div style="text-align:right;min-width:66px"><div style="font-weight:800;font-size:19px;color:'+col+'">'+pr+' €</div><div class="klabel">prime</div></div></div>'}).join('');
     var html='<div class="card" style="margin-top:16px"><div class="ocardh"><div class="label">💎 Prime MYM · série de la semaine</div><span class="klabel">7/7 = 15€ · 6/7 = 10€ · 5/7 = 5€</span></div>'+rows+'<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span class="hint">1 abo-SFS par jour = série complète (en plus des 2€/SFS).</span><span style="font-weight:800">Total prime MYM : <b style="color:#25e8c3">'+totP+' €</b></span></div></div>';
