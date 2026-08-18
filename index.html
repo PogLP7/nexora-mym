@@ -524,6 +524,7 @@
   @media(max-width:760px){.ck-herogrid{grid-template-columns:1fr;gap:20px}}
   .ck-paycol{position:relative}
   .ck-sfx{position:absolute;top:-4px;right:-4px;background:none;border:none;cursor:pointer;font-size:15px;opacity:.6;line-height:1}.ck-sfx:hover{opacity:1}
+  .ck-ajust{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin-left:8px;padding:0;border:1px solid var(--bord);border-radius:6px;background:rgba(255,255,255,.05);color:var(--fg);font-size:14px;font-weight:600;cursor:pointer;line-height:1;vertical-align:middle}.ck-ajust:hover{background:rgba(255,255,255,.12);border-color:var(--acc)}
   .ck-eyebrow{font-family:var(--fm);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--cash);display:flex;align-items:center;gap:8px}
   .ck-live{width:7px;height:7px;border-radius:50%;background:var(--green);animation:ckpulse 2s infinite}
   @keyframes ckpulse{0%{box-shadow:0 0 0 0 rgba(57,217,160,.5)}70%{box-shadow:0 0 0 9px rgba(57,217,160,0)}100%{box-shadow:0 0 0 0 rgba(57,217,160,0)}}
@@ -769,7 +770,7 @@ const PAY_PER_SFS=2,PRIME_MIN_SFS=45;
 const WEEK_GOAL=MODELS.reduce((a,m)=>a+WK_TARGET[m],0),MONTH_GOAL=WEEK_GOAL*4,DAY_GOAL=Math.max(1,Math.ceil(WEEK_GOAL/7));
 const RING_PALS=[['#25E8C3','#6172FF','#B197FC'],['#FF375F','#A6FF3A','#38E8E0'],['#FF784A','#FFC24B','#FF4D9D'],['#3FC8DE','#5B8CFF','#39D9A0']];
 const MO_FR=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
-let data=[],parts={},showAll=false,isAdmin=true,isTitouan=false,chart=null,chMode='subs',contenu=[];
+let data=[],parts={},showAll=false,isAdmin=true,isTitouan=false,chart=null,chMode='subs',contenu=[],ajustements=[];
 const $=id=>document.getElementById(id);
 (function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)})();
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
@@ -815,9 +816,13 @@ async function showApp(){
   if(!isAdmin){var bt=document.querySelector('.tab[data-tab="board"]');bt.classList.add('active');document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));$('p-board').classList.add('active');}
   $('login').style.display='none';$('app').style.display='block';
   $('who').textContent=u?u.email:'';
-  await loadParts();await loadData();await loadContenu();initUI();subscribe();monthlyRecap();
+  await loadParts();await loadData();await loadContenu();await loadAjust();initUI();subscribe();monthlyRecap();
 }
 /* data */
+async function loadAjust(){try{var r=await window.sb.from('paye_ajustements').select('*').order('created_at',{ascending:false});ajustements=r.data||[]}catch(e){ajustements=[]}}
+function ajustSumMonth(mo){var t=0;ajustements.forEach(function(a){if(a.month===mo)t+=Number(a.montant)||0});return t}
+async function addAjust(){var moDef=new Date().toISOString().slice(0,7);var mo=prompt('Mois de l ajustement (YYYY-MM) :',moDef);if(!mo||!/^\d{4}-\d{2}$/.test(mo))return;var amt=prompt('Montant en euros (nombre, peut etre negatif) :','40');if(amt===null)return;var n=Number(String(amt).replace(',','.'));if(isNaN(n)){toast('Montant invalide.');return}var motif=prompt('Motif (obligatoire) :','Prime SFS MYM');if(!motif)return;var r=await window.sb.from('paye_ajustements').insert({month:mo,montant:n,motif:motif});if(r.error){toast('Erreur : '+r.error.message);return}toast('Ajustement de '+n+' € ajoute pour '+mo);await loadAjust();renderCockpit()}
+async function delAjust(id){if(!confirm('Supprimer cet ajustement ?'))return;var r=await window.sb.from('paye_ajustements').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}await loadAjust();renderCockpit()}
 async function loadData(){var r=await window.sb.from('sfs').select('*');if(r.error){toast('Erreur chargement');return}data=r.data||[];await autoAdvance();render()}
 /* Auto-passage prog→sent (≥1 clic) puis sent/prog→done+mesuré (≥15 subs). Une seule passe par loadData, guard anti-boucle. */
 var __autoAdvanceRunning=false;
@@ -850,7 +855,7 @@ window.__syncBadgeTick=window.__syncBadgeTick||setInterval(function(){if(typeof 
 window.__heartbeat=window.__heartbeat||setInterval(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&typeof loadData==='function'){loadParts();loadData();if(typeof loadContenu==='function')loadContenu()}},60000);
 /* safety net au boot : si après 4s l'app est visible mais data vide, force un reload (protection contre load silencieux échoué) */
 setTimeout(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&(window.data||[]).length===0&&typeof loadData==='function'){loadData();loadParts();if(typeof loadContenu==='function')loadContenu()}},4000);
-function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe()}
+function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe();sb.channel('ajust-live').on('postgres_changes',{event:'*',schema:'public',table:'paye_ajustements'},()=>{loadAjust().then(renderCockpit)}).subscribe()}
 
 /* xlsx */
 function decEnt(s){return String(s==null?'':s).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
@@ -981,7 +986,7 @@ function sfxSuccess(big){try{if(localStorage.getItem('sfx')==='0')return;__ac=__
 function celebrate(msg,big){confettiBurst(big?190:95);sfxSuccess(big);try{if(navigator.vibrate)navigator.vibrate(big?[30,50,30]:22)}catch(e){}if(msg)toast(msg)}
 function bigWin(title,sub){var w=$('ckWin');if(!w)return;w.innerHTML='<div class="box"><div class="medal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.6h10V8a5 5 0 0 1-10 0V4.6z"/><path d="M7 6.1H4.6v1.1A2.7 2.7 0 0 0 7 9.9"/><path d="M17 6.1h2.4v1.1A2.7 2.7 0 0 1 17 9.9"/><path d="M12 13v3.2"/><path d="M8.7 19.6h6.6"/><path d="M9.6 16.4h4.8l.8 3.2H8.8l.8-3.2z"/></svg></div><h2>'+esc(title)+'</h2><p>'+esc(sub)+'</p></div>';w.classList.add('show');confettiBurst(220);sfxSuccess(true);try{if(navigator.vibrate)navigator.vibrate([40,60,40,60,140])}catch(e){}clearTimeout(window.__winT);window.__winT=setTimeout(function(){w.classList.remove('show')},2900);w.onclick=function(){w.classList.remove('show')}}
 function showRecap(mLabel,created,avg,prime,pay){var w=$('ckWin');if(!w)return;w.innerHTML='<div class="box recap"><div class="rk">Bilan · '+esc(mLabel)+'</div><div class="rbig">'+pay+' €</div><div class="rsub">gagné le mois dernier</div><div class="rstats"><div><span class="rv">'+created+'</span><span class="rl">SFS</span></div><div><span class="rv">'+(avg!=null?avg.toFixed(1).replace('.',','):'—')+'</span><span class="rl">note moy</span></div><div><span class="rv">'+prime+' €</span><span class="rl">prime</span></div></div><button class="btn primary" id="recapClose">Nouveau mois, on remet ça</button></div>';w.classList.add('show');confettiBurst(180);sfxSuccess(true);var b=$('recapClose');if(b)b.onclick=function(e){e.stopPropagation();w.classList.remove('show')};w.onclick=function(){w.classList.remove('show')}}
-function monthlyRecap(){try{var cm=new Date().toISOString().slice(0,7),last=localStorage.getItem('ckLastMonth');localStorage.setItem('ckLastMonth',cm);if(!last||last===cm)return;var mine=data.filter(r=>r.src==='manual'&&ym(r.date)===last),created=mine.length;if(!created)return;var meas=data.filter(r=>r.measured&&r.src==='manual'&&ym(r.date)===last),notes=meas.map(scoreOf).filter(x=>x),avg=notes.length?notes.reduce((a,b)=>a+b,0)/notes.length:null;var prime=0;if(avg!=null)prime=avg>=9?200:avg>=8?100:avg>=7?50:avg>=6?25:0;if(created>=PRIME_MIN_SFS&&prime<25)prime=25;var pay=created*PAY_PER_SFS+prime,mLabel=MO_FR[parseInt(last.slice(5),10)-1]+' '+last.slice(0,4);showRecap(mLabel,created,avg,prime,pay)}catch(e){}}
+function monthlyRecap(){try{var cm=new Date().toISOString().slice(0,7),last=localStorage.getItem('ckLastMonth');localStorage.setItem('ckLastMonth',cm);if(!last||last===cm)return;var mine=data.filter(r=>r.src==='manual'&&ym(r.date)===last),created=mine.length;if(!created)return;var meas=data.filter(r=>r.measured&&r.src==='manual'&&ym(r.date)===last),notes=meas.map(scoreOf).filter(x=>x),avg=notes.length?notes.reduce((a,b)=>a+b,0)/notes.length:null;var prime=0;if(avg!=null)prime=avg>=9?200:avg>=8?100:avg>=7?50:avg>=6?25:0;if(created>=PRIME_MIN_SFS&&prime<25)prime=25;var ajust=ajustSumMonth(last);var pay=created*PAY_PER_SFS+prime+ajust,mLabel=MO_FR[parseInt(last.slice(5),10)-1]+' '+last.slice(0,4);showRecap(mLabel,created,avg,prime,pay)}catch(e){}}
 /* ---- cockpit dopamine ---- */
 function gradeOf(n){if(n>=9.5)return'LÉGENDE';if(n>=9)return'ÉLITE';if(n>=8)return'A';if(n>=7)return'B';if(n>=6)return'C';return'—'}
 function streakBonus(s){return s>=30?0.5:s>=21?0.3:s>=14?0.2:0}
@@ -1014,7 +1019,8 @@ function renderCockpit(){
   var measM=data.filter(r=>r.measured&&r.src==='manual'&&ym(r.date)===ymNow),notes=measM.map(scoreOf).filter(function(x){return x}),avgBase=notes.length?notes.reduce(function(a,b){return a+b},0)/notes.length:null;
   var sbn=streakBonus(streak),avg=avgBase==null?null:Math.min(10,avgBase+sbn);
   var prime=0;if(avg!=null)prime=avg>=9?200:avg>=8?100:avg>=7?50:avg>=6?25:0;if(created>=PRIME_MIN_SFS&&prime<25)prime=25;
-  var base=created*PAY_PER_SFS,pay=base+prime;
+  var ajust=ajustSumMonth(ymNow);
+  var base=created*PAY_PER_SFS,pay=base+prime+ajust;
   var pM=Math.min(100,created/MONTH_GOAL*100),pW=Math.min(100,weekN/WEEK_GOAL*100),pD=Math.min(100,todayN/DAY_GOAL*100);
   var nudge;
   if(created<PRIME_MIN_SFS)nudge='Encore <b>'+(PRIME_MIN_SFS-created)+' SFS</b> pour débloquer ta prime (+25 € garantis)';
@@ -1035,7 +1041,7 @@ function renderCockpit(){
      '<div class="ck-paycol"><button class="ck-sfx" id="sfxBtn" title="Activer/couper le son">'+(sfxOn?'🔊':'🔇')+'</button>'+
        '<div class="ck-eyebrow"><span class="ck-live"></span> Ta paye en direct · '+moLabel+'</div>'+
        '<div class="ck-pay" id="payNum">0 €</div>'+
-       '<div class="ck-paysub">Base <b>'+base+' €</b> ('+created+' SFS × '+PAY_PER_SFS+'€) + Prime <b class="g">'+prime+' €</b></div>'+
+       '<div class="ck-paysub">Base <b>'+base+' €</b> ('+created+' SFS × '+PAY_PER_SFS+'€) + Prime <b class="g">'+prime+' €</b>'+(ajust?' + Ajust. <b class="g">'+(ajust>0?'+':'')+ajust+' €</b>':'')+' <button class="ck-ajust" id="ajustBtn" title="Ajouter un ajustement (prime manuelle, correction, bonus)">+</button></div>'+
        '<div class="ck-nudge">'+nudge+'</div></div>'+
      '<div class="ck-notecol" id="noteCol"><div class="ck-nk">Note moyenne · '+moLabel+'</div>'+
        '<div class="ck-nbig"><span class="ck-nval" id="noteVal">'+(avg!=null?'0,0':'—')+'</span><span class="ck-nmax">/10</span>'+(avg!=null?'<span class="ck-grade">'+grade+'</span>':'')+sbonusHtml+'</div>'+
@@ -1066,6 +1072,7 @@ function renderCockpit(){
        '<div class="ck-batch">Grosse saisie (ex. 10 d\'un coup) → de l\'<b>avance</b>. Tes jours off ne cassent ni ton rythme ni ta streak.</div>'+
      '</div></div>';
   var sfb=$('sfxBtn');if(sfb)sfb.onclick=function(){localStorage.setItem('sfx',sfxOn?'0':'1');renderCockpit()};
+  var ajb=$('ajustBtn');if(ajb)ajb.onclick=addAjust;
   if(window.__payLast===pay)$('payNum').textContent=fmtStat(pay,'eur');else{window.__payLast=pay;animateNum($('payNum'),pay,'eur')}
   var nv=$('noteVal'),nm=$('noteMeter');
   if(avg!=null){ckCoDec(nv,avg,1500);requestAnimationFrame(function(){nm.style.width=(avg/10*100)+'%'})}else if(nm){nm.style.width='0'}
