@@ -1447,10 +1447,10 @@ function storyCover(m){
   var base=String(m).replace(/\s*(OF|MYM)$/i,'').trim();
   var herite=coverOf(base)||coverOf(base+' OF');
   if(herite)return herite;
-  var p=(typeof MODELPICS!=='undefined')?(MODELPICS[m]||MODELPICS[base+' OF']||MODELPICS[base]):'';
-  if(p)return p;
   var f=b.av.filter(function(r){return r.media_url&&!isVid(r.media_url)})[0];
-  return f?f.media_url:'';
+  if(f)return f.media_url;
+  var p=(typeof MODELPICS!=='undefined')?(MODELPICS[m]||MODELPICS[base+' OF']||MODELPICS[base]):'';
+  return p||'';
 }
 function renderStoryKpis(){
   var host=$('storyKpis');if(!host)return;
