@@ -436,6 +436,8 @@
   .stskip{position:absolute;bottom:36px;left:4px;background:rgba(0,0,0,.72);color:#FF9AA8;border:none;border-radius:6px;padding:2px 7px;font-size:10px;cursor:pointer;z-index:2}
   .stskip:hover{background:#FF5C7A;color:#fff}
   .stcell .ecart{position:absolute;top:4px;right:4px;background:rgba(255,92,122,.92);color:#fff;border-radius:6px;padding:2px 7px;font-size:9.5px;font-weight:800;z-index:2}
+  .stdup{display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-size:13px;color:var(--txt);cursor:pointer}
+  .stdup input{width:16px;height:16px;accent-color:var(--acc);cursor:pointer}
   .toast.act{pointer-events:auto}
   .toast .tundo{margin-left:11px;background:rgba(0,0,0,.2);color:inherit;border:none;border-radius:7px;padding:3px 10px;cursor:pointer;font-weight:800;font-size:12px}
   .pgal.edit{gap:14px}
@@ -1519,6 +1521,9 @@ function openStoryEditor(m){
   if(!isAdmin)return;
   $('modal').innerHTML='<div class="mh"><div><div class="label">Remplir le pool</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">\u2715</button></div>'+
     '<div class="fld" style="margin-bottom:14px"><label>Photo de couverture \u2014 le visage affich\u00e9 sur la case du pool</label><input type="file" id="st_cover" accept="image/*">'+(storyBundle(m).cover?' <a href="'+esc(storyBundle(m).cover.media_url)+'" target="_blank" rel="noopener" style="font-size:12px;color:var(--acc)">couverture actuelle</a>':'')+'</div>'+
+    (function(){var base=String(m).replace(/\s*(OF|MYM)$/i,'').trim();
+      var freres=storyModels().filter(function(x){return x!==m&&String(x).replace(/\s*(OF|MYM)$/i,'').trim()===base});
+      return freres.length?'<div class="fld" style="margin-bottom:14px"><label>Verser aussi dans un autre pool \u2014 un seul envoi, une entr\u00e9e dans chaque pool</label>'+freres.map(function(x){return '<label class="stdup"><input type="checkbox" class="stdupc" value="'+esc(x)+'"> '+esc(x)+'</label>'}).join('')+'</div>':''})()+
     '<div class="fld" style="margin-bottom:12px"><label>Stories \u00e0 ajouter \u2014 photos ou vid\u00e9os, plusieurs \u00e0 la fois. Chacune ne servira qu\'une seule fois.</label><input type="file" id="st_files" accept="image/*,video/*" multiple></div>'+
     '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn primary" id="st_save">\ud83d\udcbe Ajouter au pool</button><button class="btn ghost" id="st_back">Retour</button></div><div class="lerr" id="st_err"></div>';
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;
@@ -1533,8 +1538,10 @@ async function saveStories(m){
     if(cf){err.textContent='Upload de la couverture\u2026';var cu=await uploadMedia(m,cf);var ex=storyBundle(m).cover;
       if(ex)await sb.from('contenu').update({media_url:cu}).eq('id',ex.id);
       else await sb.from('contenu').insert({model:m,kind:'story_cover',media_url:cu})}
-    for(var i=0;i<(fs?fs.length:0);i++){err.textContent='Upload '+(i+1)+'/'+fs.length+'\u2026';var u=await uploadMedia(m,fs[i]);await sb.from('contenu').insert({model:m,kind:'story',media_url:u})}
-    toast(((fs?fs.length:0)?fs.length+' story(ies) ajout\u00e9e(s)':'Couverture enregistr\u00e9e')+' \u2713');await loadContenu();storyTab='av';openStoryPool(m);renderStory();
+    var cibles=[m];Array.prototype.forEach.call($('modal').querySelectorAll('.stdupc:checked'),function(c){if(cibles.indexOf(c.value)<0)cibles.push(c.value)});
+    for(var i=0;i<(fs?fs.length:0);i++){err.textContent='Upload '+(i+1)+'/'+fs.length+(cibles.length>1?' (vers '+cibles.length+' pools)':'')+'\u2026';var u=await uploadMedia(m,fs[i]);
+      for(var ci=0;ci<cibles.length;ci++){var rr=await sb.from('contenu').insert({model:cibles[ci],kind:'story',media_url:u});if(rr.error)throw rr.error}}
+    toast(((fs?fs.length:0)?fs.length+' story(ies) ajout\u00e9e(s)'+(cibles.length>1?' dans '+cibles.length+' pools':''):'Couverture enregistr\u00e9e')+' \u2713');await loadContenu();storyTab='av';openStoryPool(m);renderStory();
   }catch(e){err.textContent='Erreur : '+(e.message||e)}
 }
 function openCapsEditor(){
