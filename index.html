@@ -1386,7 +1386,9 @@ async function saveModelContent(m){
   }catch(e){err.textContent='Erreur : '+(e.message||e)}
 }
 /* ===== Story OF : le pool de stories (une story = un usage) ===== */
-var STORY_CADENCE=3,storyTab='av';
+var STORY_CADENCE={OF:5,MYM:2},storyTab='av';
+function storyCadence(m){return STORY_CADENCE[storyPlat()[m]||'OF']||0}
+function cibleFor(p){var n=0;storyModels(p).forEach(function(m){n+=storyCadence(m)});return n}
 var STORY_EXTRA={'Alice MYM':'MYM'};
 function storyPlat(){var o={};MODELS.forEach(function(m){o[m]=PLAT[m]||'OF'});Object.keys(STORY_EXTRA).forEach(function(m){if(!o[m])o[m]=STORY_EXTRA[m]});return o}
 function storyModels(p){var o=storyPlat();return Object.keys(o).filter(function(m){return !p||o[m]===p})}
@@ -1416,11 +1418,11 @@ function renderStoryKpis(){
   var host=$('storyKpis');if(!host)return;
   var ms=storyModels(),today=new Date().toISOString().slice(0,10),stock=0,post=0;
   ms.forEach(function(m){var b=storyBundle(m);stock+=b.av.length;post+=b.used.filter(function(r){return String(r.used_at).slice(0,10)===today}).length});
-  var cible=STORY_CADENCE*Math.max(1,ms.length),j=Math.floor(stock/cible);
+  var cible=0;ms.forEach(function(m){cible+=storyCadence(m)});var j=cible?Math.floor(stock/cible):0;
   host.innerHTML='<div class="okpi"><div class="k">Post\u00e9es aujourd\'hui</div><div class="v" style="color:'+(post>=cible?'#3FD07E':'#ffb457')+'">'+post+'<span style="font-size:15px;color:var(--mut);font-weight:600"> / '+cible+'</span></div></div>'+
     '<div class="okpi"><div class="k">Stock restant</div><div class="v" style="color:#9b86ff">'+stock+'</div></div>'+
     '<div class="okpi"><div class="k">R\u00e9serve</div><div class="v" style="color:'+(j<3?'#FF5C7A':'#25E8C3')+'">'+j+' j</div></div>'+
-    '<div class="okpi"><div class="k">Cadence \u00b7 '+STORY_CADENCE+' par mod\u00e8le</div><div class="v" style="color:#ffb457">'+cible+'/j</div></div>';
+    '<div class="okpi"><div class="k">Cadence \u00b7 '+STORY_CADENCE.OF+' OF / '+STORY_CADENCE.MYM+' MYM</div><div class="v" style="color:#ffb457">'+cible+'/j</div></div>';
 }
 function renderStory(){
   var host=$('storyList');if(!host)return;
@@ -1439,7 +1441,7 @@ function renderStory(){
   function stockFor(p){var n=0;storyModels(p).forEach(function(m){n+=storyBundle(m).av.length});return n}
   function section(p,lab){
     var c=cardsFor(p);if(!c)return '';
-    return '<div class="stsec"><span class="stb '+p.toLowerCase()+'">'+p+'</span><span class="stt">Stories '+lab+'</span><span class="stn">'+stockFor(p)+' disponible'+(stockFor(p)>1?'s':'')+'</span></div><div class="modelgrid">'+c+'</div>';
+    return '<div class="stsec"><span class="stb '+p.toLowerCase()+'">'+p+'</span><span class="stt">Stories '+lab+'</span><span class="stn">'+stockFor(p)+' disponible'+(stockFor(p)>1?'s':'')+' \u00b7 '+(cibleFor(p)?Math.floor(stockFor(p)/cibleFor(p)):0)+' j de r\u00e9serve \u00b7 '+STORY_CADENCE[p]+'/jour par mod\u00e8le</span></div><div class="modelgrid">'+c+'</div>';
   }
   host.className='';
   host.innerHTML=(section('OF','OnlyFans')+section('MYM','MYM'))||'<div class="colempty">Aucun mod\u00e8le.</div>';
