@@ -1400,10 +1400,13 @@ function storyBundle(m){
   var cov=contenu.filter(function(c){return c.model===m&&c.kind==='story_cover'})[0]||null;
   return {av:av,used:us,caps:caps,cover:cov};
 }
+function coverOf(m){var r=contenu.filter(function(c){return c.model===m&&c.kind==='story_cover'})[0];return r&&r.media_url?r.media_url:''}
 function storyCover(m){
   var b=storyBundle(m);
   if(b.cover&&b.cover.media_url)return b.cover.media_url;
   var base=String(m).replace(/\s*(OF|MYM)$/i,'').trim();
+  var herite=coverOf(base)||coverOf(base+' OF');
+  if(herite)return herite;
   var p=(typeof MODELPICS!=='undefined')?(MODELPICS[m]||MODELPICS[base+' OF']||MODELPICS[base]):'';
   if(p)return p;
   var f=b.av.filter(function(r){return r.media_url&&!isVid(r.media_url)})[0];
