@@ -412,6 +412,22 @@
   .pedit .pmv:hover{background:#6172FF}
   .pedit .pmv:disabled{opacity:.2;cursor:not-allowed}
   .pedit .pmvL{left:4px} .pedit .pmvR{right:4px}
+  .pgal.st{grid-template-columns:repeat(auto-fill,minmax(126px,1fr))}
+  .pgal.st img,.pgal.st video{height:180px;width:100%;object-fit:cover;border-radius:8px;display:block;background:#000}
+  .stcell{cursor:default}
+  .stcell.used img,.stcell.used video{filter:grayscale(1) brightness(.5)}
+  .stgone{height:180px;display:grid;place-items:center;background:var(--bg2);border:1px dashed var(--line);border-radius:8px;color:var(--mut);font-size:11px}
+  .stuse,.stback{position:absolute;left:4px;right:4px;bottom:4px;border:none;border-radius:7px;height:27px;cursor:pointer;font-size:11.5px;font-weight:800;z-index:2;color:#fff;background:rgba(97,114,255,.96)}
+  .stuse:hover{background:#6172FF}
+  .stback{background:rgba(0,0,0,.75)}
+  .stback:hover{background:rgba(0,0,0,.92)}
+  .stuse:disabled{opacity:.5;cursor:wait}
+  .stsee{position:absolute;bottom:36px;right:4px;background:rgba(0,0,0,.72);color:#fff;border-radius:6px;padding:2px 7px;font-size:10px;text-decoration:none;z-index:2}
+  .stseg{display:inline-flex;gap:4px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:3px;margin:12px 0}
+  .stseg button{background:none;border:none;color:var(--mut);padding:5px 13px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700}
+  .stseg button.on{background:var(--acc);color:#fff}
+  .toast.act{pointer-events:auto}
+  .toast .tundo{margin-left:11px;background:rgba(0,0,0,.2);color:inherit;border:none;border-radius:7px;padding:3px 10px;cursor:pointer;font-weight:800;font-size:12px}
   .pgal.edit{gap:14px}
   .peditHint{font-family:var(--fm);font-size:11px;color:var(--mut);margin:-4px 0 8px;letter-spacing:.02em;text-transform:uppercase}
   .overlay{position:fixed;inset:0;background:rgba(4,8,12,.7);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:100;overflow-y:auto}
@@ -659,6 +675,7 @@
         <button class="tab" data-tab="board"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="6.5" height="15" rx="1.6"/><rect x="14" y="4.5" width="6.5" height="9.5" rx="1.6"/></svg>Tableau</button>
         <button class="tab" data-tab="part"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3"/><path d="M3.5 19c0-2.8 2.2-4.7 5-4.7s5 1.9 5 4.7"/><circle cx="16.7" cy="9" r="2.4"/><path d="M15.2 14.6c2.2.2 3.9 1.9 3.9 4.4"/></svg>Partenaires</button>
         <button class="tab" data-tab="contenu"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>Contenu</button>
+        <button class="tab" data-tab="story"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6" stroke-dasharray="3.4 2.4"/><circle cx="12" cy="12" r="3.2"/></svg>Story OF</button>
         <button class="tab" data-tab="help"><svg class="tabic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1.3 1-1.3 1.9"/><path d="M12 16.5h.01" stroke-width="2.4"/></svg>Aide</button>
       </div>
       <div class="navgroup">
@@ -745,6 +762,20 @@
         <span class="adminonly" style="font-size:12px;color:var(--mut);margin-left:6px">Clique une case pour remplir / éditer son kit</span>
       </div>
       <div id="contenuList"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="p-story">
+    <div class="card">
+      <div class="label">Story OF</div><h2>Pool de stories</h2>
+      <p class="hint">Une story ne sert qu'une fois : tu la prends, tu la postes, elle sort du pool. <span class="adminonly">Toi seul remplis le pool et les captions.</span></p>
+      <div class="okpis" id="storyKpis"></div>
+      <div class="bar" style="margin-top:14px">
+        <select id="sModelFilter"><option value="">Tous les modèles</option></select>
+        <button class="btn ghost adminonly" id="stCaps">✎ Captions communes</button>
+        <button class="btn ghost adminonly" id="stPurge">🧹 Purger les utilisées &gt; 7 j</button>
+      </div>
+      <div id="storyList"></div>
     </div>
   </div>
 
@@ -855,7 +886,7 @@ window.__syncBadgeTick=window.__syncBadgeTick||setInterval(function(){if(typeof 
 window.__heartbeat=window.__heartbeat||setInterval(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&typeof loadData==='function'){loadParts();loadData();if(typeof loadContenu==='function')loadContenu()}},60000);
 /* safety net au boot : si après 4s l'app est visible mais data vide, force un reload (protection contre load silencieux échoué) */
 setTimeout(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&(window.data||[]).length===0&&typeof loadData==='function'){loadData();loadParts();if(typeof loadContenu==='function')loadContenu()}},4000);
-function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe();sb.channel('ajust-live').on('postgres_changes',{event:'*',schema:'public',table:'paye_ajustements'},()=>{loadAjust().then(renderCockpit)}).subscribe()}
+function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide();renderStory()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe();sb.channel('ajust-live').on('postgres_changes',{event:'*',schema:'public',table:'paye_ajustements'},()=>{loadAjust().then(renderCockpit)}).subscribe()}
 
 /* xlsx */
 function decEnt(s){return String(s==null?'':s).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
@@ -875,7 +906,7 @@ function initUI(){
   var fm=$('fModel');if(fm.options.length<2)MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;fm.appendChild(o)});
   var today=new Date().toISOString().slice(0,10);if(!$('f_date').value)$('f_date').value=today;if(!$('monthSel').value)$('monthSel').value=today.slice(0,7);
   function setBrandPole(tab){var liens=(tab==='orbit'||tab==='links'||tab==='social');var el=$('brandPole'),bt=$('brandT');if(!el)return;var w=liens?'Liens':'SFS';if(el.textContent!==w){el.textContent=w;if(bt){bt.classList.remove('swap');void bt.offsetWidth;bt.classList.add('swap')}}}
-  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');setBrandPole(t.dataset.tab);if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}if(t.dataset.tab==='links'){loadOrbit().then(renderLinkManager)}if(t.dataset.tab==='social')renderSocial()});
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('p-'+t.dataset.tab).classList.add('active');setBrandPole(t.dataset.tab);if(t.dataset.tab==='dash'){drawChart();animateStats()}if(t.dataset.tab==='board')renderCockpit();if(t.dataset.tab==='contenu')renderContenu();if(t.dataset.tab==='story')renderStory();if(t.dataset.tab==='help')renderAide();if(t.dataset.tab==='orbit'){loadOrbit().then(renderOrbit)}if(t.dataset.tab==='links'){loadOrbit().then(renderLinkManager)}if(t.dataset.tab==='social')renderSocial()});
   ['f_model','f_partner','f_date','f_time'].forEach(id=>$(id).oninput=upLn);
   $('f_partner').addEventListener('blur',()=>{var k=norm($('f_partner').value),c=parts[k];if(c&&c.contact&&!$('f_contact').value)$('f_contact').value=c.contact});
   $('newBtn').onclick=()=>{var bt=document.querySelector('.tab[data-tab="board"]');if(bt&&!$('p-board').classList.contains('active'))bt.click();var af=$('addForm');if(af){af.classList.add('open');upLn();af.scrollIntoView({behavior:'smooth',block:'center'});var fp=$('f_partner');if(fp)setTimeout(function(){fp.focus()},60)}};
@@ -888,6 +919,9 @@ function initUI(){
   var syb=$('syncBtn');if(syb)syb.onclick=syncInfloww;
   var ts=$('themeSel');if(ts){ts.value=localStorage.getItem('theme')||'';ts.onchange=function(){var v=ts.value;if(v)document.documentElement.setAttribute('data-theme',v);else document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme',v)}}
   var cf=$('cModelFilter');if(cf&&cf.options.length<2){MODELS.forEach(m=>{var o=document.createElement('option');o.value=m;o.textContent=m;cf.appendChild(o)});cf.onchange=renderContenu}
+  var sf=$('sModelFilter');if(sf&&sf.options.length<2){storyModels().forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;sf.appendChild(o)});sf.onchange=renderStory}
+  var scp=$('stCaps');if(scp)scp.onclick=openCapsEditor;
+  var spg=$('stPurge');if(spg)spg.onclick=purgeStories;
   $('chSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{chMode=b.dataset.m;$('chSeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawChart()});
   $('overlay').onclick=e=>{if(e.target===$('overlay'))closeModal()};
   upLn();
@@ -1343,6 +1377,161 @@ async function saveModelContent(m){
     if(pfiles&&pfiles.length){for(var i=0;i<pfiles.length;i++){err.textContent='Upload photo '+(i+1)+'/'+pfiles.length+'…';var purl=await uploadMedia(m,pfiles[i]);await sb.from('contenu').insert({model:m,kind:'photo',media_url:purl})}}
     toast('Kit '+m+' enregistré ✓');await loadContenu();closeModal();renderContenu();
   }catch(e){err.textContent='Erreur : '+(e.message||e)}
+}
+/* ===== Story OF : le pool de stories (une story = un usage) ===== */
+var STORY_CADENCE=3,storyTab='av';
+function storyModels(){return MODELS.filter(function(m){return PLAT[m]==='OF'})}
+function isVid(u){return /\.(mp4|mov|m4v|webm)(\?|$)/i.test(String(u||''))}
+function bucketPath(u){var i=String(u||'').indexOf('/contenu/');return i<0?'':decodeURIComponent(String(u).slice(i+9))}
+function storyBundle(m){
+  var rows=contenu.filter(function(c){return c.model===m&&c.kind==='story'});
+  var av=rows.filter(function(r){return !r.used_at}).sort(function(a,b){return String(a.created_at||'').localeCompare(String(b.created_at||''))});
+  var us=rows.filter(function(r){return !!r.used_at}).sort(function(a,b){return String(b.used_at||'').localeCompare(String(a.used_at||''))});
+  var caps=contenu.filter(function(c){return c.kind==='story_txt'&&(c.model==='__stories__'||c.model===m)});
+  return {av:av,used:us,caps:caps};
+}
+function renderStoryKpis(){
+  var host=$('storyKpis');if(!host)return;
+  var ms=storyModels(),today=new Date().toISOString().slice(0,10),stock=0,post=0;
+  ms.forEach(function(m){var b=storyBundle(m);stock+=b.av.length;post+=b.used.filter(function(r){return String(r.used_at).slice(0,10)===today}).length});
+  var cible=STORY_CADENCE*Math.max(1,ms.length),j=Math.floor(stock/cible);
+  host.innerHTML='<div class="okpi"><div class="k">Post\u00e9es aujourd\'hui</div><div class="v" style="color:'+(post>=cible?'#3FD07E':'#ffb457')+'">'+post+'<span style="font-size:15px;color:var(--mut);font-weight:600"> / '+cible+'</span></div></div>'+
+    '<div class="okpi"><div class="k">Stock restant</div><div class="v" style="color:#9b86ff">'+stock+'</div></div>'+
+    '<div class="okpi"><div class="k">R\u00e9serve</div><div class="v" style="color:'+(j<3?'#FF5C7A':'#25E8C3')+'">'+j+' j</div></div>'+
+    '<div class="okpi"><div class="k">Cadence \u00b7 '+STORY_CADENCE+' par mod\u00e8le</div><div class="v" style="color:#ffb457">'+cible+'/j</div></div>';
+}
+function renderStory(){
+  var host=$('storyList');if(!host)return;
+  renderStoryKpis();
+  var fm=$('sModelFilter')?$('sModelFilter').value:'';
+  var cards=storyModels().filter(function(m){return !fm||m===fm}).map(function(m){
+    var b=storyBundle(m),kb=modelBundle(m);
+    var first=b.av.filter(function(r){return r.media_url&&!isVid(r.media_url)})[0];
+    var cover=first?first.media_url:(kb.cover?kb.cover.media_url:'');
+    var g=CGRADS[MODELS.indexOf(m)%CGRADS.length];
+    var bg=cover?'<div class="mcover" style="background-image:url(\''+esc(cover)+'\')"></div>':'<div class="mcover grad" style="background:linear-gradient(150deg,'+g[0]+','+g[1]+')"><span class="mmono">'+esc(m.slice(0,2).toUpperCase())+'</span></div>';
+    var chips=b.av.length?'<span class="mchip">'+IC_IMG+b.av.length+' dispo</span>':'<span class="mchip empty">'+(isAdmin?'\uff0b Remplir':'Pool vide')+'</span>';
+    if(b.used.length)chips+='<span class="mchip">'+b.used.length+' utilis\u00e9es</span>';
+    return '<div class="modelcard'+(b.av.length?'':' vide')+'" data-m="'+esc(m)+'">'+bg+'<div class="mscrim"></div><div class="mcinfo"><div class="mcn">'+esc(m)+'</div><div class="mchips">'+chips+'</div></div></div>';
+  }).join('');
+  host.className='modelgrid';
+  host.innerHTML=cards||'<div class="colempty">Aucun mod\u00e8le OF.</div>';
+  host.querySelectorAll('.modelcard').forEach(function(c){c.onclick=function(){openStoryPool(c.getAttribute('data-m'))}});
+}
+function openStoryPool(m){
+  var b=storyBundle(m),list=(storyTab==='used'?b.used:b.av);
+  var cells=list.map(function(r,i){
+    var med=!r.media_url?'<div class="stgone">fichier purg\u00e9</div>':(isVid(r.media_url)?'<video src="'+esc(r.media_url)+'" muted playsinline preload="metadata"></video>':'<img src="'+esc(r.media_url)+'" loading="lazy" alt="">');
+    if(storyTab==='used')return '<div class="pedit stcell used">'+med+'<span class="ppos">'+esc(String(r.used_at||'').slice(0,10))+'</span><button class="stback" data-back="'+r.id+'">\u21a9 Remettre</button></div>';
+    return '<div class="pedit stcell">'+med+'<span class="ppos">'+(i+1)+'</span><a class="stsee" href="'+esc(r.media_url)+'" target="_blank" rel="noopener">voir</a><button class="stuse" data-use="'+r.id+'">\u2b07 Prendre</button>'+(isAdmin?'<button class="pdel" data-del="'+r.id+'" title="Supprimer">\u2715</button>':'')+'</div>';
+  }).join('');
+  var caps=b.caps,ci=caps.length?Math.floor(Math.random()*caps.length):0;
+  var capHtml=caps.length?'<div class="label" style="margin-top:18px">Caption \u00e0 coller sur la story</div><div class="ctext" id="stCapT">'+esc(caps[ci].body||'')+'</div><div class="mvrow"><button class="btn ccopy" id="stCapC">Copier la caption</button>'+(caps.length>1?'<button class="btn ghost" id="stCapN" type="button">\u21bb Autre <span id="stCapCnt">'+(ci+1)+'/'+caps.length+'</span></button>':'')+'</div>':'<div class="cprev" style="margin-top:16px">Pas encore de captions.'+(isAdmin?' Ajoute-les depuis \u00ab Captions communes \u00bb.':'')+'</div>';
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Pool Story OF</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">\u2715</button></div>'+
+    '<div class="stseg"><button data-st="av" class="'+(storyTab==='av'?'on':'')+'">Disponibles ('+b.av.length+')</button><button data-st="used" class="'+(storyTab==='used'?'on':'')+'">Utilis\u00e9es ('+b.used.length+')</button></div>'+
+    (cells?'<div class="pgal st">'+cells+'</div>':'<div class="colempty">'+(storyTab==='used'?'Rien d\'utilis\u00e9 pour l\'instant.':'Pool vide, pr\u00e9viens Titouan.')+'</div>')+
+    capHtml+
+    (isAdmin?'<div style="margin-top:16px"><button class="btn ghost" id="stEdit">\uff0b Remplir le pool</button></div>':'');
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;
+  $('modal').querySelectorAll('.stseg button').forEach(function(x){x.onclick=function(){storyTab=x.getAttribute('data-st');openStoryPool(m)}});
+  $('modal').querySelectorAll('[data-use]').forEach(function(x){x.onclick=function(){takeStory(x.getAttribute('data-use'),m)}});
+  $('modal').querySelectorAll('[data-back]').forEach(function(x){x.onclick=function(){backStory(x.getAttribute('data-back'),m)}});
+  $('modal').querySelectorAll('[data-del]').forEach(function(x){x.onclick=function(){delStory(x.getAttribute('data-del'),m)}});
+  var ed=$('stEdit');if(ed)ed.onclick=function(){openStoryEditor(m)};
+  var cc=$('stCapC');if(cc&&caps.length){var o=cc.innerHTML;cc.onclick=function(){copyText(caps[ci].id,cc,o)}}
+  var cn=$('stCapN');if(cn)cn.onclick=function(){ci=(ci+1)%caps.length;$('stCapT').textContent=caps[ci].body||'';$('stCapCnt').textContent=(ci+1)+'/'+caps.length};
+}
+async function dlMedia(url,name){
+  try{var res=await fetch(url);var bl=await res.blob();var u=URL.createObjectURL(bl);var a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove()},1500);return true}
+  catch(e){window.open(url,'_blank');return false}
+}
+async function markStory(id,used){
+  var em='';
+  try{var s=await sb.auth.getSession();em=(s.data.session&&s.data.session.user&&s.data.session.user.email)||''}catch(e){}
+  var patch=used?{used_at:new Date().toISOString(),used_by:em}:{used_at:null,used_by:null};
+  var r=await sb.from('contenu').update(patch).eq('id',id).select('id');
+  if(r.error){toast('Erreur : '+r.error.message+(String(r.error.message).indexOf('used_')>=0?' (colonnes used_at / used_by \u00e0 ajouter c\u00f4t\u00e9 Supabase)':''));return false}
+  if(!r.data||!r.data.length){toast('\u00c9criture refus\u00e9e : droits Supabase \u00e0 ouvrir sur les stories');return false}
+  return true;
+}
+async function takeStory(id,m){
+  var r=contenu.filter(function(x){return String(x.id)===String(id)})[0];if(!r)return;
+  var btn=$('modal').querySelector('[data-use="'+id+'"]');if(btn){btn.disabled=true;btn.textContent='\u2026'}
+  var ext=(String(r.media_url||'').split('?')[0].split('.').pop()||'jpg').slice(0,4);
+  await dlMedia(r.media_url,'story_'+norm(m).replace(/\s+/g,'_').toLowerCase()+'_'+String(id).slice(0,8)+'.'+ext);
+  var ok=await markStory(id,true);
+  if(!ok){if(btn){btn.disabled=false;btn.textContent='\u2b07 Prendre'}return}
+  await loadContenu();openStoryPool(m);renderStory();
+  toastUndo('Story sortie du pool',function(){backStory(id,m)});
+}
+async function backStory(id,m){
+  var ok=await markStory(id,false);if(!ok)return;
+  await loadContenu();openStoryPool(m);renderStory();toast('Story remise dans la file \u2713');
+}
+async function delStory(id,m){
+  if(!isAdmin)return;
+  if(!confirm('Supprimer d\u00e9finitivement cette story du pool ?'))return;
+  var r=contenu.filter(function(x){return String(x.id)===String(id)})[0];
+  var d=await sb.from('contenu').delete().eq('id',id);
+  if(d.error){toast('Erreur : '+d.error.message);return}
+  if(r&&r.media_url){var p=bucketPath(r.media_url);if(p){try{await sb.storage.from('contenu').remove([p])}catch(e){}}}
+  await loadContenu();openStoryPool(m);renderStory();toast('Story supprim\u00e9e');
+}
+function openStoryEditor(m){
+  if(!isAdmin)return;
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Remplir le pool</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">\u2715</button></div>'+
+    '<div class="fld" style="margin-bottom:12px"><label>Stories \u00e0 ajouter \u2014 photos ou vid\u00e9os, plusieurs \u00e0 la fois. Chacune ne servira qu\'une seule fois.</label><input type="file" id="st_files" accept="image/*,video/*" multiple></div>'+
+    '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn primary" id="st_save">\ud83d\udcbe Ajouter au pool</button><button class="btn ghost" id="st_back">Retour</button></div><div class="lerr" id="st_err"></div>';
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;
+  $('st_back').onclick=function(){openStoryPool(m)};
+  $('st_save').onclick=function(){saveStories(m)};
+}
+async function saveStories(m){
+  var err=$('st_err');err.textContent='';
+  var fs=$('st_files').files;
+  if(!fs||!fs.length){err.textContent='Choisis au moins un fichier.';return}
+  try{
+    for(var i=0;i<fs.length;i++){err.textContent='Upload '+(i+1)+'/'+fs.length+'\u2026';var u=await uploadMedia(m,fs[i]);await sb.from('contenu').insert({model:m,kind:'story',media_url:u})}
+    toast(fs.length+' story(ies) ajout\u00e9e(s) \u2713');await loadContenu();storyTab='av';openStoryPool(m);renderStory();
+  }catch(e){err.textContent='Erreur : '+(e.message||e)}
+}
+function openCapsEditor(){
+  if(!isAdmin)return;
+  var caps=contenu.filter(function(c){return c.kind==='story_txt'&&c.model==='__stories__'}).sort(function(a,b){return (a.sort==null?9999:a.sort)-(b.sort==null?9999:b.sort)});
+  $('modal').innerHTML='<div class="mh"><div><div class="label">Story OF</div><h2>Captions communes</h2></div><button class="close" id="mClose">\u2715</button></div>'+
+    '<div class="fld"><label>Une caption par bloc, s\u00e9par\u00e9es par une ligne <b>---</b>. Mo\u00efse en re\u00e7oit une au hasard \u00e0 chaque ouverture d\'un pool, et peut faire tourner.</label><textarea id="cap_body" rows="14" placeholder="Caption 1&#10;---&#10;Caption 2">'+esc(caps.map(function(c){return c.body||''}).join('\n---\n'))+'</textarea></div>'+
+    '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn primary" id="cap_save">\ud83d\udcbe Enregistrer</button></div><div class="lerr" id="cap_err"></div>';
+  $('overlay').classList.add('open');$('mClose').onclick=closeModal;
+  $('cap_save').onclick=saveCaps;
+}
+async function saveCaps(){
+  var err=$('cap_err');err.textContent='';
+  try{
+    var v=($('cap_body').value||'').split(/^\s*---\s*$/m).map(function(x){return x.trim()}).filter(Boolean);
+    var d=await sb.from('contenu').delete().eq('model','__stories__').eq('kind','story_txt');
+    if(d.error)throw d.error;
+    for(var i=0;i<v.length;i++){var r=await sb.from('contenu').insert({model:'__stories__',kind:'story_txt',body:v[i],sort:i});if(r.error)throw r.error}
+    toast(v.length+' caption(s) enregistr\u00e9e(s) \u2713');await loadContenu();closeModal();renderStory();
+  }catch(e){err.textContent='Erreur : '+(e.message||e)}
+}
+async function purgeStories(){
+  if(!isAdmin)return;
+  var lim=new Date(Date.now()-7*864e5).toISOString();
+  var old=contenu.filter(function(c){return c.kind==='story'&&c.used_at&&String(c.used_at)<lim&&c.media_url});
+  if(!old.length){toast('Rien \u00e0 purger');return}
+  if(!confirm('Purger les fichiers de '+old.length+' story(ies) utilis\u00e9e(s) il y a plus de 7 jours ? Les lignes restent pour le KPI.'))return;
+  var paths=old.map(function(c){return bucketPath(c.media_url)}).filter(Boolean);
+  var r=await sb.storage.from('contenu').remove(paths);
+  if(r.error){toast('Erreur : '+r.error.message);return}
+  var up=await sb.from('contenu').update({media_url:null}).in('id',old.map(function(c){return c.id}));
+  if(up.error){toast('Erreur : '+up.error.message);return}
+  await loadContenu();renderStory();toast(old.length+' fichier(s) purg\u00e9(s) \u2713');
+}
+function toastUndo(msg,fn){
+  var t=$('toast');t.innerHTML=esc(msg)+' <button class="tundo" type="button">Annuler</button>';t.classList.add('show');t.classList.add('act');
+  var q=t.querySelector('.tundo'),done=false;
+  var to=setTimeout(function(){t.classList.remove('show');t.classList.remove('act');t.textContent=''},10000);
+  if(q)q.onclick=function(){if(done)return;done=true;clearTimeout(to);t.classList.remove('show');t.classList.remove('act');t.textContent='';fn()};
 }
 async function delContenu(id){if(!isAdmin)return;if(!confirm('Supprimer ce contenu ?'))return;var r=await sb.from('contenu').delete().eq('id',id);if(r.error){toast('Erreur : '+r.error.message);return}toast('Contenu supprimé');closeModal();await loadContenu();renderContenu()}
 
