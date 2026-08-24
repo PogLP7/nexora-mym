@@ -898,7 +898,7 @@ window.__syncBadgeTick=window.__syncBadgeTick||setInterval(function(){if(typeof 
 window.__heartbeat=window.__heartbeat||setInterval(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&typeof loadData==='function'){loadParts();loadData();if(typeof loadContenu==='function')loadContenu()}},60000);
 /* safety net au boot : si après 4s l'app est visible mais data vide, force un reload (protection contre load silencieux échoué) */
 setTimeout(function(){var app=document.getElementById('app');if(app&&getComputedStyle(app).display!=='none'&&(window.data||[]).length===0&&typeof loadData==='function'){loadData();loadParts();if(typeof loadContenu==='function')loadContenu()}},4000);
-function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{loadContenu().then(function(){renderContenu();renderAide();renderStory()})}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe();sb.channel('ajust-live').on('postgres_changes',{event:'*',schema:'public',table:'paye_ajustements'},()=>{loadAjust().then(renderCockpit)}).subscribe()}
+function subscribe(){sb.channel('sfs-live').on('postgres_changes',{event:'*',schema:'public',table:'sfs'},()=>loadData()).subscribe();sb.channel('contenu-live').on('postgres_changes',{event:'*',schema:'public',table:'contenu'},()=>{clearTimeout(window.__cdeb);window.__cdeb=setTimeout(function(){loadContenu().then(function(){renderContenu();renderAide();renderStory()})},1500)}).subscribe();sb.channel('orbit-live').on('postgres_changes',{event:'*',schema:'public',table:'orbit_clicks'},()=>{loadOrbit().then(function(){var po=$('p-orbit'),pl=$('p-links');if(po&&po.classList.contains('active'))renderOrbit();if(pl&&pl.classList.contains('active'))renderLinkManager()})}).subscribe();sb.channel('ajust-live').on('postgres_changes',{event:'*',schema:'public',table:'paye_ajustements'},()=>{loadAjust().then(renderCockpit)}).subscribe()}
 
 /* xlsx */
 function decEnt(s){return String(s==null?'':s).replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
@@ -1272,7 +1272,19 @@ function openPartner(name){
 }
 function closeModal(){$('overlay').classList.remove('open')}
 /* ===== Contenu (bibliothèque par modèle) ===== */
-async function loadContenu(){try{var r=await window.sb.from('contenu').select('*').neq('kind','preuve');if(!r.error)contenu=r.data||[]}catch(e){}}
+var PAGE_CONTENU=1000;
+async function loadContenu(){try{
+  var out=[],deb=0;
+  for(;;){
+    var r=await window.sb.from('contenu').select('*').neq('kind','preuve').order('created_at',{ascending:true}).range(deb,deb+PAGE_CONTENU-1);
+    if(r.error)break;
+    var d=r.data||[];out=out.concat(d);
+    if(d.length<PAGE_CONTENU)break;
+    deb+=PAGE_CONTENU;
+    if(deb>100000)break;
+  }
+  if(out.length)contenu=out;
+}catch(e){}}
 async function loadPreuveMym(){try{var r=await window.sb.from('contenu').select('id,title,media_url,created_at').eq('kind','preuve').eq('model','__preuve_mym__').order('created_at',{ascending:false}).limit(1);if(!r.error&&r.data&&r.data.length)window.__preuveMym=r.data[0];else window.__preuveMym=null}catch(e){window.__preuveMym=null}}
 function copyText(id,btn,orig){var c=contenu.find(x=>String(x.id)===String(id));if(!c)return;var t=c.body||'';function ok(){toast('Texte copié ✓');try{ding([880,1180]);confettiBurst(45)}catch(e){}try{if(navigator.vibrate)navigator.vibrate(18)}catch(e){}if(btn){btn.textContent='Copié ✓';setTimeout(function(){btn.innerHTML=orig||'Copier le texte'},1200)}}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,function(){fallbackCopy(t,ok)})}else fallbackCopy(t,ok)}
