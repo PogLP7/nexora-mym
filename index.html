@@ -1403,7 +1403,7 @@ async function saveModelContent(m){
   }catch(e){err.textContent='Erreur : '+(e.message||e)}
 }
 /* ===== Story OF : le pool de stories (une story = un usage) ===== */
-var STORY_CADENCE={OF:5,MYM:2},storyTab='av';
+var STORY_CADENCE={OF:5,MYM:2},storyTab='av',storyVus=60,STORY_PAS=60;
 function storyCadence(m){return STORY_CADENCE[storyPlat()[m]||'OF']||0}
 function cibleFor(p){var n=0;storyModels(p).forEach(function(m){n+=storyCadence(m)});return n}
 var STORY_EXTRA={'Alice MYM':'MYM'};
@@ -1483,10 +1483,10 @@ function renderStory(){
   }
   host.className='';
   host.innerHTML=(section('OF','OnlyFans')+section('MYM','MYM'))||'<div class="colempty">Aucun mod\u00e8le.</div>';
-  host.querySelectorAll('.modelcard').forEach(function(c){c.onclick=function(){openStoryPool(c.getAttribute('data-m'))}});
+  host.querySelectorAll('.modelcard').forEach(function(c){c.onclick=function(){storyVus=STORY_PAS;storyTab='av';openStoryPool(c.getAttribute('data-m'))}});
 }
 function openStoryPool(m){
-  var b=storyBundle(m),list=(storyTab==='used'?b.used:b.av);
+  var b=storyBundle(m),tout=(storyTab==='used'?b.used:b.av),list=tout.slice(0,storyVus);
   var cells=list.map(function(r,i){
     var med=!r.media_url?'<div class="stgone">fichier purg\u00e9</div>':(isVid(r.media_url)?'<video src="'+esc(r.media_url)+'" muted playsinline preload="metadata"></video>':'<img src="'+esc(r.media_url)+'" loading="lazy" alt="">');
     if(storyTab==='used')return '<div class="pedit stcell used">'+med+(r.title==='ecartee'?'<span class="ecart">\u00e9cart\u00e9e</span>':'')+'<span class="ppos">'+esc(String(r.used_at||'').slice(0,10))+'</span><button class="stback" data-back="'+r.id+'">\u21a9 Remettre</button></div>';
@@ -1496,12 +1496,13 @@ function openStoryPool(m){
   var capHtml=caps.length?'<div class="label" style="margin-top:18px">Caption \u00e0 coller sur la story</div><div class="ctext" id="stCapT">'+esc(caps[ci].body||'')+'</div><div class="mvrow"><button class="btn ccopy" id="stCapC">Copier la caption</button>'+(caps.length>1?'<button class="btn ghost" id="stCapN" type="button">\u21bb Autre <span id="stCapCnt">'+(ci+1)+'/'+caps.length+'</span></button>':'')+'</div>':'<div class="cprev" style="margin-top:16px">Pas encore de captions.'+(isAdmin?' Ajoute-les depuis \u00ab Captions communes \u00bb.':'')+'</div>';
   $('modal').innerHTML='<div class="mh"><div><div class="label">Pool Story '+(storyPlat()[m]||'OF')+'</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">\u2715</button></div>'+
     '<div class="stseg"><button data-st="av" class="'+(storyTab==='av'?'on':'')+'">Disponibles ('+b.av.length+')</button><button data-st="used" class="'+(storyTab==='used'?'on':'')+'">Utilis\u00e9es ('+b.used.length+')</button></div>'+
-    (cells?'<div class="pgal st">'+cells+'</div>':'<div class="colempty">'+(storyTab==='used'?'Rien d\'utilis\u00e9 pour l\'instant.':'Pool vide, pr\u00e9viens Titouan.')+'</div>')+
+    (cells?'<div class="pgal st">'+cells+'</div>'+(tout.length>list.length?'<div style="margin-top:12px"><button class="btn ghost" id="stPlus">Voir '+Math.min(STORY_PAS,tout.length-list.length)+' de plus \u00b7 '+list.length+' sur '+tout.length+'</button></div>':''):'<div class="colempty">'+(storyTab==='used'?'Rien d\'utilis\u00e9 pour l\'instant.':'Pool vide, pr\u00e9viens Titouan.')+'</div>')+
     capHtml+
     (isAdmin?'<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="stEdit">\uff0b Remplir le pool</button>'+
       storyFreres(m).map(function(x){return '<button class="btn ghost" data-dup="'+esc(x)+'">\u21c4 Dupliquer vers '+esc(x)+'</button>'}).join('')+'</div>':'');
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;
-  $('modal').querySelectorAll('.stseg button').forEach(function(x){x.onclick=function(){storyTab=x.getAttribute('data-st');openStoryPool(m)}});
+  $('modal').querySelectorAll('.stseg button').forEach(function(x){x.onclick=function(){storyTab=x.getAttribute('data-st');storyVus=STORY_PAS;openStoryPool(m)}});
+  var pl=$('stPlus');if(pl)pl.onclick=function(){storyVus+=STORY_PAS;openStoryPool(m)};
   $('modal').querySelectorAll('[data-use]').forEach(function(x){x.onclick=function(){takeStory(x.getAttribute('data-use'),m)}});
   $('modal').querySelectorAll('[data-skip]').forEach(function(x){x.onclick=function(){skipStory(x.getAttribute('data-skip'),m)}});
   $('modal').querySelectorAll('[data-back]').forEach(function(x){x.onclick=function(){backStory(x.getAttribute('data-back'),m)}});
