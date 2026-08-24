@@ -1442,14 +1442,15 @@ async function dupPool(m,cible){
   await loadContenu();renderStory();openStoryPool(m);
   toast(todo.length+' story(ies) copi\u00e9es vers '+cible+' \u2713');
 }
+function empreinteNom(m){var h=0,x=String(m);for(var i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))>>>0;return h}
 function storyCover(m){
   var b=storyBundle(m);
   if(b.cover&&b.cover.media_url)return b.cover.media_url;
   var base=String(m).replace(/\s*(OF|MYM)$/i,'').trim();
   var herite=coverOf(base)||coverOf(base+' OF');
   if(herite)return herite;
-  var f=b.av.filter(function(r){return r.media_url&&!isVid(r.media_url)})[0];
-  if(f)return f.media_url;
+  var photos=b.av.filter(function(r){return r.media_url&&!isVid(r.media_url)});
+  if(photos.length)return photos[empreinteNom(m)%photos.length].media_url;
   var p=(typeof MODELPICS!=='undefined')?(MODELPICS[m]||MODELPICS[base+' OF']||MODELPICS[base]):'';
   return p||'';
 }
