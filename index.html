@@ -1397,7 +1397,17 @@ function storyBundle(m){
   var av=rows.filter(function(r){return !r.used_at}).sort(function(a,b){return String(a.created_at||'').localeCompare(String(b.created_at||''))});
   var us=rows.filter(function(r){return !!r.used_at}).sort(function(a,b){return String(b.used_at||'').localeCompare(String(a.used_at||''))});
   var caps=contenu.filter(function(c){return c.kind==='story_txt'&&(c.model==='__stories__'||c.model===m)});
-  return {av:av,used:us,caps:caps};
+  var cov=contenu.filter(function(c){return c.model===m&&c.kind==='story_cover'})[0]||null;
+  return {av:av,used:us,caps:caps,cover:cov};
+}
+function storyCover(m){
+  var b=storyBundle(m);
+  if(b.cover&&b.cover.media_url)return b.cover.media_url;
+  var base=String(m).replace(/\s*(OF|MYM)$/i,'').trim();
+  var p=(typeof MODELPICS!=='undefined')?(MODELPICS[m]||MODELPICS[base+' OF']||MODELPICS[base]):'';
+  if(p)return p;
+  var f=b.av.filter(function(r){return r.media_url&&!isVid(r.media_url)})[0];
+  return f?f.media_url:'';
 }
 function renderStoryKpis(){
   var host=$('storyKpis');if(!host)return;
@@ -1414,9 +1424,8 @@ function renderStory(){
   renderStoryKpis();
   var fm=$('sModelFilter')?$('sModelFilter').value:'';
   function cardsFor(p){return storyModels(p).filter(function(m){return !fm||m===fm}).map(function(m){
-    var b=storyBundle(m),kb=modelBundle(m);
-    var first=b.av.filter(function(r){return r.media_url&&!isVid(r.media_url)})[0];
-    var cover=first?first.media_url:(kb.cover?kb.cover.media_url:'');
+    var b=storyBundle(m);
+    var cover=storyCover(m);
     var g=CGRADS[MODELS.indexOf(m)%CGRADS.length];
     var bg=cover?'<div class="mcover" style="background-image:url(\''+esc(cover)+'\')"></div>':'<div class="mcover grad" style="background:linear-gradient(150deg,'+g[0]+','+g[1]+')"><span class="mmono">'+esc(m.slice(0,2).toUpperCase())+'</span></div>';
     var chips=b.av.length?'<span class="mchip">'+IC_IMG+b.av.length+' dispo</span>':'<span class="mchip empty">'+(isAdmin?'\uff0b Remplir':'Pool vide')+'</span>';
@@ -1495,6 +1504,7 @@ async function delStory(id,m){
 function openStoryEditor(m){
   if(!isAdmin)return;
   $('modal').innerHTML='<div class="mh"><div><div class="label">Remplir le pool</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">\u2715</button></div>'+
+    '<div class="fld" style="margin-bottom:14px"><label>Photo de couverture \u2014 le visage affich\u00e9 sur la case du pool</label><input type="file" id="st_cover" accept="image/*">'+(storyBundle(m).cover?' <a href="'+esc(storyBundle(m).cover.media_url)+'" target="_blank" rel="noopener" style="font-size:12px;color:var(--acc)">couverture actuelle</a>':'')+'</div>'+
     '<div class="fld" style="margin-bottom:12px"><label>Stories \u00e0 ajouter \u2014 photos ou vid\u00e9os, plusieurs \u00e0 la fois. Chacune ne servira qu\'une seule fois.</label><input type="file" id="st_files" accept="image/*,video/*" multiple></div>'+
     '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn primary" id="st_save">\ud83d\udcbe Ajouter au pool</button><button class="btn ghost" id="st_back">Retour</button></div><div class="lerr" id="st_err"></div>';
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;
@@ -1503,11 +1513,14 @@ function openStoryEditor(m){
 }
 async function saveStories(m){
   var err=$('st_err');err.textContent='';
-  var fs=$('st_files').files;
-  if(!fs||!fs.length){err.textContent='Choisis au moins un fichier.';return}
+  var fs=$('st_files').files,cf=$('st_cover')?$('st_cover').files[0]:null;
+  if((!fs||!fs.length)&&!cf){err.textContent='Choisis au moins un fichier.';return}
   try{
-    for(var i=0;i<fs.length;i++){err.textContent='Upload '+(i+1)+'/'+fs.length+'\u2026';var u=await uploadMedia(m,fs[i]);await sb.from('contenu').insert({model:m,kind:'story',media_url:u})}
-    toast(fs.length+' story(ies) ajout\u00e9e(s) \u2713');await loadContenu();storyTab='av';openStoryPool(m);renderStory();
+    if(cf){err.textContent='Upload de la couverture\u2026';var cu=await uploadMedia(m,cf);var ex=storyBundle(m).cover;
+      if(ex)await sb.from('contenu').update({media_url:cu}).eq('id',ex.id);
+      else await sb.from('contenu').insert({model:m,kind:'story_cover',media_url:cu})}
+    for(var i=0;i<(fs?fs.length:0);i++){err.textContent='Upload '+(i+1)+'/'+fs.length+'\u2026';var u=await uploadMedia(m,fs[i]);await sb.from('contenu').insert({model:m,kind:'story',media_url:u})}
+    toast(((fs?fs.length:0)?fs.length+' story(ies) ajout\u00e9e(s)':'Couverture enregistr\u00e9e')+' \u2713');await loadContenu();storyTab='av';openStoryPool(m);renderStory();
   }catch(e){err.textContent='Erreur : '+(e.message||e)}
 }
 function openCapsEditor(){
