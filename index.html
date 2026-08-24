@@ -1408,6 +1408,27 @@ function storyBundle(m){
   return {av:av,used:us,caps:caps,cover:cov};
 }
 function coverOf(m){var r=contenu.filter(function(c){return c.model===m&&c.kind==='story_cover'})[0];return r&&r.media_url?r.media_url:''}
+function storyFreres(m){
+  var base=String(m).replace(/\s*(OF|MYM)$/i,'').trim();
+  return storyModels().filter(function(x){return x!==m&&String(x).replace(/\s*(OF|MYM)$/i,'').trim()===base});
+}
+async function dupPool(m,cible){
+  if(!isAdmin)return;
+  var src=storyBundle(m).av;
+  var deja={};contenu.forEach(function(c){if(c.model===cible&&c.kind==='story'&&c.media_url)deja[c.media_url]=1});
+  var todo=src.filter(function(r){return r.media_url&&!deja[r.media_url]});
+  if(!todo.length){toast('Rien \u00e0 dupliquer, '+cible+' a d\u00e9j\u00e0 tout');return}
+  if(!confirm('Copier '+todo.length+' story(ies) de '+m+' vers '+cible+' ?\n\nLes fichiers ne sont pas dupliqu\u00e9s, seules les entr\u00e9es du pool le sont : aucun stockage en plus.'))return;
+  var lot=200;
+  for(var i=0;i<todo.length;i+=lot){
+    toast('Copie '+Math.min(i+lot,todo.length)+'/'+todo.length+'\u2026');
+    var rows=todo.slice(i,i+lot).map(function(r){return {model:cible,kind:'story',media_url:r.media_url}});
+    var res=await sb.from('contenu').insert(rows);
+    if(res.error){toast('Erreur : '+res.error.message);return}
+  }
+  await loadContenu();renderStory();openStoryPool(m);
+  toast(todo.length+' story(ies) copi\u00e9es vers '+cible+' \u2713');
+}
 function storyCover(m){
   var b=storyBundle(m);
   if(b.cover&&b.cover.media_url)return b.cover.media_url;
@@ -1465,7 +1486,8 @@ function openStoryPool(m){
     '<div class="stseg"><button data-st="av" class="'+(storyTab==='av'?'on':'')+'">Disponibles ('+b.av.length+')</button><button data-st="used" class="'+(storyTab==='used'?'on':'')+'">Utilis\u00e9es ('+b.used.length+')</button></div>'+
     (cells?'<div class="pgal st">'+cells+'</div>':'<div class="colempty">'+(storyTab==='used'?'Rien d\'utilis\u00e9 pour l\'instant.':'Pool vide, pr\u00e9viens Titouan.')+'</div>')+
     capHtml+
-    (isAdmin?'<div style="margin-top:16px"><button class="btn ghost" id="stEdit">\uff0b Remplir le pool</button></div>':'');
+    (isAdmin?'<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="stEdit">\uff0b Remplir le pool</button>'+
+      storyFreres(m).map(function(x){return '<button class="btn ghost" data-dup="'+esc(x)+'">\u21c4 Dupliquer vers '+esc(x)+'</button>'}).join('')+'</div>':'');
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;
   $('modal').querySelectorAll('.stseg button').forEach(function(x){x.onclick=function(){storyTab=x.getAttribute('data-st');openStoryPool(m)}});
   $('modal').querySelectorAll('[data-use]').forEach(function(x){x.onclick=function(){takeStory(x.getAttribute('data-use'),m)}});
@@ -1473,6 +1495,7 @@ function openStoryPool(m){
   $('modal').querySelectorAll('[data-back]').forEach(function(x){x.onclick=function(){backStory(x.getAttribute('data-back'),m)}});
   $('modal').querySelectorAll('[data-del]').forEach(function(x){x.onclick=function(){delStory(x.getAttribute('data-del'),m)}});
   var ed=$('stEdit');if(ed)ed.onclick=function(){openStoryEditor(m)};
+  $('modal').querySelectorAll('[data-dup]').forEach(function(x){x.onclick=function(){dupPool(m,x.getAttribute('data-dup'))}});
   var cc=$('stCapC');if(cc&&caps.length){var o=cc.innerHTML;cc.onclick=function(){copyText(caps[ci].id,cc,o)}}
   var cn=$('stCapN');if(cn)cn.onclick=function(){ci=(ci+1)%caps.length;$('stCapT').textContent=caps[ci].body||'';$('stCapCnt').textContent=(ci+1)+'/'+caps.length};
 }
@@ -1521,8 +1544,7 @@ function openStoryEditor(m){
   if(!isAdmin)return;
   $('modal').innerHTML='<div class="mh"><div><div class="label">Remplir le pool</div><h2>'+esc(m)+'</h2></div><button class="close" id="mClose">\u2715</button></div>'+
     '<div class="fld" style="margin-bottom:14px"><label>Photo de couverture \u2014 le visage affich\u00e9 sur la case du pool</label><input type="file" id="st_cover" accept="image/*">'+(storyBundle(m).cover?' <a href="'+esc(storyBundle(m).cover.media_url)+'" target="_blank" rel="noopener" style="font-size:12px;color:var(--acc)">couverture actuelle</a>':'')+'</div>'+
-    (function(){var base=String(m).replace(/\s*(OF|MYM)$/i,'').trim();
-      var freres=storyModels().filter(function(x){return x!==m&&String(x).replace(/\s*(OF|MYM)$/i,'').trim()===base});
+    (function(){var freres=storyFreres(m);
       return freres.length?'<div class="fld" style="margin-bottom:14px"><label>Verser aussi dans un autre pool \u2014 un seul envoi, une entr\u00e9e dans chaque pool</label>'+freres.map(function(x){return '<label class="stdup"><input type="checkbox" class="stdupc" value="'+esc(x)+'"> '+esc(x)+'</label>'}).join('')+'</div>':''})()+
     '<div class="fld" style="margin-bottom:12px"><label>Stories \u00e0 ajouter \u2014 photos ou vid\u00e9os, plusieurs \u00e0 la fois. Chacune ne servira qu\'une seule fois.</label><input type="file" id="st_files" accept="image/*,video/*" multiple></div>'+
     '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn primary" id="st_save">\ud83d\udcbe Ajouter au pool</button><button class="btn ghost" id="st_back">Retour</button></div><div class="lerr" id="st_err"></div>';
