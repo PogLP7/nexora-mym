@@ -1410,6 +1410,7 @@ var STORY_EXTRA={'Alice MYM':'MYM'};
 function storyPlat(){var o={};MODELS.forEach(function(m){o[m]=PLAT[m]||'OF'});Object.keys(STORY_EXTRA).forEach(function(m){if(!o[m])o[m]=STORY_EXTRA[m]});return o}
 function storyModels(p){var o=storyPlat();return Object.keys(o).filter(function(m){return !p||o[m]===p})}
 function isVid(u){return /\.(mp4|mov|m4v|webm)(\?|$)/i.test(String(u||''))}
+function nomSource(u){return String(u||'').split('/').pop().replace(/^\d+_\d+_/,'').toLowerCase()}
 function bucketPath(u){var i=String(u||'').indexOf('/contenu/');return i<0?'':decodeURIComponent(String(u).slice(i+9))}
 function storyBundle(m){
   var rows=contenu.filter(function(c){return c.model===m&&c.kind==='story'});
@@ -1574,9 +1575,14 @@ async function saveStories(m){
       if(ex)await sb.from('contenu').update({media_url:cu}).eq('id',ex.id);
       else await sb.from('contenu').insert({model:m,kind:'story_cover',media_url:cu})}
     var cibles=[m];Array.prototype.forEach.call($('modal').querySelectorAll('.stdupc:checked'),function(c){if(cibles.indexOf(c.value)<0)cibles.push(c.value)});
-    for(var i=0;i<(fs?fs.length:0);i++){err.textContent='Upload '+(i+1)+'/'+fs.length+(cibles.length>1?' (vers '+cibles.length+' pools)':'')+'\u2026';var u=await uploadMedia(m,fs[i]);
+    var deja={};contenu.forEach(function(c){if(c.kind==='story'&&c.media_url&&cibles.indexOf(c.model)>=0)deja[nomSource(c.media_url)]=1});
+    var ignores=0;
+    for(var i=0;i<(fs?fs.length:0);i++){
+      if(deja[String(fs[i].name).toLowerCase()]){ignores++;continue}
+      deja[String(fs[i].name).toLowerCase()]=1;
+      err.textContent='Upload '+(i+1)+'/'+fs.length+(cibles.length>1?' (vers '+cibles.length+' pools)':'')+(ignores?' \u00b7 '+ignores+' d\u00e9j\u00e0 pr\u00e9sent(s)':'')+'\u2026';var u=await uploadMedia(m,fs[i]);
       for(var ci=0;ci<cibles.length;ci++){var rr=await sb.from('contenu').insert({model:cibles[ci],kind:'story',media_url:u});if(rr.error)throw rr.error}}
-    toast(((fs?fs.length:0)?fs.length+' story(ies) ajout\u00e9e(s)'+(cibles.length>1?' dans '+cibles.length+' pools':''):'Couverture enregistr\u00e9e')+' \u2713');await loadContenu();storyTab='av';openStoryPool(m);renderStory();
+    toast(((fs?fs.length:0)?((fs.length-ignores)+' story(ies) ajout\u00e9e(s)'+(cibles.length>1?' dans '+cibles.length+' pools':'')+(ignores?', '+ignores+' doublon(s) ignor\u00e9(s)':'')):'Couverture enregistr\u00e9e')+' \u2713');await loadContenu();storyTab='av';openStoryPool(m);renderStory();
   }catch(e){err.textContent='Erreur : '+(e.message||e)}
 }
 function openCapsEditor(){
