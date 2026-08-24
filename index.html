@@ -433,6 +433,9 @@
   .stsec .stb{font-size:9.5px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:6px}
   .stsec .stb.of{background:rgba(97,114,255,.16);color:#9b86ff}
   .stsec .stb.mym{background:rgba(37,232,195,.14);color:#25E8C3}
+  .stskip{position:absolute;bottom:36px;left:4px;background:rgba(0,0,0,.72);color:#FF9AA8;border:none;border-radius:6px;padding:2px 7px;font-size:10px;cursor:pointer;z-index:2}
+  .stskip:hover{background:#FF5C7A;color:#fff}
+  .stcell .ecart{position:absolute;top:4px;right:4px;background:rgba(255,92,122,.92);color:#fff;border-radius:6px;padding:2px 7px;font-size:9.5px;font-weight:800;z-index:2}
   .toast.act{pointer-events:auto}
   .toast .tundo{margin-left:11px;background:rgba(0,0,0,.2);color:inherit;border:none;border-radius:7px;padding:3px 10px;cursor:pointer;font-weight:800;font-size:12px}
   .pgal.edit{gap:14px}
@@ -1417,7 +1420,7 @@ function storyCover(m){
 function renderStoryKpis(){
   var host=$('storyKpis');if(!host)return;
   var ms=storyModels(),today=new Date().toISOString().slice(0,10),stock=0,post=0;
-  ms.forEach(function(m){var b=storyBundle(m);stock+=b.av.length;post+=b.used.filter(function(r){return String(r.used_at).slice(0,10)===today}).length});
+  ms.forEach(function(m){var b=storyBundle(m);stock+=b.av.length;post+=b.used.filter(function(r){return String(r.used_at).slice(0,10)===today&&r.title!=='ecartee'}).length});
   var cible=0;ms.forEach(function(m){cible+=storyCadence(m)});var j=cible?Math.floor(stock/cible):0;
   host.innerHTML='<div class="okpi"><div class="k">Post\u00e9es aujourd\'hui</div><div class="v" style="color:'+(post>=cible?'#3FD07E':'#ffb457')+'">'+post+'<span style="font-size:15px;color:var(--mut);font-weight:600"> / '+cible+'</span></div></div>'+
     '<div class="okpi"><div class="k">Stock restant</div><div class="v" style="color:#9b86ff">'+stock+'</div></div>'+
@@ -1451,8 +1454,8 @@ function openStoryPool(m){
   var b=storyBundle(m),list=(storyTab==='used'?b.used:b.av);
   var cells=list.map(function(r,i){
     var med=!r.media_url?'<div class="stgone">fichier purg\u00e9</div>':(isVid(r.media_url)?'<video src="'+esc(r.media_url)+'" muted playsinline preload="metadata"></video>':'<img src="'+esc(r.media_url)+'" loading="lazy" alt="">');
-    if(storyTab==='used')return '<div class="pedit stcell used">'+med+'<span class="ppos">'+esc(String(r.used_at||'').slice(0,10))+'</span><button class="stback" data-back="'+r.id+'">\u21a9 Remettre</button></div>';
-    return '<div class="pedit stcell">'+med+'<span class="ppos">'+(i+1)+'</span><a class="stsee" href="'+esc(r.media_url)+'" target="_blank" rel="noopener">voir</a><button class="stuse" data-use="'+r.id+'">\u2b07 Prendre</button>'+(isAdmin?'<button class="pdel" data-del="'+r.id+'" title="Supprimer">\u2715</button>':'')+'</div>';
+    if(storyTab==='used')return '<div class="pedit stcell used">'+med+(r.title==='ecartee'?'<span class="ecart">\u00e9cart\u00e9e</span>':'')+'<span class="ppos">'+esc(String(r.used_at||'').slice(0,10))+'</span><button class="stback" data-back="'+r.id+'">\u21a9 Remettre</button></div>';
+    return '<div class="pedit stcell">'+med+'<span class="ppos">'+(i+1)+'</span><a class="stsee" href="'+esc(r.media_url)+'" target="_blank" rel="noopener">voir</a><button class="stskip" data-skip="'+r.id+'" title="Sortir du pool sans la poster">\u00e9carter</button><button class="stuse" data-use="'+r.id+'">\u2b07 Prendre</button>'+(isAdmin?'<button class="pdel" data-del="'+r.id+'" title="Supprimer">\u2715</button>':'')+'</div>';
   }).join('');
   var caps=b.caps,ci=caps.length?Math.floor(Math.random()*caps.length):0;
   var capHtml=caps.length?'<div class="label" style="margin-top:18px">Caption \u00e0 coller sur la story</div><div class="ctext" id="stCapT">'+esc(caps[ci].body||'')+'</div><div class="mvrow"><button class="btn ccopy" id="stCapC">Copier la caption</button>'+(caps.length>1?'<button class="btn ghost" id="stCapN" type="button">\u21bb Autre <span id="stCapCnt">'+(ci+1)+'/'+caps.length+'</span></button>':'')+'</div>':'<div class="cprev" style="margin-top:16px">Pas encore de captions.'+(isAdmin?' Ajoute-les depuis \u00ab Captions communes \u00bb.':'')+'</div>';
@@ -1464,6 +1467,7 @@ function openStoryPool(m){
   $('overlay').classList.add('open');$('mClose').onclick=closeModal;
   $('modal').querySelectorAll('.stseg button').forEach(function(x){x.onclick=function(){storyTab=x.getAttribute('data-st');openStoryPool(m)}});
   $('modal').querySelectorAll('[data-use]').forEach(function(x){x.onclick=function(){takeStory(x.getAttribute('data-use'),m)}});
+  $('modal').querySelectorAll('[data-skip]').forEach(function(x){x.onclick=function(){skipStory(x.getAttribute('data-skip'),m)}});
   $('modal').querySelectorAll('[data-back]').forEach(function(x){x.onclick=function(){backStory(x.getAttribute('data-back'),m)}});
   $('modal').querySelectorAll('[data-del]').forEach(function(x){x.onclick=function(){delStory(x.getAttribute('data-del'),m)}});
   var ed=$('stEdit');if(ed)ed.onclick=function(){openStoryEditor(m)};
@@ -1477,7 +1481,7 @@ async function dlMedia(url,name){
 async function markStory(id,used){
   var em='';
   try{var s=await sb.auth.getSession();em=(s.data.session&&s.data.session.user&&s.data.session.user.email)||''}catch(e){}
-  var patch=used?{used_at:new Date().toISOString(),used_by:em}:{used_at:null,used_by:null};
+  var patch=(used==='ecartee')?{used_at:new Date().toISOString(),used_by:em,title:'ecartee'}:(used?{used_at:new Date().toISOString(),used_by:em,title:null}:{used_at:null,used_by:null,title:null});
   var r=await sb.from('contenu').update(patch).eq('id',id).select('id');
   if(r.error){toast('Erreur : '+r.error.message+(String(r.error.message).indexOf('used_')>=0?' (colonnes used_at / used_by \u00e0 ajouter c\u00f4t\u00e9 Supabase)':''));return false}
   if(!r.data||!r.data.length){toast('\u00c9criture refus\u00e9e : droits Supabase \u00e0 ouvrir sur les stories');return false}
@@ -1492,6 +1496,11 @@ async function takeStory(id,m){
   if(!ok){if(btn){btn.disabled=false;btn.textContent='\u2b07 Prendre'}return}
   await loadContenu();openStoryPool(m);renderStory();
   toastUndo('Story sortie du pool',function(){backStory(id,m)});
+}
+async function skipStory(id,m){
+  if(!confirm('\u00c9carter cette story ? Elle sort du pool sans \u00eatre post\u00e9e. Tu la retrouveras dans Utilis\u00e9es.'))return;
+  var ok=await markStory(id,'ecartee');if(!ok)return;
+  await loadContenu();openStoryPool(m);renderStory();toast('Story \u00e9cart\u00e9e');
 }
 async function backStory(id,m){
   var ok=await markStory(id,false);if(!ok)return;
