@@ -546,6 +546,27 @@
   .sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:shimmer 1.25s infinite}
   /* ===== COCKPIT DOPAMINE v2 (Moïse) ===== */
   .cockpit{display:block;margin-bottom:18px}
+  .payerecap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:18px}
+  .payerecap .prtitle{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+  .payerecap .prtitle b{font-size:16px;letter-spacing:.02em}
+  .payerecap .prtitle span{font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:.08em}
+  .payerecap .prtotal{font-size:22px;font-weight:700;color:var(--cash)}
+  .payerecap .prlines{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+  .payerecap .prline{background:rgba(255,255,255,.03);border:1px solid var(--bord);border-radius:10px;padding:9px 11px}
+  .payerecap .prline .pk{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+  .payerecap .prline .pv{font-size:16px;font-weight:600}
+  .payerecap .prline .pd{font-size:11px;color:var(--soft);margin-top:2px}
+  .payerecap details{margin-top:8px}
+  .payerecap details>summary{cursor:pointer;font-size:13px;color:var(--soft);padding:6px 0;list-style:none}
+  .payerecap details>summary::-webkit-details-marker{display:none}
+  .payerecap details>summary::before{content:"▸ ";display:inline-block;transition:transform .15s}
+  .payerecap details[open]>summary::before{transform:rotate(90deg)}
+  .payerecap .prtbl{width:100%;font-size:12px;border-collapse:collapse;margin-top:6px}
+  .payerecap .prtbl th{text-align:left;padding:5px 6px;color:var(--soft);font-weight:500;border-bottom:1px solid var(--bord)}
+  .payerecap .prtbl td{padding:5px 6px;border-top:1px solid rgba(255,255,255,.03)}
+  .payerecap .prtbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .payerecap .prtbl tr.tot td{border-top:1px solid var(--bord);font-weight:600;padding-top:7px}
+  .payerecap .prempty{color:var(--soft);font-size:12px;padding:6px 0}
   .ck-hero{background:linear-gradient(155deg,rgba(243,194,75,.09),rgba(20,27,35,.5) 46%),var(--card);border:1px solid var(--line);border-radius:22px;padding:22px 24px;position:relative;overflow:hidden;animation:cardIn .55s var(--ease-out) both;margin-bottom:14px}
   .ck-hero::after{content:"";position:absolute;right:-80px;top:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(243,194,75,.14),transparent 70%);pointer-events:none}
   .ck-herogrid{display:grid;grid-template-columns:1.35fr 1fr;gap:26px;align-items:center}
@@ -714,6 +735,7 @@
 
   <div class="panel" id="p-board">
     <div class="cockpit" id="cockpit"></div>
+    <div class="payerecap" id="payeRecap"></div>
     <div class="addform" id="addForm">
       <div class="fld"><label>Modèle</label><select id="f_model"></select></div>
       <div class="fld"><label>Partenaire</label><input type="text" id="f_partner" placeholder="ex. MAX DA"></div>
@@ -869,6 +891,7 @@ async function delAjust(id){if(!confirm('Supprimer cet ajustement ?'))return;var
 /* Historique primes MYM par semaine (lundi->dimanche) : compte les jours distincts avec SFS
    par modele MYM, applique la grille 15/10/5 (7j/6j/5j), compare aux ajustements du mois. */
 function mymPrimeGrid(n){return n>=7?15:n>=6?10:n>=5?5:0}
+function renderPayeRecap(){var el=$('payeRecap');if(!el)return;var now=new Date(),ymNow=now.toISOString().slice(0,7),moLabel=MO_FR[now.getMonth()]+' '+now.getFullYear();var mine=data.filter(function(r){return r.src==='manual'&&ym(r.date)===ymNow});var created=mine.length;var meas=data.filter(function(r){return r.measured&&r.src==='manual'&&ym(r.date)===ymNow});var notes=meas.map(scoreOf).filter(function(x){return x});var avgBase=notes.length?notes.reduce(function(a,b){return a+b},0):null;if(avgBase!=null)avgBase=avgBase/notes.length;var actDays=new Set(data.filter(function(r){return r.src==='manual'}).map(function(r){return r.date}).filter(Boolean));var streak=0,jokersUsed=0,todayStr=now.toISOString().slice(0,10);if(actDays.size){var probe=new Date(todayStr);if(!actDays.has(probe.toISOString().slice(0,10)))probe.setDate(probe.getDate()-1);var pend=0,guard=0;while(guard++<400){var dd2=probe.toISOString().slice(0,10);if(actDays.has(dd2)){streak++;jokersUsed+=pend;pend=0;if(jokersUsed>3)break}else{pend++;if(pend>3-jokersUsed)break}probe.setDate(probe.getDate()-1)}}var sbn=streakBonus(streak);var avg=avgBase==null?null:Math.min(10,avgBase+sbn);var prime=0;if(avg!=null)prime=avg>=9?200:avg>=8?100:avg>=7?50:avg>=6?25:0;if(created>=PRIME_MIN_SFS&&prime<25)prime=25;var ajust=ajustSumMonth(ymNow);var base=created*PAY_PER_SFS;var recap=mymRecapRows();var moisRecap=recap.filter(function(w){return w.wk.slice(0,7)===ymNow||(function(){var w2=new Date(w.wk+'T12:00:00Z');w2.setUTCDate(w2.getUTCDate()+6);return w2.toISOString().slice(0,7)===ymNow}())});var totalMymMois=moisRecap.reduce(function(a,b){return a+b.total},0);var ajustMois=ajustements.filter(function(a){return a.month===ymNow});var pay=base+prime+ajust;var MYM=['Amandine MYM','Bethy MYM','Milla MYM'];var H='<div class="prtitle"><b>Récap de ta paye · '+esc(moLabel)+'</b><span class="prtotal">'+pay+' €</span></div>';H+='<div class="prlines">';H+='<div class="prline"><div class="pk">Base SFS</div><div class="pv">'+base+' €</div><div class="pd">'+created+' × '+PAY_PER_SFS+' €</div></div>';H+='<div class="prline"><div class="pk">Prime notes</div><div class="pv">'+prime+' €</div><div class="pd">'+(avg!=null?'moy '+avg.toFixed(1).replace('.',',')+'/10':'—')+'</div></div>';H+='<div class="prline"><div class="pk">Prime MYM 7j</div><div class="pv">'+totalMymMois+' €</div><div class="pd">'+moisRecap.length+' semaine'+(moisRecap.length>1?'s':'')+'</div></div>';H+='<div class="prline"><div class="pk">Ajustements</div><div class="pv">'+ajust+' €</div><div class="pd">'+ajustMois.length+' ligne'+(ajustMois.length>1?'s':'')+'</div></div>';H+='</div>';H+='<details open><summary>Détail primes SFS MYM (grille 15/10/5)</summary>';if(moisRecap.length){H+='<table class="prtbl"><thead><tr><th>Semaine</th>';MYM.forEach(function(m){H+='<th>'+esc(m.replace(' MYM',''))+'</th>'});H+='<th class="num">Prime</th></tr></thead><tbody>';moisRecap.forEach(function(w){H+='<tr><td><b>'+esc(mymWeekLabel(w.wk))+'</b></td>';MYM.forEach(function(m){var d=w.parM[m];if(!d){H+='<td class="pd">—</td>'}else{var col=d.prime>=15?'var(--cash)':d.prime>=10?'var(--acc)':d.prime>=5?'var(--warn)':'var(--soft)';H+='<td>'+d.n+'j → <b style="color:'+col+'">'+d.prime+' €</b></td>'}});H+='<td class="num"><b>'+w.total+' €</b></td></tr>'});H+='<tr class="tot"><td>Total '+esc(moLabel)+'</td><td colspan="3"></td><td class="num">'+totalMymMois+' €</td></tr></tbody></table>'}else{H+='<div class="prempty">Pas encore de SFS MYM ce mois-ci.</div>'}H+='</details>';H+='<details><summary>Ajustements manuels du mois</summary>';if(ajustMois.length){H+='<table class="prtbl"><thead><tr><th>Motif</th><th class="num">Montant</th></tr></thead><tbody>';ajustMois.slice().sort(function(a,b){return (b.created_at||'').localeCompare(a.created_at||'')}).forEach(function(a){H+='<tr><td>'+esc(a.motif||'—')+'</td><td class="num"><b>'+Math.round(Number(a.montant||0))+' €</b></td></tr>'});H+='<tr class="tot"><td>Total</td><td class="num">'+ajust+' €</td></tr></tbody></table>'}else{H+='<div class="prempty">Aucun ajustement pour '+esc(moLabel)+'.</div>'}H+='</details>';el.innerHTML=H}
 function mymWeekKey(dateStr){var D=new Date(dateStr+'T12:00:00Z');var day=(D.getUTCDay()+6)%7;D.setUTCDate(D.getUTCDate()-day);return D.toISOString().slice(0,10)}
 function mymWeekLabel(mondayIso){var A=new Date(mondayIso+'T12:00:00Z'),B=new Date(A);B.setUTCDate(B.getUTCDate()+6);var f=function(D){return D.getUTCDate()+' '+MO_FR[D.getUTCMonth()]};return f(A)+' → '+f(B)+' '+B.getUTCFullYear()}
 function mymRecapRows(){var MYM=['Amandine MYM','Bethy MYM','Milla MYM'];var mymRows=data.filter(function(r){return MYM.indexOf(r.model)>=0&&r.date});var bySem={};mymRows.forEach(function(r){var wk=mymWeekKey(r.date);var k=wk+'|'+r.model;var s=bySem[k]||(bySem[k]={wk:wk,m:r.model,days:{}});s.days[r.date]=true});var agg={};Object.values(bySem).forEach(function(s){var n=Object.keys(s.days).length,p=mymPrimeGrid(n);var w=agg[s.wk]||(agg[s.wk]={wk:s.wk,parM:{},total:0});w.parM[s.m]={n:n,prime:p};w.total+=p});return Object.values(agg).sort(function(a,b){return b.wk.localeCompare(a.wk)})}
@@ -1125,6 +1148,7 @@ function renderCockpit(){
        '<div class="ck-batch">Grosse saisie (ex. 10 d\'un coup) → de l\'<b>avance</b>. Tes jours off ne cassent ni ton rythme ni ta streak.</div>'+
      '</div></div>';
   var sfb=$('sfxBtn');if(sfb)sfb.onclick=function(){localStorage.setItem('sfx',sfxOn?'0':'1');renderCockpit()};
+  renderPayeRecap();
   var ajb=$('ajustBtn');if(ajb)ajb.onclick=addAjust;
   var mrb=$('mymRecapBtn');if(mrb)mrb.onclick=openMymRecap;
   if(window.__payLast===pay)$('payNum').textContent=fmtStat(pay,'eur');else{window.__payLast=pay;animateNum($('payNum'),pay,'eur')}
