@@ -8,7 +8,7 @@ Page unique, sans compte, où les chatteurs du pôle chatting déclarent leurs c
 
 - Le chatteur clique sur son prénom, entre son **code à 4 chiffres**, coche ses créneaux et note ses indisponibilités.
 - Créneaux : nuit 02h-08h, matin 08h-14h, après-midi 14h-20h, soir 20h-02h.
-- Plafonds, vérifiés **côté serveur** : 8 créneaux par personne, 5 personnes par créneau.
+- Plafonds, vérifiés **côté serveur** : 8 créneaux par personne, 8 personnes par créneau (4 modèles × 2 chatteurs).
 - Le week-end, la page s'ouvre directement sur la semaine qui arrive.
 - Bouton **Admin** (code à 6 chiffres) : onglet **Équipe** (couverture, qui a répondu, indisponibilités, récap à copier) et onglet **Envoi** (le message privé de chaque chatteur avec son code, suivi des envois, relance des retardataires).
 

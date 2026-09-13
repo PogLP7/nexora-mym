@@ -22,7 +22,7 @@
 --   - blocage : 5 echecs en 15 min ou 20 en 24 h pour une cle, 30 echecs en
 --     15 min tous chatteurs confondus ; un jeton deja emis n'est jamais bloque ;
 --   - echecs comptes uniquement pour un prenom reel : table bornee ;
---   - plafonds 8 creneaux par personne et 5 personnes par creneau, verifies
+--   - plafonds 8 creneaux par personne et 8 personnes par creneau, verifies
 --     sous verrou ; chatteurs desactives exclus partout.
 --
 -- Les codes ne sont PAS dans ce fichier. Ils se seedent a part (voir README).
@@ -382,7 +382,7 @@ set search_path = public
 as $$
 declare
   c_maxh constant int := 8;
-  c_maxp constant int := 5;
+  c_maxp constant int := 8;
   v_slug text;
   v_clean text[];
   v_bad int;

@@ -6,7 +6,7 @@ if (window.top !== window.self) { document.documentElement.innerHTML = ''; retur
 
 var CONFIG = { url: 'https://bvcnbtbdfkoiefuedxem.supabase.co', key: 'sb_publishable__X2Z5ELAvPpQ2CK7CKoXpQ_J2F2ZxEP' };
 var LIEN = 'https://getsnexora.com/dispos/';
-var MAXH = 8, MAXP = 5, NPIN = 6, NADM = 8;
+var MAXH = 8, MAXP = 8, NPIN = 6, NADM = 8;
 var SL = [
   { i: 'nuit',  l: 'Nuit',       h: '02h — 08h', c: 'var(--c-nuit)',  r: 'rgba(110,123,255,.26)' },
   { i: 'matin', l: 'Matin',      h: '08h — 14h', c: 'var(--c-matin)', r: 'rgba(63,208,201,.26)'  },
