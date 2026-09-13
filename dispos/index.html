@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#16151E">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://bvcnbtbdfkoiefuedxem.supabase.co; base-uri 'none'; form-action 'none'">
+<title>Dispos Chatteurs · Nexora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="aura"></div>
+<div class="grain"></div>
+<div class="wrap">
+
+<header>
+  <div class="eye">Nexora — Pôle chatting</div>
+  <h1>Dispos<br>chatteurs</h1>
+  <p class="lede">Coche les créneaux où tu peux travailler la semaine prochaine. L'affectation sur les modèles se fait ensuite.</p>
+  <div class="bar">
+    <div class="wk">
+      <button type="button" class="nav" id="wp" aria-label="Semaine précédente">←</button>
+      <div class="wl" id="wl">—</div>
+      <button type="button" class="nav" id="wn" aria-label="Semaine suivante">→</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="tabs">
+        <button type="button" class="tab on" data-p="moi">Mes dispos</button>
+        <button type="button" class="tab ad" data-p="eq">Équipe</button>
+        <button type="button" class="tab ad" data-p="env">Envoi</button>
+      </div>
+      <button type="button" class="lock" id="lock" style="display:none">Admin</button>
+    </div>
+  </div>
+  <div class="net" id="net"><b>Connexion impossible.</b> Vérifie ton réseau, puis réessaie.</div>
+</header>
+
+<div id="gate" style="display:none">
+  <div class="gate">
+    <p>Code administrateur. Les chatteurs n'ont pas accès à cette partie.</p>
+    <div class="pins">
+      <input class="code" id="acode" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="8" placeholder="········" aria-label="Code administrateur">
+      <span class="pmsg" id="amsg"></span>
+    </div>
+  </div>
+</div>
+
+<div class="pan on" id="p-moi">
+  <div class="lbl">01 <b>Ton prénom</b></div>
+  <div class="names" id="names"><span class="loading">Chargement…</span></div>
+
+  <div id="pinzone" style="display:none">
+    <div class="pinbox">
+      <p>Entre ton code à 6 chiffres, <b id="who">—</b>. Il t'a été envoyé par Titouan en message privé. Tu peux le coller directement.</p>
+      <div class="pins">
+        <input class="code" id="pin" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" maxlength="6" placeholder="······" aria-label="Ton code">
+        <span class="pmsg" id="pmsg"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="charge" id="chargement"><span class="loading">Chargement de tes dispos…</span></div>
+
+  <div id="zone" style="display:none">
+    <div class="lbl">02 <b>Tes créneaux</b></div>
+    <p class="hint">Chaque créneau fait 6 heures. Maximum <span id="maxh">8</span> créneaux par semaine, et <span id="maxp">5</span> personnes par créneau. Le petit chiffre dans une case, c'est combien d'autres l'ont déjà prise.</p>
+    <div class="fermee" id="fermee">Cette semaine n'est pas ouverte. On ne peut remplir que de la semaine en cours à trois semaines devant.</div>
+    <div class="stage"><div class="board" id="board"></div></div>
+    <div class="tools">
+      <div class="qk">
+        <button type="button" class="q" id="efface">Tout effacer</button>
+      </div>
+      <div class="gauge" id="gauge"><b>0</b> h — 0 / 8 créneaux</div>
+    </div>
+
+    <div class="lbl">03 <b>Tes indisponibilités</b></div>
+    <p class="hint">Un jour à éviter, un empêchement ponctuel, une contrainte d'horaire.</p>
+    <textarea id="ind" maxlength="1000" placeholder="ex. jamais le jeudi soir, et pas dispo la semaine du 20"></textarea>
+
+    <div class="act">
+      <button type="button" class="btn" id="save">Enregistrer</button>
+      <div class="msg" id="msg"></div>
+    </div>
+    <div class="relance" id="fb" style="display:none;margin-top:16px">
+      <p><b>L'enregistrement n'a pas pu passer.</b> Pas grave : copie tes dispos et envoie-les à Titouan en message privé.</p>
+      <button type="button" class="btn" id="fbcp">Copier mes dispos</button>
+      <span class="msg" id="fbm" style="margin-left:10px"></span>
+    </div>
+  </div>
+</div>
+
+<div class="pan" id="p-eq">
+  <div class="lbl" id="eqw"></div>
+  <div class="st" id="st"></div>
+
+  <div class="lbl">Couverture</div>
+  <div class="stage"><div class="board cv set" id="cov"></div></div>
+
+  <div class="lbl">Qui a répondu</div>
+  <div class="tw"><table>
+    <thead><tr><th>Chatteur</th><th>Heures</th><th>Créneaux</th><th>Indisponibilités</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table></div>
+
+  <div class="lbl">Pas encore répondu</div>
+  <div class="miss" id="ms"></div>
+
+  <div class="act">
+    <button type="button" class="btn gh" id="cp">Copier le récap</button>
+    <div class="msg" id="cmsg"></div>
+  </div>
+</div>
+
+<div class="pan" id="p-env">
+  <div class="lbl" id="envw"></div>
+  <div class="pbar">
+    <div class="gauge"><b id="ek">0</b> / <span id="etot">0</span> envoyés</div>
+    <div class="prog"><i id="ebar"></i></div>
+    <button type="button" class="q" id="ereset">Remettre à zéro</button>
+  </div>
+  <p class="hint">Clique sur « Copier », colle dans le message privé de la personne. Le trait turquoise à gauche d'une carte veut dire qu'elle a déjà rempli ses dispos.</p>
+  <div class="eg" id="eg"></div>
+
+  <div class="relance" id="rel" style="display:none">
+    <p><b id="relc">0</b> chatteurs n'ont pas encore rempli cette semaine.</p>
+    <p id="reln" style="font-family:var(--m);font-size:12px;letter-spacing:.02em;color:var(--ink)"></p>
+    <button type="button" class="btn gh" id="relcp">Copier la relance pour le groupe</button>
+    <span class="msg" id="relm" style="margin-left:10px"></span>
+  </div>
+</div>
+
+<footer>Nexora — Pôle chatting</footer>
+</div>
+
+<div class="manuel" id="manuel">
+  <div class="box">
+    <p>La copie automatique n'a pas marché sur ce téléphone. Sélectionne le texte ci-dessous et copie-le à la main.</p>
+    <textarea id="manuel-t" readonly></textarea>
+    <button type="button" class="btn gh" id="manuel-x">Fermer</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
