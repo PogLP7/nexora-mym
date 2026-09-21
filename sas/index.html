@@ -492,50 +492,29 @@
   // ============================================================
   //  Push Supabase (insert-or-update via upsert par session_id)
   // ============================================================
-  // L'upsert PostgREST (on_conflict + merge-duplicates) exige une policy SELECT
-  // pour anon, qu'on ne veut surtout pas ouvrir : la table redeviendrait lisible
-  // de l'exterieur. On cree donc la ligne une seule fois, puis on la met a jour.
-  var _creationLigne = null;
-  function _enteteSb() {
-    return {
-      "Content-Type": "application/json",
-      "apikey": CONFIG.SUPABASE_ANON_KEY,
-      "Authorization": "Bearer " + CONFIG.SUPABASE_ANON_KEY,
-      "Prefer": "return=minimal"
-    };
-  }
-  function _ligneSb() {
-    if (state.row_creee) return Promise.resolve();
-    if (_creationLigne) return _creationLigne;
-    _creationLigne = fetch(CONFIG.SUPABASE_URL + "/rest/v1/onboarding_sas", {
-      method: "POST",
-      headers: _enteteSb(),
-      body: JSON.stringify([{
-        session_id: state.session_id,
-        cohorte: state.cohorte,
-        prenom: state.prenom || null,
-        telegram_tel: state.tel || null,
-        entered_sas_at: state.entered_at
-      }])
-    }).then(function (r) {
-      if (!r.ok && r.status !== 409) throw new Error("creation refusee");
-      state.row_creee = true;
-      localStorage.setItem(LSKEY, JSON.stringify(state));
-    });
-    return _creationLigne;
-  }
+  // La table onboarding_sas est fermee a anon : il ne peut ni la lire ni
+  // l'ecrire directement. Tout passe par la fonction sas_suivi, qui n'accepte
+  // que les colonnes de suivi. Un UPDATE direct ne marcherait pas de toute
+  // facon : PostgreSQL exige une policy SELECT pour voir la ligne a modifier,
+  // et on refuse d'ouvrir la lecture (prenoms et numeros).
   function pushSupabase(patch) {
     if (!CONFIG.SUPABASE_ANON_KEY || CONFIG.SUPABASE_ANON_KEY === "PLACEHOLDER_ANON_KEY") return; // no-op tant que non branche
-    _ligneSb().then(function () {
-      var corps = Object.assign({
-        prenom: state.prenom || null,
-        telegram_tel: state.tel || null
-      }, patch);
-      return fetch(CONFIG.SUPABASE_URL + "/rest/v1/onboarding_sas?session_id=eq." + encodeURIComponent(state.session_id), {
-        method: "PATCH",
-        headers: _enteteSb(),
-        body: JSON.stringify(corps)
-      });
+    var donnees = Object.assign({
+      prenom: state.prenom || null,
+      telegram_tel: state.tel || null
+    }, patch);
+    fetch(CONFIG.SUPABASE_URL + "/rest/v1/rpc/sas_suivi", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": CONFIG.SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + CONFIG.SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({
+        p_session_id: state.session_id,
+        p_cohorte: state.cohorte,
+        p_patch: donnees
+      })
     }).catch(function () { /* silence, la page continue */ });
   }
 
