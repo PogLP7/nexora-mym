@@ -598,3 +598,103 @@ grant execute on function public.dispos_envoi(text, date, text, boolean)        
 grant execute on function public.dispos_envois_reset(text, date)                   to anon, authenticated;
 
 notify pgrst, 'reload schema';
+
+-- ---------------------------------------------------- gestion du roster ----
+-- Creer un chatteur et son code depuis la page admin, sans passer par le SQL.
+
+create or replace function public.dispos_slug(p_nom text)
+returns text
+language sql immutable
+set search_path = public
+as $$
+  select trim(both '-' from regexp_replace(
+    translate(lower(p_nom),
+      'àáâãäåçèéêëìíîïñòóôõöùúûüýÿ',
+      'aaaaaaceeeeiiiinooooouuuuyy'),
+    '[^a-z0-9]+', '-', 'g'));
+$$;
+
+create or replace function public.dispos_roster(p_jeton text)
+returns json
+language plpgsql security definer
+set search_path = public
+as $$
+begin
+  if not public.dispos_est_admin(p_jeton) then
+    return json_build_object('ok', false, 'erreur', 'jeton');
+  end if;
+  return json_build_object('ok', true, 'chatteurs', coalesce((
+    select json_agg(json_build_object('slug', slug, 'nom', nom, 'pin', pin, 'actif', actif)
+                    order by actif desc, ordre, nom)
+    from public.dispos_chatteurs), '[]'::json));
+end;
+$$;
+
+create or replace function public.dispos_chatteur_creer(p_jeton text, p_nom text)
+returns json
+language plpgsql security definer
+set search_path = public
+as $$
+declare
+  v_nom  text := btrim(coalesce(p_nom, ''));
+  v_base text;
+  v_slug text;
+  v_pin  text;
+  i      int := 1;
+begin
+  if not public.dispos_est_admin(p_jeton) then
+    return json_build_object('ok', false, 'erreur', 'jeton');
+  end if;
+  if char_length(v_nom) < 1 or char_length(v_nom) > 40 then
+    return json_build_object('ok', false, 'erreur', 'nom');
+  end if;
+  v_base := public.dispos_slug(v_nom);
+  if v_base is null or v_base !~ '^[a-z0-9-]{1,40}$' then
+    return json_build_object('ok', false, 'erreur', 'nom');
+  end if;
+  v_slug := v_base;
+  while exists (select 1 from public.dispos_chatteurs where slug = v_slug) loop
+    i := i + 1;
+    v_slug := left(v_base, 36) || '-' || i;
+  end loop;
+  loop
+    v_pin := lpad((floor(random() * 1000000))::int::text, 6, '0');
+    exit when not exists (select 1 from public.dispos_chatteurs where pin = v_pin);
+  end loop;
+  insert into public.dispos_chatteurs (slug, nom, pin, ordre, actif)
+  values (v_slug, v_nom, v_pin,
+          coalesce((select max(ordre) from public.dispos_chatteurs), 0) + 1, true);
+  return json_build_object('ok', true, 'slug', v_slug, 'nom', v_nom, 'pin', v_pin);
+end;
+$$;
+
+create or replace function public.dispos_chatteur_actif(p_jeton text, p_slug text, p_actif boolean)
+returns json
+language plpgsql security definer
+set search_path = public
+as $$
+begin
+  if not public.dispos_est_admin(p_jeton) then
+    return json_build_object('ok', false, 'erreur', 'jeton');
+  end if;
+  update public.dispos_chatteurs
+     set actif = coalesce(p_actif, true)
+   where slug = p_slug;
+  if not found then
+    return json_build_object('ok', false, 'erreur', 'inconnu');
+  end if;
+  return json_build_object('ok', true);
+end;
+$$;
+
+-- droits : le helper de slug reste interne, les trois autres passent par l'API
+revoke execute on function public.dispos_slug(text)                         from public, anon, authenticated;
+revoke execute on function public.dispos_roster(text)                       from public;
+revoke execute on function public.dispos_chatteur_creer(text, text)         from public;
+revoke execute on function public.dispos_chatteur_actif(text, text, boolean) from public;
+
+grant  execute on function public.dispos_roster(text)                        to anon, authenticated;
+grant  execute on function public.dispos_chatteur_creer(text, text)          to anon, authenticated;
+grant  execute on function public.dispos_chatteur_actif(text, text, boolean) to anon, authenticated;
+
+notify pgrst, 'reload schema';

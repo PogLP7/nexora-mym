@@ -83,6 +83,7 @@ each(document.querySelectorAll('.tab'), function(t){
     t.classList.add('on');
     $('p-' + t.dataset.p).classList.add('on');
     if (t.dataset.p !== 'moi') rafraichirAdmin();
+    if (t.dataset.p === 'ros') chargerRoster();
   });
 });
 function ongletMoi(){ document.querySelector('.tab[data-p="moi"]').click(); }
@@ -516,7 +517,9 @@ $('acode').addEventListener('input', function(){
 });
 
 function viderAdmin(){
-  adm = null; envoisLocaux = {};
+  adm = null; envoisLocaux = {}; rosterCharge = false;
+  if ($('rlist')) $('rlist').innerHTML = '';
+  if ($('rcount')) $('rcount').textContent = '—';
   $('st').innerHTML = '';
   $('tb').innerHTML = '<tr><td colspan="4"><div class="void">Chargement…</div></td></tr>';
   $('ms').innerHTML = '';
@@ -632,6 +635,85 @@ function rendreAdmin(){
   $('reln').textContent = abs.map(function(c){ return c.nom; }).join(' · ');
   $('rel').style.display = abs.length ? 'block' : 'none';
 }
+/* ------------------------------------------------------------- roster */
+var rosterCharge = false;
+
+function chargerRoster(force){
+  if (!ADM) return;
+  if (rosterCharge && !force) return;
+  var l = $('rlist');
+  l.innerHTML = '<span class="loading">Chargement…</span>';
+  rpc('dispos_roster', { p_jeton: ADM }).then(function(r){
+    reseau(null);
+    if (r && r.ok){ rosterCharge = true; dessinerRoster(r.chatteurs || []); return; }
+    if (r && r.erreur === 'jeton'){ setAdmin(null, 'SESSION ADMIN TERMINÉE — ENTRE TON CODE'); return; }
+    l.innerHTML = '<div class="void">Impossible de charger le roster.</div>';
+  }).catch(function(e){
+    reseau(e);
+    l.innerHTML = '<div class="void">' + esc(texteErreur(e)) + '</div>';
+  });
+}
+
+function dessinerRoster(C){
+  var l = $('rlist');
+  l.innerHTML = '';
+  var na = C.filter(function(c){ return c.actif; }).length;
+  $('rcount').textContent = na + ' actif' + (na > 1 ? 's' : '') + ' sur ' + C.length;
+  if (!C.length){ l.innerHTML = '<div class="void">Personne pour l\'instant.</div>'; return; }
+  C.forEach(function(c){
+    var card = el('div', 'ec' + (c.actif ? '' : ' off'));
+    card.innerHTML =
+      '<div class="et"><span class="en">' + esc(c.nom) + '</span><span class="ep">' + esc(c.pin) + '</span></div>' +
+      '<button type="button" class="eb">Copier le message</button>' +
+      '<div class="es"><span class="' + (c.actif ? 'y' : '') + '">' + (c.actif ? 'Actif' : 'Inactif') + '</span>' +
+      '<button type="button" class="q rq">' + (c.actif ? 'Désactiver' : 'Réactiver') + '</button></div>';
+    var b = card.querySelector('.eb');
+    b.addEventListener('click', function(){
+      copier(messageDM(c.nom, c.pin), function(){
+        b.textContent = 'Copié ✓'; b.classList.add('ok');
+      }, function(){ b.textContent = 'Copie le texte affiché'; });
+    });
+    var t = card.querySelector('.rq');
+    t.addEventListener('click', function(){
+      if (c.actif && !confirm('Désactiver ' + c.nom + ' ? Ses réponses passées sont conservées.')) return;
+      t.disabled = true;
+      rpc('dispos_chatteur_actif', { p_jeton: ADM, p_slug: c.slug, p_actif: !c.actif }).then(function(r){
+        reseau(null); t.disabled = false;
+        if (r && r.ok){ chargerRoster(true); chargerListe(); rafraichirAdmin(); return; }
+        if (r && r.erreur === 'jeton'){ setAdmin(null, 'SESSION ADMIN TERMINÉE — ENTRE TON CODE'); return; }
+        t.textContent = 'Échec, réessaie';
+      }).catch(function(e){ reseau(e); t.disabled = false; t.textContent = 'Échec, réessaie'; });
+    });
+    l.appendChild(card);
+  });
+}
+
+function creerChatteur(){
+  if (!ADM) return;
+  var i = $('rnom'), b = $('radd'), nom = i.value.trim();
+  if (!nom){ msg('rmsg', 'ENTRE UN PRÉNOM'); try { i.focus(); } catch(e){} return; }
+  b.disabled = true;
+  msg('rmsg', 'CRÉATION…');
+  rpc('dispos_chatteur_creer', { p_jeton: ADM, p_nom: nom }).then(function(r){
+    reseau(null); b.disabled = false;
+    if (r && r.ok){
+      i.value = '';
+      msg('rmsg', r.nom.toUpperCase() + ' · CODE ' + r.pin, true);
+      chargerRoster(true); chargerListe(); rafraichirAdmin();
+      return;
+    }
+    if (r && r.erreur === 'jeton'){ setAdmin(null, 'SESSION ADMIN TERMINÉE — ENTRE TON CODE'); return; }
+    msg('rmsg', (r && r.erreur === 'nom') ? 'PRÉNOM INVALIDE' : 'ÉCHEC, RÉESSAIE');
+  }).catch(function(e){
+    reseau(e); b.disabled = false; msg('rmsg', texteErreur(e));
+  });
+}
+
+if ($('radd')) $('radd').addEventListener('click', creerChatteur);
+if ($('rnom')) $('rnom').addEventListener('keydown', function(e){
+  if (e.key === 'Enter' || e.keyCode === 13){ e.preventDefault(); creerChatteur(); }
+});
+
 function majCompteurEnvoi(C){
   var E = {};
   ((adm && adm.envois) || []).forEach(function(x){ E[x] = true; });

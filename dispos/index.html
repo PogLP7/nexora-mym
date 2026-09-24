@@ -32,6 +32,7 @@
         <button type="button" class="tab on" data-p="moi">Mes dispos</button>
         <button type="button" class="tab ad" data-p="eq">Équipe</button>
         <button type="button" class="tab ad" data-p="env">Envoi</button>
+        <button type="button" class="tab ad" data-p="ros">Roster</button>
       </div>
       <button type="button" class="lock" id="lock" style="display:none">Admin</button>
     </div>
@@ -131,6 +132,17 @@
     <button type="button" class="btn gh" id="relcp">Copier la relance pour le groupe</button>
     <span class="msg" id="relm" style="margin-left:10px"></span>
   </div>
+</div>
+
+<div class="pan" id="p-ros">
+  <div class="lbl">Qui fait partie de l'équipe <b id="rcount">—</b></div>
+  <div class="radd">
+    <input id="rnom" maxlength="40" placeholder="Prénom du nouveau chatteur" aria-label="Prénom du nouveau chatteur" autocomplete="off">
+    <button type="button" class="btn" id="radd">Créer son code</button>
+    <span class="msg" id="rmsg"></span>
+  </div>
+  <p class="hint">Le code à 6 chiffres est tiré au hasard et lui appartient. « Copier le message » prépare le texte à lui envoyer en privé. Désactiver quelqu'un le retire de la page sans effacer ses réponses passées.</p>
+  <div class="eg" id="rlist"><span class="loading">Chargement…</span></div>
 </div>
 
 <footer>Nexora — Pôle chatting</footer>
