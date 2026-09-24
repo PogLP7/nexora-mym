@@ -381,7 +381,7 @@ language plpgsql security definer
 set search_path = public
 as $$
 declare
-  c_maxh constant int := 8;
+  c_maxh constant int := 10;
   c_maxp constant int := 8;
   v_slug text;
   v_clean text[];
