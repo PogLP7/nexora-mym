@@ -190,6 +190,14 @@ body.admin .tab.ad{display:inline-block}
 .ec{background:var(--s1);border:1px solid var(--ln);border-radius:13px;padding:14px 15px 13px;position:relative;
   transform-style:preserve-3d;transition:transform .4s cubic-bezier(.16,1.3,.3,1),border-color .3s,box-shadow .4s,opacity .4s;box-shadow:var(--sh)}
 .ec:hover{transform:translateY(-4px) rotateX(3deg);border-color:var(--ln2);box-shadow:var(--sh2)}
+tr.fait td{opacity:.38}
+tr.fait td.n{text-decoration:line-through}
+.pl{border:1px solid var(--ln);background:transparent;color:var(--dim);font-family:var(--m);font-size:10.5px;
+  letter-spacing:.08em;text-transform:uppercase;border-radius:8px;padding:6px 11px;cursor:pointer;white-space:nowrap;
+  transition:color .16s,border-color .16s,background .16s}
+.pl:hover{color:var(--ink);border-color:var(--ln2)}
+.pl.on{background:var(--hi);border-color:var(--hi);color:#08121A;font-weight:600;opacity:1}
+tr.fait .pl{opacity:1}
 .ec.off{opacity:.42}
 .ec.off:hover{opacity:.85}
 .radd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 4px}

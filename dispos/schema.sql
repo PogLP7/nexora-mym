@@ -698,3 +698,102 @@ grant  execute on function public.dispos_chatteur_creer(text, text)          to 
 grant  execute on function public.dispos_chatteur_actif(text, text, boolean) to anon, authenticated;
 
 notify pgrst, 'reload schema';
+
+-- ------------------------------------------- place au planning ------------
+-- Cocher quelqu'un une fois ses dispos reportees dans le classeur PLANNING.
+
+create table if not exists public.dispos_places (
+  semaine date not null,
+  slug    text not null references public.dispos_chatteurs(slug) on delete cascade,
+  maj     timestamptz not null default now(),
+  primary key (semaine, slug)
+);
+alter table public.dispos_places enable row level security;
+revoke all on table public.dispos_places from anon, authenticated;
+
+create or replace function public.dispos_admin(p_jeton text, p_semaine date)
+returns json
+language plpgsql security definer
+set search_path = public
+as $$
+begin
+  if not public.dispos_est_admin(p_jeton) then
+    return json_build_object('ok', false, 'erreur', 'jeton');
+  end if;
+  return json_build_object(
+    'ok', true,
+    'semaine', p_semaine,
+    'chatteurs', coalesce((
+      select json_agg(json_build_object('nom', c.nom, 'slug', c.slug, 'pin', c.pin)
+                      order by c.ordre, c.nom)
+      from public.dispos_chatteurs c
+      where c.actif
+    ), '[]'::json),
+    'reponses', coalesce((
+      select json_agg(json_build_object(
+               'slug', r.slug, 'nom', c.nom, 'slots', r.slots,
+               'indispos', r.indispos, 'heures', r.heures, 'maj', r.maj)
+             order by r.heures desc, c.nom)
+      from public.dispos_reponses r
+      join public.dispos_chatteurs c on c.slug = r.slug and c.actif
+      where r.semaine = p_semaine
+    ), '[]'::json),
+    'envois', coalesce((
+      select json_agg(e.slug order by e.slug)
+      from public.dispos_envois e
+      join public.dispos_chatteurs c on c.slug = e.slug and c.actif
+      where e.semaine = p_semaine
+    ), '[]'::json),
+    'places', coalesce((
+      select json_agg(p.slug order by p.slug)
+      from public.dispos_places p
+      join public.dispos_chatteurs c on c.slug = p.slug and c.actif
+      where p.semaine = p_semaine
+    ), '[]'::json)
+  );
+end;
+$$;
+
+create or replace function public.dispos_place(p_jeton text, p_semaine date, p_slug text, p_fait boolean)
+returns json
+language plpgsql security definer
+set search_path = public
+as $$
+begin
+  if not public.dispos_est_admin(p_jeton) then
+    return json_build_object('ok', false, 'erreur', 'jeton');
+  end if;
+  if p_semaine is null or not exists (select 1 from public.dispos_chatteurs where slug = p_slug) then
+    return json_build_object('ok', false, 'erreur', 'inconnu');
+  end if;
+  if p_fait then
+    insert into public.dispos_places (semaine, slug) values (p_semaine, p_slug)
+    on conflict (semaine, slug) do update set maj = now();
+  else
+    delete from public.dispos_places where semaine = p_semaine and slug = p_slug;
+  end if;
+  return json_build_object('ok', true);
+end;
+$$;
+
+create or replace function public.dispos_places_reset(p_jeton text, p_semaine date)
+returns json
+language plpgsql security definer
+set search_path = public
+as $$
+begin
+  if not public.dispos_est_admin(p_jeton) then
+    return json_build_object('ok', false, 'erreur', 'jeton');
+  end if;
+  delete from public.dispos_places where semaine = p_semaine;
+  return json_build_object('ok', true);
+end;
+$$;
+
+revoke execute on function public.dispos_place(text, date, text, boolean) from public;
+revoke execute on function public.dispos_places_reset(text, date)         from public;
+grant  execute on function public.dispos_place(text, date, text, boolean) to anon, authenticated;
+grant  execute on function public.dispos_places_reset(text, date)         to anon, authenticated;
+grant  execute on function public.dispos_admin(text, date)                to anon, authenticated;
+
+notify pgrst, 'reload schema';

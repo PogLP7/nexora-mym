@@ -7,6 +7,7 @@ if (window.top !== window.self) { document.documentElement.innerHTML = ''; retur
 var CONFIG = { url: 'https://bvcnbtbdfkoiefuedxem.supabase.co', key: 'sb_publishable__X2Z5ELAvPpQ2CK7CKoXpQ_J2F2ZxEP' };
 var LIEN = 'https://getsnexora.com/dispos/';
 var MAXH = 10, MAXP = 8, NPIN = 6, NADM = 8;
+var placesLocales = {};
 var SL = [
   { i: 'nuit',  l: 'Nuit',       h: '02h — 08h', c: 'var(--c-nuit)',  r: 'rgba(110,123,255,.26)' },
   { i: 'matin', l: 'Matin',      h: '08h — 14h', c: 'var(--c-matin)', r: 'rgba(63,208,201,.26)'  },
@@ -517,11 +518,11 @@ $('acode').addEventListener('input', function(){
 });
 
 function viderAdmin(){
-  adm = null; envoisLocaux = {}; rosterCharge = false;
+  adm = null; envoisLocaux = {}; placesLocales = {}; rosterCharge = false;
   if ($('rlist')) $('rlist').innerHTML = '';
   if ($('rcount')) $('rcount').textContent = '—';
   $('st').innerHTML = '';
-  $('tb').innerHTML = '<tr><td colspan="4"><div class="void">Chargement…</div></td></tr>';
+  $('tb').innerHTML = '<tr><td colspan="5"><div class="void">Chargement…</div></td></tr>';
   $('ms').innerHTML = '';
   $('eg').innerHTML = '';
   $('ek').textContent = '0'; $('etot').textContent = '0'; $('ebar').style.width = '0';
@@ -586,16 +587,40 @@ function rendreAdmin(){
   $('st').innerHTML =
     '<div class="sc"><b>' + L.length + '/' + C.length + '</b><span>ont répondu</span></div>' +
     '<div class="sc"><b>' + hh + '</b><span>heures déclarées</span></div>' +
-    '<div class="sc"><b>' + vides + '</b><span>créneaux vides</span></div>';
-  $('tb').innerHTML = L.length ? L.map(function(r){
+    '<div class="sc"><b>' + vides + '</b><span>créneaux vides</span></div>' +
+    '<div class="sc"><b id="scpl">0</b><span>reportés au planning</span></div>';
+  var PL = {};
+  ((adm && adm.places) || []).forEach(function(x){ PL[x] = true; });
+  Object.keys(placesLocales).forEach(function(x){ if (placesLocales[x]) PL[x] = true; else delete PL[x]; });
+  var Ltri = L.slice().sort(function(a, b){ return (PL[a.slug] ? 1 : 0) - (PL[b.slug] ? 1 : 0); });
+  $('tb').innerHTML = Ltri.length ? Ltri.map(function(r){
     var p = SL.map(function(s){
       var n = 0; JR.forEach(function(j, di){ if ((r.slots || []).indexOf(di + '-' + s.i) >= 0) n++; });
       return n ? '<span class="chip">' + s.l + ' ×' + n + '</span>' : '';
     }).filter(Boolean).join('');
-    return '<tr><td class="n">' + esc(r.nom) + '</td><td class="h">' + (r.heures || 0) + ' h</td><td>' +
+    var fait = !!PL[r.slug];
+    return '<tr' + (fait ? ' class="fait"' : '') + ' data-slug="' + esc(r.slug) + '"><td class="n">' + esc(r.nom) +
+      '</td><td class="h">' + (r.heures || 0) + ' h</td><td>' +
       (p || '<span class="chip">aucun</span>') + '</td><td class="' + (r.indispos ? 'ind' : 'ind no') + '">' +
-      (r.indispos ? esc(r.indispos) : '—') + '</td></tr>';
-  }).join('') : '<tr><td colspan="4"><div class="void">Aucune réponse pour cette semaine</div></td></tr>';
+      (r.indispos ? esc(r.indispos) : '—') + '</td><td><button type="button" class="pl' + (fait ? ' on' : '') +
+      '">' + (fait ? '✓ Placé' : 'À placer') + '</button></td></tr>';
+  }).join('') : '<tr><td colspan="5"><div class="void">Aucune réponse pour cette semaine</div></td></tr>';
+  each($('tb').querySelectorAll('.pl'), function(b){
+    b.addEventListener('click', function(){
+      var tr = b.parentNode.parentNode, slug = tr.dataset.slug, avant = !!PL[slug];
+      placesLocales[slug] = !avant;
+      b.disabled = true;
+      rpc('dispos_place', { p_jeton: ADM, p_semaine: semCarte, p_slug: slug, p_fait: !avant }).then(function(x){
+        reseau(null); b.disabled = false;
+        if (x && x.ok){ rendreAdmin(); return; }
+        delete placesLocales[slug];
+        if (x && x.erreur === 'jeton') setAdmin(null, 'SESSION ADMIN TERMINÉE — ENTRE TON CODE');
+        else b.textContent = 'Échec, réessaie';
+      }, function(e){ delete placesLocales[slug]; reseau(e); b.disabled = false; b.textContent = 'Échec, réessaie'; });
+    });
+  });
+  var np = Ltri.filter(function(r){ return PL[r.slug]; }).length;
+  if ($('scpl')) $('scpl').textContent = np + '/' + Ltri.length;
   var abs = C.filter(function(c){ return !R[c.slug]; });
   $('ms').innerHTML = abs.length ? abs.map(function(c){ return '<span>' + esc(c.nom) + '</span>'; }).join('')
     : '<span style="color:var(--ink)">Tout le monde a répondu</span>';
