@@ -1,0 +1,163 @@
+<title>Formation clippers Nexora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --papier: #FBF7F6; --carte: #FFFFFF; --encre: #241B21; --encre-douce: #6E5F67;
+    --brume: #9B8D94; --rose: #C0446B; --rose-clair: #FDEEF2; --rose-trait: #F3D4DE;
+    --trait: #EDE4E7;
+    --ombre: 0 1px 2px rgba(36,27,33,.04), 0 10px 30px rgba(36,27,33,.07);
+    --display: "Fraunces", Georgia, serif;
+    --texte: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--papier); color: var(--encre);
+    font-family: var(--texte); font-size: 15px; line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    background-image: radial-gradient(ellipse 80% 30% at 80% -8%, rgba(192,68,107,.08), transparent 64%);
+    background-repeat: no-repeat; min-height: 100vh;
+  }
+  .page { max-width: 660px; margin: 0 auto; padding: 0 18px 80px; }
+  .bandeau {
+    position: sticky; top: 0; z-index: 5; margin: 0 -18px 0; padding: 13px 18px 11px;
+    background: rgba(251,247,246,.92); backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--trait);
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  }
+  .maison { font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--brume); font-weight: 700; }
+  .duree { font-size: 12px; font-weight: 600; color: var(--rose); }
+  .une { padding: 38px 0 12px; }
+  h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(34px, 9.5vw, 50px); line-height: 1.06;
+    letter-spacing: -.02em; margin: 0; text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--rose); }
+  .une p { margin: 20px 0 0; color: var(--encre-douce); max-width: 44ch; font-size: 15.5px; }
+  .partie { padding-top: 44px; }
+  .partie > header { border-bottom: 1px solid var(--trait); padding-bottom: 14px; margin-bottom: 24px; }
+  .rang { font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--rose); font-weight: 700; }
+  .partie h2 {
+    font-family: var(--display); font-weight: 400; font-size: 27px;
+    letter-spacing: -.015em; margin: 7px 0 0;
+  }
+  .partie > header p { margin: 9px 0 0; color: var(--encre-douce); font-size: 14.5px; max-width: 48ch; }
+  .fiche {
+    background: var(--carte); border-radius: 16px; box-shadow: var(--ombre);
+    margin-bottom: 20px; overflow: hidden;
+  }
+  .fiche-tete { padding: 20px 22px 0; }
+  .etiq {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--rose); background: var(--rose-clair);
+    border: 1px solid var(--rose-trait); border-radius: 999px; padding: 3px 11px; margin-bottom: 10px;
+  }
+  .fiche h3 {
+    font-family: var(--display); font-weight: 600; font-size: 20px;
+    line-height: 1.2; margin: 0; letter-spacing: -.01em;
+  }
+  .fiche h3 b { font-weight: 400; color: var(--brume); font-family: var(--texte); font-size: 15px; margin-right: 8px; }
+  .fiche p { margin: 9px 0 0; color: var(--encre-douce); font-size: 14.5px; }
+  .lecteur { padding: 16px 22px 22px; }
+  video { width: 100%; max-height: 62vh; border-radius: 11px; background: #efe7ea; display: block; }
+  .canva { padding: 4px 22px 22px; }
+  .canva a {
+    display: block; text-align: center; padding: 16px; border-radius: 12px;
+    background: var(--rose); color: #fff; font-weight: 700; text-decoration: none; font-size: 15px;
+  }
+  .canva a:hover { background: #A93A5C; }
+  footer { margin-top: 48px; padding: 24px 22px; background: var(--carte); border-radius: 16px; box-shadow: var(--ombre); }
+  footer h2 { font-family: var(--display); font-weight: 400; font-size: 22px; margin: 0 0 12px; }
+  footer p { margin: 0 0 12px; color: var(--encre-douce); font-size: 14.5px; }
+  footer .regle { color: var(--rose); font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="page">
+  <div class="bandeau"><span class="maison">Nexora</span><span class="duree">4 min + 9 tutos</span></div>
+
+  <header class="une">
+    <h1>Formation <em>clippers</em></h1>
+    <p>Tu viens d'être pris. Tout est ici, dans l'ordre. Partie 1 tu comprends le job, partie 2 tu apprends à rendre un compte crédible, partie 3 tu apprends les gestes, jour par jour. Reviens dessus chaque fois que tu bloques.</p>
+  </header>
+
+  <section class="partie">
+    <header>
+      <div class="rang">Partie 1</div>
+      <h2>Le job</h2>
+      <p>Quatre vidéos, quatre minutes en tout. Regarde-les avant tout le reste.</p>
+    </header>
+    <div id="p1"></div>
+  </section>
+
+  <section class="partie">
+    <header>
+      <div class="rang">Partie 2</div>
+      <h2>Le branding</h2>
+      <p>Comment un profil crédible transforme un visiteur en clic. À trafic égal, un bon branding rapporte plusieurs fois plus qu'un mauvais. Sept parties : la photo de profil, la bio du public et du privé, les stories à la une, la FAQ et les stories CTA.</p>
+    </header>
+    <div class="fiche">
+      <div class="canva"><a href="https://canva.link/lvqjr2nuoi0fn5a" target="_blank" rel="noopener">Ouvrir la présentation branding</a></div>
+    </div>
+  </section>
+
+  <section class="partie">
+    <header>
+      <div class="rang">Partie 3</div>
+      <h2>La méthode, geste par geste</h2>
+      <p>Neuf vidéos dans l'ordre du parcours 7 jours. Le jour indiqué est celui où tu en as besoin. Ne prends pas d'avance, chaque étape s'appuie sur la précédente.</p>
+    </header>
+    <div id="p3"></div>
+  </section>
+
+  <footer>
+    <h2>Ce qui t'attend ensuite</h2>
+    <p>Ton groupe Telegram t'envoie ton parcours jour par jour : tes consignes, tes photos, tes bios d'exemple et tes réels. Tu n'as rien à aller chercher, tout arrive au bon moment. Ton manager, c'est Karim.</p>
+    <p class="regle">Une règle avant toutes les autres : un réel par jour et par compte, sans jamais sauter un jour.</p>
+  </footer>
+</div>
+
+<script>
+  var SAS = [{"nom": "Le vrai boulot, le vrai argent", "jour": "18 s", "texte": "Ce qu'un clipper a touché le mois dernier chez Nexora.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/sas/nexora-sas-v1-9x16.mp4"}, {"nom": "La vérité qui fait mal", "jour": "55 s", "texte": "Ce qui filtre les 8 sur 10 qui abandonnent la première semaine.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/sas/nexora-sas-v2-9x16.mp4"}, {"nom": "La mécanique concrète", "jour": "48 s", "texte": "À quoi ressemble ta semaine si tu rentres.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/sas/nexora-sas-v3-9x16.mp4"}, {"nom": "Ceux qui bossent, on les fait monter", "jour": "2 min 17", "texte": "La progression, et comment on fait monter ceux qui tiennent.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/sas/nexora-sas-v4-9x16.mp4"}];
+  var TUTOS = [{"nom": "Créer un compte", "jour": "Jours 1, 2 et 3", "texte": "Le geste de base, tu le referas trois fois. Couper le WiFi, passer en 4G, Safari en navigation privée, créer le compte, choisir le @, puis ne plus y toucher pendant 24h.  🚨 L'erreur qui tue : créer depuis l'app, ou en WiFi, ou se reconnecter le soir même. Le compte est grillé et tu recommences de zéro.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/01-cr-er-un-compte-jours-1-2-et-3.mp4"}, {"nom": "Le warm up", "jour": "Jours 2 et 3", "texte": "Se comporter comme une vraie utilisatrice avant de toucher au profil : liker, commenter, mettre en favori, regarder des réels.  💡 Les comptes à liker sont dans le topic 📈 @ des comptes pour interaction. 🚨 Toujours après avoir connecté le compte à l'app. Jamais avant.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/02-le-warm-up-jours-2-et-3.mp4"}, {"nom": "La photo de profil et la bio", "jour": "Jours 2 et 3", "texte": "Comment habiller un compte public : la photo no-face, et la bio.  💡 Les photos sont dans 📸 Photos de profil, les bios dans 📝 Bio Instagram. 🚨 Inspire-toi des exemples, ne copie jamais à l'identique — Instagram repère les comptes qui se ressemblent trop.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/03-la-photo-de-profil-et-la-bio-jours-2-et-3.mp4"}, {"nom": "Story à la une — Me", "jour": "Jours 2 et 3", "texte": "C'est ta devanture : la première chose qu'un visiteur voit après ta photo de profil et ta bio.  Le geste : tu postes la photo en story → tu l'enregistres à la une → tu nommes la bulle.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/04-story-la-une-me-jours-2-et-3.mp4"}, {"nom": "Story à la une — FAQ", "jour": "Jours 2 et 3", "texte": "La FAQ chauffe le visiteur avant le clic : plus il se sent proche de toi, plus il te fait confiance, plus il clique.  💡 Les 5 questions/réponses sont dans le topic ❓ Story FAQ. Tu écris la question et la réponse par-dessus la photo.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/05-story-la-une-faq-jours-2-et-3.mp4"}, {"nom": "Poster un réel", "jour": "Jour 3, puis tous les jours", "texte": "Tes réels sont déjà dans le topic 🎬 Réel — tu n'as rien à chercher ailleurs.  🕕 Poste entre 18h et 22h, c'est là que ton audience est en ligne. 🚨 1 réel par jour et par compte. Un jour sans poster, et l'algo repart de zéro.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/06-poster-un-r-el-jour-3-puis-tous-les-jours.mp4"}, {"nom": "Passer le compte en privé", "jour": "Jour 4", "texte": "Le compte privé a été créé la veille sur Safari — il est encore public. On le passe en privé une fois connecté à l'app : Paramètres → Confidentialité.  🚨 S'il reste public, tout le reste ne sert à rien. Les gens tombent sur un compte ouvert et n'ont plus aucune raison de cliquer sur ton lien.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/07-passer-le-compte-en-priv-jour-4.mp4"}, {"nom": "L'@ du privé dans la bio de tes comptes publics", "jour": "Jour 4", "texte": "C'est l'étape qui te fait gagner de l'argent.  Le chemin : ton compte public → l'@ de ton privé dans sa bio → ton compte privé → ton lien GMS → 💰  🚨 Sans ce lien, personne ne trouve ton compte privé. Tu peux poster tous les jours pendant un mois, tous tes clics sont perdus.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/08-l-du-priv-dans-la-bio-de-tes-comptes-publics-jou.mp4"}, {"nom": "Récupérer ton lien GMS et le mettre en bio", "jour": "Jour 7", "texte": "Ton manager t'envoie le lien. Tu le mets dans la bio du compte privé.  🚨 Uniquement le privé. Jamais sur tes comptes publics — ils se feraient bannir.", "src": "https://bvcnbtbdfkoiefuedxem.supabase.co/storage/v1/object/public/app/tutos/09-r-cup-rer-ton-lien-gms-et-le-mettre-en-bio-jour-.mp4"}];
+
+  function fiche(v, i) {
+    var art = document.createElement("article");
+    art.className = "fiche";
+    var tete = document.createElement("div");
+    tete.className = "fiche-tete";
+    if (v.jour) {
+      var e = document.createElement("span");
+      e.className = "etiq";
+      e.textContent = v.jour;
+      tete.appendChild(e);
+    }
+    var h = document.createElement("h3");
+    var num = document.createElement("b");
+    num.textContent = i + ".";
+    h.appendChild(num);
+    h.appendChild(document.createTextNode(v.nom));
+    tete.appendChild(h);
+    if (v.texte) {
+      var p = document.createElement("p");
+      p.textContent = v.texte;
+      tete.appendChild(p);
+    }
+    art.appendChild(tete);
+    var box = document.createElement("div");
+    box.className = "lecteur";
+    var vid = document.createElement("video");
+    vid.src = v.src;
+    vid.controls = true;
+    vid.preload = "none";
+    vid.playsInline = true;
+    box.appendChild(vid);
+    art.appendChild(box);
+    return art;
+  }
+
+  SAS.forEach(function (v, i) { document.getElementById("p1").appendChild(fiche(v, i + 1)); });
+  TUTOS.forEach(function (v, i) { document.getElementById("p3").appendChild(fiche(v, i + 1)); });
+</script>
