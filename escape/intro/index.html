@@ -96,7 +96,35 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 #fade{position:fixed;inset:0;z-index:16;background:#000;opacity:1;pointer-events:none;
   transition:opacity .8s linear}
 
+/* ================= NEON SUSPENDU ================= */
+#lamp{position:absolute;left:50%;top:0;width:40%;height:34%;z-index:4;pointer-events:none;
+  transform-origin:50% 0;animation:swing 7.5s ease-in-out infinite;opacity:0;transition:opacity .1s linear}
+#lamp.on{opacity:var(--lum)}
+@keyframes swing{0%,100%{transform:translateX(-50%) rotate(-1.5deg)}50%{transform:translateX(-50%) rotate(1.5deg)}}
+#lamp .wire{position:absolute;left:50%;top:0;width:1px;height:16%;background:#4a4238;transform:translateX(-50%)}
+#lamp .tube{position:absolute;left:0;right:0;top:16%;height:9%;border-radius:99px;background:#fff4e0;
+  box-shadow:0 0 4vmin .6vmin rgba(255,240,208,.8),0 0 16vmin 4vmin rgba(255,218,160,.3)}
+#lamp .pool{position:absolute;left:-85%;right:-85%;top:16%;height:520%;
+  background:radial-gradient(ellipse 44% 62% at 50% 0%,rgba(255,230,186,.62),rgba(255,222,172,.18) 46%,transparent 74%)}
+
 /* ================= SILHOUETTE ================= */
+/* ombre projetee sur le mur, elle suit le balancement de la lampe */
+#manShade{position:absolute;left:50%;bottom:8%;height:55%;aspect-ratio:.4545/1;z-index:5;
+  transform-origin:50% 100%;opacity:0;pointer-events:none;
+  filter:blur(1.6vmin);animation:shadeSwing 7.5s ease-in-out infinite}
+@keyframes shadeSwing{
+  0%,100%{transform:translateX(-50%) translateX(7%) scale(1.35,2.3) skewX(17deg)}
+  50%{transform:translateX(-50%) translateX(-7%) scale(1.35,2.3) skewX(-17deg)}}
+#manShade.on{opacity:.72;transition:opacity 1.6s ease-out}
+#manShade svg{width:100%;height:100%;overflow:visible}
+
+/* yeux */
+#eyes{opacity:0}
+#eyes.on{animation:eyesIn 2.4s ease-out forwards}
+@keyframes eyesIn{0%{opacity:0}100%{opacity:1}}
+#eyes.burn{animation:burn 1.1s ease-in-out infinite}
+@keyframes burn{0%,100%{opacity:1}50%{opacity:.55}}
+
 #manWrap{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);
   height:55%;aspect-ratio:.4545/1;opacity:0;z-index:6}
 #manWrap.in{animation:manIn 3.4s cubic-bezier(.2,.75,.25,1) forwards}
@@ -299,6 +327,10 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
       </svg>
     </div>
 
+    <div id="lamp"><div class="wire"></div><div class="tube"></div><div class="pool"></div></div>
+
+    <div id="manShade"><svg viewBox="0 0 200 440" aria-hidden="true"><use href="#breath"/></svg></div>
+
     <div id="manWrap">
       <div id="manShadow"></div>
       <svg id="man" viewBox="0 0 200 440" aria-hidden="true">
@@ -330,6 +362,12 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
           <path id="armR" fill="#000"
             d="M167 144 C174 150 177 159 178 170 L184 240 C185 250 181 256 174 256
                C167 256 163 251 162 242 L154 174 Z"/>
+          <g id="eyes">
+            <ellipse cx="86" cy="56" rx="11" ry="5.5" fill="#ff9a4a" opacity=".3"/>
+            <ellipse cx="114" cy="56" rx="11" ry="5.5" fill="#ff9a4a" opacity=".3"/>
+            <ellipse cx="86" cy="56" rx="5.4" ry="2.5" fill="#ffd9a8"/>
+            <ellipse cx="114" cy="56" rx="5.4" ry="2.5" fill="#ffd9a8"/>
+          </g>
         </g>
       </svg>
     </div>
@@ -430,6 +468,16 @@ function send(node, amt, echo){
   if (echoIn && echo){ var e = AC.createGain(); e.gain.value = echo; node.connect(e); e.connect(echoIn); }
 }
 function now(){ return AC.currentTime; }
+/* place un son dans le champ stereo : -1 a gauche, +1 a droite */
+function out(node, rev, echo, pan){
+  var dest = node;
+  if (pan !== undefined && pan !== null && AC.createStereoPanner){
+    var pn = AC.createStereoPanner(); pn.pan.value = Math.max(-1, Math.min(1, pan));
+    node.connect(pn); dest = pn;
+  }
+  dest.connect(master);
+  send(dest, rev, echo);
+}
 
 /* ---- nappe : deux sinus proches qui battent, c'est ce qui met mal a l'aise ---- */
 var droneG = [];
@@ -536,7 +584,13 @@ function whispers(dur, vol){
   lfo.frequency.value = 2.6; lg.gain.value = 620;
   lfo.connect(lg); lg.connect(bp.frequency); lfo.start();
   var g = a.createGain(); g.gain.value = vol || .07;
-  s.connect(bp); bp.connect(g); g.connect(master); send(g, .7, .3);
+  s.connect(bp); bp.connect(g);
+  var pn = a.createStereoPanner ? a.createStereoPanner() : null;
+  if (pn){
+    pn.pan.setValueAtTime(rnd(-.9, .9), now());
+    pn.pan.linearRampToValueAtTime(rnd(-.9, .9), now()+dur);
+    g.connect(pn); pn.connect(master); send(pn, .7, .3);
+  } else { g.connect(master); send(g, .7, .3); }
   s.start(); lfo.stop(now()+dur+.1);
 }
 /* ---- montee ---- */
@@ -611,7 +665,8 @@ function metal(vol){
     g.gain.setValueAtTime(.0001, now());
     g.gain.linearRampToValueAtTime((vol||.1)/(i+2), now()+.008);
     g.gain.exponentialRampToValueAtTime(.0001, now()+2.2 - i*.22);
-    o.connect(g); g.connect(master); send(g, .6, .25);
+    o.connect(g);
+    out(g, .6, .25, (i % 2 ? .4 : -.4));
     o.start(); o.stop(now()+2.4);
   });
 }
@@ -624,7 +679,8 @@ function woodCrack(n){
       var s = a.createBufferSource(); s.buffer = noiseBuf(.035, function(x){ return Math.pow(1-x, 5); });
       var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = rnd(700, 2400); bp.Q.value = 4;
       var g = a.createGain(); g.gain.value = rnd(.05, .14);
-      s.connect(bp); bp.connect(g); g.connect(master); send(g, .5);
+      s.connect(bp); bp.connect(g);
+      out(g, .5, 0, rnd(-.85, .85));
       s.start(t);
     })(Math.random()*.55);
   }
@@ -638,7 +694,8 @@ function scrape(sec, vol){
   bp.frequency.setValueAtTime(900, now());
   bp.frequency.linearRampToValueAtTime(1700, now()+sec);
   var g = a.createGain(); g.gain.value = vol || .12;
-  s.connect(bp); bp.connect(g); g.connect(master); send(g, .6);
+  s.connect(bp); bp.connect(g);
+  out(g, .6, 0, .55);
   s.start();
 }
 /* ---- neon ---- */
@@ -667,13 +724,16 @@ function buzzOff(){
   buzzN = null;
 }
 /* ---- pas, porte, craie, souffle ---- */
-function step(vol){
+var stepSide = 1;
+function step(vol, pan){
   var a = audio(); if (!a) return;
   var s = a.createBufferSource(); s.buffer = noiseBuf(.14, function(x){ return Math.pow(1-x, 4); });
   var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1500;
   var hp = a.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 160;
   var g = a.createGain(); g.gain.value = vol || .2;
-  s.connect(lp); lp.connect(hp); hp.connect(g); g.connect(master); send(g, .7, .35);
+  s.connect(lp); lp.connect(hp); hp.connect(g);
+  if (pan === undefined){ stepSide = -stepSide; pan = stepSide * .34; }
+  out(g, .7, .35, pan);
   s.start();
 }
 function creak(sec){
@@ -689,7 +749,8 @@ function creak(sec){
   g.gain.setValueAtTime(.0001, now());
   g.gain.linearRampToValueAtTime(.1, now()+sec*.3);
   g.gain.linearRampToValueAtTime(.0001, now()+sec);
-  o.connect(bp); bp.connect(g); g.connect(master); send(g, .65, .3);
+  o.connect(bp); bp.connect(g);
+  out(g, .65, .3, .3);
   o.start(); o.stop(now()+sec+.1); lfo.stop(now()+sec+.1);
 }
 function chalk(){
@@ -1053,6 +1114,14 @@ function run(){
   at(15700, function(){ torchTo("76%", "24%"); tick(false,.07); strings(.9, .06, 980); });
   at(16400, function(){ clockOn = true; tick(false,.07); });
   at(17000, function(){ torchTo("50%", "58%"); riser(2, .24); });
+  /* elle est la une fraction de seconde, puis plus rien */
+  at(17350, function(){
+    var m = $("manWrap");
+    m.style.transition = "none"; m.style.opacity = "1";
+    crack(.36, 5200); strings(.32, .15, 1560); chroma();
+    setTimeout(function(){ m.style.opacity = ""; m.style.transition = ""; }, 130);
+  });
+  at(17700, function(){ breath(.16); inhale(.7, .14); });
   at(18100, function(){ scrape(.7, .1); woodCrack(4); });
 
   /* le neon prend le relais */
@@ -1064,6 +1133,7 @@ function run(){
     lum(.92); buzzOn(); droneTo(1.3, 2);
     cam("0px","0px",1.16,0,15000);
     ageStage(1);
+    $("lamp").classList.add("on");
   });
   [20800, 22200, 24500, 27600, 30400].forEach(function(t){
     at(t, function(){ lum(.5); flickerSnd(); });
@@ -1074,15 +1144,17 @@ function run(){
 
   /* ---------- 21 → 33 s : l'ombre ---------- */
   at(20900, function(){ $("manWrap").classList.add("in"); strSlide(1.6, .12); breath(.1); });
+  at(21600, function(){ $("manShade").classList.add("on"); });
   at(22600, function(){ say("Tu entres ici à vingt ans.", 1); });
   at(25400, unsay);
   at(25900, function(){ say("Chaque salle t’en prendra vingt de plus.", 2); });
   at(29000, unsay);
   at(29500, function(){ say("À la dernière, tu auras quatre-vingts ans.", 3); });
   at(32400, unsay);
+  at(31600, function(){ $("eyes").classList.add("on"); strings(1.3, .08, 1440); });
 
   /* ---------- 33 → 42 s : le lieu pourrit ---------- */
-  at(32600, function(){ riser(3, .34); droneTo(1.7, 2.6); heartStart(760, .26); });
+  at(32600, function(){ riser(3, .34); droneTo(1.7, 2.6); heartStart(760, .26); $("eyes").classList.add("burn"); });
   var ages = [[33200,20,1],[34100,40,2],[35000,65,3],[35900,80,4]];
   ages.forEach(function(p, i){
     at(p[0], function(){
@@ -1116,6 +1188,9 @@ function run(){
     boom(.85); metal(.1); whoosh(1.3);
     blast(); shake(9, 500);
     ageStage(0);
+    $("lamp").classList.remove("on");
+    $("manShade").classList.remove("on");
+    $("eyes").className = "";
   });
 
   /* ---------- 40 → 46 s : le titre ---------- */
