@@ -225,10 +225,14 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
   border:1px solid rgba(255,255,255,.3);animation:pl 2.4s ease-in-out infinite}
 @keyframes pl{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.16);opacity:1}}
 
-#rec{margin-top:3.4vmin;font:inherit;font-size:min(1.6vmin,2.6vw);letter-spacing:.2em;
-  text-transform:uppercase;cursor:pointer;color:#bbb;padding:1.1vmin 2.8vmin;border-radius:99px;
-  border:1px solid rgba(255,255,255,.2);background:transparent;transition:all .25s}
-#rec:hover{color:#000;background:#eee;border-color:#eee}
+#rec{position:fixed;top:2.6vmin;right:3vmin;z-index:22;display:flex;align-items:center;gap:1.1vmin;
+  font:inherit;font-size:min(2vmin,3.1vw);letter-spacing:.16em;text-transform:uppercase;
+  cursor:pointer;color:#f0ece4;padding:1.5vmin 3vmin;border-radius:99px;
+  border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.08);transition:all .25s}
+#rec:hover{color:#111;background:#f0ece4;border-color:#f0ece4}
+#rec:hover b{background:#d8322a}
+#rec b{width:1.5vmin;height:1.5vmin;min-width:9px;min-height:9px;border-radius:50%;
+  background:#ff3b30;box-shadow:0 0 1.4vmin rgba(255,59,48,.8)}
 #recDot{position:fixed;top:2.4vmin;left:2.6vmin;z-index:21;display:none;align-items:center;gap:1vmin;
   font-size:min(1.5vmin,2.4vw);letter-spacing:.2em;text-transform:uppercase;color:#ff6b5e}
 #recDot.on{display:flex}
@@ -471,8 +475,8 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
   <div class="d">Touchez pour lancer · son compris</div>
   <div class="w">Montez le son. Flashes lumineux, et un sursaut à la fin.</div>
   <div class="pulse"></div>
-  <button id="rec">Enregistrer en vidéo</button>
 </div>
+<button id="rec"><b></b>Enregistrer</button>
 <div id="recDot"><i></i>Enregistrement</div>
 
 <script>
@@ -1438,6 +1442,7 @@ buildDecay();
 var started = false;
 function start(){
   if (started) return; started = true;
+  $("rec").style.display = "none";          /* il ne doit pas finir dans l'enregistrement */
   audio(); loadVoices();
   $("go").classList.add("gone");
   at(900, run);
