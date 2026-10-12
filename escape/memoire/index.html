@@ -124,7 +124,14 @@ p.lead{font-size:min(3vmin,4vw);font-weight:300;line-height:1.5;max-width:46ch;o
 #pad button.go{grid-column:span 3;font-size:min(2.4vmin,3.2vw);letter-spacing:.16em;text-transform:uppercase;
   background:hsl(var(--hue) 88% 62% / .22);border-color:hsl(var(--hue) 88% 62% / .5)}
 #pad button.go:disabled{opacity:.3;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1)}
+.rmid{display:flex;flex-direction:column;align-items:center;gap:1.2vmin}
 #verdict{font-size:min(3.4vmin,4.4vw);font-weight:300;letter-spacing:.04em;min-height:4.6vmin}
+#bAgain{font:inherit;font-size:min(2.1vmin,2.9vw);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;
+  color:#f4f1fa;padding:1.2vmin 3vmin;border-radius:99px;
+  border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.055);
+  transition:background .2s,transform .14s}
+#bAgain:active{transform:scale(.95)}
+#bAgain.off{display:none}
 #verdict.ok{color:hsl(140 72% 68%)}
 #verdict.ko{color:hsl(4 84% 70%)}
 
@@ -206,7 +213,10 @@ p.lead{font-size:min(3vmin,4vw);font-weight:300;line-height:1.5;max-width:46ch;o
       <div class="rhint" id="rHint">Dans l'ordre d'apparition</div>
     </div>
     <div id="slots"></div>
-    <div id="verdict"></div>
+    <div class="rmid">
+      <div id="verdict"></div>
+      <button id="bAgain">Revoir la série · <span id="againN">1</span></button>
+    </div>
     <div id="pad"></div>
   </section>
 
@@ -242,7 +252,7 @@ var SERIES = [
 ];
 var GAP = 190;
 
-var idx = 0, timers = [], entry = [], tries = 0, locked = true;
+var idx = 0, timers = [], entry = [], tries = 0, locked = true, replayLeft = 1;
 var $ = function(id){ return document.getElementById(id); };
 var body = document.body;
 
@@ -368,6 +378,13 @@ function push(n){
 }
 function pop(){ entry.pop(); drawSlots(); $("verdict").textContent = ""; $("verdict").className = ""; }
 
+$("bAgain").addEventListener("click", function(){
+  if (locked || replayLeft <= 0) return;
+  replayLeft--;
+  audioCtx();
+  runDigits();
+});
+
 function validate(){
   var want = expected(), ok = entry.join("") === want.join("");
   var v = $("verdict"), sl = $("slots");
@@ -395,45 +412,66 @@ function validate(){
 function playSeries(i, replay){
   clearTimers(); stopNoise();
   idx = i; entry = []; locked = true;
-  if (!replay) tries = 0;
+  if (!replay){ tries = 0; replayLeft = 1; }
   var s = SERIES[i];
   applyAge(i); markSteps(i, i);
 
   $("tAge").textContent = s.age;
-  $("tSub").textContent = "Série " + (i+1) + " sur 4";
+  $("tSub").textContent = "S\u00e9rie " + (i+1) + " sur 4";
   var o = $("tOrder");
-  o.textContent = s.rev ? "↶ Ordre inverse" : "Ordre direct";
+  o.textContent = s.rev ? "\u21b6 Ordre inverse" : "Ordre direct";
   o.className = "order" + (s.rev ? " rev" : "");
   show("s-title");
   $("steps").classList.remove("hide");
 
   at(2500, function(){ show("s-ready"); });
+  at(3900, runDigits);
+}
 
-  var start = 3900;
-  at(start - 400, function(){ if (s.noise) startNoise(s.noise); });
-  at(start, function(){
-    show("s-play");
-    $("steps").classList.add("hide");
-    var d = $("digit");
-    d.classList.toggle("shaky", i === SERIES.length-1);
-    s.digits.forEach(function(n,k){
-      var t = k*(s.ms+GAP);
-      at(t, function(){ d.textContent = n; d.className = ""; void d.offsetWidth; d.classList.add("in"); });
-      at(t+s.ms, function(){ d.className = ""; void d.offsetWidth; d.classList.add("out"); });
+/* affiche la serie de chiffres, puis rend la main a la saisie */
+function runDigits(){
+  clearTimers();
+  var s = SERIES[idx], last = (idx === SERIES.length-1);
+  entry = []; locked = true;
+  if (s.noise) startNoise(s.noise);
+  show("s-play");
+  $("steps").classList.add("hide");
+  var d = $("digit");
+  d.textContent = "";
+  d.classList.toggle("shaky", last);
+  s.digits.forEach(function(n,k){
+    var t = k*(s.ms+GAP);
+    at(t, function(){
+      d.textContent = n;
+      d.classList.remove("in","out"); void d.offsetWidth; d.classList.add("in");
     });
-    at(s.digits.length*(s.ms+GAP)+240, function(){
-      stopNoise();
-      $("rTitle").textContent = s.rev ? "Tapez la série à l'envers" : "Tapez la série";
-      $("rHint").textContent  = s.rev ? "Du dernier chiffre vu au premier" : "Dans l'ordre d'apparition";
-      $("verdict").textContent = ""; $("verdict").className = "";
-      drawSlots();
-      show("s-recall");
-      $("steps").classList.remove("hide");
-      markSteps(i, i);
-      locked = false;
+    at(t+s.ms, function(){
+      d.classList.remove("in"); void d.offsetWidth; d.classList.add("out");
     });
   });
+  at(s.digits.length*(s.ms+GAP)+240, toRecall);
 }
+
+function toRecall(){
+  stopNoise();
+  var s = SERIES[idx];
+  $("rTitle").textContent = s.rev ? "Tapez la s\u00e9rie \u00e0 l\u2019envers" : "Tapez la s\u00e9rie";
+  $("rHint").textContent  = s.rev ? "Du dernier chiffre vu au premier" : "Dans l\u2019ordre d\u2019apparition";
+  $("verdict").textContent = ""; $("verdict").className = "";
+  entry = [];
+  drawSlots();
+  updateReplay();
+  show("s-recall");
+  $("steps").classList.remove("hide");
+  markSteps(idx, idx);
+  locked = false;
+}
+
+function updateReplay(){
+  $("againN").textContent = replayLeft;
+  $("bAgain").classList.toggle("off", replayLeft <= 0);
+}
+
 function nextSeries(){
   if (idx+1 < SERIES.length) playSeries(idx+1);
   else finish();
