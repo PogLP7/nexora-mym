@@ -1190,7 +1190,7 @@ function run(){
     ageStage(0);
     $("lamp").classList.remove("on");
     $("manShade").classList.remove("on");
-    $("eyes").className = "";
+    $("eyes").setAttribute("class", "");   /* className est en lecture seule sur un element SVG */
   });
 
   /* ---------- 40 → 46 s : le titre ---------- */
