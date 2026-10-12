@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="robots" content="noindex,nofollow">
+<title>Intro — Évolution de l'âge</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#000;overscroll-behavior:none}
+body{font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;color:#eee;
+  -webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
+  --lum:0;        /* 0 = noir, 1 = neon allume */
+  --age:0;        /* degradation */
+}
+
+/* ============ SCENE ============ */
+#world{position:fixed;inset:0;overflow:hidden;
+  transform:scale(var(--z,1));transform-origin:50% 48%;
+  filter:saturate(calc(100% - var(--age)*62%)) sepia(calc(var(--age)*42%));
+  transition:filter 1.4s linear}
+#room{position:absolute;inset:0;opacity:var(--lum);transition:opacity .06s linear}
+
+svg.scene{position:absolute;inset:0;width:100%;height:100%}
+
+/* lumiere du neon : halo chaud au plafond */
+#neon{position:absolute;left:50%;top:7%;transform:translateX(-50%);
+  width:52%;height:2.2%;border-radius:99px;background:#fff6e2;
+  box-shadow:0 0 6vmin 1vmin rgba(255,238,205,.85),0 0 22vmin 6vmin rgba(255,220,160,.35);
+  opacity:var(--lum)}
+#spill{position:absolute;left:50%;top:7%;transform:translateX(-50%);
+  width:90%;height:70%;opacity:calc(var(--lum)*.55);
+  background:radial-gradient(ellipse 50% 70% at 50% 0%,rgba(255,226,175,.5),transparent 70%)}
+
+/* rais de lune a travers les stores */
+#blinds{position:absolute;inset:0;opacity:calc(.5 + var(--lum)*.25);
+  background:repeating-linear-gradient(74deg,
+    rgba(150,190,255,.085) 0 1.6vmin, transparent 1.6vmin 7.5vmin);
+  mask-image:radial-gradient(ellipse 70% 90% at 12% 25%,#000 10%,transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse 70% 90% at 12% 25%,#000 10%,transparent 72%)}
+
+#dust,#grain{position:absolute;inset:0;pointer-events:none}
+#grain{z-index:9;mix-blend-mode:overlay;opacity:calc(.1 + var(--age)*.3);
+  background-repeat:repeat;animation:gr .5s steps(1) infinite}
+@keyframes gr{0%{background-position:0 0}25%{background-position:-23px 17px}50%{background-position:41px -31px}75%{background-position:-11px -47px}100%{background-position:29px 13px}}
+
+#vig{position:fixed;inset:0;z-index:10;pointer-events:none;
+  background:radial-gradient(ellipse calc(92% - var(--age)*30%) calc(92% - var(--age)*32%) at 50% 50%,transparent 38%,#000 100%);
+  transition:background 1.4s linear}
+
+/* ============ SILHOUETTE ============ */
+#man{position:absolute;left:50%;bottom:7%;transform:translateX(-50%) scale(.86);
+  height:56%;opacity:0;filter:drop-shadow(0 0 3vmin rgba(0,0,0,.9))}
+#man.in{animation:manIn 2.6s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes manIn{
+  0%{opacity:0;transform:translateX(-50%) scale(.86) translateY(3%)}
+  40%{opacity:1}
+  100%{opacity:1;transform:translateX(-50%) scale(1) translateY(0)}}
+#man .sway{animation:sway 5.5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(.4%,-.5%) rotate(.5deg)}}
+
+/* ============ TEXTE ============ */
+#subs{position:fixed;left:0;right:0;bottom:11%;z-index:12;text-align:center;padding:0 6vw}
+#sub{display:inline-block;font-size:min(4.2vmin,5.6vw);font-weight:300;letter-spacing:.012em;
+  line-height:1.35;color:#f2efe8;text-shadow:0 .4vmin 2.4vmin rgba(0,0,0,.95);opacity:0}
+#sub.on{animation:subIn .7s cubic-bezier(.16,1,.3,1) forwards}
+#sub.off{animation:subOut .45s ease-in forwards}
+@keyframes subIn{from{opacity:0;transform:translateY(1.2vmin);filter:blur(.5vmin)}to{opacity:1;transform:none;filter:none}}
+@keyframes subOut{to{opacity:0;transform:translateY(-.7vmin)}}
+
+/* age qui defile */
+#ages{position:fixed;inset:0;z-index:13;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#ageN{font-size:min(30vmin,36vw);font-weight:150;letter-spacing:-.04em;line-height:1;
+  font-variant-numeric:tabular-nums;color:#fff;opacity:0;text-shadow:0 0 8vmin rgba(0,0,0,.8)}
+#ageN.hit{animation:hit .62s cubic-bezier(.16,1,.3,1)}
+@keyframes hit{0%{opacity:0;transform:scale(1.5);filter:blur(2vmin)}
+  22%{opacity:1;transform:scale(1);filter:none}
+  78%{opacity:1}100%{opacity:0;transform:scale(.97)}}
+
+/* titre final */
+#end{position:fixed;inset:0;z-index:14;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;background:#000;opacity:0;pointer-events:none;text-align:center;padding:6vw}
+#end.on{opacity:1;pointer-events:auto;transition:opacity .9s ease-out}
+#end .k{font-size:min(1.8vmin,2.8vw);letter-spacing:.5em;text-transform:uppercase;opacity:0;color:#8e8a82}
+#end h1{margin-top:2.4vmin;font-size:min(9vmin,11vw);font-weight:200;letter-spacing:-.03em;line-height:1;opacity:0}
+#end h1 em{font-style:normal;background:linear-gradient(100deg,#c9a4ff,#ff9ec4 46%,#ffc07a);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#end a{margin-top:7vmin;font-size:min(2vmin,3.2vw);letter-spacing:.22em;text-transform:uppercase;
+  text-decoration:none;color:#000;background:#eee;padding:1.7vmin 4vmin;border-radius:99px;opacity:0}
+.fin{animation:fin 1s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes fin{from{opacity:0;transform:translateY(1.6vmin)}to{opacity:1;transform:none}}
+
+/* lancement */
+#go{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;background:#000;cursor:pointer;text-align:center;padding:6vw}
+#go.gone{opacity:0;pointer-events:none;transition:opacity .7s}
+#go .t{font-size:min(5.4vmin,7vw);font-weight:200;letter-spacing:-.02em}
+#go .d{margin-top:2.6vmin;font-size:min(2.1vmin,3.2vw);font-weight:300;letter-spacing:.2em;
+  text-transform:uppercase;opacity:.4}
+#go .pulse{margin-top:6vmin;width:min(9vmin,13vw);height:min(9vmin,13vw);border-radius:50%;
+  border:1px solid rgba(255,255,255,.3);animation:pl 2.2s ease-in-out infinite}
+@keyframes pl{0%,100%{transform:scale(1);opacity:.45}50%{transform:scale(1.14);opacity:1}}
+
+@media (prefers-reduced-motion:reduce){#man .sway,.pulse{animation:none}}
+</style>
+</head>
+<body>
+
+<div id="world">
+  <div id="room">
+    <svg class="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2b2724"/><stop offset="1" stop-color="#0d0c0b"/>
+        </linearGradient>
+        <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#17140f"/><stop offset="1" stop-color="#050504"/>
+        </linearGradient>
+        <linearGradient id="board" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1d2a24"/><stop offset="1" stop-color="#121a16"/>
+        </linearGradient>
+      </defs>
+
+      <rect width="1600" height="900" fill="url(#wall)"/>
+      <!-- sol en perspective -->
+      <polygon points="0,900 1600,900 1180,470 420,470" fill="url(#floor)"/>
+      <g stroke="#2a251e" stroke-width="1.1" opacity=".5">
+        <line x1="0" y1="900" x2="470" y2="470"/><line x1="330" y1="900" x2="610" y2="470"/>
+        <line x1="760" y1="900" x2="770" y2="470"/><line x1="1230" y1="900" x2="990" y2="470"/>
+        <line x1="1600" y1="900" x2="1130" y2="470"/>
+      </g>
+      <!-- tableau du fond -->
+      <rect x="560" y="300" width="480" height="165" rx="4" fill="url(#board)" stroke="#3a3229" stroke-width="2"/>
+      <g stroke="#6f7a6b" stroke-width="2" opacity=".32" stroke-linecap="round" fill="none">
+        <path d="M600 345 h130 M600 372 h86 M600 399 h150"/>
+        <circle cx="880" cy="372" r="38"/><path d="M842 372 h76 M880 334 v76"/>
+        <path d="M940 340 l44 56 M984 340 l-44 56"/>
+      </g>
+      <!-- fenetre avec stores, a gauche -->
+      <rect x="92" y="250" width="215" height="300" rx="3" fill="#0a1424" stroke="#332c24" stroke-width="3"/>
+      <g stroke="#9bb9e8" stroke-width="5" opacity=".3">
+        <line x1="96" y1="275" x2="303" y2="275"/><line x1="96" y1="313" x2="303" y2="313"/>
+        <line x1="96" y1="351" x2="303" y2="351"/><line x1="96" y1="389" x2="303" y2="389"/>
+        <line x1="96" y1="427" x2="303" y2="427"/><line x1="96" y1="465" x2="303" y2="465"/>
+        <line x1="96" y1="503" x2="303" y2="503"/>
+      </g>
+      <!-- posters decolles -->
+      <rect x="1310" y="255" width="150" height="205" fill="#272019" stroke="#3b3228" stroke-width="2" transform="rotate(2.5 1385 357)"/>
+      <path d="M1310 255 l32 26 l-32 20 z" fill="#0b0a09"/>
+      <g opacity=".28" stroke="#8d7f6c" stroke-width="2" fill="none" transform="rotate(2.5 1385 357)">
+        <ellipse cx="1385" cy="310" rx="26" ry="32"/><path d="M1385 342 v70 M1385 372 l-26 24 M1385 372 l26 24"/>
+      </g>
+      <!-- horloge : les aiguilles tournent a l'envers -->
+      <g id="clock" transform="translate(1180 215)">
+        <circle r="56" fill="#15120f" stroke="#473c30" stroke-width="4"/>
+        <circle r="46" fill="none" stroke="#2c251e" stroke-width="1.5"/>
+        <g stroke="#7d7566" stroke-width="3" stroke-linecap="round">
+          <line y1="-44" y2="-36"/><line x1="44" x2="36"/><line y1="44" y2="36"/><line x1="-44" x2="-36"/>
+        </g>
+        <line id="hh" y1="6" y2="-26" stroke="#cfc6b4" stroke-width="5" stroke-linecap="round"/>
+        <line id="mm" y1="8" y2="-40" stroke="#cfc6b4" stroke-width="3.4" stroke-linecap="round"/>
+        <circle r="4" fill="#cfc6b4"/>
+      </g>
+      <!-- tables, de travers -->
+      <g fill="#241e18" stroke="#3a3127" stroke-width="2">
+        <g transform="translate(470 500) rotate(-5)"><rect x="-95" y="-20" width="190" height="34" rx="3"/><rect x="-80" y="14" width="12" height="60" rx="2"/><rect x="68" y="14" width="12" height="60" rx="2"/></g>
+        <g transform="translate(830 512) rotate(3)"><rect x="-100" y="-20" width="200" height="35" rx="3"/><rect x="-85" y="15" width="12" height="62" rx="2"/><rect x="73" y="15" width="12" height="62" rx="2"/></g>
+        <g transform="translate(1170 498) rotate(-2)"><rect x="-92" y="-19" width="184" height="33" rx="3"/><rect x="-78" y="14" width="11" height="58" rx="2"/><rect x="67" y="14" width="11" height="58" rx="2"/></g>
+        <g transform="translate(330 640) rotate(6)"><rect x="-120" y="-24" width="240" height="42" rx="4"/><rect x="-100" y="18" width="14" height="78" rx="2"/><rect x="86" y="18" width="14" height="78" rx="2"/></g>
+        <g transform="translate(1290 655) rotate(-7)"><rect x="-124" y="-25" width="248" height="43" rx="4"/><rect x="-104" y="18" width="14" height="80" rx="2"/><rect x="90" y="18" width="14" height="80" rx="2"/></g>
+        <g transform="translate(760 760) rotate(2)"><rect x="-150" y="-30" width="300" height="52" rx="5"/><rect x="-126" y="22" width="17" height="96" rx="3"/><rect x="109" y="22" width="17" height="96" rx="3"/></g>
+      </g>
+    </svg>
+
+    <div id="spill"></div>
+    <div id="neon"></div>
+    <div id="blinds"></div>
+    <canvas id="dust"></canvas>
+
+    <svg id="man" viewBox="0 0 200 420" aria-hidden="true">
+      <g class="sway" fill="#000">
+        <ellipse cx="100" cy="46" rx="33" ry="39"/>
+        <path d="M100 84 c-12 0 -20 5 -24 13 l-32 14 c-16 7 -24 20 -26 38 l-8 86 c-1 11 3 17 11 18 l9 1 l5 134 c0 8 5 12 13 12 l14 0 c8 0 12 -5 12 -13 l6 -104 l4 0 l6 104 c0 8 4 13 12 13 l14 0 c8 0 13 -4 13 -12 l5 -134 l9 -1 c8 -1 12 -7 11 -18 l-8 -86 c-2 -18 -10 -31 -26 -38 l-32 -14 c-4 -8 -12 -13 -24 -13 z"/>
+      </g>
+    </svg>
+  </div>
+  <canvas id="grain"></canvas>
+</div>
+<div id="vig"></div>
+
+<div id="subs"><span id="sub"></span></div>
+<div id="ages"><div id="ageN">20</div></div>
+
+<div id="end">
+  <div class="k" id="eK">Escape game</div>
+  <h1 id="eH">Évolution de <em>l'âge</em></h1>
+  <a href="../stroop/" id="eA">Commencer l'énigme 3</a>
+</div>
+
+<div id="go">
+  <div class="t">Intro</div>
+  <div class="d">Touchez pour lancer · son compris</div>
+  <div class="pulse"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var body = document.body, world = $("world");
+var T = [];
+function at(ms, fn){ T.push(setTimeout(fn, ms)); }
+
+/* ---------- grain ---------- */
+(function(){
+  var n = 180, c = document.createElement("canvas");
+  c.width = c.height = n;
+  var x = c.getContext("2d"), im = x.createImageData(n,n), d = im.data;
+  for (var i=0;i<d.length;i+=4){ var v=(Math.random()*255)|0; d[i]=d[i+1]=d[i+2]=v; d[i+3]=255; }
+  x.putImageData(im,0,0);
+  $("grain").style.backgroundImage = "url(" + c.toDataURL("image/png") + ")";
+})();
+
+/* ---------- poussiere ---------- */
+(function(){
+  var cv = $("dust"), x = cv.getContext("2d"), P = [], W, H;
+  function size(){
+    W = cv.width = Math.round(innerWidth * Math.min(devicePixelRatio||1, 2));
+    H = cv.height = Math.round(innerHeight * Math.min(devicePixelRatio||1, 2));
+    cv.style.width = "100%"; cv.style.height = "100%";
+  }
+  size(); addEventListener("resize", size);
+  for (var i=0;i<110;i++){
+    P.push({x:Math.random(), y:Math.random(), r:Math.random()*1.8+.4,
+            vx:(Math.random()-.5)*.00018, vy:-Math.random()*.00022-.00004,
+            a:Math.random()*.5+.12, p:Math.random()*6.28});
+  }
+  (function loop(){
+    x.clearRect(0,0,W,H);
+    var t = Date.now()/1000;
+    for (var i=0;i<P.length;i++){
+      var p = P[i];
+      p.x += p.vx + Math.sin(t*.5 + p.p)*.00012;
+      p.y += p.vy;
+      if (p.y < -.02){ p.y = 1.02; p.x = Math.random(); }
+      if (p.x < -.02) p.x = 1.02; if (p.x > 1.02) p.x = -.02;
+      var k = .35 + .65*Math.max(0, 1 - Math.abs(p.x-.42)/.5);
+      x.beginPath();
+      x.arc(p.x*W, p.y*H, p.r*(W/1600)*2.2, 0, 6.2832);
+      x.fillStyle = "rgba(255,238,206," + (p.a*k*parseFloat(getComputedStyle(body).getPropertyValue("--lum")||0)).toFixed(3) + ")";
+      x.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ---------- son ---------- */
+var AC = null, master = null;
+function audio(){
+  if (AC) return AC;
+  var C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+  AC = new C();
+  master = AC.createGain(); master.gain.value = .9; master.connect(AC.destination);
+  return AC;
+}
+function drone(){
+  var a = audio(); if (!a) return;
+  [44, 66.5, 88].forEach(function(f, i){
+    var o = a.createOscillator(), g = a.createGain(), lp = a.createBiquadFilter();
+    o.type = "sine"; o.frequency.value = f;
+    lp.type = "lowpass"; lp.frequency.value = 180;
+    g.gain.value = 0;
+    o.connect(lp); lp.connect(g); g.connect(master);
+    o.start();
+    g.gain.linearRampToValueAtTime(.15 - i*.035, a.currentTime + 3);
+    g.gain.setValueAtTime(.15 - i*.035, a.currentTime + 12.6);
+    g.gain.linearRampToValueAtTime(0, a.currentTime + 14.4);
+    o.stop(a.currentTime + 15);
+  });
+}
+function buzz(){                       /* bourdonnement du neon */
+  var a = audio(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain(), bp = a.createBiquadFilter();
+  o.type = "sawtooth"; o.frequency.value = 100;
+  bp.type = "bandpass"; bp.frequency.value = 2400; bp.Q.value = 6;
+  g.gain.value = 0;
+  o.connect(bp); bp.connect(g); g.connect(master);
+  o.start();
+  g.gain.linearRampToValueAtTime(.022, a.currentTime + .4);
+  g.gain.setValueAtTime(.022, a.currentTime + 11.5);
+  g.gain.linearRampToValueAtTime(0, a.currentTime + 13);
+  o.stop(a.currentTime + 13.5);
+}
+function noiseBurst(dur, cut, vol){     /* flash, impact */
+  var a = audio(); if (!a) return;
+  var len = Math.max(1, Math.floor(a.sampleRate*dur));
+  var b = a.createBuffer(1, len, a.sampleRate), ch = b.getChannelData(0);
+  for (var i=0;i<len;i++) ch[i] = (Math.random()*2-1) * (1 - i/len);
+  var s = a.createBufferSource(); s.buffer = b;
+  var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = cut;
+  var g = a.createGain(); g.gain.value = vol;
+  s.connect(lp); lp.connect(g); g.connect(master);
+  s.start();
+}
+function tick(hi){                      /* tic-tac */
+  var a = audio(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = "square"; o.frequency.value = hi ? 2100 : 1500;
+  g.gain.value = 0;
+  o.connect(g); g.connect(master);
+  var t = a.currentTime;
+  g.gain.linearRampToValueAtTime(.05, t + .004);
+  g.gain.exponentialRampToValueAtTime(.0001, t + .05);
+  o.start(t); o.stop(t + .06);
+}
+function thump(){
+  var a = audio(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(110, a.currentTime);
+  o.frequency.exponentialRampToValueAtTime(32, a.currentTime + .5);
+  g.gain.setValueAtTime(.5, a.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + .8);
+  o.connect(g); g.connect(master);
+  o.start(); o.stop(a.currentTime + .9);
+}
+
+/* ---------- utilitaires scene ---------- */
+function lum(v){ body.style.setProperty("--lum", v); }
+function zoom(v, ms){
+  world.style.transition = "transform " + ms + "ms linear";
+  world.style.setProperty("--z", v);
+}
+function say(txt){
+  var s = $("sub");
+  s.className = ""; void s.offsetWidth;
+  s.textContent = txt;
+  s.classList.add("on");
+}
+function unsay(){ var s = $("sub"); s.classList.remove("on"); s.classList.add("off"); }
+function flash(on, ms){ lum(on); if (ms) at(ms, function(){ lum(0); }); }
+
+/* horloge a l'envers */
+var clockOn = false, cAng = 0, cSpeed = 1;
+(function spin(){
+  if (clockOn){
+    cAng -= cSpeed;
+    $("mm").setAttribute("transform", "rotate(" + cAng + ")");
+    $("hh").setAttribute("transform", "rotate(" + (cAng/12) + ")");
+  }
+  requestAnimationFrame(spin);
+})();
+
+/* ---------- le film ---------- */
+function run(){
+  drone();
+
+  /* 0 - 2.2 s : le neon cherche a s'allumer */
+  at(500,  function(){ flash(.9, 70);  noiseBurst(.05, 4000, .22); });
+  at(760,  function(){ flash(.35, 50); noiseBurst(.03, 3000, .12); });
+  at(1250, function(){ flash(1, 110);  noiseBurst(.06, 5000, .26); });
+  at(1500, function(){ flash(.2, 60); });
+  at(1900, function(){
+    lum(.92); buzz(); clockOn = true;
+    zoom(1.16, 11000);
+  });
+  /* micro-clignotements pour que le neon reste vivant */
+  [2600, 3400, 5200, 7100, 9300].forEach(function(t){
+    at(t, function(){ lum(.5); });
+    at(t + 55, function(){ lum(.92); });
+  });
+
+  /* tic-tac */
+  var tk = 2200;
+  while (tk < 10400){ (function(t){ at(t, function(){ tick(false); }); })(tk); tk += 1000; }
+
+  /* 3.4 s : la silhouette sort de l'ombre */
+  at(3300, function(){ $("man").classList.add("in"); });
+
+  /* sous-titres */
+  at(3900,  function(){ say("Tu entres ici à vingt ans."); });
+  at(6500,  unsay);
+  at(6900,  function(){ say("Tu en ressortiras à quatre-vingts."); });
+  at(9400,  unsay);
+  at(9800,  function(){ say("Si tu ressors."); });
+  at(11600, unsay);
+
+  /* 10.4 s : les decennies defilent, tout se degrade */
+  var ages = [[10500,20],[11250,40],[11950,65],[12650,80]];
+  ages.forEach(function(p, i){
+    at(p[0], function(){
+      var n = $("ageN");
+      n.textContent = p[1];
+      n.classList.remove("hit"); void n.offsetWidth; n.classList.add("hit");
+      body.style.setProperty("--age", (i+1)/4);
+      cSpeed = 1 + i*7;
+      noiseBurst(.09, 1800, .2);
+      tick(true);
+    });
+  });
+
+  /* 13.4 s : coupure nette */
+  at(13350, function(){
+    lum(0); clockOn = false; thump();
+    body.style.setProperty("--age", 0);
+  });
+  at(13900, function(){ $("end").classList.add("on"); });
+  at(14300, function(){ $("eK").classList.add("fin"); });
+  at(14600, function(){ $("eH").classList.add("fin"); });
+  at(15400, function(){ $("eA").classList.add("fin"); });
+}
+
+/* ---------- lancement ---------- */
+function start(){
+  audio();
+  $("go").classList.add("gone");
+  at(700, run);
+}
+$("go").addEventListener("click", start);
+document.addEventListener("keydown", function(e){
+  if (e.code === "Space" || e.key === "Enter"){ e.preventDefault(); if (!AC) start(); }
+  if (e.key && e.key.toLowerCase() === "f"){
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  }
+});
+})();
+</script>
+</body>
+</html>
