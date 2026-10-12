@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; media-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; media-src 'self' blob:; connect-src 'self' blob:; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="robots" content="noindex,nofollow">
 <title>Intro — Évolution de l'âge</title>
@@ -224,6 +224,17 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 #go .pulse{margin-top:5vmin;width:min(9vmin,13vw);height:min(9vmin,13vw);border-radius:50%;
   border:1px solid rgba(255,255,255,.3);animation:pl 2.4s ease-in-out infinite}
 @keyframes pl{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.16);opacity:1}}
+
+#rec{margin-top:3.4vmin;font:inherit;font-size:min(1.6vmin,2.6vw);letter-spacing:.2em;
+  text-transform:uppercase;cursor:pointer;color:#bbb;padding:1.1vmin 2.8vmin;border-radius:99px;
+  border:1px solid rgba(255,255,255,.2);background:transparent;transition:all .25s}
+#rec:hover{color:#000;background:#eee;border-color:#eee}
+#recDot{position:fixed;top:2.4vmin;left:2.6vmin;z-index:21;display:none;align-items:center;gap:1vmin;
+  font-size:min(1.5vmin,2.4vw);letter-spacing:.2em;text-transform:uppercase;color:#ff6b5e}
+#recDot.on{display:flex}
+#recDot i{width:1.4vmin;height:1.4vmin;min-width:8px;min-height:8px;border-radius:50%;background:#ff3b30;
+  animation:recBlink 1.1s ease-in-out infinite}
+@keyframes recBlink{0%,100%{opacity:1}50%{opacity:.25}}
 
 @media (prefers-reduced-motion:reduce){#breath,#head,#armR,#armL,.pulse{animation:none}}
 </style>
@@ -460,7 +471,9 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
   <div class="d">Touchez pour lancer · son compris</div>
   <div class="w">Montez le son. Flashes lumineux, et un sursaut à la fin.</div>
   <div class="pulse"></div>
+  <button id="rec">Enregistrer en vidéo</button>
 </div>
+<div id="recDot"><i></i>Enregistrement</div>
 
 <script>
 (function(){
@@ -474,28 +487,28 @@ function rnd(a, b){ return a + Math.random()*(b-a); }
 /* =====================================================================
    SON
    ===================================================================== */
-var AC = null, master = null, hallIn = null, echoIn = null, choke = null;
+var AC = null, master = null, hallIn = null, echoIn = null, choke = null, bus = null;
 
 function audio(){
   if (AC) return AC;
   var C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
   AC = new C();
 
-  var comp = AC.createDynamicsCompressor();
-  comp.threshold.value = -15; comp.knee.value = 22; comp.ratio.value = 3.6;
-  comp.attack.value = .005; comp.release.value = .2;
-  comp.connect(AC.destination);
+  bus = AC.createDynamicsCompressor();
+  bus.threshold.value = -15; bus.knee.value = 22; bus.ratio.value = 3.6;
+  bus.attack.value = .005; bus.release.value = .2;
+  bus.connect(AC.destination);
 
   /* tout le son passe par la : en fermant ce filtre, on etouffe la piece */
   choke = AC.createBiquadFilter(); choke.type = "lowpass";
   choke.frequency.value = 20000; choke.Q.value = .4;
-  choke.connect(comp);
+  choke.connect(bus);
   master = AC.createGain(); master.gain.value = .9; master.connect(choke);
 
   /* grande reverberation sombre */
   var hall = AC.createConvolver(); hall.buffer = impulse(3.2, 3.1, 1800);
   var hw = AC.createGain(); hw.gain.value = .55;
-  hall.connect(hw); hw.connect(comp);
+  hall.connect(hw); hw.connect(bus);
   hallIn = AC.createGain(); hallIn.connect(hall);
 
   /* echo de couloir */
@@ -503,7 +516,7 @@ function audio(){
   var fb = AC.createGain(); fb.gain.value = .34;
   var dlp = AC.createBiquadFilter(); dlp.type = "lowpass"; dlp.frequency.value = 1400;
   var dw = AC.createGain(); dw.gain.value = .4;
-  dl.connect(dlp); dlp.connect(fb); fb.connect(dl); dlp.connect(dw); dw.connect(comp);
+  dl.connect(dlp); dlp.connect(fb); fb.connect(dl); dlp.connect(dw); dw.connect(bus);
   echoIn = AC.createGain(); echoIn.connect(dl);
   return AC;
 }
@@ -1429,6 +1442,58 @@ function start(){
   $("go").classList.add("gone");
   at(900, run);
 }
+/* ---------- enregistrement : image de l'onglet, son pris a la source ---------- */
+var recorder = null, recChunks = [];
+function canRecord(){
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && window.MediaRecorder);
+}
+function recStart(){
+  if (!canRecord()){
+    $("rec").textContent = "Enregistrement non géré ici — utilisez Chrome";
+    return;
+  }
+  audio();
+  navigator.mediaDevices.getDisplayMedia({
+    video: { frameRate: 60, width: { ideal: 1920 }, height: { ideal: 1080 } },
+    audio: false
+  }).then(function(disp){
+    var dest = AC.createMediaStreamDestination();
+    bus.connect(dest);
+    var ms = new MediaStream(disp.getVideoTracks().concat(dest.stream.getAudioTracks()));
+    var types = ["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"];
+    var mt = "";
+    for (var i=0;i<types.length;i++){
+      if (MediaRecorder.isTypeSupported(types[i])){ mt = types[i]; break; }
+    }
+    recorder = new MediaRecorder(ms, mt
+      ? { mimeType: mt, videoBitsPerSecond: 14000000, audioBitsPerSecond: 192000 }
+      : undefined);
+    recChunks = [];
+    recorder.ondataavailable = function(e){ if (e.data && e.data.size) recChunks.push(e.data); };
+    recorder.onstop = function(){
+      disp.getTracks().forEach(function(tr){ tr.stop(); });
+      $("recDot").classList.remove("on");
+      var blob = new Blob(recChunks, { type: mt || "video/webm" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "intro-evolution-de-l-age.webm";
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+    };
+    /* si l'utilisateur coupe le partage, on cloture proprement */
+    disp.getVideoTracks()[0].addEventListener("ended", function(){
+      if (recorder && recorder.state === "recording") recorder.stop();
+    });
+    recorder.start();
+    $("recDot").classList.add("on");
+    var el = document.documentElement;
+    if (el.requestFullscreen){ el.requestFullscreen().catch(function(){}); }
+    start();
+    at(46000, function(){ if (recorder && recorder.state === "recording") recorder.stop(); });
+  }).catch(function(){ /* partage refuse : on ne fait rien */ });
+}
+$("rec").addEventListener("click", function(e){ e.stopPropagation(); recStart(); });
+
 $("go").addEventListener("click", start);
 document.addEventListener("keydown", function(e){
   if (e.code === "Space" || e.key === "Enter"){ e.preventDefault(); start(); return; }
