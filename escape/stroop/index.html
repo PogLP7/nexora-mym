@@ -3,145 +3,179 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="robots" content="noindex,nofollow">
 <title>Énigme 3 — Ne crois pas ce que tu lis</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
+html,body{height:100%;overflow:hidden;background:#06040c;overscroll-behavior:none}
 body{
-  background:#06070c;color:#eef1fa;overflow:hidden;
   font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;user-select:none;
+  color:#f4f1fa;-webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
   --age:0;
-  --rouge:hsl(6 78% calc(54% - var(--age)*4%));
-  --orange:hsl(30 92% calc(55% - var(--age)*3%));
-  --jaune:hsl(46 94% calc(58% - var(--age)*2%));
-  --vert:hsl(140 58% calc(48% + var(--age)*2%));
-  --bleu:hsl(218 76% calc(58% + var(--age)*2%));
-  --violet:hsl(272 64% calc(62% + var(--age)*2%));
+  --rouge:hsl(6 78% 54%); --orange:hsl(30 92% 55%); --jaune:hsl(46 94% 56%);
+  --vert:hsl(140 58% 46%); --bleu:hsl(218 76% 58%); --violet:hsl(272 64% 62%);
 }
-/* la perception des couleurs se dégrade avec l'âge : jaunissement du cristallin */
+
+/* ===== FOND ===== */
+#glow{position:fixed;inset:-30%;z-index:0;filter:blur(11vmin);opacity:.52}
+.g{position:absolute;border-radius:48% 52% 56% 44%;mix-blend-mode:screen;will-change:transform}
+.g1{width:66vmin;height:66vmin;left:0;top:-4%;background:radial-gradient(circle,hsl(272 90% 58%),transparent 66%);animation:gf1 19s ease-in-out infinite}
+.g2{width:74vmin;height:74vmin;right:-6%;bottom:-10%;background:radial-gradient(circle,hsl(330 88% 56%),transparent 66%);animation:gf2 24s ease-in-out infinite}
+.g3{width:56vmin;height:56vmin;left:34%;top:30%;background:radial-gradient(circle,hsl(30 90% 56%),transparent 70%);animation:gf3 16s ease-in-out infinite}
+@keyframes gf1{0%,100%{transform:translate(0,0) scale(1) rotate(0)}50%{transform:translate(18vmin,13vmin) scale(1.22) rotate(70deg)}}
+@keyframes gf2{0%,100%{transform:translate(0,0) scale(1.08) rotate(0)}50%{transform:translate(-17vmin,-14vmin) scale(.86) rotate(-60deg)}}
+@keyframes gf3{0%,100%{transform:translate(0,0) scale(.9) rotate(0)}50%{transform:translate(-13vmin,16vmin) scale(1.25) rotate(50deg)}}
+
+/* vieillissement de la perception : seulement pendant le defile */
 #tint{position:fixed;inset:0;z-index:30;pointer-events:none;
-  backdrop-filter:saturate(calc(100% - var(--age)*52%)) sepia(calc(var(--age)*34%)) blur(calc(var(--age)*.14vmin));
-  -webkit-backdrop-filter:saturate(calc(100% - var(--age)*52%)) sepia(calc(var(--age)*34%));
-  transition:backdrop-filter 1.6s cubic-bezier(.4,0,.2,1)}
+  backdrop-filter:saturate(calc(100% - var(--age)*54%)) sepia(calc(var(--age)*36%)) blur(calc(var(--age)*.3vmin));
+  -webkit-backdrop-filter:saturate(calc(100% - var(--age)*54%)) sepia(calc(var(--age)*36%));
+  transition:backdrop-filter 1.2s cubic-bezier(.4,0,.2,1)}
 #vig{position:fixed;inset:0;z-index:31;pointer-events:none;
-  background:radial-gradient(ellipse calc(98% - var(--age)*26%) calc(98% - var(--age)*28%) at 50% 50%,transparent 46%,rgba(3,4,9,calc(.16 + var(--age)*.52)) 100%);
-  transition:background 1.6s}
+  background:radial-gradient(ellipse calc(98% - var(--age)*34%) calc(98% - var(--age)*36%) at 50% 50%,transparent 44%,rgba(4,2,9,calc(.16 + var(--age)*.56)) 100%);
+  transition:background 1.2s}
 
-/* fond */
-#glow{position:fixed;inset:-25%;z-index:0;filter:blur(13vmin);opacity:.5}
-.g{position:absolute;border-radius:50%;mix-blend-mode:screen}
-.g1{width:62vmin;height:62vmin;left:2%;top:0;background:radial-gradient(circle,#2f6fe0,transparent 66%);animation:gf1 38s ease-in-out infinite}
-.g2{width:70vmin;height:70vmin;right:0;bottom:-10%;background:radial-gradient(circle,#8a4fd8,transparent 66%);animation:gf2 44s ease-in-out infinite}
-@keyframes gf1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(16vmin,10vmin) scale(1.16)}}
-@keyframes gf2{0%,100%{transform:translate(0,0) scale(1.08)}50%{transform:translate(-14vmin,-12vmin) scale(.9)}}
-
-/* ====== VUES ====== */
+/* ===== VUES ===== */
 .view{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;padding:4vmin}
 .view.on{display:flex}
 
-/* --- règle d'ouverture --- */
-#v-rule h1{font-size:7.6vmin;font-weight:200;letter-spacing:-.02em;line-height:1.08;text-align:center;max-width:22ch}
+/* --- 1. la regle --- */
+#v-rule h1{font-size:min(7.6vmin,8.6vw);font-weight:200;letter-spacing:-.025em;line-height:1.1;text-align:center;max-width:20ch}
 #v-rule h1 em{font-style:normal;background:linear-gradient(100deg,var(--rouge),var(--orange) 30%,var(--jaune) 48%,var(--vert) 66%,var(--bleu) 82%,var(--violet));
   -webkit-background-clip:text;background-clip:text;color:transparent}
-#v-rule p{margin-top:4.5vmin;font-size:2.8vmin;font-weight:300;letter-spacing:.04em;opacity:.66;text-align:center;max-width:52ch;line-height:1.5}
 
-/* --- mur de cartes --- */
-#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2.6vmin;width:min(92vw,148vh,164vmin)}
-@media (max-aspect-ratio:1/1){#grid{grid-template-columns:repeat(2,1fr);width:min(92vw,64vh)}}
-.card{position:relative;aspect-ratio:1.414/1;border-radius:2.2vmin;background:#fbfaf7;
+/* --- 2. le defile --- */
+#ageBadge{position:fixed;top:0;left:0;right:0;z-index:25;display:none;
+  flex-direction:column;align-items:center;padding-top:5vmin;pointer-events:none}
+#ageBadge.on{display:flex}
+#ageBig{font-size:min(13vmin,16vw);font-weight:200;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+#ageLbl{font-size:min(2.6vmin,3.4vw);letter-spacing:.44em;text-transform:uppercase;opacity:.5;margin-top:.8vmin;padding-left:.44em}
+.bump{animation:bump .7s cubic-bezier(.16,1,.3,1)}
+@keyframes bump{0%{transform:scale(.7);opacity:0;filter:blur(1.4vmin)}60%{transform:scale(1.07)}100%{transform:scale(1);opacity:1}}
+#solo{font-size:min(21vmin,26vw);font-weight:700;letter-spacing:.02em;line-height:1;text-align:center}
+#soloSub{margin-top:5vmin;font-size:min(2.3vmin,3.2vw);letter-spacing:.3em;text-transform:uppercase;opacity:.34;text-align:center}
+.pop{animation:pop .45s cubic-bezier(.16,1,.3,1) both}
+@keyframes pop{from{opacity:0;transform:scale(1.1)}to{opacity:1;transform:none}}
+#runbar{position:fixed;left:0;bottom:0;height:.45vmin;background:rgba(255,255,255,.5);width:0;z-index:26}
+
+/* --- 3. le mur jouable --- */
+#v-wall{justify-content:space-between;padding:3vmin 3vmin 2.4vmin}
+.htitle{font-size:min(2.4vmin,3.3vw);letter-spacing:.2em;text-transform:uppercase;opacity:.45;text-align:center}
+.htitle b{color:#fff;opacity:1;font-weight:600}
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vmin;width:min(92vw,112vh)}
+@media (max-aspect-ratio:1/1){#grid{grid-template-columns:repeat(2,1fr);width:min(92vw,52vh)}}
+.card{position:relative;aspect-ratio:1.414/1;border-radius:1.6vmin;background:#fbfaf7;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2vmin 5vmin rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.07);
-  opacity:0;transform:translateY(5vmin) scale(.94) rotate(var(--rot,0deg));
-  animation:cIn .72s cubic-bezier(.16,1,.3,1) forwards;animation-delay:var(--d,0s);
-  transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
-@keyframes cIn{to{opacity:1;transform:translateY(0) scale(1) rotate(var(--rot,0deg))}}
-.card:hover{transform:translateY(-1.2vmin) scale(1.035) rotate(0deg);box-shadow:0 3.4vmin 7vmin rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.12)}
-.card .word{font-size:7.4vmin;font-weight:700;letter-spacing:.03em;line-height:1}
-.card .tag{position:absolute;right:1.6vmin;bottom:1.1vmin;font-size:2.3vmin;font-weight:700;opacity:.9}
-.card .pin{position:absolute;left:50%;top:-1.1vmin;transform:translateX(-50%);width:3.2vmin;height:2.2vmin;border-radius:.4vmin;
-  background:linear-gradient(180deg,#d9dbe4,#a9adbb);box-shadow:0 .5vmin 1vmin rgba(0,0,0,.4)}
+  box-shadow:0 1.4vmin 3.4vmin rgba(0,0,0,.5);
+  transition:transform .28s cubic-bezier(.16,1,.3,1),box-shadow .28s,opacity .28s}
+.card .word{font-size:min(4.4vmin,5.4vw);font-weight:700;letter-spacing:.02em;line-height:1}
+.card .tag{position:absolute;right:1vmin;bottom:.6vmin;font-size:min(1.9vmin,2.5vw);font-weight:700;opacity:.9}
+.card.sel{transform:translateY(-1.4vmin) scale(1.06);box-shadow:0 2.6vmin 5vmin rgba(0,0,0,.6),0 0 0 .4vmin rgba(255,255,255,.85)}
+.card.gone{opacity:0;transform:scale(.8);pointer-events:none}
 
-/* --- légende arc-en-ciel --- */
-#legend{display:flex;gap:1.4vmin;margin-top:5vmin;flex-wrap:wrap;justify-content:center}
-.lg{display:flex;align-items:center;gap:1vmin;padding:1.1vmin 2.2vmin;border-radius:99px;
-  border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.045);font-size:2vmin;letter-spacing:.1em;text-transform:uppercase}
-.lg b{font-size:2.4vmin;opacity:.45;font-weight:500;font-variant-numeric:tabular-nums}
-.sw{width:2.4vmin;height:2.4vmin;border-radius:50%;box-shadow:0 0 2.4vmin currentColor}
+#rack{display:flex;gap:1.2vmin;justify-content:center;flex-wrap:wrap;width:min(96vw,120vh)}
+.slot{position:relative;flex:1 1 0;min-width:min(13vmin,15vw);max-width:17vmin;aspect-ratio:1.414/1;
+  border-radius:1.4vmin;border:1px dashed rgba(255,255,255,.26);background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:border-color .22s,background .22s,transform .22s}
+.slot .idx{position:absolute;top:-2.9vmin;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:.7vmin;font-size:min(1.7vmin,2.3vw);opacity:.6}
+.slot .dot{width:1.5vmin;height:1.5vmin;min-width:7px;min-height:7px;border-radius:50%}
+.slot.hot{border-color:rgba(255,255,255,.75);background:rgba(255,255,255,.12);transform:translateY(-.6vmin)}
+.slot.full{border-style:solid;border-color:transparent;background:#fbfaf7}
+.slot .word{font-size:min(2.9vmin,3.6vw);font-weight:700;line-height:1}
+#rack.ok .slot{box-shadow:0 0 0 .3vmin hsl(140 70% 55% / .9)}
+#rack.ko{animation:no .5s cubic-bezier(.36,.07,.19,.97)}
+#rack.ko .slot.bad{box-shadow:0 0 0 .3vmin hsl(2 82% 58% / .9)}
+@keyframes no{10%,90%{transform:translateX(-1.2vmin)}30%,70%{transform:translateX(1.8vmin)}50%{transform:translateX(-1.8vmin)}}
 
-/* --- défilé plein écran --- */
-#solo{font-size:min(26vmin,34vw);font-weight:700;letter-spacing:.02em;line-height:1;text-align:center}
-#soloTag{margin-top:5vmin;font-size:2.4vmin;letter-spacing:.34em;text-transform:uppercase;opacity:.3}
-.pop{animation:pop .5s cubic-bezier(.16,1,.3,1) both}
-@keyframes pop{from{opacity:0;transform:scale(1.1) translateY(2vmin);filter:blur(1.4vmin)}to{opacity:1;transform:none;filter:none}}
+#act{display:flex;align-items:center;gap:1.6vmin;min-height:7vmin}
+#act button{font:inherit;font-size:min(2.2vmin,3vw);letter-spacing:.18em;text-transform:uppercase;cursor:pointer;
+  color:#f4f1fa;padding:1.5vmin 3.4vmin;border-radius:99px;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);transition:background .2s,transform .14s,opacity .2s}
+#act button:active{transform:scale(.95)}
+#act button.go{background:#f4f1fa;color:#120a1c;border-color:#f4f1fa;font-weight:600}
+#act button.go:disabled{opacity:.25;background:rgba(255,255,255,.06);color:#f4f1fa;border-color:rgba(255,255,255,.2)}
 
-/* --- barre --- */
-#bar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:1.4vmin;justify-content:center;padding:2.6vmin;
-  font-size:1.7vmin;letter-spacing:.17em;text-transform:uppercase}
-#bar button{font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;color:#eef1fa;
-  padding:1.2vmin 2.6vmin;border-radius:99px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);
-  transition:background .25s,border-color .25s,transform .18s}
-#bar button:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
-#bar button:active{transform:scale(.96)}
-#bar button.on{background:#eef1fa;color:#06070c;border-color:#eef1fa}
-#age{position:fixed;top:3vmin;right:3.4vmin;z-index:50;font-size:1.7vmin;letter-spacing:.17em;text-transform:uppercase;opacity:.4}
+/* --- 4. resolution --- */
+#letters{display:flex;gap:1.6vmin;justify-content:center;margin-bottom:5vmin}
+.lt{width:min(11vmin,13vw);height:min(14vmin,17vw);border-radius:1.4vmin;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);
+  display:flex;align-items:center;justify-content:center;
+  font-size:min(7vmin,8.4vw);font-weight:700;opacity:0;transform:translateY(2vmin) scale(.9)}
+.lt.on{animation:ltIn .5s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes ltIn{to{opacity:1;transform:none}}
+#orb{width:min(30vmin,38vw);height:min(30vmin,38vw);border-radius:50%;
+  background:radial-gradient(circle at 36% 34%,hsl(32 100% 68%),hsl(26 92% 48%) 64%,hsl(20 86% 38%));
+  box-shadow:0 0 14vmin hsl(30 95% 55% / .6),inset 0 -2vmin 5vmin rgba(0,0,0,.3);
+  animation:pulse 3.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+#v-done h2{font-size:min(8vmin,9vw);font-weight:200;letter-spacing:.1em;text-transform:uppercase;margin-top:5vmin}
+#v-done p{margin-top:2.6vmin;font-size:min(3vmin,4vw);font-weight:300;opacity:.7;text-align:center;max-width:34ch;line-height:1.5}
 
-/* ====== IMPRESSION : 6 cartes A5, une par page ====== */
+#legend{display:flex;gap:1vmin;justify-content:center;flex-wrap:wrap}
+.lg{display:flex;align-items:center;gap:.8vmin;padding:.9vmin 1.8vmin;border-radius:99px;
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);
+  font-size:min(1.8vmin,2.5vw);letter-spacing:.1em;text-transform:uppercase}
+.lg b{opacity:.45;font-weight:500;font-variant-numeric:tabular-nums}
+.sw{width:1.7vmin;height:1.7vmin;min-width:8px;min-height:8px;border-radius:50%}
+
 #print{display:none}
 @media print{
   @page{size:A5 landscape;margin:0}
   html,body{height:auto;overflow:visible;background:#fff;color:#000}
-  #glow,#tint,#vig,#bar,#age,.view{display:none!important}
+  #glow,#tint,#vig,.view,#ageBadge,#runbar{display:none!important}
   #print{display:block}
-  .p-card{width:210mm;height:148mm;page-break-after:always;position:relative;
-    display:flex;align-items:center;justify-content:center;background:#fff}
+  .p-card{width:210mm;height:148mm;page-break-after:always;position:relative;display:flex;align-items:center;justify-content:center;background:#fff}
   .p-word{font-size:62mm;font-weight:800;letter-spacing:1mm;line-height:1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .p-tag{position:absolute;right:12mm;bottom:9mm;font-size:16mm;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .p-cut{position:absolute;inset:6mm;border:.4mm dashed #ccc;border-radius:4mm}
-  .p-legend{width:210mm;height:148mm;padding:18mm;page-break-after:always;font-family:inherit}
+  .p-legend{width:210mm;height:148mm;padding:18mm;page-break-after:always}
   .p-legend h2{font-size:11mm;font-weight:800;margin-bottom:4mm}
   .p-legend p{font-size:5.4mm;margin-bottom:9mm;color:#444}
   .p-row{display:flex;align-items:center;gap:6mm;margin-bottom:5.5mm;font-size:7.5mm;font-weight:700}
   .p-dot{width:11mm;height:11mm;border-radius:50%;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .p-num{width:10mm;font-size:8mm;color:#999}
 }
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 </style>
 </head>
 <body>
 
-<div id="glow"><div class="g g1"></div><div class="g g2"></div></div>
+<div id="glow"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div></div>
 <div id="tint"></div>
 <div id="vig"></div>
-<div id="age">20 ans</div>
 
-<!-- 1. La règle -->
+<div id="ageBadge"><div id="ageBig">20</div><div id="ageLbl">ans</div></div>
+<div id="runbar"></div>
+
 <section class="view on" id="v-rule">
   <h1>Ne crois pas<br>ce que tu <em>lis</em>.<br>Crois ce que tu <em>vois</em>.</h1>
-  <p>Six cartes. Six encres. Classez-les par la couleur de l'encre,<br>jamais par le mot.</p>
 </section>
 
-<!-- 2. Le mur -->
+<section class="view" id="v-solo">
+  <div id="solo">—</div>
+  <div id="soloSub">Regardez la couleur de l'encre</div>
+</section>
+
 <section class="view" id="v-wall">
+  <div class="htitle" id="wallTitle">Rangez les cartes par la <b>couleur de l'encre</b></div>
   <div id="grid"></div>
+  <div id="rack"></div>
+  <div id="act">
+    <button id="bReset">Tout retirer</button>
+    <button id="bGo" class="go" disabled>Valider</button>
+  </div>
   <div id="legend"></div>
 </section>
 
-<!-- 3. Le défilé (version orale, chronométrée) -->
-<section class="view" id="v-solo">
-  <div id="solo">—</div>
-  <div id="soloTag">Nommez la couleur de l'encre</div>
+<section class="view" id="v-done">
+  <div id="letters"></div>
+  <div id="orb"></div>
+  <h2>Salle orange</h2>
+  <p>Le nombre est affiché dans cette salle.<br>Allez le chercher.</p>
 </section>
-
-<div id="bar">
-  <button data-go="v-rule">Règle</button>
-  <button data-go="v-wall" class="on">Le mur</button>
-  <button data-go="v-solo">Défilé</button>
-  <button id="bAge">Vieillir</button>
-  <button id="bPrint">Imprimer les cartes</button>
-</div>
 
 <div id="print"></div>
 
@@ -149,7 +183,6 @@ body{
 (function(){
 "use strict";
 
-/* mot affiché / couleur de l'encre / lettre cachée */
 var CARDS = [
   {word:"VERT",   ink:"rouge",  letter:"O"},
   {word:"BLEU",   ink:"orange", letter:"R"},
@@ -158,107 +191,217 @@ var CARDS = [
   {word:"ROUGE",  ink:"bleu",   letter:"G"},
   {word:"JAUNE",  ink:"violet", letter:"E"}
 ];
-/* ordre arc-en-ciel = ordre de classement attendu -> O R A N G E */
 var RAINBOW = ["rouge","orange","jaune","vert","bleu","violet"];
-/* encres pour l'impression : saturées, lisibles sur blanc */
 var PRINT_INK = {rouge:"#d8261a",orange:"#e87b0c",jaune:"#d8a200",vert:"#1f8f3e",bleu:"#1b55c9",violet:"#7b36cc"};
-/* ordre d'affichage au mur : mélangé, surtout pas l'ordre solution */
 var WALL = [2,5,0,3,1,4];
 
+/* defile : une carte toutes les 5 s, l'age monte -> 30 s en tout */
+var RUN = [
+  {card:WALL[0], age:20, a:0},
+  {card:WALL[1], age:40, a:.3},
+  {card:WALL[2], age:65, a:.62},
+  {card:WALL[3], age:65, a:.68},
+  {card:WALL[4], age:80, a:1},
+  {card:WALL[5], age:80, a:1}
+];
+var STEP = 5000;
+
 var $ = function(id){ return document.getElementById(id); };
-var body = document.body;
+var body = document.body, timers = [];
+function at(ms,fn){ timers.push(setTimeout(fn,ms)); }
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+function show(id){
+  var v = document.querySelectorAll(".view");
+  for (var i=0;i<v.length;i++) v[i].classList.remove("on");
+  $(id).classList.add("on");
+}
+function setAge(a){ body.style.setProperty("--age", a); }
 
-/* ---- mur ---- */
+/* ---------- impression ---------- */
 (function(){
-  var g = $("grid"), html = "";
-  WALL.forEach(function(i,k){
-    var c = CARDS[i], rot = (((k*37)%7)-3)*0.55;
-    html += '<div class="card" style="--d:' + (0.08*k).toFixed(2) + 's;--rot:' + rot.toFixed(2) + 'deg">'
-          +   '<div class="pin"></div>'
-          +   '<div class="word" style="color:var(--' + c.ink + ')">' + c.word + '</div>'
-          +   '<div class="tag"  style="color:var(--' + c.ink + ')">' + c.letter + '</div>'
-          + '</div>';
-  });
-  g.innerHTML = html;
-
-  var l = $("legend"), lh = "";
+  var h = '<div class="p-legend"><h2>Ne crois pas ce que tu lis. Crois ce que tu vois.</h2>'
+        + "<p>Classez les six cartes par la <b>couleur de l'encre</b>, dans l'ordre ci-dessous.</p>";
   RAINBOW.forEach(function(ink,i){
-    lh += '<div class="lg"><span class="sw" style="background:var(--' + ink + ');color:var(--' + ink + ')"></span>'
-       +  '<b>' + (i+1) + '</b>' + ink + '</div>';
+    h += '<div class="p-row"><span class="p-num">'+(i+1)+'</span><span class="p-dot" style="background:'+PRINT_INK[ink]+'"></span>'+ink.toUpperCase()+"</div>";
   });
-  l.innerHTML = lh;
-})();
-
-/* ---- impression ---- */
-(function(){
-  var h = "";
-  h += '<div class="p-legend"><h2>Ne crois pas ce que tu lis. Crois ce que tu vois.</h2>'
-     + '<p>Classez les six cartes par la <b>couleur de l\'encre</b>, dans l\'ordre ci-dessous.</p>';
-  RAINBOW.forEach(function(ink,i){
-    h += '<div class="p-row"><span class="p-num">' + (i+1) + '</span>'
-       + '<span class="p-dot" style="background:' + PRINT_INK[ink] + '"></span>' + ink.toUpperCase() + '</div>';
-  });
-  h += '</div>';
+  h += "</div>";
   WALL.forEach(function(i){
     var c = CARDS[i], col = PRINT_INK[c.ink];
-    h += '<div class="p-card"><div class="p-cut"></div>'
-       +   '<div class="p-word" style="color:' + col + '">' + c.word + '</div>'
-       +   '<div class="p-tag"  style="color:' + col + '">' + c.letter + '</div>'
-       + '</div>';
+    h += '<div class="p-card"><div class="p-cut"></div><div class="p-word" style="color:'+col+'">'+c.word+'</div>'
+       + '<div class="p-tag" style="color:'+col+'">'+c.letter+"</div></div>";
   });
   $("print").innerHTML = h;
 })();
 
-/* ---- navigation ---- */
-var soloTimer = null, soloIdx = 0;
-function stopSolo(){ if (soloTimer) { clearInterval(soloTimer); soloTimer = null; } }
-function go(id){
-  stopSolo();
-  var v = document.querySelectorAll(".view");
-  for (var i=0;i<v.length;i++) v[i].classList.remove("on");
-  $(id).classList.add("on");
-  var b = document.querySelectorAll("#bar button[data-go]");
-  for (var j=0;j<b.length;j++) b[j].classList.toggle("on", b[j].getAttribute("data-go") === id);
-  if (id === "v-solo") startSolo();
+/* ---------- legende ---------- */
+(function(){
+  var h = "";
+  RAINBOW.forEach(function(ink,i){
+    h += '<div class="lg"><span class="sw" style="background:var(--'+ink+')"></span><b>'+(i+1)+"</b>"+ink+"</div>";
+  });
+  $("legend").innerHTML = h;
+})();
+
+/* ============ 1 + 2 : regle puis defile, tout seul ============ */
+function runIntro(){
+  clearTimers();
+  setAge(0);
+  show("v-rule");
+  $("ageBadge").classList.remove("on");
+  $("runbar").style.transition = "none";
+  $("runbar").style.width = "0";
+
+  at(4200, function(){
+    show("v-solo");
+    $("ageBadge").classList.add("on");
+    var bar = $("runbar"), total = RUN.length*STEP;
+    bar.style.transition = "width " + total + "ms linear";
+    bar.style.width = "100%";
+
+    RUN.forEach(function(r,k){
+      at(k*STEP, function(){
+        var c = CARDS[r.card];
+        setAge(r.a);
+        var big = $("ageBig");
+        if (big.textContent !== String(r.age)){
+          big.textContent = r.age;
+          big.classList.remove("bump"); void big.offsetWidth; big.classList.add("bump");
+        }
+        var el = $("solo");
+        el.textContent = c.word;
+        el.style.color = "var(--" + c.ink + ")";
+        el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+      });
+    });
+    at(total + 400, buildWall);
+  });
 }
-function startSolo(){
-  soloIdx = 0;
-  var el = $("solo");
-  function tick(){
-    var c = CARDS[WALL[soloIdx % WALL.length]];
-    el.textContent = c.word;
-    el.style.color = "var(--" + c.ink + ")";
-    el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
-    soloIdx++;
+
+/* ============ 3 : le mur jouable ============ */
+var placed = [], sel = -1;
+
+function buildWall(){
+  clearTimers();
+  setAge(0);
+  $("ageBadge").classList.remove("on");
+  $("runbar").style.transition = "none";
+  $("runbar").style.width = "0";
+  placed = [null,null,null,null,null,null];
+  sel = -1;
+
+  var h = "";
+  WALL.forEach(function(i){
+    var c = CARDS[i];
+    h += '<div class="card" data-c="'+i+'">'
+       +   '<div class="word" style="color:var(--'+c.ink+')">'+c.word+"</div>"
+       +   '<div class="tag"  style="color:var(--'+c.ink+')">'+c.letter+"</div>"
+       + "</div>";
+  });
+  $("grid").innerHTML = h;
+
+  var rh = "";
+  RAINBOW.forEach(function(ink,i){
+    rh += '<div class="slot" data-s="'+i+'">'
+        +   '<div class="idx"><span class="dot" style="background:var(--'+ink+')"></span>'+(i+1)+"</div>"
+        + "</div>";
+  });
+  var r = $("rack");
+  r.innerHTML = rh;
+  r.className = "";
+
+  show("v-wall");
+  refresh();
+}
+
+function refresh(){
+  var cards = $("grid").children;
+  for (var i=0;i<cards.length;i++){
+    var ci = parseInt(cards[i].getAttribute("data-c"),10);
+    cards[i].classList.toggle("gone", placed.indexOf(ci) !== -1);
+    cards[i].classList.toggle("sel", sel === ci);
   }
-  tick();
-  soloTimer = setInterval(tick, 2200);
-}
-var btns = document.querySelectorAll("#bar button[data-go]");
-for (var i=0;i<btns.length;i++){
-  btns[i].addEventListener("click", function(){ go(this.getAttribute("data-go")); });
+  var slots = $("rack").children;
+  for (var s=0;s<slots.length;s++){
+    var p = placed[s], old = slots[s].querySelector(".word");
+    if (old) old.remove();
+    slots[s].classList.toggle("full", p !== null);
+    slots[s].classList.toggle("hot", sel !== -1 && p === null);
+    if (p !== null){
+      var c = CARDS[p], w = document.createElement("div");
+      w.className = "word"; w.textContent = c.word;
+      w.style.color = "var(--" + c.ink + ")";
+      slots[s].appendChild(w);
+    }
+  }
+  var full = placed.every(function(x){ return x !== null; });
+  $("bGo").disabled = !full;
+  $("wallTitle").innerHTML = full
+    ? "Six cartes placées. <b>Validez.</b>"
+    : "Rangez les cartes par la <b>couleur de l'encre</b>";
 }
 
-/* ---- vieillissement ---- */
-var AGES = [[0,"20 ans"],[.34,"45 ans"],[.67,"65 ans"],[1,"80 ans"]], aIdx = 0;
-$("bAge").addEventListener("click", function(){
-  aIdx = (aIdx + 1) % AGES.length;
-  body.style.setProperty("--age", AGES[aIdx][0]);
-  $("age").textContent = AGES[aIdx][1];
+$("grid").addEventListener("click", function(e){
+  var el = e.target.closest(".card"); if (!el) return;
+  var i = parseInt(el.getAttribute("data-c"),10);
+  sel = (sel === i) ? -1 : i;
+  refresh();
 });
-$("bPrint").addEventListener("click", function(){ window.print(); });
+$("rack").addEventListener("click", function(e){
+  var el = e.target.closest(".slot"); if (!el) return;
+  var s = parseInt(el.getAttribute("data-s"),10);
+  if (placed[s] !== null){ placed[s] = null; sel = -1; }
+  else if (sel !== -1){ placed[s] = sel; sel = -1; }
+  $("rack").className = "";
+  refresh();
+});
+$("bReset").addEventListener("click", function(){
+  placed = [null,null,null,null,null,null]; sel = -1;
+  $("rack").className = ""; refresh();
+});
 
+/* ============ 4 : resolution ============ */
+$("bGo").addEventListener("click", function(){
+  var r = $("rack"), slots = r.children, bad = 0;
+  for (var s=0;s<6;s++){
+    var no = (RAINBOW[s] !== CARDS[placed[s]].ink);
+    slots[s].classList.toggle("bad", no);
+    if (no) bad++;
+  }
+  if (bad){
+    r.className = "ko";
+    setTimeout(function(){ r.className = ""; }, 700);
+    return;
+  }
+  r.className = "ok";
+  setTimeout(reveal, 900);
+});
+
+function reveal(){
+  var h = "";
+  RAINBOW.forEach(function(ink){
+    var c = CARDS.filter(function(x){ return x.ink === ink; })[0];
+    h += '<div class="lt" style="color:var(--'+ink+')">'+c.letter+"</div>";
+  });
+  $("letters").innerHTML = h;
+  show("v-done");
+  var lt = $("letters").children;
+  for (var i=0;i<lt.length;i++){
+    (function(el,k){ setTimeout(function(){ el.classList.add("on"); }, 160*k); })(lt[i], i);
+  }
+}
+
+/* ---------- confort game master ---------- */
 document.addEventListener("keydown", function(e){
   var k = e.key.toLowerCase();
-  if (k === "1") go("v-rule");
-  if (k === "2") go("v-wall");
-  if (k === "3") go("v-solo");
-  if (k === "a") $("bAge").click();
-  if (k === "p") { e.preventDefault(); window.print(); }
-  if (k === "f") { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  if (k === "p"){ e.preventDefault(); window.print(); return; }
+  if (k === "f"){ e.preventDefault();
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); return; }
+  if (k === "escape"){ runIntro(); return; }
+  if (k === "s"){ clearTimers(); buildWall(); return; }
 });
 
-go("v-wall");
+runIntro();
 })();
 </script>
 </body>

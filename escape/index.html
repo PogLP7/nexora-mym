@@ -2,121 +2,91 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Escape game — Évolution de l'âge</title>
+<title>Évolution de l'âge</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#06070c;color:#eaedf7;font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;line-height:1.5;padding:40px 20px 80px;overflow-x:hidden}
-#glow{position:fixed;inset:-30%;z-index:0;filter:blur(100px);opacity:.44;pointer-events:none}
-.g{position:absolute;border-radius:50%;mix-blend-mode:screen}
-.g1{width:62vmin;height:62vmin;left:-2%;top:0;background:radial-gradient(circle,#2f6fe0,transparent 66%);animation:f1 40s ease-in-out infinite}
-.g2{width:68vmin;height:68vmin;right:-6%;top:28%;background:radial-gradient(circle,#8a4fd8,transparent 66%);animation:f2 48s ease-in-out infinite}
-.g3{width:56vmin;height:56vmin;left:30%;bottom:-8%;background:radial-gradient(circle,#c2491f,transparent 68%);animation:f3 34s ease-in-out infinite}
-@keyframes f1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(14vmin,12vmin) scale(1.16)}}
-@keyframes f2{0%,100%{transform:translate(0,0) scale(1.06)}50%{transform:translate(-15vmin,-10vmin) scale(.9)}}
-@keyframes f3{0%,100%{transform:translate(0,0) scale(.95)}50%{transform:translate(10vmin,-12vmin) scale(1.2)}}
-.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto}
+html,body{height:100%;overflow:hidden;background:#06040c;overscroll-behavior:none}
+body{font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;color:#f4f1fa;
+  -webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
+  display:flex;flex-direction:column}
 
-.kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;opacity:.38;margin-bottom:14px}
-h1{font-size:clamp(34px,7vw,62px);font-weight:200;letter-spacing:-.025em;line-height:1.05;margin-bottom:16px}
-h1 em{font-style:normal;background:linear-gradient(100deg,#8fd0ff,#c79bff 48%,#ffb27a);
+#glow{position:fixed;inset:-30%;z-index:0;filter:blur(13vmin);opacity:.5;pointer-events:none}
+.g{position:absolute;border-radius:48% 52% 56% 44%;mix-blend-mode:screen;will-change:transform}
+.g1{width:70vmin;height:70vmin;left:-4%;top:-8%;background:radial-gradient(circle,hsl(272 92% 58%),transparent 66%);animation:a1 18s ease-in-out infinite}
+.g2{width:78vmin;height:78vmin;right:-10%;bottom:-14%;background:radial-gradient(circle,hsl(28 94% 56%),transparent 66%);animation:a2 23s ease-in-out infinite}
+.g3{width:58vmin;height:58vmin;left:38%;top:34%;background:radial-gradient(circle,hsl(330 88% 58%),transparent 70%);animation:a3 15s ease-in-out infinite}
+@keyframes a1{0%,100%{transform:translate(0,0) scale(1) rotate(0)}50%{transform:translate(20vmin,14vmin) scale(1.24) rotate(70deg)}}
+@keyframes a2{0%,100%{transform:translate(0,0) scale(1.08) rotate(0)}50%{transform:translate(-18vmin,-15vmin) scale(.84) rotate(-60deg)}}
+@keyframes a3{0%,100%{transform:translate(0,0) scale(.9) rotate(0)}50%{transform:translate(-15vmin,17vmin) scale(1.28) rotate(55deg)}}
+
+header{position:relative;z-index:2;padding:5vmin 5vmin 0;text-align:center;flex:0 0 auto}
+.kicker{font-size:min(1.7vmin,2.6vw);letter-spacing:.42em;text-transform:uppercase;opacity:.34}
+h1{margin-top:1.6vmin;font-size:min(7vmin,9vw);font-weight:200;letter-spacing:-.03em;line-height:1}
+h1 em{font-style:normal;background:linear-gradient(100deg,hsl(272 92% 72%),hsl(330 90% 70%) 46%,hsl(28 94% 66%));
   -webkit-background-clip:text;background-clip:text;color:transparent}
-.lead{font-size:clamp(15px,2.1vw,19px);font-weight:300;opacity:.62;max-width:56ch;margin-bottom:46px}
 
-h2{font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.38;margin:56px 0 18px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:14px}
-a.card{display:block;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.1);
-  background:rgba(255,255,255,.03);border-radius:20px;padding:24px;transition:background .3s,border-color .3s,transform .3s}
-a.card:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22);transform:translateY(-3px)}
-a.card .n{font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:.4;margin-bottom:10px}
-a.card .t{font-size:21px;font-weight:300;margin-bottom:7px}
-a.card .d{font-size:14px;font-weight:300;opacity:.52;line-height:1.5}
+main{position:relative;z-index:2;flex:1 1 auto;display:flex;gap:2.4vmin;padding:4vmin 5vmin 6vmin}
+@media (max-aspect-ratio:1/1){main{flex-direction:column}}
 
-/* ---- QR ---- */
-.qrs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
-.qr{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);border-radius:20px;padding:20px;text-align:center}
-.qr .k{font-size:10px;letter-spacing:.26em;text-transform:uppercase;opacity:.4;margin-bottom:14px}
-.qr .code{background:#fff;border-radius:12px;padding:11px;line-height:0}
-.qr .code svg{width:100%;height:auto;display:block}
-.qr figcaption{margin-top:14px;display:flex;flex-direction:column;gap:5px}
-.qr b{font-size:15px;font-weight:400}
-.qr span{font-size:12.5px;font-weight:300;opacity:.46}
-.qr code{font-size:10.5px;font-family:ui-monospace,Menlo,monospace;opacity:.3;word-break:break-all}
+a.tile{flex:1 1 0;display:flex;flex-direction:column;justify-content:flex-end;
+  text-decoration:none;color:inherit;position:relative;overflow:hidden;
+  border-radius:3vmin;padding:5vmin;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.035);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),border-color .4s,background .4s}
+a.tile:hover,a.tile:active{transform:translateY(-1vmin) scale(1.012);border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.07)}
+a.tile:before{content:"";position:absolute;inset:0;opacity:.3;transition:opacity .4s;
+  background:radial-gradient(ellipse 70% 60% at 50% 110%,var(--c1),transparent 70%)}
+a.tile:hover:before{opacity:.55}
+.t3{--c1:hsl(28 94% 56%)}
+.t4{--c1:hsl(275 92% 60%)}
 
-.note{margin-top:22px;font-size:13.5px;font-weight:300;opacity:.42;max-width:62ch;line-height:1.6}
-button.pr{margin-top:22px;font:inherit;font-size:12px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;
-  color:#06070c;background:#eaedf7;border:0;border-radius:99px;padding:15px 30px;transition:transform .18s}
-button.pr:hover{transform:translateY(-2px)}
+.num{position:absolute;top:4vmin;left:5vmin;font-size:min(2vmin,3vw);letter-spacing:.3em;text-transform:uppercase;opacity:.42}
+.mark{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font-size:min(34vmin,46vw);
+  font-weight:150;line-height:1;letter-spacing:-.05em;opacity:.1;pointer-events:none}
+.tname{position:relative;font-size:min(5.4vmin,7vw);font-weight:250;letter-spacing:-.02em;line-height:1.08}
+.tsub{position:relative;margin-top:1.4vmin;font-size:min(2.2vmin,3.2vw);font-weight:300;opacity:.55;letter-spacing:.02em}
+.swatches{position:relative;display:flex;gap:.9vmin;margin-top:3vmin}
+.swatches i{width:min(2.2vmin,3vw);height:min(2.2vmin,3vw);border-radius:50%;display:block}
 
-footer{margin-top:64px;padding-top:26px;border-top:1px solid rgba(255,255,255,.08);
-  font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.26}
-
-/* ---- impression : un QR par page A4, format mural ---- */
-@media print{
-  @page{size:A4 portrait;margin:14mm}
-  body{background:#fff;color:#000;padding:0}
-  #glow,.cards,h1,.lead,.kicker,h2,.note,button.pr,footer{display:none!important}
-  .qrs{display:block}
-  .qr{page-break-after:always;border:0;background:none;padding:0;
-    height:265mm;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .qr .k{font-size:5mm;letter-spacing:4mm;opacity:1;color:#888;margin-bottom:10mm}
-  .qr .code{width:125mm;padding:0;background:none}
-  .qr figcaption{margin-top:12mm;gap:3mm}
-  .qr b{font-size:13mm;font-weight:700}
-  .qr span{font-size:6mm;opacity:1;color:#555}
-  .qr code{font-size:4mm;opacity:1;color:#aaa}
-}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
+
 <div id="glow"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div></div>
-<div class="wrap">
 
-  <div class="kicker">Escape game · psychologie</div>
-  <h1>Évolution<br>de <em>l'âge</em></h1>
-  <p class="lead">Énigmes 3 et 4. Deux tests de psychologie cognitive dont l'interface vieillit avec le joueur : les couleurs se fanent, le grain monte, le champ visuel se referme.</p>
+<header>
+  <div class="kicker">Escape game</div>
+  <h1>Évolution de <em>l'âge</em></h1>
+</header>
 
-  <h2>Les salles</h2>
-  <div class="cards">
-    <a class="card" href="stroop/">
-      <div class="n">Énigme 3</div>
-      <div class="t">Ne crois pas ce que tu lis</div>
-      <div class="d">Effet Stroop. Six cartes, six encres. Mode mur, mode défilé, et impression des cartes A5.</div>
-    </a>
-    <a class="card" href="memoire/">
-      <div class="n">Énigme 4</div>
-      <div class="t">La mémoire qui s'efface</div>
-      <div class="d">Empan mnésique. Quatre séries, une par décennie. Plein écran, à projeter.</div>
-    </a>
-    <a class="card" href="gm/">
-      <div class="n">Staff</div>
-      <div class="t">Console game master</div>
-      <div class="d">Solutions, chrono, pénalités, indices et points de cours.</div>
-    </a>
-    <a class="card" href="indice/?e=3">
-      <div class="n">Secours</div>
-      <div class="t">Indices</div>
-      <div class="d">Révélation progressive. Chaque indice coûte deux minutes.</div>
-    </a>
-  </div>
+<main>
+  <a class="tile t3" href="stroop/">
+    <div class="num">Énigme 3</div>
+    <div class="mark">3</div>
+    <div class="tname">Ne crois pas<br>ce que tu lis</div>
+    <div class="tsub">Six cartes, six encres</div>
+    <div class="swatches">
+      <i style="background:hsl(6 78% 54%)"></i><i style="background:hsl(30 92% 55%)"></i>
+      <i style="background:hsl(46 94% 56%)"></i><i style="background:hsl(140 58% 46%)"></i>
+      <i style="background:hsl(218 76% 58%)"></i><i style="background:hsl(272 64% 62%)"></i>
+    </div>
+  </a>
 
-  <h2>Les QR à coller dans les salles</h2>
-  <div class="qrs">
-<figure class="qr"><div class="k">Énigme 4</div><div class="code"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" shape-rendering="crispEdges" role="img"><path fill="#000000" d="M4 4h7v1h-7zM16 4h1v1h-1zM19 4h1v1h-1zM22 4h3v1h-3zM27 4h5v1h-5zM34 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM16 5h4v1h-4zM21 5h1v1h-1zM23 5h2v1h-2zM26 5h4v1h-4zM32 5h1v1h-1zM34 5h1v1h-1zM40 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM13 6h1v1h-1zM17 6h5v1h-5zM24 6h2v1h-2zM28 6h1v1h-1zM30 6h3v1h-3zM34 6h1v1h-1zM36 6h3v1h-3zM40 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM14 7h1v1h-1zM18 7h1v1h-1zM22 7h2v1h-2zM27 7h3v1h-3zM31 7h2v1h-2zM34 7h1v1h-1zM36 7h3v1h-3zM40 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM19 8h1v1h-1zM23 8h1v1h-1zM26 8h3v1h-3zM30 8h2v1h-2zM34 8h1v1h-1zM36 8h3v1h-3zM40 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h8v1h-8zM23 9h1v1h-1zM26 9h1v1h-1zM32 9h1v1h-1zM34 9h1v1h-1zM40 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h1v1h-1zM32 10h1v1h-1zM34 10h7v1h-7zM12 11h1v1h-1zM17 11h2v1h-2zM20 11h2v1h-2zM24 11h1v1h-1zM26 11h2v1h-2zM29 11h1v1h-1zM8 12h4v1h-4zM13 12h3v1h-3zM17 12h2v1h-2zM22 12h1v1h-1zM26 12h4v1h-4zM31 12h2v1h-2zM34 12h2v1h-2zM39 12h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM13 13h2v1h-2zM16 13h1v1h-1zM19 13h2v1h-2zM24 13h1v1h-1zM26 13h1v1h-1zM30 13h1v1h-1zM35 13h4v1h-4zM4 14h1v1h-1zM7 14h2v1h-2zM10 14h2v1h-2zM13 14h1v1h-1zM15 14h4v1h-4zM20 14h4v1h-4zM26 14h1v1h-1zM28 14h4v1h-4zM33 14h1v1h-1zM35 14h1v1h-1zM39 14h1v1h-1zM6 15h1v1h-1zM9 15h1v1h-1zM12 15h3v1h-3zM16 15h3v1h-3zM20 15h2v1h-2zM24 15h4v1h-4zM30 15h4v1h-4zM35 15h1v1h-1zM38 15h1v1h-1zM5 16h2v1h-2zM8 16h3v1h-3zM12 16h2v1h-2zM15 16h1v1h-1zM19 16h1v1h-1zM23 16h3v1h-3zM27 16h2v1h-2zM33 16h3v1h-3zM38 16h2v1h-2zM7 17h2v1h-2zM11 17h1v1h-1zM13 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM22 17h1v1h-1zM26 17h1v1h-1zM28 17h1v1h-1zM30 17h4v1h-4zM36 17h1v1h-1zM38 17h2v1h-2zM5 18h2v1h-2zM8 18h1v1h-1zM10 18h2v1h-2zM13 18h2v1h-2zM16 18h2v1h-2zM20 18h1v1h-1zM22 18h5v1h-5zM28 18h11v1h-11zM4 19h1v1h-1zM7 19h3v1h-3zM12 19h1v1h-1zM16 19h1v1h-1zM19 19h1v1h-1zM21 19h1v1h-1zM23 19h4v1h-4zM28 19h1v1h-1zM31 19h3v1h-3zM38 19h2v1h-2zM5 20h1v1h-1zM9 20h4v1h-4zM14 20h3v1h-3zM18 20h2v1h-2zM22 20h1v1h-1zM26 20h1v1h-1zM33 20h2v1h-2zM37 20h4v1h-4zM4 21h2v1h-2zM7 21h2v1h-2zM12 21h2v1h-2zM15 21h1v1h-1zM17 21h1v1h-1zM19 21h3v1h-3zM23 21h2v1h-2zM26 21h1v1h-1zM30 21h3v1h-3zM36 21h1v1h-1zM4 22h1v1h-1zM7 22h4v1h-4zM13 22h5v1h-5zM21 22h1v1h-1zM23 22h1v1h-1zM26 22h8v1h-8zM35 22h1v1h-1zM4 23h2v1h-2zM7 23h3v1h-3zM11 23h3v1h-3zM15 23h1v1h-1zM19 23h1v1h-1zM23 23h3v1h-3zM27 23h2v1h-2zM30 23h1v1h-1zM32 23h1v1h-1zM34 23h2v1h-2zM38 23h3v1h-3zM7 24h2v1h-2zM10 24h2v1h-2zM14 24h1v1h-1zM16 24h1v1h-1zM18 24h3v1h-3zM25 24h2v1h-2zM28 24h1v1h-1zM33 24h2v1h-2zM38 24h3v1h-3zM6 25h2v1h-2zM9 25h1v1h-1zM14 25h1v1h-1zM16 25h4v1h-4zM21 25h1v1h-1zM23 25h1v1h-1zM25 25h1v1h-1zM27 25h5v1h-5zM36 25h3v1h-3zM4 26h1v1h-1zM6 26h3v1h-3zM10 26h1v1h-1zM12 26h2v1h-2zM15 26h1v1h-1zM17 26h1v1h-1zM19 26h1v1h-1zM22 26h1v1h-1zM24 26h3v1h-3zM31 26h2v1h-2zM34 26h1v1h-1zM6 27h1v1h-1zM12 27h1v1h-1zM16 27h2v1h-2zM19 27h2v1h-2zM30 27h1v1h-1zM32 27h1v1h-1zM34 27h2v1h-2zM38 27h1v1h-1zM4 28h4v1h-4zM10 28h3v1h-3zM14 28h1v1h-1zM17 28h1v1h-1zM19 28h1v1h-1zM22 28h1v1h-1zM24 28h1v1h-1zM29 28h3v1h-3zM34 28h2v1h-2zM38 28h2v1h-2zM4 29h3v1h-3zM8 29h2v1h-2zM12 29h1v1h-1zM16 29h2v1h-2zM23 29h1v1h-1zM25 29h2v1h-2zM28 29h2v1h-2zM32 29h1v1h-1zM34 29h1v1h-1zM36 29h1v1h-1zM38 29h1v1h-1zM6 30h2v1h-2zM10 30h3v1h-3zM14 30h1v1h-1zM17 30h2v1h-2zM22 30h1v1h-1zM25 30h6v1h-6zM32 30h2v1h-2zM36 30h1v1h-1zM38 30h1v1h-1zM8 31h1v1h-1zM14 31h2v1h-2zM18 31h1v1h-1zM20 31h1v1h-1zM24 31h2v1h-2zM27 31h1v1h-1zM30 31h1v1h-1zM34 31h1v1h-1zM38 31h1v1h-1zM40 31h1v1h-1zM4 32h4v1h-4zM9 32h3v1h-3zM13 32h1v1h-1zM15 32h2v1h-2zM22 32h5v1h-5zM28 32h1v1h-1zM31 32h9v1h-9zM12 33h1v1h-1zM15 33h3v1h-3zM19 33h2v1h-2zM22 33h3v1h-3zM27 33h1v1h-1zM29 33h4v1h-4zM36 33h2v1h-2zM39 33h1v1h-1zM4 34h7v1h-7zM12 34h1v1h-1zM15 34h5v1h-5zM21 34h3v1h-3zM26 34h4v1h-4zM32 34h1v1h-1zM34 34h1v1h-1zM36 34h3v1h-3zM4 35h1v1h-1zM10 35h1v1h-1zM12 35h4v1h-4zM20 35h5v1h-5zM27 35h2v1h-2zM30 35h1v1h-1zM32 35h1v1h-1zM36 35h1v1h-1zM38 35h1v1h-1zM4 36h1v1h-1zM6 36h3v1h-3zM10 36h1v1h-1zM12 36h1v1h-1zM15 36h4v1h-4zM20 36h1v1h-1zM26 36h1v1h-1zM28 36h1v1h-1zM32 36h9v1h-9zM4 37h1v1h-1zM6 37h3v1h-3zM10 37h1v1h-1zM14 37h1v1h-1zM16 37h3v1h-3zM20 37h1v1h-1zM22 37h1v1h-1zM24 37h3v1h-3zM30 37h2v1h-2zM34 37h1v1h-1zM37 37h2v1h-2zM4 38h1v1h-1zM6 38h3v1h-3zM10 38h1v1h-1zM13 38h1v1h-1zM15 38h2v1h-2zM20 38h1v1h-1zM23 38h1v1h-1zM30 38h3v1h-3zM34 38h2v1h-2zM37 38h1v1h-1zM39 38h1v1h-1zM4 39h1v1h-1zM10 39h1v1h-1zM13 39h2v1h-2zM17 39h2v1h-2zM20 39h1v1h-1zM23 39h3v1h-3zM28 39h1v1h-1zM30 39h1v1h-1zM34 39h2v1h-2zM38 39h2v1h-2zM4 40h7v1h-7zM15 40h3v1h-3zM20 40h2v1h-2zM23 40h3v1h-3zM27 40h2v1h-2zM31 40h1v1h-1zM33 40h1v1h-1zM36 40h1v1h-1zM38 40h3v1h-3z"/></svg></div><figcaption><b>La mémoire qui s'efface</b><span>Diaporama des séries</span><code>getsnexora.com/escape/memoire/</code></figcaption></figure>
-<figure class="qr"><div class="k">Énigme 3</div><div class="code"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" shape-rendering="crispEdges" role="img"><path fill="#000000" d="M4 4h7v1h-7zM14 4h2v1h-2zM17 4h1v1h-1zM19 4h1v1h-1zM21 4h4v1h-4zM27 4h5v1h-5zM34 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h2v1h-2zM15 5h2v1h-2zM19 5h1v1h-1zM22 5h2v1h-2zM26 5h4v1h-4zM32 5h1v1h-1zM34 5h1v1h-1zM40 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM14 6h3v1h-3zM18 6h4v1h-4zM23 6h1v1h-1zM26 6h1v1h-1zM28 6h1v1h-1zM30 6h3v1h-3zM34 6h1v1h-1zM36 6h3v1h-3zM40 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM17 7h2v1h-2zM22 7h2v1h-2zM26 7h2v1h-2zM29 7h1v1h-1zM31 7h2v1h-2zM34 7h1v1h-1zM36 7h3v1h-3zM40 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM16 8h2v1h-2zM22 8h3v1h-3zM26 8h1v1h-1zM28 8h4v1h-4zM34 8h1v1h-1zM36 8h3v1h-3zM40 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h3v1h-3zM16 9h1v1h-1zM19 9h1v1h-1zM26 9h2v1h-2zM29 9h2v1h-2zM32 9h1v1h-1zM34 9h1v1h-1zM40 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h1v1h-1zM32 10h1v1h-1zM34 10h7v1h-7zM12 11h1v1h-1zM17 11h1v1h-1zM20 11h2v1h-2zM23 11h1v1h-1zM28 11h1v1h-1zM30 11h1v1h-1zM8 12h4v1h-4zM13 12h3v1h-3zM18 12h1v1h-1zM22 12h1v1h-1zM26 12h2v1h-2zM29 12h3v1h-3zM34 12h2v1h-2zM39 12h1v1h-1zM6 13h4v1h-4zM11 13h1v1h-1zM13 13h2v1h-2zM16 13h3v1h-3zM24 13h2v1h-2zM32 13h1v1h-1zM34 13h5v1h-5zM4 14h4v1h-4zM10 14h2v1h-2zM15 14h2v1h-2zM19 14h1v1h-1zM22 14h2v1h-2zM29 14h2v1h-2zM32 14h2v1h-2zM35 14h2v1h-2zM39 14h1v1h-1zM4 15h2v1h-2zM9 15h1v1h-1zM12 15h2v1h-2zM16 15h1v1h-1zM18 15h1v1h-1zM21 15h2v1h-2zM24 15h1v1h-1zM26 15h1v1h-1zM28 15h1v1h-1zM30 15h1v1h-1zM33 15h1v1h-1zM35 15h2v1h-2zM38 15h1v1h-1zM4 16h3v1h-3zM10 16h1v1h-1zM12 16h1v1h-1zM15 16h1v1h-1zM17 16h2v1h-2zM20 16h6v1h-6zM27 16h2v1h-2zM31 16h1v1h-1zM33 16h3v1h-3zM38 16h2v1h-2zM6 17h1v1h-1zM9 17h1v1h-1zM12 17h1v1h-1zM14 17h1v1h-1zM16 17h2v1h-2zM19 17h1v1h-1zM21 17h2v1h-2zM26 17h2v1h-2zM30 17h4v1h-4zM36 17h1v1h-1zM38 17h2v1h-2zM5 18h1v1h-1zM8 18h3v1h-3zM12 18h2v1h-2zM15 18h3v1h-3zM21 18h1v1h-1zM25 18h2v1h-2zM29 18h10v1h-10zM4 19h1v1h-1zM6 19h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1zM14 19h3v1h-3zM22 19h2v1h-2zM25 19h4v1h-4zM31 19h3v1h-3zM38 19h2v1h-2zM5 20h2v1h-2zM8 20h1v1h-1zM10 20h2v1h-2zM13 20h1v1h-1zM15 20h1v1h-1zM18 20h1v1h-1zM22 20h1v1h-1zM24 20h1v1h-1zM26 20h2v1h-2zM33 20h2v1h-2zM37 20h4v1h-4zM5 21h1v1h-1zM7 21h1v1h-1zM11 21h2v1h-2zM14 21h1v1h-1zM16 21h2v1h-2zM19 21h4v1h-4zM24 21h3v1h-3zM30 21h3v1h-3zM36 21h1v1h-1zM4 22h1v1h-1zM7 22h4v1h-4zM12 22h3v1h-3zM16 22h1v1h-1zM22 22h4v1h-4zM27 22h7v1h-7zM35 22h1v1h-1zM4 23h1v1h-1zM7 23h1v1h-1zM9 23h1v1h-1zM12 23h1v1h-1zM15 23h1v1h-1zM18 23h2v1h-2zM22 23h2v1h-2zM27 23h2v1h-2zM30 23h1v1h-1zM32 23h1v1h-1zM34 23h2v1h-2zM38 23h1v1h-1zM4 24h2v1h-2zM8 24h1v1h-1zM10 24h3v1h-3zM17 24h1v1h-1zM19 24h1v1h-1zM23 24h1v1h-1zM25 24h1v1h-1zM28 24h1v1h-1zM33 24h2v1h-2zM38 24h3v1h-3zM4 25h1v1h-1zM7 25h1v1h-1zM11 25h1v1h-1zM15 25h1v1h-1zM17 25h2v1h-2zM20 25h3v1h-3zM24 25h1v1h-1zM26 25h1v1h-1zM28 25h1v1h-1zM31 25h1v1h-1zM36 25h3v1h-3zM5 26h1v1h-1zM8 26h1v1h-1zM10 26h4v1h-4zM16 26h1v1h-1zM20 26h1v1h-1zM22 26h4v1h-4zM29 26h4v1h-4zM34 26h1v1h-1zM4 27h3v1h-3zM11 27h1v1h-1zM15 27h1v1h-1zM18 27h2v1h-2zM24 27h2v1h-2zM28 27h2v1h-2zM32 27h4v1h-4zM38 27h3v1h-3zM4 28h1v1h-1zM10 28h1v1h-1zM12 28h1v1h-1zM14 28h1v1h-1zM18 28h1v1h-1zM22 28h3v1h-3zM26 28h4v1h-4zM31 28h3v1h-3zM35 28h1v1h-1zM38 28h1v1h-1zM40 28h1v1h-1zM4 29h2v1h-2zM7 29h3v1h-3zM12 29h2v1h-2zM16 29h1v1h-1zM18 29h1v1h-1zM23 29h1v1h-1zM26 29h1v1h-1zM29 29h2v1h-2zM34 29h5v1h-5zM10 30h4v1h-4zM22 30h1v1h-1zM25 30h1v1h-1zM29 30h3v1h-3zM33 30h1v1h-1zM8 31h2v1h-2zM15 31h1v1h-1zM17 31h2v1h-2zM20 31h1v1h-1zM24 31h1v1h-1zM26 31h1v1h-1zM28 31h1v1h-1zM30 31h3v1h-3zM34 31h1v1h-1zM38 31h1v1h-1zM40 31h1v1h-1zM4 32h4v1h-4zM9 32h4v1h-4zM15 32h3v1h-3zM21 32h7v1h-7zM32 32h8v1h-8zM12 33h2v1h-2zM15 33h5v1h-5zM22 33h2v1h-2zM26 33h2v1h-2zM29 33h4v1h-4zM36 33h2v1h-2zM39 33h1v1h-1zM4 34h7v1h-7zM12 34h1v1h-1zM14 34h1v1h-1zM16 34h3v1h-3zM20 34h3v1h-3zM24 34h1v1h-1zM26 34h2v1h-2zM29 34h1v1h-1zM32 34h1v1h-1zM34 34h1v1h-1zM36 34h3v1h-3zM4 35h1v1h-1zM10 35h1v1h-1zM12 35h3v1h-3zM19 35h1v1h-1zM27 35h2v1h-2zM30 35h1v1h-1zM32 35h1v1h-1zM36 35h1v1h-1zM38 35h1v1h-1zM4 36h1v1h-1zM6 36h3v1h-3zM10 36h1v1h-1zM12 36h2v1h-2zM15 36h8v1h-8zM26 36h1v1h-1zM32 36h9v1h-9zM4 37h1v1h-1zM6 37h3v1h-3zM10 37h1v1h-1zM13 37h1v1h-1zM18 37h1v1h-1zM20 37h3v1h-3zM26 37h1v1h-1zM28 37h4v1h-4zM34 37h1v1h-1zM37 37h2v1h-2zM4 38h1v1h-1zM6 38h3v1h-3zM10 38h1v1h-1zM13 38h3v1h-3zM17 38h1v1h-1zM20 38h2v1h-2zM23 38h1v1h-1zM27 38h3v1h-3zM31 38h2v1h-2zM34 38h2v1h-2zM37 38h1v1h-1zM39 38h1v1h-1zM4 39h1v1h-1zM10 39h1v1h-1zM13 39h5v1h-5zM20 39h1v1h-1zM23 39h1v1h-1zM25 39h3v1h-3zM30 39h1v1h-1zM34 39h2v1h-2zM38 39h2v1h-2zM4 40h7v1h-7zM14 40h3v1h-3zM18 40h1v1h-1zM20 40h1v1h-1zM25 40h1v1h-1zM31 40h1v1h-1zM33 40h1v1h-1zM36 40h1v1h-1zM38 40h3v1h-3z"/></svg></div><figcaption><b>Ne crois pas ce que tu lis</b><span>Cartes à l'écran</span><code>getsnexora.com/escape/stroop/</code></figcaption></figure>
-<figure class="qr"><div class="k">Indice</div><div class="code"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" shape-rendering="crispEdges" role="img"><path fill="#000000" d="M4 4h7v1h-7zM12 4h1v1h-1zM14 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM22 4h1v1h-1zM25 4h1v1h-1zM27 4h2v1h-2zM34 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h3v1h-3zM16 5h3v1h-3zM21 5h3v1h-3zM25 5h1v1h-1zM27 5h2v1h-2zM30 5h3v1h-3zM34 5h1v1h-1zM40 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM17 6h1v1h-1zM19 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h2v1h-2zM30 6h2v1h-2zM34 6h1v1h-1zM36 6h3v1h-3zM40 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM14 7h2v1h-2zM18 7h1v1h-1zM20 7h1v1h-1zM26 7h1v1h-1zM29 7h1v1h-1zM31 7h1v1h-1zM34 7h1v1h-1zM36 7h3v1h-3zM40 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM13 8h1v1h-1zM16 8h4v1h-4zM23 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM34 8h1v1h-1zM36 8h3v1h-3zM40 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h1v1h-1zM14 9h2v1h-2zM17 9h1v1h-1zM19 9h1v1h-1zM23 9h3v1h-3zM27 9h3v1h-3zM31 9h2v1h-2zM34 9h1v1h-1zM40 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h1v1h-1zM32 10h1v1h-1zM34 10h7v1h-7zM12 11h1v1h-1zM14 11h1v1h-1zM16 11h2v1h-2zM22 11h2v1h-2zM25 11h1v1h-1zM30 11h1v1h-1zM32 11h1v1h-1zM6 12h3v1h-3zM10 12h1v1h-1zM12 12h1v1h-1zM14 12h1v1h-1zM17 12h1v1h-1zM19 12h2v1h-2zM22 12h3v1h-3zM26 12h1v1h-1zM28 12h1v1h-1zM32 12h4v1h-4zM38 12h3v1h-3zM6 13h1v1h-1zM8 13h2v1h-2zM12 13h1v1h-1zM14 13h1v1h-1zM16 13h6v1h-6zM23 13h1v1h-1zM28 13h2v1h-2zM33 13h1v1h-1zM37 13h2v1h-2zM4 14h1v1h-1zM7 14h1v1h-1zM9 14h3v1h-3zM14 14h1v1h-1zM23 14h1v1h-1zM26 14h7v1h-7zM34 14h3v1h-3zM40 14h1v1h-1zM6 15h4v1h-4zM12 15h4v1h-4zM17 15h1v1h-1zM20 15h3v1h-3zM24 15h1v1h-1zM28 15h1v1h-1zM30 15h3v1h-3zM34 15h3v1h-3zM39 15h2v1h-2zM4 16h10v1h-10zM15 16h1v1h-1zM17 16h2v1h-2zM21 16h1v1h-1zM24 16h3v1h-3zM29 16h2v1h-2zM33 16h2v1h-2zM36 16h4v1h-4zM6 17h4v1h-4zM11 17h3v1h-3zM16 17h1v1h-1zM19 17h1v1h-1zM22 17h2v1h-2zM25 17h1v1h-1zM29 17h1v1h-1zM32 17h2v1h-2zM35 17h1v1h-1zM37 17h3v1h-3zM4 18h3v1h-3zM10 18h1v1h-1zM12 18h2v1h-2zM16 18h2v1h-2zM19 18h1v1h-1zM21 18h5v1h-5zM27 18h1v1h-1zM29 18h3v1h-3zM35 18h3v1h-3zM39 18h2v1h-2zM6 19h2v1h-2zM9 19h1v1h-1zM12 19h1v1h-1zM15 19h1v1h-1zM20 19h1v1h-1zM22 19h1v1h-1zM24 19h2v1h-2zM28 19h1v1h-1zM31 19h1v1h-1zM34 19h1v1h-1zM40 19h1v1h-1zM7 20h1v1h-1zM9 20h3v1h-3zM13 20h1v1h-1zM17 20h1v1h-1zM21 20h1v1h-1zM23 20h5v1h-5zM29 20h3v1h-3zM33 20h4v1h-4zM38 20h3v1h-3zM6 21h1v1h-1zM13 21h1v1h-1zM16 21h3v1h-3zM20 21h1v1h-1zM23 21h2v1h-2zM26 21h1v1h-1zM29 21h1v1h-1zM32 21h1v1h-1zM35 21h1v1h-1zM37 21h1v1h-1zM4 22h1v1h-1zM7 22h1v1h-1zM10 22h1v1h-1zM12 22h2v1h-2zM15 22h1v1h-1zM18 22h1v1h-1zM20 22h3v1h-3zM25 22h1v1h-1zM29 22h3v1h-3zM34 22h2v1h-2zM38 22h3v1h-3zM4 23h2v1h-2zM7 23h1v1h-1zM9 23h1v1h-1zM12 23h5v1h-5zM19 23h2v1h-2zM22 23h1v1h-1zM25 23h1v1h-1zM30 23h1v1h-1zM33 23h1v1h-1zM35 23h1v1h-1zM39 23h2v1h-2zM5 24h3v1h-3zM9 24h3v1h-3zM14 24h2v1h-2zM17 24h1v1h-1zM20 24h1v1h-1zM23 24h2v1h-2zM26 24h1v1h-1zM29 24h3v1h-3zM33 24h6v1h-6zM4 25h1v1h-1zM7 25h1v1h-1zM12 25h2v1h-2zM15 25h2v1h-2zM20 25h2v1h-2zM23 25h1v1h-1zM26 25h2v1h-2zM29 25h1v1h-1zM35 25h1v1h-1zM38 25h1v1h-1zM5 26h1v1h-1zM7 26h1v1h-1zM9 26h6v1h-6zM18 26h4v1h-4zM24 26h2v1h-2zM28 26h4v1h-4zM33 26h1v1h-1zM38 26h3v1h-3zM6 27h4v1h-4zM11 27h2v1h-2zM14 27h2v1h-2zM17 27h1v1h-1zM19 27h1v1h-1zM21 27h4v1h-4zM29 27h1v1h-1zM33 27h1v1h-1zM35 27h1v1h-1zM40 27h1v1h-1zM4 28h3v1h-3zM10 28h2v1h-2zM13 28h2v1h-2zM17 28h1v1h-1zM19 28h1v1h-1zM22 28h2v1h-2zM25 28h4v1h-4zM30 28h1v1h-1zM32 28h3v1h-3zM36 28h5v1h-5zM4 29h1v1h-1zM6 29h2v1h-2zM9 29h1v1h-1zM11 29h1v1h-1zM13 29h1v1h-1zM16 29h1v1h-1zM24 29h3v1h-3zM37 29h1v1h-1zM4 30h1v1h-1zM6 30h1v1h-1zM8 30h5v1h-5zM14 30h3v1h-3zM20 30h2v1h-2zM25 30h1v1h-1zM27 30h6v1h-6zM34 30h2v1h-2zM38 30h3v1h-3zM4 31h1v1h-1zM7 31h3v1h-3zM16 31h1v1h-1zM18 31h1v1h-1zM21 31h1v1h-1zM24 31h1v1h-1zM27 31h1v1h-1zM30 31h4v1h-4zM35 31h1v1h-1zM39 31h1v1h-1zM4 32h1v1h-1zM7 32h1v1h-1zM9 32h2v1h-2zM12 32h1v1h-1zM15 32h4v1h-4zM20 32h2v1h-2zM24 32h16v1h-16zM12 33h1v1h-1zM14 33h3v1h-3zM18 33h1v1h-1zM20 33h1v1h-1zM25 33h1v1h-1zM27 33h1v1h-1zM32 33h1v1h-1zM36 33h1v1h-1zM39 33h1v1h-1zM4 34h7v1h-7zM15 34h1v1h-1zM17 34h4v1h-4zM23 34h2v1h-2zM28 34h2v1h-2zM32 34h1v1h-1zM34 34h1v1h-1zM36 34h2v1h-2zM39 34h2v1h-2zM4 35h1v1h-1zM10 35h1v1h-1zM14 35h1v1h-1zM16 35h1v1h-1zM19 35h2v1h-2zM22 35h3v1h-3zM26 35h2v1h-2zM30 35h1v1h-1zM32 35h1v1h-1zM36 35h1v1h-1zM39 35h2v1h-2zM4 36h1v1h-1zM6 36h3v1h-3zM10 36h1v1h-1zM12 36h2v1h-2zM20 36h1v1h-1zM22 36h1v1h-1zM25 36h3v1h-3zM29 36h8v1h-8zM38 36h3v1h-3zM4 37h1v1h-1zM6 37h3v1h-3zM10 37h1v1h-1zM12 37h1v1h-1zM17 37h1v1h-1zM19 37h2v1h-2zM24 37h1v1h-1zM26 37h1v1h-1zM28 37h2v1h-2zM34 37h3v1h-3zM38 37h1v1h-1zM4 38h1v1h-1zM6 38h3v1h-3zM10 38h1v1h-1zM12 38h1v1h-1zM15 38h2v1h-2zM18 38h1v1h-1zM21 38h4v1h-4zM26 38h1v1h-1zM31 38h1v1h-1zM33 38h1v1h-1zM35 38h1v1h-1zM37 38h2v1h-2zM40 38h1v1h-1zM4 39h1v1h-1zM10 39h1v1h-1zM13 39h2v1h-2zM16 39h2v1h-2zM21 39h1v1h-1zM24 39h1v1h-1zM28 39h1v1h-1zM30 39h1v1h-1zM32 39h2v1h-2zM35 39h1v1h-1zM40 39h1v1h-1zM4 40h7v1h-7zM14 40h2v1h-2zM19 40h3v1h-3zM23 40h1v1h-1zM26 40h1v1h-1zM28 40h3v1h-3zM33 40h1v1h-1zM35 40h1v1h-1zM37 40h4v1h-4z"/></svg></div><figcaption><b>Énigme 3 — les couleurs</b><span>Chaque indice coûte 2 min</span><code>getsnexora.com/escape/indice/?e=3</code></figcaption></figure>
-<figure class="qr"><div class="k">Indice</div><div class="code"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" shape-rendering="crispEdges" role="img"><path fill="#000000" d="M4 4h7v1h-7zM12 4h4v1h-4zM19 4h2v1h-2zM22 4h3v1h-3zM26 4h3v1h-3zM30 4h3v1h-3zM34 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h2v1h-2zM17 5h2v1h-2zM20 5h1v1h-1zM24 5h3v1h-3zM30 5h2v1h-2zM34 5h1v1h-1zM40 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM13 6h1v1h-1zM15 6h3v1h-3zM20 6h3v1h-3zM24 6h2v1h-2zM30 6h1v1h-1zM32 6h1v1h-1zM34 6h1v1h-1zM36 6h3v1h-3zM40 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM12 7h1v1h-1zM14 7h5v1h-5zM20 7h3v1h-3zM26 7h3v1h-3zM31 7h1v1h-1zM34 7h1v1h-1zM36 7h3v1h-3zM40 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM12 8h1v1h-1zM16 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h4v1h-4zM34 8h1v1h-1zM36 8h3v1h-3zM40 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h1v1h-1zM14 9h4v1h-4zM19 9h1v1h-1zM22 9h1v1h-1zM25 9h3v1h-3zM29 9h1v1h-1zM31 9h2v1h-2zM34 9h1v1h-1zM40 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h1v1h-1zM32 10h1v1h-1zM34 10h7v1h-7zM15 11h1v1h-1zM17 11h1v1h-1zM20 11h2v1h-2zM23 11h1v1h-1zM25 11h4v1h-4zM7 12h1v1h-1zM10 12h1v1h-1zM13 12h1v1h-1zM15 12h1v1h-1zM17 12h1v1h-1zM20 12h8v1h-8zM31 12h1v1h-1zM35 12h3v1h-3zM39 12h2v1h-2zM4 13h1v1h-1zM6 13h3v1h-3zM11 13h2v1h-2zM14 13h2v1h-2zM22 13h1v1h-1zM34 13h2v1h-2zM37 13h4v1h-4zM4 14h4v1h-4zM9 14h2v1h-2zM12 14h3v1h-3zM17 14h2v1h-2zM24 14h3v1h-3zM28 14h1v1h-1zM32 14h1v1h-1zM34 14h1v1h-1zM37 14h1v1h-1zM40 14h1v1h-1zM4 15h3v1h-3zM8 15h2v1h-2zM11 15h1v1h-1zM13 15h4v1h-4zM18 15h1v1h-1zM20 15h2v1h-2zM23 15h1v1h-1zM27 15h3v1h-3zM31 15h2v1h-2zM39 15h1v1h-1zM4 16h2v1h-2zM9 16h3v1h-3zM14 16h2v1h-2zM17 16h1v1h-1zM19 16h3v1h-3zM27 16h1v1h-1zM29 16h1v1h-1zM31 16h4v1h-4zM39 16h1v1h-1zM4 17h1v1h-1zM6 17h3v1h-3zM11 17h2v1h-2zM14 17h2v1h-2zM19 17h2v1h-2zM23 17h1v1h-1zM25 17h5v1h-5zM34 17h2v1h-2zM37 17h1v1h-1zM40 17h1v1h-1zM4 18h4v1h-4zM10 18h1v1h-1zM12 18h2v1h-2zM15 18h3v1h-3zM20 18h5v1h-5zM26 18h1v1h-1zM29 18h2v1h-2zM32 18h2v1h-2zM35 18h2v1h-2zM38 18h1v1h-1zM40 18h1v1h-1zM4 19h5v1h-5zM11 19h2v1h-2zM14 19h1v1h-1zM16 19h2v1h-2zM20 19h2v1h-2zM23 19h3v1h-3zM27 19h1v1h-1zM29 19h1v1h-1zM31 19h1v1h-1zM33 19h1v1h-1zM35 19h1v1h-1zM39 19h1v1h-1zM5 20h2v1h-2zM10 20h1v1h-1zM12 20h2v1h-2zM18 20h2v1h-2zM22 20h1v1h-1zM26 20h2v1h-2zM33 20h2v1h-2zM37 20h4v1h-4zM4 21h2v1h-2zM9 21h1v1h-1zM12 21h5v1h-5zM20 21h1v1h-1zM24 21h1v1h-1zM26 21h1v1h-1zM28 21h1v1h-1zM30 21h1v1h-1zM32 21h1v1h-1zM34 21h1v1h-1zM36 21h2v1h-2zM40 21h1v1h-1zM4 22h1v1h-1zM6 22h1v1h-1zM8 22h1v1h-1zM10 22h1v1h-1zM14 22h3v1h-3zM19 22h1v1h-1zM21 22h3v1h-3zM26 22h1v1h-1zM29 22h1v1h-1zM32 22h1v1h-1zM34 22h4v1h-4zM39 22h2v1h-2zM5 23h1v1h-1zM7 23h2v1h-2zM11 23h3v1h-3zM15 23h2v1h-2zM19 23h1v1h-1zM21 23h1v1h-1zM24 23h5v1h-5zM30 23h1v1h-1zM32 23h1v1h-1zM34 23h2v1h-2zM38 23h1v1h-1zM5 24h2v1h-2zM8 24h1v1h-1zM10 24h1v1h-1zM13 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1zM19 24h1v1h-1zM21 24h1v1h-1zM23 24h3v1h-3zM27 24h1v1h-1zM29 24h2v1h-2zM32 24h1v1h-1zM34 24h3v1h-3zM39 24h1v1h-1zM4 25h2v1h-2zM7 25h1v1h-1zM9 25h1v1h-1zM11 25h3v1h-3zM20 25h1v1h-1zM22 25h1v1h-1zM25 25h2v1h-2zM28 25h1v1h-1zM33 25h2v1h-2zM38 25h3v1h-3zM4 26h1v1h-1zM6 26h1v1h-1zM9 26h2v1h-2zM14 26h1v1h-1zM17 26h1v1h-1zM20 26h2v1h-2zM23 26h1v1h-1zM28 26h1v1h-1zM33 26h1v1h-1zM35 26h6v1h-6zM4 27h2v1h-2zM7 27h3v1h-3zM14 27h3v1h-3zM18 27h2v1h-2zM21 27h1v1h-1zM26 27h1v1h-1zM28 27h1v1h-1zM30 27h1v1h-1zM33 27h2v1h-2zM36 27h1v1h-1zM4 28h2v1h-2zM7 28h2v1h-2zM10 28h3v1h-3zM20 28h1v1h-1zM22 28h7v1h-7zM31 28h1v1h-1zM33 28h2v1h-2zM39 28h2v1h-2zM7 29h2v1h-2zM11 29h1v1h-1zM13 29h3v1h-3zM18 29h5v1h-5zM24 29h5v1h-5zM32 29h3v1h-3zM37 29h4v1h-4zM4 30h1v1h-1zM7 30h1v1h-1zM10 30h4v1h-4zM16 30h1v1h-1zM19 30h2v1h-2zM26 30h1v1h-1zM28 30h3v1h-3zM33 30h3v1h-3zM37 30h1v1h-1zM40 30h1v1h-1zM5 31h1v1h-1zM7 31h2v1h-2zM11 31h1v1h-1zM15 31h1v1h-1zM17 31h2v1h-2zM20 31h1v1h-1zM22 31h3v1h-3zM28 31h5v1h-5zM34 31h1v1h-1zM40 31h1v1h-1zM4 32h3v1h-3zM9 32h3v1h-3zM13 32h1v1h-1zM15 32h2v1h-2zM20 32h2v1h-2zM23 32h1v1h-1zM26 32h3v1h-3zM32 32h5v1h-5zM38 32h2v1h-2zM12 33h4v1h-4zM17 33h1v1h-1zM20 33h6v1h-6zM27 33h4v1h-4zM32 33h1v1h-1zM36 33h1v1h-1zM39 33h2v1h-2zM4 34h7v1h-7zM13 34h1v1h-1zM15 34h1v1h-1zM17 34h1v1h-1zM22 34h2v1h-2zM25 34h2v1h-2zM28 34h5v1h-5zM34 34h1v1h-1zM36 34h1v1h-1zM38 34h3v1h-3zM4 35h1v1h-1zM10 35h1v1h-1zM13 35h3v1h-3zM19 35h1v1h-1zM21 35h1v1h-1zM23 35h2v1h-2zM28 35h1v1h-1zM30 35h1v1h-1zM32 35h1v1h-1zM36 35h1v1h-1zM38 35h1v1h-1zM4 36h1v1h-1zM6 36h3v1h-3zM10 36h1v1h-1zM13 36h1v1h-1zM15 36h1v1h-1zM19 36h1v1h-1zM24 36h1v1h-1zM29 36h2v1h-2zM32 36h6v1h-6zM40 36h1v1h-1zM4 37h1v1h-1zM6 37h3v1h-3zM10 37h1v1h-1zM12 37h1v1h-1zM14 37h1v1h-1zM19 37h4v1h-4zM26 37h2v1h-2zM33 37h1v1h-1zM36 37h1v1h-1zM38 37h3v1h-3zM4 38h1v1h-1zM6 38h3v1h-3zM10 38h1v1h-1zM13 38h1v1h-1zM17 38h1v1h-1zM19 38h1v1h-1zM21 38h3v1h-3zM25 38h2v1h-2zM29 38h2v1h-2zM33 38h1v1h-1zM36 38h1v1h-1zM38 38h1v1h-1zM40 38h1v1h-1zM4 39h1v1h-1zM10 39h1v1h-1zM13 39h2v1h-2zM16 39h1v1h-1zM18 39h1v1h-1zM21 39h3v1h-3zM29 39h1v1h-1zM32 39h3v1h-3zM36 39h1v1h-1zM4 40h7v1h-7zM13 40h1v1h-1zM18 40h1v1h-1zM21 40h1v1h-1zM23 40h3v1h-3zM28 40h2v1h-2zM31 40h3v1h-3zM35 40h2v1h-2zM39 40h2v1h-2z"/></svg></div><figcaption><b>Énigme 4 — la mémoire</b><span>Chaque indice coûte 2 min</span><code>getsnexora.com/escape/indice/?e=4</code></figcaption></figure>
-<figure class="qr"><div class="k">Staff</div><div class="code"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" shape-rendering="crispEdges" role="img"><path fill="#000000" d="M4 4h7v1h-7zM12 4h1v1h-1zM15 4h2v1h-2zM20 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM30 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM13 5h3v1h-3zM20 5h1v1h-1zM22 5h2v1h-2zM28 5h1v1h-1zM30 5h1v1h-1zM36 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM12 6h2v1h-2zM16 6h2v1h-2zM22 6h1v1h-1zM24 6h2v1h-2zM27 6h2v1h-2zM30 6h1v1h-1zM32 6h3v1h-3zM36 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM13 7h1v1h-1zM16 7h1v1h-1zM19 7h1v1h-1zM23 7h1v1h-1zM25 7h1v1h-1zM27 7h2v1h-2zM30 7h1v1h-1zM32 7h3v1h-3zM36 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM19 8h1v1h-1zM21 8h2v1h-2zM25 8h1v1h-1zM27 8h2v1h-2zM30 8h1v1h-1zM32 8h3v1h-3zM36 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM13 9h1v1h-1zM20 9h1v1h-1zM22 9h1v1h-1zM24 9h1v1h-1zM26 9h1v1h-1zM30 9h1v1h-1zM36 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h7v1h-7zM12 11h4v1h-4zM18 11h2v1h-2zM21 11h2v1h-2zM26 11h1v1h-1zM9 12h2v1h-2zM14 12h2v1h-2zM17 12h1v1h-1zM20 12h1v1h-1zM23 12h2v1h-2zM26 12h3v1h-3zM30 12h1v1h-1zM32 12h1v1h-1zM34 12h1v1h-1zM36 12h1v1h-1zM5 13h2v1h-2zM8 13h1v1h-1zM11 13h1v1h-1zM13 13h2v1h-2zM16 13h1v1h-1zM18 13h1v1h-1zM21 13h1v1h-1zM24 13h2v1h-2zM27 13h1v1h-1zM29 13h1v1h-1zM31 13h2v1h-2zM34 13h1v1h-1zM4 14h5v1h-5zM10 14h1v1h-1zM21 14h1v1h-1zM23 14h1v1h-1zM26 14h1v1h-1zM31 14h1v1h-1zM33 14h3v1h-3zM7 15h3v1h-3zM11 15h1v1h-1zM14 15h3v1h-3zM18 15h3v1h-3zM22 15h1v1h-1zM26 15h2v1h-2zM29 15h3v1h-3zM34 15h3v1h-3zM4 16h2v1h-2zM7 16h1v1h-1zM10 16h2v1h-2zM15 16h1v1h-1zM17 16h1v1h-1zM21 16h3v1h-3zM25 16h2v1h-2zM30 16h2v1h-2zM33 16h1v1h-1zM36 16h1v1h-1zM4 17h2v1h-2zM7 17h2v1h-2zM12 17h1v1h-1zM14 17h1v1h-1zM16 17h1v1h-1zM19 17h2v1h-2zM22 17h2v1h-2zM25 17h1v1h-1zM27 17h1v1h-1zM30 17h1v1h-1zM34 17h1v1h-1zM36 17h1v1h-1zM5 18h1v1h-1zM9 18h2v1h-2zM12 18h2v1h-2zM15 18h6v1h-6zM22 18h1v1h-1zM24 18h1v1h-1zM26 18h1v1h-1zM29 18h2v1h-2zM33 18h3v1h-3zM7 19h3v1h-3zM11 19h2v1h-2zM16 19h1v1h-1zM19 19h6v1h-6zM29 19h1v1h-1zM31 19h6v1h-6zM6 20h1v1h-1zM8 20h4v1h-4zM14 20h2v1h-2zM17 20h2v1h-2zM20 20h1v1h-1zM22 20h1v1h-1zM29 20h1v1h-1zM31 20h3v1h-3zM4 21h2v1h-2zM7 21h2v1h-2zM11 21h2v1h-2zM17 21h7v1h-7zM25 21h1v1h-1zM27 21h2v1h-2zM30 21h2v1h-2zM36 21h1v1h-1zM5 22h2v1h-2zM8 22h4v1h-4zM13 22h4v1h-4zM19 22h3v1h-3zM23 22h1v1h-1zM27 22h1v1h-1zM33 22h2v1h-2zM36 22h1v1h-1zM5 23h1v1h-1zM7 23h2v1h-2zM11 23h2v1h-2zM16 23h1v1h-1zM18 23h2v1h-2zM23 23h2v1h-2zM26 23h5v1h-5zM33 23h4v1h-4zM4 24h1v1h-1zM7 24h5v1h-5zM15 24h2v1h-2zM19 24h1v1h-1zM23 24h1v1h-1zM26 24h1v1h-1zM28 24h2v1h-2zM32 24h2v1h-2zM4 25h1v1h-1zM8 25h1v1h-1zM13 25h1v1h-1zM17 25h3v1h-3zM23 25h2v1h-2zM27 25h1v1h-1zM31 25h4v1h-4zM4 26h1v1h-1zM9 26h3v1h-3zM15 26h2v1h-2zM20 26h1v1h-1zM23 26h2v1h-2zM31 26h1v1h-1zM33 26h3v1h-3zM4 27h1v1h-1zM6 27h1v1h-1zM8 27h1v1h-1zM12 27h4v1h-4zM17 27h1v1h-1zM21 27h1v1h-1zM26 27h2v1h-2zM31 27h1v1h-1zM33 27h2v1h-2zM36 27h1v1h-1zM4 28h7v1h-7zM13 28h2v1h-2zM17 28h4v1h-4zM23 28h2v1h-2zM27 28h6v1h-6zM35 28h2v1h-2zM12 29h3v1h-3zM16 29h3v1h-3zM21 29h3v1h-3zM25 29h1v1h-1zM28 29h1v1h-1zM32 29h2v1h-2zM36 29h1v1h-1zM4 30h7v1h-7zM13 30h1v1h-1zM15 30h2v1h-2zM20 30h3v1h-3zM26 30h3v1h-3zM30 30h1v1h-1zM32 30h1v1h-1zM35 30h1v1h-1zM4 31h1v1h-1zM10 31h1v1h-1zM12 31h2v1h-2zM15 31h1v1h-1zM17 31h1v1h-1zM19 31h2v1h-2zM24 31h3v1h-3zM28 31h1v1h-1zM32 31h4v1h-4zM4 32h1v1h-1zM6 32h3v1h-3zM10 32h1v1h-1zM13 32h3v1h-3zM18 32h2v1h-2zM21 32h1v1h-1zM25 32h2v1h-2zM28 32h5v1h-5zM35 32h2v1h-2zM4 33h1v1h-1zM6 33h3v1h-3zM10 33h1v1h-1zM14 33h1v1h-1zM16 33h1v1h-1zM19 33h2v1h-2zM22 33h1v1h-1zM24 33h1v1h-1zM27 33h3v1h-3zM31 33h2v1h-2zM34 33h1v1h-1zM36 33h1v1h-1zM4 34h1v1h-1zM6 34h3v1h-3zM10 34h1v1h-1zM13 34h1v1h-1zM17 34h1v1h-1zM19 34h1v1h-1zM21 34h5v1h-5zM32 34h5v1h-5zM4 35h1v1h-1zM10 35h1v1h-1zM14 35h5v1h-5zM21 35h2v1h-2zM25 35h1v1h-1zM29 35h2v1h-2zM33 35h2v1h-2zM4 36h7v1h-7zM13 36h1v1h-1zM18 36h1v1h-1zM21 36h1v1h-1zM24 36h1v1h-1zM27 36h2v1h-2zM30 36h1v1h-1zM35 36h1v1h-1z"/></svg></div><figcaption><b>Console game master</b><span>Solutions et chrono</span><code>getsnexora.com/escape/gm/</code></figcaption></figure>
-  </div>
-  <p class="note">Correction d'erreur maximale : un QR reste lisible même sali, plié ou partiellement masqué. Vectoriels — agrandissez-les autant que vous voulez sans perte. L'impression sort un QR par page A4, format mural.</p>
-  <button class="pr" id="pr">Imprimer la planche</button>
+  <a class="tile t4" href="memoire/">
+    <div class="num">Énigme 4</div>
+    <div class="mark">4</div>
+    <div class="tname">La mémoire<br>qui s'efface</div>
+    <div class="tsub">Quatre séries, quatre décennies</div>
+    <div class="swatches">
+      <i style="background:hsl(275 90% 62%)"></i><i style="background:hsl(314 88% 60%)"></i>
+      <i style="background:hsl(353 86% 58%)"></i><i style="background:hsl(32 84% 56%)"></i>
+    </div>
+  </a>
+</main>
 
-  <footer>Énigmes 3 &amp; 4 · thème évolution de l'âge</footer>
-</div>
-<script>document.getElementById("pr").addEventListener("click",function(){window.print()});</script>
 </body>
 </html>

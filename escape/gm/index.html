@@ -63,9 +63,7 @@ details ol li{margin-bottom:9px}
   <div id="clock">
     <div id="t">00:00</div>
     <button id="go">Démarrer</button>
-    <button id="pen">−2 min</button>
     <button id="rz">Reset</button>
-    <div class="pen">Pénalités<br><b id="np">0</b></div>
   </div>
 
   <div class="kicker">Console game master</div>
@@ -89,10 +87,10 @@ details ol li{margin-bottom:9px}
 
     <h3>Solution</h3>
     <ul>
-      <li>Classer par la <b>couleur de l'encre</b> dans l'ordre arc-en-ciel</li>
+      <li>La page fait tout : défilé de 30 s, puis le mur à ranger, puis la révélation</li>
       <li>Les lettres des coins donnent <b>O R A N G E</b></li>
       <li>Piège : classer par le mot donne GNEORA (anagramme) — ils sont proches, laissez-les chercher</li>
-      <li>Salle orange → le nombre <b>47</b> est peint au mur</li>
+      <li>Écran final : <b>SALLE ORANGE</b>. Le nombre <b>47</b> est peint dans cette salle</li>
     </ul>
 
     <div class="out"><span class="lbl">Sortie vers le code final</span><span class="val">4 7</span></div>
@@ -135,8 +133,9 @@ details ol li{margin-bottom:9px}
 
     <h3>Règles</h3>
     <ul>
-      <li>2 essais par série. 2<sup>e</sup> échec : on rejoue la série, −2 min</li>
-      <li>Touche <b>R</b> sur la page pour rejouer la série en cours</li>
+      <li>2 essais par série, puis la série se rejoue toute seule</li>
+      <li>Les joueurs tapent leur réponse sur le pavé à l’écran, la page valide seule</li>
+      <li>Secours game master : <b>Alt+1</b> à <b>Alt+4</b> pour sauter à une série, <b>Alt+R</b> pour la rejouer</li>
       <li>Touches <b>1 2 3 4</b> pour sauter directement à une série</li>
     </ul>
 
@@ -177,8 +176,8 @@ details ol li{margin-bottom:9px}
 <script>
 (function(){
 "use strict";
-var DUR = 45*60, left = DUR, run = false, pen = 0;
-var t = document.getElementById("t"), np = document.getElementById("np");
+var DUR = 45*60, left = DUR, run = false;
+var t = document.getElementById("t");
 function paint(){
   var s = Math.max(0,left);
   t.textContent = ("0"+Math.floor(s/60)).slice(-2) + ":" + ("0"+(s%60)).slice(-2);
@@ -188,11 +187,8 @@ setInterval(function(){ if (run && left > 0){ left--; paint(); } }, 1000);
 document.getElementById("go").addEventListener("click", function(){
   run = !run; this.textContent = run ? "Pause" : "Reprendre";
 });
-document.getElementById("pen").addEventListener("click", function(){
-  left = Math.max(0, left - 120); pen++; np.textContent = pen; paint();
-});
 document.getElementById("rz").addEventListener("click", function(){
-  left = DUR; run = false; pen = 0; np.textContent = 0;
+  left = DUR; run = false;
   document.getElementById("go").textContent = "Démarrer"; paint();
 });
 paint();
