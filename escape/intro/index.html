@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; media-src 'self' blob:; connect-src 'self' blob:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; media-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="robots" content="noindex,nofollow">
 <title>Intro — Évolution de l'âge</title>
@@ -224,21 +224,6 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 #go .pulse{margin-top:5vmin;width:min(9vmin,13vw);height:min(9vmin,13vw);border-radius:50%;
   border:1px solid rgba(255,255,255,.3);animation:pl 2.4s ease-in-out infinite}
 @keyframes pl{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.16);opacity:1}}
-
-#rec{position:fixed;top:2.6vmin;right:3vmin;z-index:22;display:flex;align-items:center;gap:1.1vmin;
-  font:inherit;font-size:min(2vmin,3.1vw);letter-spacing:.16em;text-transform:uppercase;
-  cursor:pointer;color:#f0ece4;padding:1.5vmin 3vmin;border-radius:99px;
-  border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.08);transition:all .25s}
-#rec:hover{color:#111;background:#f0ece4;border-color:#f0ece4}
-#rec:hover b{background:#d8322a}
-#rec b{width:1.5vmin;height:1.5vmin;min-width:9px;min-height:9px;border-radius:50%;
-  background:#ff3b30;box-shadow:0 0 1.4vmin rgba(255,59,48,.8)}
-#recDot{position:fixed;top:2.4vmin;left:2.6vmin;z-index:21;display:none;align-items:center;gap:1vmin;
-  font-size:min(1.5vmin,2.4vw);letter-spacing:.2em;text-transform:uppercase;color:#ff6b5e}
-#recDot.on{display:flex}
-#recDot i{width:1.4vmin;height:1.4vmin;min-width:8px;min-height:8px;border-radius:50%;background:#ff3b30;
-  animation:recBlink 1.1s ease-in-out infinite}
-@keyframes recBlink{0%,100%{opacity:1}50%{opacity:.25}}
 
 @media (prefers-reduced-motion:reduce){#breath,#head,#armR,#armL,.pulse{animation:none}}
 </style>
@@ -476,8 +461,6 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
   <div class="w">Montez le son. Flashes lumineux, et un sursaut à la fin.</div>
   <div class="pulse"></div>
 </div>
-<button id="rec"><b></b>Enregistrer</button>
-<div id="recDot"><i></i>Enregistrement</div>
 
 <script>
 (function(){
@@ -1442,63 +1425,10 @@ buildDecay();
 var started = false;
 function start(){
   if (started) return; started = true;
-  $("rec").style.display = "none";          /* il ne doit pas finir dans l'enregistrement */
   audio(); loadVoices();
   $("go").classList.add("gone");
   at(900, run);
 }
-/* ---------- enregistrement : image de l'onglet, son pris a la source ---------- */
-var recorder = null, recChunks = [];
-function canRecord(){
-  return !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia && window.MediaRecorder);
-}
-function recStart(){
-  if (!canRecord()){
-    $("rec").textContent = "Enregistrement non géré ici — utilisez Chrome";
-    return;
-  }
-  audio();
-  navigator.mediaDevices.getDisplayMedia({
-    video: { frameRate: 60, width: { ideal: 1920 }, height: { ideal: 1080 } },
-    audio: false
-  }).then(function(disp){
-    var dest = AC.createMediaStreamDestination();
-    bus.connect(dest);
-    var ms = new MediaStream(disp.getVideoTracks().concat(dest.stream.getAudioTracks()));
-    var types = ["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"];
-    var mt = "";
-    for (var i=0;i<types.length;i++){
-      if (MediaRecorder.isTypeSupported(types[i])){ mt = types[i]; break; }
-    }
-    recorder = new MediaRecorder(ms, mt
-      ? { mimeType: mt, videoBitsPerSecond: 14000000, audioBitsPerSecond: 192000 }
-      : undefined);
-    recChunks = [];
-    recorder.ondataavailable = function(e){ if (e.data && e.data.size) recChunks.push(e.data); };
-    recorder.onstop = function(){
-      disp.getTracks().forEach(function(tr){ tr.stop(); });
-      $("recDot").classList.remove("on");
-      var blob = new Blob(recChunks, { type: mt || "video/webm" });
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "intro-evolution-de-l-age.webm";
-      document.body.appendChild(a); a.click();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 4000);
-    };
-    /* si l'utilisateur coupe le partage, on cloture proprement */
-    disp.getVideoTracks()[0].addEventListener("ended", function(){
-      if (recorder && recorder.state === "recording") recorder.stop();
-    });
-    recorder.start();
-    $("recDot").classList.add("on");
-    var el = document.documentElement;
-    if (el.requestFullscreen){ el.requestFullscreen().catch(function(){}); }
-    start();
-    at(46000, function(){ if (recorder && recorder.state === "recording") recorder.stop(); });
-  }).catch(function(){ /* partage refuse : on ne fait rien */ });
-}
-$("rec").addEventListener("click", function(e){ e.stopPropagation(); recStart(); });
-
 $("go").addEventListener("click", start);
 document.addEventListener("keydown", function(e){
   if (e.code === "Space" || e.key === "Enter"){ e.preventDefault(); start(); return; }
