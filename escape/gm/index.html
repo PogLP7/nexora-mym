@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Game Master — Énigmes 3 & 4</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#06070c;color:#e9ecf6;font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;padding:26px 18px 90px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto}
+.kicker{font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.38;margin-bottom:10px}
+h1{font-size:clamp(26px,6vw,34px);font-weight:200;letter-spacing:-.02em;margin-bottom:28px}
+h1 span{opacity:.4}
+
+/* chrono */
+#clock{position:sticky;top:0;z-index:20;margin:-26px -18px 26px;padding:16px 18px;
+  background:rgba(6,7,12,.86);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:14px}
+#t{font-size:34px;font-weight:200;font-variant-numeric:tabular-nums;letter-spacing:.01em;min-width:118px}
+#t.low{color:#f0604a}
+#clock button{font:inherit;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;color:#e9ecf6;
+  padding:9px 15px;border-radius:99px;border:1px solid rgba(255,255,255,.17);background:rgba(255,255,255,.05);transition:background .2s}
+#clock button:hover{background:rgba(255,255,255,.13)}
+#clock .pen{margin-left:auto;font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.4;text-align:right}
+
+section{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.028);border-radius:20px;padding:24px;margin-bottom:18px}
+section h2{font-size:20px;font-weight:400;margin-bottom:4px}
+section .meta{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.4;margin-bottom:20px}
+h3{font-size:11px;letter-spacing:.24em;text-transform:uppercase;opacity:.45;margin:22px 0 9px}
+h3:first-of-type{margin-top:0}
+ul{list-style:none}
+li{position:relative;padding-left:17px;margin-bottom:7px;font-size:15px;font-weight:300}
+li:before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3)}
+.say{border-left:2px solid rgba(240,160,74,.6);padding:4px 0 4px 15px;margin:9px 0;font-size:15px;font-style:italic;opacity:.85}
+.out{display:flex;align-items:center;gap:12px;margin-top:20px;padding:15px 18px;border-radius:14px;
+  background:rgba(240,160,74,.11);border:1px solid rgba(240,160,74,.32)}
+.out .lbl{font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.65}
+.out .val{font-size:30px;font-weight:300;letter-spacing:.14em;font-variant-numeric:tabular-nums;color:#f5b571;margin-left:auto}
+.links{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
+.links a{font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:#e9ecf6;
+  padding:11px 17px;border-radius:99px;border:1px solid rgba(255,255,255,.17);background:rgba(255,255,255,.05);transition:background .2s}
+.links a:hover{background:rgba(255,255,255,.13)}
+details{margin-top:16px;border-top:1px solid rgba(255,255,255,.08);padding-top:14px}
+summary{cursor:pointer;font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.45;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:before{content:"▸ ";opacity:.6}
+details[open] summary:before{content:"▾ "}
+details ol{margin:12px 0 0 18px;font-size:15px;font-weight:300}
+details ol li{padding-left:0}
+details ol li:before{display:none}
+details ol li{margin-bottom:9px}
+.final{text-align:center;padding:30px}
+.final .code{font-size:52px;font-weight:200;letter-spacing:.16em;font-variant-numeric:tabular-nums;margin:8px 0}
+.final small{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.4}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="clock">
+    <div id="t">00:00</div>
+    <button id="go">Démarrer</button>
+    <button id="pen">−2 min</button>
+    <button id="rz">Reset</button>
+    <div class="pen">Pénalités<br><b id="np">0</b></div>
+  </div>
+
+  <div class="kicker">Console game master</div>
+  <h1>Énigmes 3 &amp; 4 <span>— évolution de l'âge</span></h1>
+
+  <section>
+    <h2>Énigme 3 — Ne crois pas ce que tu lis</h2>
+    <div class="meta">Effet Stroop · inhibition cognitive · 6 à 10 min</div>
+
+    <h3>Matériel</h3>
+    <ul>
+      <li>6 cartes A5 plastifiées au mur, dans le désordre</li>
+      <li>Affiche légende arc-en-ciel numérotée 1 → 6</li>
+      <li>Panneau de dépôt, 6 emplacements numérotés</li>
+      <li>Phrase en gros : « Ne crois pas ce que tu lis. Crois ce que tu vois. »</li>
+      <li>Option : lunettes vaselinées (presbytie simulée)</li>
+    </ul>
+
+    <h3>À dire en entrant</h3>
+    <div class="say">« Vous avez vingt ans. Vos yeux vont vite, votre cerveau va plus vite encore — et c'est exactement le problème. »</div>
+
+    <h3>Solution</h3>
+    <ul>
+      <li>Classer par la <b>couleur de l'encre</b> dans l'ordre arc-en-ciel</li>
+      <li>Les lettres des coins donnent <b>O R A N G E</b></li>
+      <li>Piège : classer par le mot donne GNEORA (anagramme) — ils sont proches, laissez-les chercher</li>
+      <li>Salle orange → le nombre <b>47</b> est peint au mur</li>
+    </ul>
+
+    <div class="out"><span class="lbl">Sortie vers le code final</span><span class="val">4 7</span></div>
+
+    <details><summary>Indices à donner</summary><ol>
+      <li>« Relisez la phrase au mur. Elle ne décore pas. »</li>
+      <li>« Le mot ment. Seule l'encre dit la vérité. »</li>
+      <li>« Ordre de l'arc-en-ciel, selon l'encre. Puis lisez les lettres. »</li>
+    </ol></details>
+
+    <details><summary>Le point de cours</summary><ol>
+      <li>Stroop, 1935. La lecture est automatisée : elle s'impose et parasite le nommage de la couleur.</li>
+      <li>C'est le test de référence de l'<b>inhibition</b>, fonction du cortex préfrontal.</li>
+      <li>Lien avec le thème : l'interférence Stroop <b>augmente avec l'âge</b>, le frontal étant la région qui décline le plus tôt.</li>
+    </ol></details>
+
+    <div class="links"><a href="../stroop/">Ouvrir la page écran</a><a href="../indice/?e=3">Page indices</a></div>
+  </section>
+
+  <section>
+    <h2>Énigme 4 — La mémoire qui s'efface</h2>
+    <div class="meta">Empan mnésique · mémoire de travail · 8 à 12 min</div>
+
+    <h3>Matériel</h3>
+    <ul>
+      <li>Écran ou vidéoprojecteur + la page « mémoire »</li>
+      <li>Cadenas à 4 chiffres sur une boîte</li>
+      <li>Dans la boîte : enveloppe (chiffres 1 et 9) + indice vers la salle info</li>
+      <li>Ni papier ni stylo dans la salle</li>
+      <li>Affiche : « Notez mentalement le PREMIER chiffre de chaque série »</li>
+    </ul>
+
+    <h3>Les 4 séries</h3>
+    <ul>
+      <li><b>20 ans</b> — 3 9 1 6 4 — direct</li>
+      <li><b>40 ans</b> — 7 2 8 5 0 3 — direct, plus rapide</li>
+      <li><b>60 ans</b> — 4 1 9 6 2 — <b>inverse</b> (réponse 2 6 9 1 4)</li>
+      <li><b>80 ans</b> — 8 3 7 2 5 1 — <b>inverse</b> + brouhaha (réponse 1 5 2 7 3 8)</li>
+    </ul>
+
+    <h3>Règles</h3>
+    <ul>
+      <li>2 essais par série. 2<sup>e</sup> échec : on rejoue la série, −2 min</li>
+      <li>Touche <b>R</b> sur la page pour rejouer la série en cours</li>
+      <li>Touches <b>1 2 3 4</b> pour sauter directement à une série</li>
+    </ul>
+
+    <h3>Solution</h3>
+    <ul>
+      <li>Premiers chiffres : <b>3 · 7 · 4 · 8</b> → cadenas <b>3748</b></li>
+      <li>Dans la boîte : l'enveloppe donne <b>1</b> et <b>9</b></li>
+    </ul>
+
+    <div class="out"><span class="lbl">Sortie vers le code final</span><span class="val">1 9</span></div>
+
+    <h3>À dire à la fin</h3>
+    <div class="say">« Vous avez réussi quatre séries sur quatre. Un sujet de quatre-vingts ans en réussit deux. »</div>
+
+    <details><summary>Indices à donner</summary><ol>
+      <li>« Vous êtes plusieurs. Répartissez-vous la série. »</li>
+      <li>« Regroupez par paquets de trois. Sept éléments, pas sept chiffres. »</li>
+      <li>« Le code, c'est le premier chiffre de chaque série. »</li>
+    </ol></details>
+
+    <details><summary>Le point de cours</summary><ol>
+      <li>Empan endroit = mémoire à court terme. Empan envers = <b>mémoire de travail</b> (Baddeley), celle qui manipule l'information.</li>
+      <li>Miller, 1956 : 7 ± 2 éléments. Le <b>chunking</b> contourne la limite — d'où l'indice 2.</li>
+      <li>Lien avec le thème : l'empan endroit bouge peu avec l'âge, l'empan <b>envers s'effondre</b>. La série 4 ajoute un distracteur sonore : c'est le déficit d'inhibition, encore lui.</li>
+    </ol></details>
+
+    <div class="links"><a href="../memoire/">Ouvrir le diaporama</a><a href="../indice/?e=4">Page indices</a></div>
+  </section>
+
+  <section class="final">
+    <small>Chiffres accumulés après l'énigme 4</small>
+    <div class="code">4 7 1 9</div>
+    <small>Reste : énigme 5 (clé USB) puis énigme 6 (go/no-go + question de cours)</small>
+  </section>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var DUR = 45*60, left = DUR, run = false, pen = 0;
+var t = document.getElementById("t"), np = document.getElementById("np");
+function paint(){
+  var s = Math.max(0,left);
+  t.textContent = ("0"+Math.floor(s/60)).slice(-2) + ":" + ("0"+(s%60)).slice(-2);
+  t.classList.toggle("low", s <= 300);
+}
+setInterval(function(){ if (run && left > 0){ left--; paint(); } }, 1000);
+document.getElementById("go").addEventListener("click", function(){
+  run = !run; this.textContent = run ? "Pause" : "Reprendre";
+});
+document.getElementById("pen").addEventListener("click", function(){
+  left = Math.max(0, left - 120); pen++; np.textContent = pen; paint();
+});
+document.getElementById("rz").addEventListener("click", function(){
+  left = DUR; run = false; pen = 0; np.textContent = 0;
+  document.getElementById("go").textContent = "Démarrer"; paint();
+});
+paint();
+})();
+</script>
+</body>
+</html>

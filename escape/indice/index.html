@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Indice</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%}
+body{background:#06070c;color:#eef1fa;font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;padding:28px 20px;overflow-x:hidden}
+#glow{position:fixed;inset:-30%;z-index:0;filter:blur(90px);opacity:.42;pointer-events:none}
+.g{position:absolute;border-radius:50%;mix-blend-mode:screen}
+.g1{width:60vmin;height:60vmin;left:0;top:4%;background:radial-gradient(circle,#2f6fe0,transparent 66%);animation:f1 36s ease-in-out infinite}
+.g2{width:64vmin;height:64vmin;right:-6%;bottom:0;background:radial-gradient(circle,#c2491f,transparent 66%);animation:f2 44s ease-in-out infinite}
+@keyframes f1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(12vmin,10vmin) scale(1.15)}}
+@keyframes f2{0%,100%{transform:translate(0,0) scale(1.06)}50%{transform:translate(-12vmin,-9vmin) scale(.9)}}
+main{position:relative;z-index:1;width:100%;max-width:560px}
+.kicker{font-size:12px;letter-spacing:.3em;text-transform:uppercase;opacity:.4;margin-bottom:14px}
+h1{font-size:clamp(28px,7vw,40px);font-weight:200;letter-spacing:-.02em;line-height:1.12;margin-bottom:10px}
+.warn{font-size:14px;line-height:1.6;opacity:.56;margin-bottom:30px}
+.warn b{color:#f0a04a;font-weight:600}
+.hint{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);border-radius:18px;
+  padding:22px 24px;margin-bottom:14px;opacity:0;transform:translateY(16px);
+  animation:rise .55s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.hint .n{font-size:11px;letter-spacing:.26em;text-transform:uppercase;opacity:.42;margin-bottom:9px}
+.hint p{font-size:18px;line-height:1.52;font-weight:300}
+.hint.sol{border-color:rgba(240,160,74,.45);background:rgba(240,160,74,.1)}
+.hint.sol .n{color:#f0a04a;opacity:.9}
+button{width:100%;font:inherit;font-size:14px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;
+  color:#06070c;background:#eef1fa;border:0;border-radius:99px;padding:17px;margin-top:14px;
+  transition:transform .18s,opacity .25s}
+button:hover{transform:translateY(-1px)}
+button:active{transform:scale(.98)}
+button:disabled{opacity:.3;cursor:default;transform:none}
+.done{margin-top:26px;text-align:center;font-size:13px;letter-spacing:.2em;text-transform:uppercase;opacity:.34}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="glow"><div class="g g1"></div><div class="g g2"></div></div>
+<main>
+  <div class="kicker" id="kick">Indice</div>
+  <h1 id="title">—</h1>
+  <p class="warn">Chaque indice révélé coûte <b>2 minutes</b> au chrono.<br>Réfléchissez encore avant de toucher au bouton.</p>
+  <div id="list"></div>
+  <button id="more">Révéler un indice</button>
+  <div class="done" id="done" style="display:none">Plus d'indice. Appelez le game master.</div>
+</main>
+<script>
+(function(){
+"use strict";
+var DATA = {
+  "3": {
+    title:"Énigme 3 — Les couleurs",
+    hints:[
+      "Relisez la phrase affichée au mur. Elle ne décore pas : elle donne la règle.",
+      "Le mot écrit est un piège. Il ne sert à rien. Seule compte la couleur de l'encre dans laquelle il est écrit.",
+      "Classez les six cartes dans l'ordre de l'arc-en-ciel, selon leur encre. Puis lisez les lettres des coins, de haut en bas."
+    ],
+    sol:"Les lettres donnent ORANGE. Rendez-vous dans la salle orange : le nombre est peint au mur."
+  },
+  "4": {
+    title:"Énigme 4 — La mémoire",
+    hints:[
+      "Vous êtes plusieurs. Répartissez-vous la série : chacun prend sa part, vous recollez après.",
+      "Votre mémoire tient environ sept éléments, pas sept chiffres. Regroupez par paquets de trois : 392 - 164 se retient mieux que 3-9-2-1-6-4.",
+      "Le code du cadenas n'est pas dans la dernière série. C'est le PREMIER chiffre de chacune des quatre séries, dans l'ordre."
+    ],
+    sol:"Code du cadenas : 3 7 4 8."
+  }
+};
+var p = (location.search.match(/[?&]e=(\d)/) || [])[1] || "3";
+var d = DATA[p] || DATA["3"];
+var i = 0;
+document.getElementById("title").textContent = d.title;
+document.getElementById("kick").textContent = "Indice · énigme " + p;
+var list = document.getElementById("list"), btn = document.getElementById("more");
+btn.addEventListener("click", function(){
+  var el = document.createElement("div");
+  var last = (i === d.hints.length);
+  el.className = "hint" + (last ? " sol" : "");
+  el.innerHTML = '<div class="n">' + (last ? "Solution" : "Indice " + (i+1) + " sur " + d.hints.length) + "</div><p></p>";
+  el.querySelector("p").textContent = last ? d.sol : d.hints[i];
+  list.appendChild(el);
+  i++;
+  if (i > d.hints.length){ btn.style.display = "none"; document.getElementById("done").style.display = "block"; }
+  else if (i === d.hints.length) btn.textContent = "Donner la solution";
+});
+})();
+</script>
+</body>
+</html>

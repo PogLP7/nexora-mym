@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Énigme 3 — Ne crois pas ce que tu lis</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:#06070c;color:#eef1fa;overflow:hidden;
+  font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;user-select:none;
+  --age:0;
+  --rouge:hsl(6 78% calc(54% - var(--age)*4%));
+  --orange:hsl(30 92% calc(55% - var(--age)*3%));
+  --jaune:hsl(46 94% calc(58% - var(--age)*2%));
+  --vert:hsl(140 58% calc(48% + var(--age)*2%));
+  --bleu:hsl(218 76% calc(58% + var(--age)*2%));
+  --violet:hsl(272 64% calc(62% + var(--age)*2%));
+}
+/* la perception des couleurs se dégrade avec l'âge : jaunissement du cristallin */
+#tint{position:fixed;inset:0;z-index:30;pointer-events:none;
+  backdrop-filter:saturate(calc(100% - var(--age)*52%)) sepia(calc(var(--age)*34%)) blur(calc(var(--age)*.14vmin));
+  -webkit-backdrop-filter:saturate(calc(100% - var(--age)*52%)) sepia(calc(var(--age)*34%));
+  transition:backdrop-filter 1.6s cubic-bezier(.4,0,.2,1)}
+#vig{position:fixed;inset:0;z-index:31;pointer-events:none;
+  background:radial-gradient(ellipse calc(98% - var(--age)*26%) calc(98% - var(--age)*28%) at 50% 50%,transparent 46%,rgba(3,4,9,calc(.16 + var(--age)*.52)) 100%);
+  transition:background 1.6s}
+
+/* fond */
+#glow{position:fixed;inset:-25%;z-index:0;filter:blur(13vmin);opacity:.5}
+.g{position:absolute;border-radius:50%;mix-blend-mode:screen}
+.g1{width:62vmin;height:62vmin;left:2%;top:0;background:radial-gradient(circle,#2f6fe0,transparent 66%);animation:gf1 38s ease-in-out infinite}
+.g2{width:70vmin;height:70vmin;right:0;bottom:-10%;background:radial-gradient(circle,#8a4fd8,transparent 66%);animation:gf2 44s ease-in-out infinite}
+@keyframes gf1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(16vmin,10vmin) scale(1.16)}}
+@keyframes gf2{0%,100%{transform:translate(0,0) scale(1.08)}50%{transform:translate(-14vmin,-12vmin) scale(.9)}}
+
+/* ====== VUES ====== */
+.view{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;padding:4vmin}
+.view.on{display:flex}
+
+/* --- règle d'ouverture --- */
+#v-rule h1{font-size:7.6vmin;font-weight:200;letter-spacing:-.02em;line-height:1.08;text-align:center;max-width:22ch}
+#v-rule h1 em{font-style:normal;background:linear-gradient(100deg,var(--rouge),var(--orange) 30%,var(--jaune) 48%,var(--vert) 66%,var(--bleu) 82%,var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#v-rule p{margin-top:4.5vmin;font-size:2.8vmin;font-weight:300;letter-spacing:.04em;opacity:.66;text-align:center;max-width:52ch;line-height:1.5}
+
+/* --- mur de cartes --- */
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2.6vmin;width:min(92vw,148vh,164vmin)}
+@media (max-aspect-ratio:1/1){#grid{grid-template-columns:repeat(2,1fr);width:min(92vw,64vh)}}
+.card{position:relative;aspect-ratio:1.414/1;border-radius:2.2vmin;background:#fbfaf7;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2vmin 5vmin rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.07);
+  opacity:0;transform:translateY(5vmin) scale(.94) rotate(var(--rot,0deg));
+  animation:cIn .72s cubic-bezier(.16,1,.3,1) forwards;animation-delay:var(--d,0s);
+  transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
+@keyframes cIn{to{opacity:1;transform:translateY(0) scale(1) rotate(var(--rot,0deg))}}
+.card:hover{transform:translateY(-1.2vmin) scale(1.035) rotate(0deg);box-shadow:0 3.4vmin 7vmin rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.12)}
+.card .word{font-size:7.4vmin;font-weight:700;letter-spacing:.03em;line-height:1}
+.card .tag{position:absolute;right:1.6vmin;bottom:1.1vmin;font-size:2.3vmin;font-weight:700;opacity:.9}
+.card .pin{position:absolute;left:50%;top:-1.1vmin;transform:translateX(-50%);width:3.2vmin;height:2.2vmin;border-radius:.4vmin;
+  background:linear-gradient(180deg,#d9dbe4,#a9adbb);box-shadow:0 .5vmin 1vmin rgba(0,0,0,.4)}
+
+/* --- légende arc-en-ciel --- */
+#legend{display:flex;gap:1.4vmin;margin-top:5vmin;flex-wrap:wrap;justify-content:center}
+.lg{display:flex;align-items:center;gap:1vmin;padding:1.1vmin 2.2vmin;border-radius:99px;
+  border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.045);font-size:2vmin;letter-spacing:.1em;text-transform:uppercase}
+.lg b{font-size:2.4vmin;opacity:.45;font-weight:500;font-variant-numeric:tabular-nums}
+.sw{width:2.4vmin;height:2.4vmin;border-radius:50%;box-shadow:0 0 2.4vmin currentColor}
+
+/* --- défilé plein écran --- */
+#solo{font-size:min(26vmin,34vw);font-weight:700;letter-spacing:.02em;line-height:1;text-align:center}
+#soloTag{margin-top:5vmin;font-size:2.4vmin;letter-spacing:.34em;text-transform:uppercase;opacity:.3}
+.pop{animation:pop .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes pop{from{opacity:0;transform:scale(1.1) translateY(2vmin);filter:blur(1.4vmin)}to{opacity:1;transform:none;filter:none}}
+
+/* --- barre --- */
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:1.4vmin;justify-content:center;padding:2.6vmin;
+  font-size:1.7vmin;letter-spacing:.17em;text-transform:uppercase}
+#bar button{font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;color:#eef1fa;
+  padding:1.2vmin 2.6vmin;border-radius:99px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);
+  transition:background .25s,border-color .25s,transform .18s}
+#bar button:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
+#bar button:active{transform:scale(.96)}
+#bar button.on{background:#eef1fa;color:#06070c;border-color:#eef1fa}
+#age{position:fixed;top:3vmin;right:3.4vmin;z-index:50;font-size:1.7vmin;letter-spacing:.17em;text-transform:uppercase;opacity:.4}
+
+/* ====== IMPRESSION : 6 cartes A5, une par page ====== */
+#print{display:none}
+@media print{
+  @page{size:A5 landscape;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff;color:#000}
+  #glow,#tint,#vig,#bar,#age,.view{display:none!important}
+  #print{display:block}
+  .p-card{width:210mm;height:148mm;page-break-after:always;position:relative;
+    display:flex;align-items:center;justify-content:center;background:#fff}
+  .p-word{font-size:62mm;font-weight:800;letter-spacing:1mm;line-height:1;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .p-tag{position:absolute;right:12mm;bottom:9mm;font-size:16mm;font-weight:800;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .p-cut{position:absolute;inset:6mm;border:.4mm dashed #ccc;border-radius:4mm}
+  .p-legend{width:210mm;height:148mm;padding:18mm;page-break-after:always;font-family:inherit}
+  .p-legend h2{font-size:11mm;font-weight:800;margin-bottom:4mm}
+  .p-legend p{font-size:5.4mm;margin-bottom:9mm;color:#444}
+  .p-row{display:flex;align-items:center;gap:6mm;margin-bottom:5.5mm;font-size:7.5mm;font-weight:700}
+  .p-dot{width:11mm;height:11mm;border-radius:50%;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .p-num{width:10mm;font-size:8mm;color:#999}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="glow"><div class="g g1"></div><div class="g g2"></div></div>
+<div id="tint"></div>
+<div id="vig"></div>
+<div id="age">20 ans</div>
+
+<!-- 1. La règle -->
+<section class="view on" id="v-rule">
+  <h1>Ne crois pas<br>ce que tu <em>lis</em>.<br>Crois ce que tu <em>vois</em>.</h1>
+  <p>Six cartes. Six encres. Classez-les par la couleur de l'encre,<br>jamais par le mot.</p>
+</section>
+
+<!-- 2. Le mur -->
+<section class="view" id="v-wall">
+  <div id="grid"></div>
+  <div id="legend"></div>
+</section>
+
+<!-- 3. Le défilé (version orale, chronométrée) -->
+<section class="view" id="v-solo">
+  <div id="solo">—</div>
+  <div id="soloTag">Nommez la couleur de l'encre</div>
+</section>
+
+<div id="bar">
+  <button data-go="v-rule">Règle</button>
+  <button data-go="v-wall" class="on">Le mur</button>
+  <button data-go="v-solo">Défilé</button>
+  <button id="bAge">Vieillir</button>
+  <button id="bPrint">Imprimer les cartes</button>
+</div>
+
+<div id="print"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* mot affiché / couleur de l'encre / lettre cachée */
+var CARDS = [
+  {word:"VERT",   ink:"rouge",  letter:"O"},
+  {word:"BLEU",   ink:"orange", letter:"R"},
+  {word:"VIOLET", ink:"jaune",  letter:"A"},
+  {word:"ORANGE", ink:"vert",   letter:"N"},
+  {word:"ROUGE",  ink:"bleu",   letter:"G"},
+  {word:"JAUNE",  ink:"violet", letter:"E"}
+];
+/* ordre arc-en-ciel = ordre de classement attendu -> O R A N G E */
+var RAINBOW = ["rouge","orange","jaune","vert","bleu","violet"];
+/* encres pour l'impression : saturées, lisibles sur blanc */
+var PRINT_INK = {rouge:"#d8261a",orange:"#e87b0c",jaune:"#d8a200",vert:"#1f8f3e",bleu:"#1b55c9",violet:"#7b36cc"};
+/* ordre d'affichage au mur : mélangé, surtout pas l'ordre solution */
+var WALL = [2,5,0,3,1,4];
+
+var $ = function(id){ return document.getElementById(id); };
+var body = document.body;
+
+/* ---- mur ---- */
+(function(){
+  var g = $("grid"), html = "";
+  WALL.forEach(function(i,k){
+    var c = CARDS[i], rot = (((k*37)%7)-3)*0.55;
+    html += '<div class="card" style="--d:' + (0.08*k).toFixed(2) + 's;--rot:' + rot.toFixed(2) + 'deg">'
+          +   '<div class="pin"></div>'
+          +   '<div class="word" style="color:var(--' + c.ink + ')">' + c.word + '</div>'
+          +   '<div class="tag"  style="color:var(--' + c.ink + ')">' + c.letter + '</div>'
+          + '</div>';
+  });
+  g.innerHTML = html;
+
+  var l = $("legend"), lh = "";
+  RAINBOW.forEach(function(ink,i){
+    lh += '<div class="lg"><span class="sw" style="background:var(--' + ink + ');color:var(--' + ink + ')"></span>'
+       +  '<b>' + (i+1) + '</b>' + ink + '</div>';
+  });
+  l.innerHTML = lh;
+})();
+
+/* ---- impression ---- */
+(function(){
+  var h = "";
+  h += '<div class="p-legend"><h2>Ne crois pas ce que tu lis. Crois ce que tu vois.</h2>'
+     + '<p>Classez les six cartes par la <b>couleur de l\'encre</b>, dans l\'ordre ci-dessous.</p>';
+  RAINBOW.forEach(function(ink,i){
+    h += '<div class="p-row"><span class="p-num">' + (i+1) + '</span>'
+       + '<span class="p-dot" style="background:' + PRINT_INK[ink] + '"></span>' + ink.toUpperCase() + '</div>';
+  });
+  h += '</div>';
+  WALL.forEach(function(i){
+    var c = CARDS[i], col = PRINT_INK[c.ink];
+    h += '<div class="p-card"><div class="p-cut"></div>'
+       +   '<div class="p-word" style="color:' + col + '">' + c.word + '</div>'
+       +   '<div class="p-tag"  style="color:' + col + '">' + c.letter + '</div>'
+       + '</div>';
+  });
+  $("print").innerHTML = h;
+})();
+
+/* ---- navigation ---- */
+var soloTimer = null, soloIdx = 0;
+function stopSolo(){ if (soloTimer) { clearInterval(soloTimer); soloTimer = null; } }
+function go(id){
+  stopSolo();
+  var v = document.querySelectorAll(".view");
+  for (var i=0;i<v.length;i++) v[i].classList.remove("on");
+  $(id).classList.add("on");
+  var b = document.querySelectorAll("#bar button[data-go]");
+  for (var j=0;j<b.length;j++) b[j].classList.toggle("on", b[j].getAttribute("data-go") === id);
+  if (id === "v-solo") startSolo();
+}
+function startSolo(){
+  soloIdx = 0;
+  var el = $("solo");
+  function tick(){
+    var c = CARDS[WALL[soloIdx % WALL.length]];
+    el.textContent = c.word;
+    el.style.color = "var(--" + c.ink + ")";
+    el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+    soloIdx++;
+  }
+  tick();
+  soloTimer = setInterval(tick, 2200);
+}
+var btns = document.querySelectorAll("#bar button[data-go]");
+for (var i=0;i<btns.length;i++){
+  btns[i].addEventListener("click", function(){ go(this.getAttribute("data-go")); });
+}
+
+/* ---- vieillissement ---- */
+var AGES = [[0,"20 ans"],[.34,"45 ans"],[.67,"65 ans"],[1,"80 ans"]], aIdx = 0;
+$("bAge").addEventListener("click", function(){
+  aIdx = (aIdx + 1) % AGES.length;
+  body.style.setProperty("--age", AGES[aIdx][0]);
+  $("age").textContent = AGES[aIdx][1];
+});
+$("bPrint").addEventListener("click", function(){ window.print(); });
+
+document.addEventListener("keydown", function(e){
+  var k = e.key.toLowerCase();
+  if (k === "1") go("v-rule");
+  if (k === "2") go("v-wall");
+  if (k === "3") go("v-solo");
+  if (k === "a") $("bAge").click();
+  if (k === "p") { e.preventDefault(); window.print(); }
+  if (k === "f") { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+});
+
+go("v-wall");
+})();
+</script>
+</body>
+</html>
