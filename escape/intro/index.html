@@ -183,6 +183,21 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 .fin{animation:fin 1.1s cubic-bezier(.16,1,.3,1) forwards}
 @keyframes fin{from{opacity:0;transform:translateY(1.8vmin)}to{opacity:1;transform:none}}
 
+/* ================= LE SURGISSEMENT ================= */
+#scream{position:fixed;inset:0;z-index:19;display:flex;align-items:center;justify-content:center;
+  background:#000;opacity:0;visibility:hidden;pointer-events:none}
+#scream svg{height:128%;width:auto}
+#scream.on{opacity:1;visibility:visible;animation:scr .78s cubic-bezier(.1,.9,.2,1) both}
+@keyframes scr{
+  0%{opacity:0;transform:scale(.46) rotate(-3deg)}
+  7%{opacity:1;transform:scale(1.16) rotate(1.5deg)}
+  18%{transform:scale(1.02) rotate(-1deg)}
+  40%{transform:scale(1.1) rotate(.8deg)}
+  70%{transform:scale(1.04) rotate(-.6deg)}
+  100%{opacity:1;transform:scale(1.08)}}
+#scream .glow{animation:eyeBurn .09s steps(2) infinite}
+@keyframes eyeBurn{0%{opacity:1}100%{opacity:.72}}
+
 /* ================= LANCEMENT ================= */
 #go{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
   align-items:center;justify-content:center;background:#000;cursor:pointer;text-align:center;padding:7vw}
@@ -385,6 +400,34 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 <div id="fade"></div>
 <div id="flash"></div>
 
+<div id="scream">
+  <svg viewBox="0 0 400 400" aria-hidden="true">
+    <defs>
+      <radialGradient id="eyeGlow"><stop offset="0" stop-color="#ffb062" stop-opacity=".9"/>
+        <stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/></radialGradient>
+    </defs>
+    <path d="M200 10 C104 10 44 76 40 166 C36 236 56 300 92 352 L308 352 C344 300 364 236 360 166
+             C356 76 296 10 200 10 Z" fill="#06050a"/>
+    <ellipse cx="200" cy="204" rx="106" ry="132" fill="#0a090d"/>
+    <g class="glow">
+      <circle cx="152" cy="180" r="52" fill="url(#eyeGlow)"/>
+      <circle cx="248" cy="180" r="52" fill="url(#eyeGlow)"/>
+      <g transform="rotate(-15 152 180)">
+        <ellipse cx="152" cy="180" rx="36" ry="13" fill="#ff8c2c"/>
+        <ellipse cx="152" cy="180" rx="15" ry="6" fill="#fff3dc"/>
+      </g>
+      <g transform="rotate(15 248 180)">
+        <ellipse cx="248" cy="180" rx="36" ry="13" fill="#ff8c2c"/>
+        <ellipse cx="248" cy="180" rx="15" ry="6" fill="#fff3dc"/>
+      </g>
+    </g>
+    <path d="M112 150 L186 170 M288 150 L214 170" stroke="#06050a" stroke-width="22"
+          stroke-linecap="round" fill="none"/>
+    <ellipse cx="200" cy="286" rx="40" ry="58" fill="#000"/>
+    <path d="M166 250 q34 -22 68 0" stroke="#000" stroke-width="7" fill="none"/>
+  </svg>
+</div>
+
 <div id="card"><div id="cardT"></div></div>
 <div id="subs"><span id="sub"></span></div>
 <div id="ages"><div id="ageN">20</div></div>
@@ -398,7 +441,7 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 <div id="go">
   <div class="t">Intro</div>
   <div class="d">Touchez pour lancer · son compris</div>
-  <div class="w">Montez le son. Flashes lumineux.</div>
+  <div class="w">Montez le son. Flashes lumineux, et un sursaut à la fin.</div>
   <div class="pulse"></div>
 </div>
 
@@ -789,6 +832,46 @@ function whoosh(sec){
   s.connect(bp); bp.connect(g); g.connect(master); send(g, .5);
   s.start();
 }
+/* ---- saturation ---- */
+function shaper(amount){
+  var ws = AC.createWaveShaper(), n = 1024, c = new Float32Array(n), k = amount;
+  for (var i=0;i<n;i++){
+    var x = i*2/n - 1;
+    c[i] = (3+k)*x*20*Math.PI/180 / (Math.PI + k*Math.abs(x));
+  }
+  ws.curve = c; ws.oversample = "4x";
+  return ws;
+}
+/* ---- le cri ---- */
+function scream(){
+  var a = audio(); if (!a) return;
+  var ws = shaper(42);
+  var og = a.createGain(); og.gain.value = .42;
+  var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 7000;
+  ws.connect(lp); lp.connect(og); og.connect(master); send(og, .45);
+  [742, 901, 1138, 1397, 1822, 2341].forEach(function(f, i){
+    var o = a.createOscillator(), g = a.createGain(), lfo = a.createOscillator(), lg = a.createGain();
+    o.type = "sawtooth";
+    o.frequency.setValueAtTime(f*.9, now());
+    o.frequency.linearRampToValueAtTime(f*1.1, now()+.5);
+    lfo.type = "sine"; lfo.frequency.value = 7.5 + i*1.7; lg.gain.value = f*.035;
+    lfo.connect(lg); lg.connect(o.frequency); lfo.start();
+    var v = .17/(i*.45+1);
+    g.gain.setValueAtTime(.0001, now());
+    g.gain.linearRampToValueAtTime(v, now()+.014);
+    g.gain.setValueAtTime(v, now()+.42);
+    g.gain.exponentialRampToValueAtTime(.0001, now()+.72);
+    o.connect(g); g.connect(ws);
+    o.start(); o.stop(now()+.8); lfo.stop(now()+.8);
+  });
+  var s = a.createBufferSource(); s.buffer = noiseBuf(.7, function(x){ return Math.pow(1-x, 1.3); });
+  var hp = a.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 850;
+  var ng = a.createGain(); ng.gain.value = .26;
+  s.connect(hp); hp.connect(ng); ng.connect(ws);
+  s.start();
+  subDrop(1, .5);
+}
+
 /* ---- le silence brutal, l'arme la plus efficace ---- */
 function hush(ms){
   if (!master || !AC) return;
@@ -1182,22 +1265,33 @@ function run(){
   at(38200, function(){ lum(.06); buzzOff(); });
 
   /* le silence, puis le choc */
-  at(38300, function(){ hush(900); heartStop(); clockOn = false; });
-  at(39250, function(){
-    lum(0); beam(0); droneStop();
-    boom(.85); metal(.1); whoosh(1.3);
-    blast(); shake(9, 500);
-    ageStage(0);
+  /* le vide : plus un son, presque plus d'image. Une seconde entiere. */
+  at(38300, function(){
+    hush(1000); heartStop(); clockOn = false;
+    lum(.03); buzzOff();
     $("lamp").classList.remove("on");
     $("manShade").classList.remove("on");
-    $("eyes").setAttribute("class", "");   /* className est en lecture seule sur un element SVG */
   });
 
-  /* ---------- 40 → 46 s : le titre ---------- */
-  at(40100, function(){ $("end").classList.add("on"); });
-  at(40600, function(){ $("eK").classList.add("fin"); });
-  at(40950, function(){ $("eH").classList.add("fin"); boom(.26); });
-  at(41900, function(){ $("eA").classList.add("fin"); });
+  /* et il est la, plein cadre */
+  at(39300, function(){
+    lum(0); beam(0); droneStop(); ageStage(0);
+    $("eyes").setAttribute("class", "");   /* className est en lecture seule sur un element SVG */
+    $("scream").classList.add("on");
+    scream(); blast(); chroma(); shake(16, 760);
+  });
+  at(39700, function(){ glitch(); });
+  at(40050, function(){ boom(.6); });
+  at(40150, function(){
+    $("scream").classList.remove("on");
+    whoosh(1.2); shake(0, 0);
+  });
+
+  /* ---------- 41 → 47 s : le titre ---------- */
+  at(41000, function(){ $("end").classList.add("on"); });
+  at(41500, function(){ $("eK").classList.add("fin"); });
+  at(41850, function(){ $("eH").classList.add("fin"); boom(.24); });
+  at(42800, function(){ $("eA").classList.add("fin"); });
 }
 
 /* =====================================================================
