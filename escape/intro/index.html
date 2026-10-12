@@ -11,28 +11,23 @@
 html,body{height:100%;overflow:hidden;background:#000;overscroll-behavior:none}
 body{font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;color:#eee;
   -webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
-  --lum:0;          /* lumiere ambiante de la scene */
-  --age:0;          /* degradation */
-  --tx:50%; --ty:60%;   /* position du faisceau */
-  --beam:0;         /* intensite du faisceau */
+  --lum:0; --age:0; --rot:0;
+  --tx:50%; --ty:60%; --beam:0;
   --camx:0px; --camy:0px; --camz:1; --camr:0deg;
-}
+  --shk:0px;}
 
 /* ================= CAMERA ================= */
-#cam{position:fixed;inset:-6%;
-  transform:translate3d(var(--camx),var(--camy),0) scale(var(--camz)) rotate(var(--camr));
+#cam{position:fixed;inset:-7%;
+  transform:translate3d(calc(var(--camx) + var(--shk)),var(--camy),0) scale(var(--camz)) rotate(var(--camr));
   will-change:transform}
 
-/* ================= DECORS ================= */
 .set{position:absolute;inset:0;opacity:0;visibility:hidden}
 .set.on{opacity:1;visibility:visible}
 .layer{position:absolute;inset:0;will-change:transform}
 svg.art{position:absolute;inset:0;width:100%;height:100%}
-
-/* lumiere ambiante appliquee au decor */
 .lit{opacity:var(--lum);transition:opacity .07s linear}
 
-/* faisceau de torche : masque + halo */
+/* ================= TORCHE ================= */
 .torch{
   --m:radial-gradient(circle closest-side,#000 0%,rgba(0,0,0,.74) 40%,transparent 75%);
   -webkit-mask-image:var(--m); mask-image:var(--m);
@@ -46,32 +41,57 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
     rgba(255,242,214,.3),rgba(255,232,196,.09) 44%,transparent 70%);
   mix-blend-mode:screen;
   transition:background 1.2s cubic-bezier(.42,0,.22,1),opacity .6s linear}
-#shake{animation:none}
-.jitter{animation:jit .18s steps(2) infinite}
-@keyframes jit{0%{transform:translate(0,0)}50%{transform:translate(.22vmin,-.18vmin)}100%{transform:translate(-.14vmin,.2vmin)}}
+
+/* ================= LE LIEU VIEILLIT ================= */
+/* chaque palier fait apparaitre une couche de decrepitude */
+#webs,#cracks,#peel,#debris,#grime{opacity:0;transition:opacity 1.6s ease-out}
+body.ag1 #grime{opacity:.4}
+body.ag2 #grime{opacity:.75}  body.ag2 #cracks{opacity:.5}
+body.ag3 #grime{opacity:.95}  body.ag3 #cracks{opacity:.85} body.ag3 #peel{opacity:.7} body.ag3 #webs{opacity:.45}
+body.ag4 #grime{opacity:1}    body.ag4 #cracks{opacity:1}   body.ag4 #peel{opacity:1}  body.ag4 #webs{opacity:.85}
+body.ag4 #debris{opacity:.9}  body.ag3 #debris{opacity:.45}
+#chalkMarks{transition:opacity 1.6s ease-out}
+body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #chalkMarks{opacity:.04}
+#webs path{stroke:#b5aea0;fill:none;stroke-width:.9;stroke-linecap:round;opacity:.8}
+#webs .thick{stroke-width:1.15;opacity:.78}
+#cracks path{stroke:#6b6253;fill:none;stroke-width:1.6;stroke-linecap:round;opacity:.5}
+#cracks .hair{stroke-width:.9;opacity:.3}
 
 /* ================= EFFETS ================= */
 #dust,#grain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 #dust{z-index:7}
-#grain{z-index:9;mix-blend-mode:overlay;opacity:calc(.09 + var(--age)*.3);
+#grain{z-index:9;mix-blend-mode:overlay;opacity:calc(.09 + var(--age)*.2);
   background-repeat:repeat;animation:gr .5s steps(1) infinite}
 @keyframes gr{0%{background-position:0 0}25%{background-position:-23px 17px}
   50%{background-position:41px -31px}75%{background-position:-11px -47px}100%{background-position:29px 13px}}
 
+#scan{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:calc(var(--age)*.13);
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.5) 0 .18vmin,transparent .18vmin .42vmin);
+  transition:opacity 1.4s linear}
+
 #vig{position:fixed;inset:0;z-index:10;pointer-events:none;
-  background:radial-gradient(ellipse calc(94% - var(--age)*30%) calc(94% - var(--age)*32%) at 50% 50%,transparent 36%,#000 100%);
+  background:radial-gradient(ellipse calc(96% - var(--age)*18%) calc(96% - var(--age)*20%) at 50% 50%,transparent 44%,#000 100%);
   transition:background 1.4s linear}
 
 #chroma{position:fixed;inset:0;z-index:11;pointer-events:none;opacity:0;mix-blend-mode:screen;
-  background:linear-gradient(90deg,rgba(255,40,40,.5),transparent 18%,transparent 82%,rgba(40,120,255,.5))}
-#chroma.hit{animation:ch .4s ease-out}
-@keyframes ch{0%{opacity:.5}100%{opacity:0}}
+  background:linear-gradient(90deg,rgba(255,30,30,.55),transparent 16%,transparent 84%,rgba(30,110,255,.55))}
+#chroma.hit{animation:ch .45s ease-out}
+@keyframes ch{0%{opacity:.6}100%{opacity:0}}
+
+/* dechirure numerique */
+#glitch{position:fixed;inset:0;z-index:12;pointer-events:none;opacity:0;overflow:hidden}
+#glitch div{position:absolute;left:-10%;right:-10%;background:#fff;opacity:.9;mix-blend-mode:overlay}
+#glitch.hit{animation:gl .34s steps(5)}
+@keyframes gl{0%,100%{opacity:0}20%,60%{opacity:1}}
 
 #flash{position:fixed;inset:0;z-index:17;background:#fff;opacity:0;pointer-events:none}
 #flash.hit{animation:fl .3s ease-out}
 @keyframes fl{0%{opacity:0}4%{opacity:1}20%{opacity:.45}100%{opacity:0}}
 #flash.soft{animation:fls .9s ease-out}
 @keyframes fls{0%{opacity:0}10%{opacity:.8}100%{opacity:0}}
+#flash.red{background:#5a0b0b}
+#flash.red.hit{animation:flr .7s ease-out}
+@keyframes flr{0%{opacity:0}8%{opacity:.75}100%{opacity:0}}
 
 #fade{position:fixed;inset:0;z-index:16;background:#000;opacity:1;pointer-events:none;
   transition:opacity .8s linear}
@@ -79,20 +99,18 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
 /* ================= SILHOUETTE ================= */
 #manWrap{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);
   height:55%;aspect-ratio:.4545/1;opacity:0;z-index:6}
-#manWrap.in{animation:manIn 3.2s cubic-bezier(.2,.75,.25,1) forwards}
-@keyframes manIn{
-  0%{opacity:0;transform:translateX(-50%) translateY(4%) scale(.82)}
-  45%{opacity:1}
-  100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
-#manWrap.old{animation:old 2.6s cubic-bezier(.3,0,.3,1) forwards}
-@keyframes old{
-  to{transform:translateX(-50%) translateY(3.5%) scale(.9) skewX(-2.4deg)}}
+#manWrap.in{animation:manIn 3.4s cubic-bezier(.2,.75,.25,1) forwards}
+@keyframes manIn{0%{opacity:0;transform:translateX(-50%) translateY(4%) scale(.8)}
+  45%{opacity:1}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+#manWrap.old{animation:old 3.2s cubic-bezier(.3,0,.3,1) forwards}
+@keyframes old{to{transform:translateX(-50%) translateY(4%) scale(.88) skewX(-3deg)}}
 #man{position:absolute;inset:0;overflow:visible}
 #breath{transform-origin:50% 42%;animation:br 4.4s ease-in-out infinite}
 @keyframes br{0%,100%{transform:scale(1,1)}50%{transform:scale(1.014,1.008)}}
 #head{transform-origin:50% 100%;animation:look 11s ease-in-out infinite}
 @keyframes look{0%,62%,100%{transform:rotate(0)}70%{transform:rotate(-4.5deg)}86%{transform:rotate(2deg)}}
 #armR{transform-origin:78% 32%;animation:arm 7.5s ease-in-out infinite}
+#armL{transform-origin:22% 32%;animation:arm 9.2s ease-in-out infinite reverse}
 @keyframes arm{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-7deg)}}
 #manShadow{position:absolute;left:50%;bottom:-2%;width:62%;height:7%;
   transform:translateX(-50%);border-radius:50%;
@@ -112,23 +130,22 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
   pointer-events:none;text-align:center;padding:8vw}
 #cardT{font-size:min(3vmin,4.4vw);font-weight:300;letter-spacing:.42em;text-transform:uppercase;
   color:#cfc8ba;opacity:0}
-#cardT.on{animation:cardIn 3.4s ease-in-out forwards}
-@keyframes cardIn{0%{opacity:0;letter-spacing:.6em}22%{opacity:.85;letter-spacing:.42em}
+#cardT.on{animation:cardIn 3.6s ease-in-out forwards}
+@keyframes cardIn{0%{opacity:0;letter-spacing:.62em}20%{opacity:.85;letter-spacing:.42em}
   74%{opacity:.85}100%{opacity:0;letter-spacing:.3em}}
 
 #ages{position:fixed;inset:0;z-index:13;display:flex;align-items:center;justify-content:center;pointer-events:none}
 #ageN{font-size:min(32vmin,38vw);font-weight:150;letter-spacing:-.045em;line-height:1;
-  font-variant-numeric:tabular-nums;color:#fff;opacity:0;
-  text-shadow:0 0 9vmin rgba(0,0,0,.85)}
-#ageN.hit{animation:hit .68s cubic-bezier(.16,1,.3,1)}
-@keyframes hit{0%{opacity:0;transform:scale(1.6);filter:blur(2.4vmin)}
-  18%{opacity:1;transform:scale(1);filter:none}76%{opacity:1}100%{opacity:0;transform:scale(.96)}}
+  font-variant-numeric:tabular-nums;color:#fff;opacity:0;text-shadow:0 0 9vmin rgba(0,0,0,.85)}
+#ageN.hit{animation:hit .72s cubic-bezier(.16,1,.3,1)}
+@keyframes hit{0%{opacity:0;transform:scale(1.7);filter:blur(2.6vmin)}
+  16%{opacity:1;transform:scale(1);filter:none}76%{opacity:1}100%{opacity:0;transform:scale(.95)}}
 
 /* ================= FIN ================= */
 #end{position:fixed;inset:0;z-index:15;display:flex;flex-direction:column;
   align-items:center;justify-content:center;background:#000;opacity:0;pointer-events:none;
   text-align:center;padding:7vw}
-#end.on{opacity:1;pointer-events:auto;transition:opacity 1.1s ease-out}
+#end.on{opacity:1;pointer-events:auto;transition:opacity 1.2s ease-out}
 #end .k{font-size:min(1.8vmin,2.8vw);letter-spacing:.5em;text-transform:uppercase;opacity:0;color:#8e8a82}
 #end h1{margin-top:2.4vmin;font-size:min(9vmin,11vw);font-weight:200;letter-spacing:-.03em;line-height:1;opacity:0}
 #end h1 em{font-style:normal;background:linear-gradient(100deg,#c9a4ff,#ff9ec4 46%,#ffc07a);
@@ -145,85 +162,68 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
 #go .t{font-size:min(5.4vmin,7vw);font-weight:200;letter-spacing:-.02em}
 #go .d{margin-top:2.6vmin;font-size:min(2.1vmin,3.2vw);font-weight:300;letter-spacing:.2em;
   text-transform:uppercase;opacity:.38}
-#go .pulse{margin-top:6vmin;width:min(9vmin,13vw);height:min(9vmin,13vw);border-radius:50%;
+#go .w{margin-top:1.4vmin;font-size:min(1.7vmin,2.7vw);font-weight:300;letter-spacing:.14em;opacity:.22}
+#go .pulse{margin-top:5vmin;width:min(9vmin,13vw);height:min(9vmin,13vw);border-radius:50%;
   border:1px solid rgba(255,255,255,.3);animation:pl 2.4s ease-in-out infinite}
 @keyframes pl{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.16);opacity:1}}
 
-#armL{transform-origin:22% 32%;animation:arm 9.2s ease-in-out infinite reverse}
-
-@media (prefers-reduced-motion:reduce){#breath,#head,#armR,#armL,.pulse,.jitter{animation:none}}
+@media (prefers-reduced-motion:reduce){#breath,#head,#armR,#armL,.pulse{animation:none}}
 </style>
 </head>
 <body>
 
 <div id="cam">
 
-  <!-- ===== DECOR 1 : LA PORTE ===== -->
+  <!-- ===== LA PORTE ===== -->
   <div class="set" id="set-door">
     <div class="layer lit" id="doorLayer">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="corr" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#191613"/><stop offset="1" stop-color="#070605"/>
-          </linearGradient>
+            <stop offset="0" stop-color="#191613"/><stop offset="1" stop-color="#070605"/></linearGradient>
           <linearGradient id="dr" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#2c2219"/><stop offset=".5" stop-color="#3b2f22"/><stop offset="1" stop-color="#231b14"/>
-          </linearGradient>
+            <stop offset="0" stop-color="#2c2219"/><stop offset=".5" stop-color="#3b2f22"/><stop offset="1" stop-color="#231b14"/></linearGradient>
         </defs>
         <rect width="1600" height="900" fill="url(#corr)"/>
-        <!-- murs du couloir en perspective -->
         <polygon points="0,0 0,900 440,760 440,150" fill="#120f0c"/>
         <polygon points="1600,0 1600,900 1160,760 1160,150" fill="#0f0d0a"/>
         <polygon points="0,900 1600,900 1160,760 440,760" fill="#0a0907"/>
-        <!-- plinthes -->
         <path d="M440,760 L440,700 L0,830 L0,900 Z" fill="#171310"/>
         <path d="M1160,760 L1160,700 L1600,830 L1600,900 Z" fill="#141110"/>
-        <!-- la porte -->
         <rect x="620" y="200" width="360" height="560" rx="4" fill="url(#dr)" stroke="#4a3b2a" stroke-width="4"/>
         <rect x="652" y="236" width="296" height="196" rx="3" fill="#241c14" stroke="#4a3b2a" stroke-width="3"/>
         <rect x="652" y="470" width="296" height="250" rx="3" fill="#241c14" stroke="#4a3b2a" stroke-width="3"/>
-        <!-- vitre depolie -->
         <rect x="672" y="256" width="256" height="156" fill="#0e1620" opacity=".9"/>
-        <g opacity=".12" fill="#8fb6e8">
-          <rect x="672" y="256" width="256" height="156"/>
-        </g>
-        <!-- plaque + numero -->
         <rect x="1012" y="300" width="112" height="78" rx="3" fill="#1b1713" stroke="#50422f" stroke-width="2"/>
         <text x="1068" y="352" font-family="ui-sans-serif,Helvetica,Arial" font-size="42" font-weight="700"
-              fill="#9a8straight" text-anchor="middle" opacity=".85" style="fill:#9a8a6f">B12</text>
-        <!-- poignee -->
+              text-anchor="middle" opacity=".85" style="fill:#9a8a6f">B12</text>
         <rect x="952" y="470" width="54" height="15" rx="7" fill="#8d7c5e"/>
         <circle cx="958" cy="478" r="13" fill="#6f6149"/>
-        <!-- affichette qui pend -->
         <g transform="rotate(-6 560 330)">
           <rect x="500" y="290" width="120" height="160" fill="#241f18" stroke="#3c3326" stroke-width="2"/>
           <g stroke="#7b705c" stroke-width="3" opacity=".3">
-            <path d="M516 322 h88 M516 346 h66 M516 370 h88 M516 394 h48"/>
-          </g>
+            <path d="M516 322 h88 M516 346 h66 M516 370 h88 M516 394 h48"/></g>
         </g>
+        <!-- toile deja presente sur la porte, discrete -->
+        <g id="doorWeb" opacity=".32"></g>
       </svg>
     </div>
   </div>
 
-  <!-- ===== DECOR 2 : LA SALLE ===== -->
+  <!-- ===== LA SALLE ===== -->
   <div class="set" id="set-room">
-    <!-- fond : mur, tableau, fenetre, horloge -->
     <div class="layer lit" id="bg">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#2d2825"/><stop offset="1" stop-color="#0c0b0a"/>
-          </linearGradient>
+            <stop offset="0" stop-color="#2d2825"/><stop offset="1" stop-color="#0c0b0a"/></linearGradient>
           <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#191510"/><stop offset="1" stop-color="#050504"/>
-          </linearGradient>
+            <stop offset="0" stop-color="#191510"/><stop offset="1" stop-color="#050504"/></linearGradient>
           <linearGradient id="board" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#1e2c25"/><stop offset="1" stop-color="#111a15"/>
-          </linearGradient>
+            <stop offset="0" stop-color="#1e2c25"/><stop offset="1" stop-color="#111a15"/></linearGradient>
           <radialGradient id="godray" cx=".5" cy="0" r="1">
             <stop offset="0" stop-color="#ffe9c0" stop-opacity=".22"/>
-            <stop offset="1" stop-color="#ffe9c0" stop-opacity="0"/>
-          </radialGradient>
+            <stop offset="1" stop-color="#ffe9c0" stop-opacity="0"/></radialGradient>
         </defs>
         <rect width="1600" height="900" fill="url(#wall)"/>
         <polygon points="0,900 1600,900 1180,470 420,470" fill="url(#floor)"/>
@@ -232,63 +232,56 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
           <line x1="760" y1="900" x2="770" y2="470"/><line x1="1230" y1="900" x2="990" y2="470"/>
           <line x1="1600" y1="900" x2="1130" y2="470"/>
         </g>
-        <!-- tableau -->
         <rect x="548" y="292" width="504" height="178" rx="4" fill="url(#board)" stroke="#3d342a" stroke-width="2"/>
         <rect x="548" y="470" width="504" height="13" fill="#2a2319"/>
-        <g stroke="#7b876f" stroke-width="2" opacity=".3" stroke-linecap="round" fill="none">
+        <g id="chalkMarks" stroke="#7b876f" stroke-width="2" opacity=".3" stroke-linecap="round" fill="none">
           <path d="M586 338 h132 M586 366 h88 M586 394 h152 M586 422 h70"/>
           <circle cx="878" cy="372" r="40"/><path d="M838 372 h80 M878 332 v80"/>
           <path d="M952 336 l46 58 M998 336 l-46 58"/>
           <path d="M770 420 q30 -26 60 0 t60 0"/>
         </g>
-        <!-- craies sur le rebord -->
         <g fill="#cfc7b4" opacity=".5">
-          <rect x="600" y="474" width="26" height="6" rx="3"/><rect x="640" y="474" width="18" height="6" rx="3"/>
-        </g>
-        <!-- fenetre a stores -->
+          <rect x="600" y="474" width="26" height="6" rx="3"/><rect x="640" y="474" width="18" height="6" rx="3"/></g>
         <rect x="80" y="238" width="232" height="318" rx="3" fill="#0a1526" stroke="#362e25" stroke-width="3"/>
         <g stroke="#9ab8e6" stroke-width="5" opacity=".28">
           <line x1="84" y1="264" x2="308" y2="264"/><line x1="84" y1="302" x2="308" y2="302"/>
           <line x1="84" y1="340" x2="308" y2="340"/><line x1="84" y1="378" x2="308" y2="378"/>
           <line x1="84" y1="416" x2="308" y2="416"/><line x1="84" y1="454" x2="308" y2="454"/>
-          <line x1="84" y1="492" x2="308" y2="492"/><line x1="84" y1="530" x2="308" y2="530"/>
-        </g>
-        <!-- poster decolle -->
+          <line x1="84" y1="492" x2="308" y2="492"/><line x1="84" y1="530" x2="308" y2="530"/></g>
         <g transform="rotate(2.5 1388 356)">
           <rect x="1312" y="250" width="152" height="212" fill="#282118" stroke="#3d3429" stroke-width="2"/>
           <g opacity=".26" stroke="#8d7f6c" stroke-width="2" fill="none">
-            <ellipse cx="1388" cy="306" rx="26" ry="32"/><path d="M1388 338 v72 M1388 368 l-26 24 M1388 368 l26 24"/>
-          </g>
+            <ellipse cx="1388" cy="306" rx="26" ry="32"/><path d="M1388 338 v72 M1388 368 l-26 24 M1388 368 l26 24"/></g>
         </g>
         <path d="M1312 250 l34 28 l-34 20 z" fill="#0b0a09"/>
-        <!-- horloge -->
         <g id="clock" transform="translate(1182 206)">
           <circle r="58" fill="#161310" stroke="#4a3e31" stroke-width="4"/>
           <circle r="47" fill="none" stroke="#2d261f" stroke-width="1.5"/>
           <g stroke="#7e7667" stroke-width="3" stroke-linecap="round">
-            <line y1="-45" y2="-37"/><line x1="45" x2="37"/><line y1="45" y2="37"/><line x1="-45" x2="-37"/>
-          </g>
+            <line y1="-45" y2="-37"/><line x1="45" x2="37"/><line y1="45" y2="37"/><line x1="-45" x2="-37"/></g>
           <line id="hh" y1="7" y2="-27" stroke="#d2c9b7" stroke-width="5" stroke-linecap="round"/>
           <line id="mm" y1="9" y2="-41" stroke="#d2c9b7" stroke-width="3.4" stroke-linecap="round"/>
           <circle r="4" fill="#d2c9b7"/>
         </g>
-        <!-- papiers au sol -->
         <g fill="#2a251d" opacity=".75">
           <rect x="300" y="820" width="78" height="54" rx="2" transform="rotate(-14 339 847)"/>
           <rect x="1180" y="842" width="92" height="60" rx="2" transform="rotate(9 1226 872)"/>
-          <rect x="690" y="868" width="70" height="48" rx="2" transform="rotate(-5 725 892)"/>
-        </g>
+          <rect x="690" y="868" width="70" height="48" rx="2" transform="rotate(-5 725 892)"/></g>
+
+        <!-- ===== COUCHES DE DECREPITUDE, remplies en JS ===== -->
+        <g id="grime"></g>
+        <g id="peel"></g>
+        <g id="cracks"></g>
+        <g id="debris"></g>
+        <g id="webs"></g>
       </svg>
-      <!-- rais de lumiere -->
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="mix-blend-mode:screen">
         <g opacity=".5">
           <polygon points="84,250 310,250 700,900 240,900" fill="url(#godray)" opacity=".5"/>
-          <polygon points="120,300 300,300 620,900 300,900" fill="url(#godray)" opacity=".4"/>
-        </g>
+          <polygon points="120,300 300,300 620,900 300,900" fill="url(#godray)" opacity=".4"/></g>
       </svg>
     </div>
 
-    <!-- premier plan : les tables, qui bougent plus vite -->
     <div class="layer lit" id="fg">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <g fill="#241e18" stroke="#3c3228" stroke-width="2">
@@ -297,26 +290,23 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
           <g transform="translate(1170 498) rotate(-2)"><rect x="-92" y="-19" width="184" height="33" rx="3"/><rect x="-78" y="14" width="11" height="58" rx="2"/><rect x="67" y="14" width="11" height="58" rx="2"/></g>
           <g transform="translate(300 648) rotate(7)"><rect x="-122" y="-24" width="244" height="42" rx="4"/><rect x="-102" y="18" width="14" height="80" rx="2"/><rect x="88" y="18" width="14" height="80" rx="2"/></g>
           <g transform="translate(1310 662) rotate(-8)"><rect x="-126" y="-25" width="252" height="44" rx="4"/><rect x="-106" y="19" width="14" height="82" rx="2"/><rect x="92" y="19" width="14" height="82" rx="2"/></g>
-          <!-- chaise renversee -->
           <g transform="translate(1030 790) rotate(104)">
             <rect x="-44" y="-8" width="88" height="13" rx="3"/><rect x="-40" y="5" width="11" height="52" rx="2"/>
             <rect x="29" y="5" width="11" height="52" rx="2"/><rect x="-40" y="-70" width="11" height="62" rx="2"/>
-            <rect x="29" y="-70" width="11" height="62" rx="2"/><rect x="-40" y="-70" width="80" height="11" rx="3"/>
-          </g>
+            <rect x="29" y="-70" width="11" height="62" rx="2"/><rect x="-40" y="-70" width="80" height="11" rx="3"/></g>
         </g>
+        <g id="fgWebs"></g>
       </svg>
     </div>
 
-    <!-- la silhouette -->
     <div id="manWrap">
       <div id="manShadow"></div>
       <svg id="man" viewBox="0 0 200 440" aria-hidden="true">
         <defs>
           <linearGradient id="rim" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0"   stop-color="#ffe7c0" stop-opacity=".55"/>
-            <stop offset=".3"  stop-color="#ffe7c0" stop-opacity=".07"/>
-            <stop offset="1"   stop-color="#ffe7c0" stop-opacity="0"/>
-          </linearGradient>
+            <stop offset="0" stop-color="#ffe7c0" stop-opacity=".55"/>
+            <stop offset=".3" stop-color="#ffe7c0" stop-opacity=".07"/>
+            <stop offset="1" stop-color="#ffe7c0" stop-opacity="0"/></linearGradient>
         </defs>
         <g id="breath">
           <g id="head">
@@ -350,8 +340,10 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
 <canvas id="dust"></canvas>
 <canvas id="grain"></canvas>
 <div id="beam"></div>
+<div id="scan"></div>
 <div id="vig"></div>
 <div id="chroma"></div>
+<div id="glitch"><div></div><div></div><div></div><div></div><div></div></div>
 <div id="fade"></div>
 <div id="flash"></div>
 
@@ -368,6 +360,7 @@ svg.art{position:absolute;inset:0;width:100%;height:100%}
 <div id="go">
   <div class="t">Intro</div>
   <div class="d">Touchez pour lancer · son compris</div>
+  <div class="w">Montez le son. Flashes lumineux.</div>
   <div class="pulse"></div>
 </div>
 
@@ -378,11 +371,12 @@ var $ = function(id){ return document.getElementById(id); };
 var body = document.body, T = [];
 function at(ms, fn){ T.push(setTimeout(fn, ms)); }
 function css(k, v){ body.style.setProperty(k, v); }
+function rnd(a, b){ return a + Math.random()*(b-a); }
 
 /* =====================================================================
-   SON — tout est synthetise, aucun fichier d'effet
+   SON
    ===================================================================== */
-var AC = null, master = null, hall = null, hallIn = null, voiceBus = null;
+var AC = null, master = null, hallIn = null, echoIn = null;
 
 function audio(){
   if (AC) return AC;
@@ -390,29 +384,37 @@ function audio(){
   AC = new C();
 
   var comp = AC.createDynamicsCompressor();
-  comp.threshold.value = -16; comp.knee.value = 24; comp.ratio.value = 3.4;
-  comp.attack.value = .006; comp.release.value = .22;
+  comp.threshold.value = -15; comp.knee.value = 22; comp.ratio.value = 3.6;
+  comp.attack.value = .005; comp.release.value = .2;
   comp.connect(AC.destination);
 
   master = AC.createGain(); master.gain.value = .9; master.connect(comp);
 
-  /* reverberation de salle, partagee */
-  hall = AC.createConvolver(); hall.buffer = impulse(1.9, 2.8);
-  var hw = AC.createGain(); hw.gain.value = .5;
+  /* grande reverberation sombre */
+  var hall = AC.createConvolver(); hall.buffer = impulse(3.2, 3.1, 1800);
+  var hw = AC.createGain(); hw.gain.value = .55;
   hall.connect(hw); hw.connect(comp);
-  hallIn = AC.createGain(); hallIn.gain.value = 1; hallIn.connect(hall);
+  hallIn = AC.createGain(); hallIn.connect(hall);
 
-  voiceBus = AC.createGain(); voiceBus.gain.value = 1;
+  /* echo de couloir */
+  var dl = AC.createDelay(1.2); dl.delayTime.value = .33;
+  var fb = AC.createGain(); fb.gain.value = .34;
+  var dlp = AC.createBiquadFilter(); dlp.type = "lowpass"; dlp.frequency.value = 1400;
+  var dw = AC.createGain(); dw.gain.value = .4;
+  dl.connect(dlp); dlp.connect(fb); fb.connect(dl); dlp.connect(dw); dw.connect(comp);
+  echoIn = AC.createGain(); echoIn.connect(dl);
   return AC;
 }
-function impulse(sec, decay){
+function impulse(sec, decay, cut){
   var sr = AC.sampleRate, len = Math.floor(sr*sec), b = AC.createBuffer(2, len, sr);
   for (var c=0;c<2;c++){
-    var d = b.getChannelData(c);
+    var d = b.getChannelData(c), lp = 0;
     for (var i=0;i<len;i++){
       var x = i/len;
-      var early = (i > sr*.011 && i < sr*.055) ? 1.8 : 1;
-      d[i] = (Math.random()*2-1) * Math.pow(1-x, decay) * early * .55;
+      var early = (i > sr*.013 && i < sr*.06) ? 1.9 : 1;
+      var n = (Math.random()*2-1) * Math.pow(1-x, decay) * early;
+      lp += ((cut ? .22 : 1) * n - lp) * .5;     /* assombrit la queue */
+      d[i] = lp * .6;
     }
   }
   return b;
@@ -420,178 +422,326 @@ function impulse(sec, decay){
 function noiseBuf(sec, shape){
   var sr = AC.sampleRate, len = Math.max(1, Math.floor(sr*sec)), b = AC.createBuffer(1, len, sr);
   var d = b.getChannelData(0);
-  for (var i=0;i<len;i++){
-    var x = i/len;
-    d[i] = (Math.random()*2-1) * (shape ? shape(x) : (1-x));
-  }
+  for (var i=0;i<len;i++){ var x = i/len; d[i] = (Math.random()*2-1) * (shape ? shape(x) : (1-x)); }
   return b;
 }
-function send(node, amt){ if (hallIn && amt){ var g = AC.createGain(); g.gain.value = amt; node.connect(g); g.connect(hallIn); } }
+function send(node, amt, echo){
+  if (hallIn && amt){ var g = AC.createGain(); g.gain.value = amt; node.connect(g); g.connect(hallIn); }
+  if (echoIn && echo){ var e = AC.createGain(); e.gain.value = echo; node.connect(e); e.connect(echoIn); }
+}
+function now(){ return AC.currentTime; }
 
-/* --- nappe de fond, evolutive --- */
-var droneGains = [];
+/* ---- nappe : deux sinus proches qui battent, c'est ce qui met mal a l'aise ---- */
+var droneG = [];
 function drone(){
   var a = audio(); if (!a) return;
-  [[41,.17],[61.5,.12],[82,.07],[123,.035]].forEach(function(p){
+  [[40,.17],[40.7,.13],[61,.1],[81.3,.055],[122,.03]].forEach(function(p){
     var o = a.createOscillator(), g = a.createGain(), lp = a.createBiquadFilter();
     o.type = "sine"; o.frequency.value = p[0];
-    lp.type = "lowpass"; lp.frequency.value = 220;
+    lp.type = "lowpass"; lp.frequency.value = 240;
     g.gain.value = 0;
     o.connect(lp); lp.connect(g); g.connect(master);
-    o.start();
-    g.gain.linearRampToValueAtTime(p[1], a.currentTime + 4);
-    droneGains.push({g:g, v:p[1], o:o});
+    o.start(); g.gain.linearRampToValueAtTime(p[1], now() + 5);
+    droneG.push({g:g, v:p[1], o:o});
   });
+  /* infrason : on ne l'entend pas, on le ressent */
+  var s = a.createOscillator(), sg = a.createGain();
+  s.type = "sine"; s.frequency.value = 19;
+  sg.gain.value = 0; s.connect(sg); sg.connect(master); s.start();
+  sg.gain.linearRampToValueAtTime(.12, now() + 6);
+  droneG.push({g:sg, v:.12, o:s});
 }
-function droneTo(mult, sec){
+function droneTo(m, sec){
   if (!AC) return;
-  droneGains.forEach(function(d){
-    try { d.g.gain.linearRampToValueAtTime(d.v*mult, AC.currentTime + sec); } catch(e){}
-  });
+  droneG.forEach(function(d){ try { d.g.gain.linearRampToValueAtTime(d.v*m, now()+sec); } catch(e){} });
 }
 function droneStop(){
   if (!AC) return;
-  droneGains.forEach(function(d){
-    try { d.g.gain.linearRampToValueAtTime(0, AC.currentTime + 1.4); d.o.stop(AC.currentTime + 2); } catch(e){}
-  });
-  droneGains = [];
+  droneG.forEach(function(d){ try { d.g.gain.linearRampToValueAtTime(0, now()+1.2); d.o.stop(now()+1.8); } catch(e){} });
+  droneG = [];
 }
 
-/* --- montee de tension --- */
+/* ---- cordes stridentes, le reflexe Psycho ---- */
+function strings(dur, vol, base){
+  var a = audio(); if (!a) return;
+  base = base || 1180;
+  [1, 1.0595, 1.498, 2.004, 2.52].forEach(function(r, i){
+    var o = a.createOscillator(), g = a.createGain(), bp = a.createBiquadFilter();
+    var lfo = a.createOscillator(), lg = a.createGain();
+    o.type = "sawtooth"; o.frequency.value = base*r;
+    lfo.type = "sine"; lfo.frequency.value = 5.5 + i*1.3; lg.gain.value = base*r*.014;
+    lfo.connect(lg); lg.connect(o.frequency); lfo.start();
+    bp.type = "bandpass"; bp.frequency.value = base*r*1.8; bp.Q.value = 2.6;
+    g.gain.setValueAtTime(.0001, now());
+    g.gain.linearRampToValueAtTime((vol||.12)/5, now()+.035);
+    g.gain.setValueAtTime((vol||.12)/5, now()+dur*.72);
+    g.gain.linearRampToValueAtTime(.0001, now()+dur);
+    o.connect(bp); bp.connect(g); g.connect(master); send(g, .45);
+    o.start(); o.stop(now()+dur+.1); lfo.stop(now()+dur+.1);
+  });
+}
+/* ---- cordes qui glissent vers l'aigu ---- */
+function strSlide(dur, vol){
+  var a = audio(); if (!a) return;
+  [1, 1.5].forEach(function(r){
+    var o = a.createOscillator(), g = a.createGain(), bp = a.createBiquadFilter();
+    o.type = "sawtooth";
+    o.frequency.setValueAtTime(260*r, now());
+    o.frequency.exponentialRampToValueAtTime(1700*r, now()+dur);
+    bp.type = "bandpass"; bp.Q.value = 3.4;
+    bp.frequency.setValueAtTime(600, now());
+    bp.frequency.exponentialRampToValueAtTime(4200, now()+dur);
+    g.gain.setValueAtTime(.0001, now());
+    g.gain.exponentialRampToValueAtTime((vol||.16)/2, now()+dur*.85);
+    g.gain.linearRampToValueAtTime(.0001, now()+dur);
+    o.connect(bp); bp.connect(g); g.connect(master); send(g, .5);
+    o.start(); o.stop(now()+dur+.1);
+  });
+}
+/* ---- battement de coeur ---- */
+function beat(vol){
+  var a = audio(); if (!a) return;
+  [[0, vol], [.21, vol*.68]].forEach(function(p){
+    var o = a.createOscillator(), g = a.createGain(), t = now() + p[0];
+    o.type = "sine";
+    o.frequency.setValueAtTime(66, t);
+    o.frequency.exponentialRampToValueAtTime(31, t+.15);
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.linearRampToValueAtTime(p[1], t+.012);
+    g.gain.exponentialRampToValueAtTime(.0001, t+.26);
+    o.connect(g); g.connect(master); send(g, .3);
+    o.start(t); o.stop(t+.3);
+  });
+}
+var heartT = null;
+function heartStart(ms, vol){
+  heartStop();
+  var v = vol || .22, period = ms;
+  (function loop(){
+    beat(v);
+    period = Math.max(300, period*.93);
+    heartT = setTimeout(loop, period);
+    T.push(heartT);
+  })();
+}
+function heartStop(){ if (heartT){ clearTimeout(heartT); heartT = null; } }
+
+/* ---- chuchotements ---- */
+function whispers(dur, vol){
+  var a = audio(); if (!a) return;
+  var s = a.createBufferSource();
+  s.buffer = noiseBuf(dur, function(x){ return Math.sin(Math.PI*x) * (.35 + .65*Math.abs(Math.sin(x*37))); });
+  var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 1750; bp.Q.value = 5.5;
+  var lfo = a.createOscillator(), lg = a.createGain();
+  lfo.frequency.value = 2.6; lg.gain.value = 620;
+  lfo.connect(lg); lg.connect(bp.frequency); lfo.start();
+  var g = a.createGain(); g.gain.value = vol || .07;
+  s.connect(bp); bp.connect(g); g.connect(master); send(g, .7, .3);
+  s.start(); lfo.stop(now()+dur+.1);
+}
+/* ---- montee ---- */
 function riser(sec, peak){
   var a = audio(); if (!a) return;
-  var s = a.createBufferSource(); s.buffer = noiseBuf(sec, function(x){ return Math.pow(x, 1.6); });
-  var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 2.2;
-  bp.frequency.setValueAtTime(220, a.currentTime);
-  bp.frequency.exponentialRampToValueAtTime(5200, a.currentTime + sec);
+  var s = a.createBufferSource(); s.buffer = noiseBuf(sec, function(x){ return Math.pow(x, 1.7); });
+  var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 2.4;
+  bp.frequency.setValueAtTime(190, now());
+  bp.frequency.exponentialRampToValueAtTime(5600, now()+sec);
   var g = a.createGain();
-  g.gain.setValueAtTime(.0001, a.currentTime);
-  g.gain.exponentialRampToValueAtTime(peak || .3, a.currentTime + sec*.92);
-  g.gain.linearRampToValueAtTime(0, a.currentTime + sec);
+  g.gain.setValueAtTime(.0001, now());
+  g.gain.exponentialRampToValueAtTime(peak || .3, now()+sec*.93);
+  g.gain.linearRampToValueAtTime(0, now()+sec);
   s.connect(bp); bp.connect(g); g.connect(master); send(g, .35);
   s.start();
 }
-/* --- impact grave --- */
+/* ---- inspiration inversee avant un choc ---- */
+function inhale(sec, vol){
+  var a = audio(); if (!a) return;
+  var s = a.createBufferSource(); s.buffer = noiseBuf(sec, function(x){ return Math.pow(x, 2.2); });
+  var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 1.2;
+  bp.frequency.setValueAtTime(380, now());
+  bp.frequency.exponentialRampToValueAtTime(3400, now()+sec);
+  var g = a.createGain(); g.gain.value = vol || .24;
+  s.connect(bp); bp.connect(g); g.connect(master); send(g, .4);
+  s.start();
+}
+/* ---- impact ---- */
 function boom(vol){
   var a = audio(); if (!a) return;
   var o = a.createOscillator(), g = a.createGain();
   o.type = "sine";
-  o.frequency.setValueAtTime(138, a.currentTime);
-  o.frequency.exponentialRampToValueAtTime(29, a.currentTime + .7);
-  g.gain.setValueAtTime(vol || .62, a.currentTime);
-  g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + 1.1);
-  o.connect(g); g.connect(master); send(g, .5);
-  o.start(); o.stop(a.currentTime + 1.2);
-  var s = a.createBufferSource(); s.buffer = noiseBuf(.22, function(x){ return Math.pow(1-x, 2.4); });
-  var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 900;
-  var ng = a.createGain(); ng.gain.value = (vol || .62)*.5;
-  s.connect(lp); lp.connect(ng); ng.connect(master); send(ng, .6);
+  o.frequency.setValueAtTime(142, now());
+  o.frequency.exponentialRampToValueAtTime(27, now()+.8);
+  g.gain.setValueAtTime(vol || .7, now());
+  g.gain.exponentialRampToValueAtTime(.0001, now()+1.3);
+  o.connect(g); g.connect(master); send(g, .55);
+  o.start(); o.stop(now()+1.4);
+  var s = a.createBufferSource(); s.buffer = noiseBuf(.26, function(x){ return Math.pow(1-x, 2.2); });
+  var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 820;
+  var ng = a.createGain(); ng.gain.value = (vol||.7)*.55;
+  s.connect(lp); lp.connect(ng); ng.connect(master); send(ng, .65);
   s.start();
 }
-/* --- claquement sec, flash --- */
+/* ---- chute de sub ---- */
+function subDrop(sec, vol){
+  var a = audio(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(96, now());
+  o.frequency.exponentialRampToValueAtTime(21, now()+sec);
+  g.gain.setValueAtTime(vol || .4, now());
+  g.gain.linearRampToValueAtTime(.0001, now()+sec);
+  o.connect(g); g.connect(master);
+  o.start(); o.stop(now()+sec+.1);
+}
+/* ---- claquement ---- */
 function crack(vol, cut){
   var a = audio(); if (!a) return;
   var s = a.createBufferSource(); s.buffer = noiseBuf(.09, function(x){ return Math.pow(1-x, 3.2); });
   var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = cut || 6500;
   var g = a.createGain(); g.gain.value = vol || .3;
-  s.connect(lp); lp.connect(g); g.connect(master); send(g, .55);
+  s.connect(lp); lp.connect(g); g.connect(master); send(g, .55, .2);
   s.start();
 }
-/* --- grésillement de neon --- */
+/* ---- metal qui resonne ---- */
+function metal(vol){
+  var a = audio(); if (!a) return;
+  [1, 1.41, 1.93, 2.71, 3.39, 4.17].forEach(function(r, i){
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = "sine"; o.frequency.value = 196*r;
+    g.gain.setValueAtTime(.0001, now());
+    g.gain.linearRampToValueAtTime((vol||.1)/(i+2), now()+.008);
+    g.gain.exponentialRampToValueAtTime(.0001, now()+2.2 - i*.22);
+    o.connect(g); g.connect(master); send(g, .6, .25);
+    o.start(); o.stop(now()+2.4);
+  });
+}
+/* ---- bois qui craque ---- */
+function woodCrack(n){
+  var a = audio(); if (!a) return;
+  for (var i=0;i<(n||5);i++){
+    (function(d){
+      var t = now() + d;
+      var s = a.createBufferSource(); s.buffer = noiseBuf(.035, function(x){ return Math.pow(1-x, 5); });
+      var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = rnd(700, 2400); bp.Q.value = 4;
+      var g = a.createGain(); g.gain.value = rnd(.05, .14);
+      s.connect(bp); bp.connect(g); g.connect(master); send(g, .5);
+      s.start(t);
+    })(Math.random()*.55);
+  }
+}
+/* ---- raclement ---- */
+function scrape(sec, vol){
+  var a = audio(); if (!a) return;
+  var s = a.createBufferSource();
+  s.buffer = noiseBuf(sec, function(x){ return Math.sin(Math.PI*x) * (.3 + .7*Math.abs(Math.sin(x*140))); });
+  var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 6;
+  bp.frequency.setValueAtTime(900, now());
+  bp.frequency.linearRampToValueAtTime(1700, now()+sec);
+  var g = a.createGain(); g.gain.value = vol || .12;
+  s.connect(bp); bp.connect(g); g.connect(master); send(g, .6);
+  s.start();
+}
+/* ---- neon ---- */
 function flickerSnd(){
   var a = audio(); if (!a) return;
-  var s = a.createBufferSource(); s.buffer = noiseBuf(.06, function(x){ return (Math.random()>.4?1:.2)*(1-x); });
+  var s = a.createBufferSource();
+  s.buffer = noiseBuf(.07, function(x){ return (Math.random()>.4?1:.2)*(1-x); });
   var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 3400; bp.Q.value = 3;
-  var g = a.createGain(); g.gain.value = .22;
+  var g = a.createGain(); g.gain.value = .2;
   s.connect(bp); bp.connect(g); g.connect(master); send(g, .4);
   s.start();
 }
-var buzzNodes = null;
+var buzzN = null;
 function buzzOn(){
-  var a = audio(); if (!a || buzzNodes) return;
+  var a = audio(); if (!a || buzzN) return;
   var o = a.createOscillator(), g = a.createGain(), bp = a.createBiquadFilter();
   o.type = "sawtooth"; o.frequency.value = 100;
   bp.type = "bandpass"; bp.frequency.value = 2500; bp.Q.value = 7;
-  g.gain.value = 0;
-  o.connect(bp); bp.connect(g); g.connect(master);
-  o.start(); g.gain.linearRampToValueAtTime(.02, a.currentTime + .5);
-  buzzNodes = {o:o, g:g};
+  g.gain.value = 0; o.connect(bp); bp.connect(g); g.connect(master);
+  o.start(); g.gain.linearRampToValueAtTime(.02, now()+.5);
+  buzzN = {o:o, g:g};
 }
 function buzzOff(){
-  if (!AC || !buzzNodes) return;
-  try { buzzNodes.g.gain.linearRampToValueAtTime(0, AC.currentTime + .6); buzzNodes.o.stop(AC.currentTime + .8); } catch(e){}
-  buzzNodes = null;
+  if (!AC || !buzzN) return;
+  try { buzzN.g.gain.linearRampToValueAtTime(0, now()+.5); buzzN.o.stop(now()+.7); } catch(e){}
+  buzzN = null;
 }
-/* --- pas sur le lino --- */
+/* ---- pas, porte, craie, souffle ---- */
 function step(vol){
   var a = audio(); if (!a) return;
-  var s = a.createBufferSource(); s.buffer = noiseBuf(.13, function(x){ return Math.pow(1-x, 4); });
+  var s = a.createBufferSource(); s.buffer = noiseBuf(.14, function(x){ return Math.pow(1-x, 4); });
   var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1500;
   var hp = a.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 160;
   var g = a.createGain(); g.gain.value = vol || .2;
-  s.connect(lp); lp.connect(hp); hp.connect(g); g.connect(master); send(g, .7);
+  s.connect(lp); lp.connect(hp); hp.connect(g); g.connect(master); send(g, .7, .35);
   s.start();
 }
-/* --- porte qui grince --- */
 function creak(sec){
   var a = audio(); if (!a) return;
-  var o = a.createOscillator(), g = a.createGain(), bp = a.createBiquadFilter(), lfo = a.createOscillator(), lg = a.createGain();
-  o.type = "sawtooth"; o.frequency.setValueAtTime(128, a.currentTime);
-  o.frequency.linearRampToValueAtTime(196, a.currentTime + sec);
-  bp.type = "bandpass"; bp.frequency.value = 1500; bp.Q.value = 9;
-  lfo.frequency.value = 11; lg.gain.value = 38;
+  var o = a.createOscillator(), g = a.createGain(), bp = a.createBiquadFilter(),
+      lfo = a.createOscillator(), lg = a.createGain();
+  o.type = "sawtooth";
+  o.frequency.setValueAtTime(118, now());
+  o.frequency.linearRampToValueAtTime(212, now()+sec);
+  bp.type = "bandpass"; bp.frequency.value = 1500; bp.Q.value = 10;
+  lfo.frequency.value = 9; lg.gain.value = 44;
   lfo.connect(lg); lg.connect(o.frequency); lfo.start();
-  g.gain.setValueAtTime(.0001, a.currentTime);
-  g.gain.linearRampToValueAtTime(.09, a.currentTime + sec*.3);
-  g.gain.linearRampToValueAtTime(.0001, a.currentTime + sec);
-  o.connect(bp); bp.connect(g); g.connect(master); send(g, .6);
-  o.start(); o.stop(a.currentTime + sec + .1); lfo.stop(a.currentTime + sec + .1);
+  g.gain.setValueAtTime(.0001, now());
+  g.gain.linearRampToValueAtTime(.1, now()+sec*.3);
+  g.gain.linearRampToValueAtTime(.0001, now()+sec);
+  o.connect(bp); bp.connect(g); g.connect(master); send(g, .65, .3);
+  o.start(); o.stop(now()+sec+.1); lfo.stop(now()+sec+.1);
 }
-/* --- craie --- */
 function chalk(){
   var a = audio(); if (!a) return;
-  var s = a.createBufferSource(); s.buffer = noiseBuf(.3, function(x){ return (1-x)*(.4 + .6*Math.abs(Math.sin(x*48))); });
+  var s = a.createBufferSource();
+  s.buffer = noiseBuf(.32, function(x){ return (1-x)*(.4 + .6*Math.abs(Math.sin(x*48))); });
   var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 4200; bp.Q.value = 2.4;
-  var g = a.createGain(); g.gain.value = .11;
+  var g = a.createGain(); g.gain.value = .1;
   s.connect(bp); bp.connect(g); g.connect(master); send(g, .5);
   s.start();
 }
-/* --- respiration --- */
 function breath(vol){
   var a = audio(); if (!a) return;
-  var s = a.createBufferSource(); s.buffer = noiseBuf(.75, function(x){ return Math.sin(Math.PI*x); });
-  var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 760; bp.Q.value = .9;
+  var s = a.createBufferSource(); s.buffer = noiseBuf(.8, function(x){ return Math.sin(Math.PI*x); });
+  var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 740; bp.Q.value = .9;
   var g = a.createGain(); g.gain.value = vol || .09;
   s.connect(bp); bp.connect(g); g.connect(master); send(g, .5);
   s.start();
 }
-/* --- horloge --- */
 function tick(hi, vol){
   var a = audio(); if (!a) return;
   var o = a.createOscillator(), g = a.createGain();
   o.type = "square"; o.frequency.value = hi ? 2300 : 1550;
-  g.gain.value = 0;
-  o.connect(g); g.connect(master); send(g, .3);
-  var t = a.currentTime;
-  g.gain.linearRampToValueAtTime(vol || .05, t + .004);
-  g.gain.exponentialRampToValueAtTime(.0001, t + .05);
-  o.start(t); o.stop(t + .06);
+  g.gain.value = 0; o.connect(g); g.connect(master); send(g, .3);
+  g.gain.linearRampToValueAtTime(vol || .05, now()+.004);
+  g.gain.exponentialRampToValueAtTime(.0001, now()+.05);
+  o.start(); o.stop(now()+.06);
 }
-/* --- souffle de transition --- */
 function whoosh(sec){
   var a = audio(); if (!a) return;
   var s = a.createBufferSource(); s.buffer = noiseBuf(sec, function(x){ return Math.sin(Math.PI*x); });
   var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 1.1;
-  bp.frequency.setValueAtTime(3000, a.currentTime);
-  bp.frequency.exponentialRampToValueAtTime(260, a.currentTime + sec);
+  bp.frequency.setValueAtTime(3200, now());
+  bp.frequency.exponentialRampToValueAtTime(240, now()+sec);
   var g = a.createGain(); g.gain.value = .3;
   s.connect(bp); bp.connect(g); g.connect(master); send(g, .5);
   s.start();
 }
+/* ---- le silence brutal, l'arme la plus efficace ---- */
+function hush(ms){
+  if (!master || !AC) return;
+  try {
+    master.gain.cancelScheduledValues(now());
+    master.gain.setValueAtTime(master.gain.value, now());
+    master.gain.linearRampToValueAtTime(.0005, now()+.05);
+    master.gain.setValueAtTime(.0005, now()+ms/1000);
+    master.gain.linearRampToValueAtTime(.9, now()+ms/1000+.05);
+  } catch(e){}
+}
 
 /* =====================================================================
-   VOIX — trois repliques. Depose voix-1.m4a, voix-2.m4a, voix-3.m4a
-   dans ce dossier et elles sont jouees automatiquement.
+   VOIX — depose voix-1.m4a, voix-2.m4a, voix-3.m4a dans ce dossier
    ===================================================================== */
 var vbuf = {};
 function loadVoices(){
@@ -610,20 +760,122 @@ function loadVoices(){
 function duck(on){
   if (!master || !AC) return;
   try {
-    master.gain.cancelScheduledValues(AC.currentTime);
-    master.gain.linearRampToValueAtTime(on ? .34 : .9, AC.currentTime + .3);
+    master.gain.cancelScheduledValues(now());
+    master.gain.linearRampToValueAtTime(on ? .34 : .9, now()+.3);
   } catch(e){}
 }
 function voice(n){
   if (!AC || !vbuf[n]) return;
-  var s = AC.createBufferSource();
-  s.buffer = vbuf[n];
+  var s = AC.createBufferSource(); s.buffer = vbuf[n];
   var hp = AC.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 95;
   var pr = AC.createBiquadFilter(); pr.type = "peaking"; pr.frequency.value = 2600; pr.Q.value = .9; pr.gain.value = 3;
-  var g = AC.createGain(); g.gain.value = 1;
+  var g = AC.createGain();
   s.connect(hp); hp.connect(pr); pr.connect(g); g.connect(master); send(g, .3);
   duck(true); s.onended = function(){ duck(false); };
   s.start();
+}
+
+/* =====================================================================
+   TOILES, FISSURES, CRASSE — generees
+   ===================================================================== */
+function webPath(cx, cy, r, a0, a1, rays, rings){
+  var d = "", i, k, A = [];
+  for (i=0;i<=rays;i++) A.push(a0 + (a1-a0)*i/rays);
+  A.forEach(function(a){
+    d += "M" + cx.toFixed(1) + " " + cy.toFixed(1) +
+         "L" + (cx + Math.cos(a)*r).toFixed(1) + " " + (cy + Math.sin(a)*r).toFixed(1);
+  });
+  for (k=1;k<=rings;k++){
+    var rr = r * (k/(rings+.4)) * rnd(.9, 1.06);
+    for (i=0;i<rays;i++){
+      var p0 = [cx + Math.cos(A[i])*rr, cy + Math.sin(A[i])*rr];
+      var p1 = [cx + Math.cos(A[i+1])*rr, cy + Math.sin(A[i+1])*rr];
+      var mid = [(p0[0]+p1[0])/2, (p0[1]+p1[1])/2];
+      var sag = rr * .13;
+      var cm = [cx + (mid[0]-cx)*(1 - sag/rr), cy + (mid[1]-cy)*(1 - sag/rr)];
+      d += "M" + p0[0].toFixed(1) + " " + p0[1].toFixed(1) +
+           "Q" + cm[0].toFixed(1) + " " + cm[1].toFixed(1) + " " + p1[0].toFixed(1) + " " + p1[1].toFixed(1);
+    }
+  }
+  return d;
+}
+function crackPath(x, y, len, ang, depth){
+  var d = "M" + x + " " + y, cx = x, cy = y, a = ang, i;
+  var seg = len / 7;
+  for (i=0;i<7;i++){
+    a += rnd(-.42, .42);
+    cx += Math.cos(a)*seg; cy += Math.sin(a)*seg;
+    d += "L" + cx.toFixed(1) + " " + cy.toFixed(1);
+  }
+  if (depth > 0){
+    d += " " + crackPath(cx, cy, len*.45, a + rnd(.5, 1.1), depth-1);
+    d += " " + crackPath(cx, cy, len*.38, a - rnd(.5, 1.1), depth-1);
+  }
+  return d;
+}
+function buildDecay(){
+  var P = Math.PI;
+  /* toiles : coins du mur, tableau, horloge, fenetre */
+  var W = [
+    webPath(0, 0, 230, 0, P/2, 6, 3),
+    webPath(1600, 0, 210, P/2, P, 6, 3),
+    webPath(1052, 292, 112, P/2, P, 5, 3),
+    webPath(548, 292, 104, 0, P/2, 5, 3),
+    webPath(1240, 150, 96, P*.55, P*1.05, 5, 2),
+    webPath(312, 238, 104, P*.5, P, 5, 2)
+  ];
+  $("webs").innerHTML = W.map(function(d, i){
+    return '<path class="' + (i < 2 ? "thick" : "") + '" d="' + d + '"/>';
+  }).join("");
+  /* toiles au premier plan, entre les tables */
+  $("fgWebs").innerHTML =
+    '<g opacity="0" id="fgW">' +
+    '<path d="' + webPath(300, 648, 132, -P*.9, -P*.1, 5, 3) + '" stroke="#9d9686" fill="none" stroke-width=".9" opacity=".7"/>' +
+    '<path d="' + webPath(1310, 662, 140, -P*.95, -P*.15, 5, 3) + '" stroke="#9d9686" fill="none" stroke-width=".9" opacity=".7"/>' +
+    '</g>';
+  /* fissures sur les murs */
+  var C = [
+    crackPath(120, 60, 420, 1.25, 2),
+    crackPath(1470, 110, 380, 1.9, 2),
+    crackPath(760, 40, 300, 1.45, 1),
+    crackPath(40, 420, 260, .25, 1)
+  ];
+  $("cracks").innerHTML = C.map(function(d, i){
+    return '<path class="' + (i > 1 ? "hair" : "") + '" d="' + d + '"/>';
+  }).join("");
+  /* peinture ecaillee */
+  var pe = "";
+  for (var i=0;i<16;i++){
+    var x = rnd(0, 1600), y = rnd(30, 440), w = rnd(26, 90), h = rnd(20, 70);
+    pe += '<path d="M' + x.toFixed(0) + ' ' + y.toFixed(0) +
+          ' l' + w.toFixed(0) + ' ' + rnd(-12, 12).toFixed(0) +
+          ' l' + rnd(-18, 18).toFixed(0) + ' ' + h.toFixed(0) +
+          ' l' + (-w).toFixed(0) + ' ' + rnd(-14, 14).toFixed(0) + ' z" fill="#0f0d0b" opacity="' + rnd(.3, .7).toFixed(2) + '"/>';
+  }
+  $("peel").innerHTML = pe;
+  /* crasse et coulures */
+  var gr = '<rect width="1600" height="900" fill="#241a0c" opacity=".1"/>';
+  for (var j=0;j<13;j++){
+    var gx = rnd(0, 1600), gw = rnd(20, 70);
+    gr += '<rect x="' + gx.toFixed(0) + '" y="0" width="' + gw.toFixed(0) + '" height="' + rnd(160, 460).toFixed(0) +
+          '" fill="#0d0a06" opacity="' + rnd(.1, .24).toFixed(2) + '"/>';
+  }
+  /* poussiere sur les tables */
+  [[470,478],[830,490],[1170,477],[300,622],[1310,635]].forEach(function(p){
+    gr += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="96" ry="9" fill="#8d8572" opacity=".16"/>';
+  });
+  $("grime").innerHTML = gr;
+  /* gravats au sol */
+  var db = "";
+  for (var k=0;k<26;k++){
+    db += '<ellipse cx="' + rnd(60, 1540).toFixed(0) + '" cy="' + rnd(640, 890).toFixed(0) +
+          '" rx="' + rnd(4, 16).toFixed(0) + '" ry="' + rnd(2, 7).toFixed(0) +
+          '" fill="#3a332a" opacity="' + rnd(.4, .9).toFixed(2) + '"/>';
+  }
+  $("debris").innerHTML = db;
+  /* une toile sur la porte, des le depart */
+  $("doorWeb").innerHTML =
+    '<path d="' + webPath(620, 200, 118, 0, Math.PI/2, 5, 3) + '" stroke="#9d9686" fill="none" stroke-width=".85"/>';
 }
 
 /* =====================================================================
@@ -641,46 +893,41 @@ function voice(n){
 (function(){
   var cv = $("dust"), x = cv.getContext("2d"), P = [], W = 0, H = 0;
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  function size(){
-    W = cv.width  = Math.round(innerWidth  * dpr);
-    H = cv.height = Math.round(innerHeight * dpr);
-  }
+  function size(){ W = cv.width = Math.round(innerWidth*dpr); H = cv.height = Math.round(innerHeight*dpr); }
   size(); addEventListener("resize", size);
-  for (var i=0;i<140;i++){
+  for (var i=0;i<150;i++){
     P.push({x:Math.random(), y:Math.random(), r:Math.random()*1.9+.35,
             vx:(Math.random()-.5)*.00016, vy:-Math.random()*.0002-.00003,
             a:Math.random()*.5+.1, p:Math.random()*6.28});
   }
   (function loop(){
     x.clearRect(0,0,W,H);
-    var t = Date.now()/1000;
-    var st  = getComputedStyle(body);
+    var t = Date.now()/1000, st = getComputedStyle(body);
     var lum = parseFloat(st.getPropertyValue("--lum")) || 0;
     var bm  = parseFloat(st.getPropertyValue("--beam")) || 0;
-    var tx  = (parseFloat(st.getPropertyValue("--tx")) || 50) / 100;
-    var ty  = (parseFloat(st.getPropertyValue("--ty")) || 60) / 100;
-    var ar  = W / H;
+    var age = parseFloat(st.getPropertyValue("--age")) || 0;
+    var tx  = (parseFloat(st.getPropertyValue("--tx")) || 50)/100;
+    var ty  = (parseFloat(st.getPropertyValue("--ty")) || 60)/100;
+    var ar  = W/H;
     if (lum > .02 || bm > .02){
       for (var i=0;i<P.length;i++){
         var p = P[i];
         p.x += p.vx + Math.sin(t*.45 + p.p)*.00011;
-        p.y += p.vy;
+        p.y += p.vy * (1 + age*2.2);
         if (p.y < -.02){ p.y = 1.02; p.x = Math.random(); }
         if (p.x < -.02) p.x = 1.02; if (p.x > 1.02) p.x = -.02;
         var vis;
         if (bm > .02){
-          /* dans le faisceau de la torche, et nulle part ailleurs */
-          var dx = (p.x - tx) * ar, dy = p.y - ty;
-          var fall = 1 - Math.min(1, Math.sqrt(dx*dx + dy*dy) / .34);
+          var dx = (p.x - tx)*ar, dy = p.y - ty;
+          var fall = 1 - Math.min(1, Math.sqrt(dx*dx + dy*dy)/.34);
           vis = bm * Math.pow(Math.max(0, fall), 1.5) * .95;
         } else {
-          /* sous le neon : surtout dans les rais venant de la fenetre */
-          var band = .5 + .5 * Math.max(0, 1 - Math.abs(p.x - .3) / .34);
-          vis = lum * band * .3;
+          var band = .5 + .5*Math.max(0, 1 - Math.abs(p.x - .3)/.34);
+          vis = lum * band * (.3 + age*.5);
         }
         if (vis < .01) continue;
         x.beginPath();
-        x.arc(p.x*W, p.y*H, p.r*dpr*1.5, 0, 6.2832);
+        x.arc(p.x*W, p.y*H, p.r*dpr*(1.5 + age), 0, 6.2832);
         x.fillStyle = "rgba(255,240,212," + (p.a*vis).toFixed(3) + ")";
         x.fill();
       }
@@ -690,7 +937,7 @@ function voice(n){
 })();
 
 /* =====================================================================
-   HORLOGE A L'ENVERS
+   HORLOGE
    ===================================================================== */
 var clockOn = false, cAng = 0, cSpeed = 1;
 (function spin(){
@@ -704,52 +951,60 @@ var clockOn = false, cAng = 0, cSpeed = 1;
 })();
 
 /* =====================================================================
-   OUTILS DE MISE EN SCENE
+   MISE EN SCENE
    ===================================================================== */
 function lum(v){ css("--lum", v); }
 function beam(v){ css("--beam", v); }
 function torchTo(x, y){ css("--tx", x); css("--ty", y); }
 function cam(x, y, z, r, ms, ease){
-  var c = $("cam");
-  c.style.transition = "transform " + ms + "ms " + (ease || "cubic-bezier(.4,0,.25,1)");
-  css("--camx", x); css("--camy", y); css("--camz", z); css("--camr", (r||0) + "deg");
+  $("cam").style.transition = "transform " + ms + "ms " + (ease || "cubic-bezier(.4,0,.25,1)");
+  css("--camx", x); css("--camy", y); css("--camz", z); css("--camr", (r||0)+"deg");
 }
-function parallax(bgF, fgF){
+(function px(){
   var x = parseFloat(getComputedStyle(body).getPropertyValue("--camx")) || 0;
-  $("bg").style.transform = "translateX(" + (-x*bgF) + "px)";
-  $("fg").style.transform = "translateX(" + (-x*fgF) + "px)";
+  $("bg").style.transform = "translateX(" + (-x*.35) + "px)";
+  $("fg").style.transform = "translateX(" + (-x*1.25) + "px)";
+  requestAnimationFrame(px);
+})();
+var shakeT = null;
+function shake(amp, ms){
+  if (shakeT) clearInterval(shakeT);
+  var end = Date.now() + ms;
+  shakeT = setInterval(function(){
+    if (Date.now() > end){ clearInterval(shakeT); shakeT = null; css("--shk", "0px"); return; }
+    css("--shk", rnd(-amp, amp).toFixed(2) + "px");
+  }, 32);
 }
-function set(id){
-  ["set-door","set-room"].forEach(function(s){ $(s).classList.toggle("on", s === id); });
-}
+function set(id){ ["set-door","set-room"].forEach(function(s){ $(s).classList.toggle("on", s === id); }); }
 function torchOn(el, on){ $(el).classList.toggle("torch", on); }
-function blast(soft){
+function blast(kind){
   var f = $("flash");
   f.className = ""; void f.offsetWidth;
-  f.classList.add(soft ? "soft" : "hit");
+  f.classList.add(kind === "soft" ? "soft" : "hit");
+  if (kind === "red") f.classList.add("red");
 }
-function chroma(){
-  var c = $("chroma");
-  c.className = ""; void c.offsetWidth; c.classList.add("hit");
+function chroma(){ var c = $("chroma"); c.className = ""; void c.offsetWidth; c.classList.add("hit"); }
+function glitch(){
+  var g = $("glitch"), k = g.children;
+  for (var i=0;i<k.length;i++){
+    k[i].style.top    = rnd(0, 92).toFixed(1) + "%";
+    k[i].style.height = rnd(.6, 5).toFixed(1) + "%";
+    k[i].style.transform = "translateX(" + rnd(-9, 9).toFixed(1) + "%)";
+  }
+  g.className = ""; void g.offsetWidth; g.classList.add("hit");
 }
-function fade(v, ms){
-  var f = $("fade");
-  f.style.transition = "opacity " + ms + "ms linear";
-  f.style.opacity = v;
-}
+function fade(v, ms){ var f = $("fade"); f.style.transition = "opacity " + ms + "ms linear"; f.style.opacity = v; }
 function say(txt, n){
-  var s = $("sub");
-  s.className = ""; void s.offsetWidth;
-  s.textContent = txt;
-  s.classList.add("on");
+  var s = $("sub"); s.className = ""; void s.offsetWidth;
+  s.textContent = txt; s.classList.add("on");
   if (n) voice(n);
 }
 function unsay(){ var s = $("sub"); s.classList.remove("on"); s.classList.add("off"); }
-function card(txt){
-  var c = $("cardT");
-  c.className = ""; void c.offsetWidth;
-  c.textContent = txt;
-  c.classList.add("on");
+function card(txt){ var c = $("cardT"); c.className = ""; void c.offsetWidth; c.textContent = txt; c.classList.add("on"); }
+function ageStage(n){
+  body.classList.remove("ag1","ag2","ag3","ag4");
+  if (n) body.classList.add("ag" + n);
+  css("--age", n/4);
 }
 
 /* =====================================================================
@@ -758,117 +1013,122 @@ function card(txt){
 function run(){
   drone();
 
-  /* ---------- 0 → 4 s : le noir, on entend avant de voir ---------- */
-  at(400,  function(){ breath(.11); });
+  /* ---------- 0 → 5 s : on entend avant de voir ---------- */
+  at(300,  function(){ breath(.12); whispers(3.2, .05); });
   at(1200, function(){ card("Après la fermeture"); });
-  at(1800, function(){ step(.14); });
-  at(2500, function(){ step(.16); });
-  at(3200, function(){ step(.19); breath(.09); });
+  at(1600, function(){ step(.13); });
+  at(2400, function(){ step(.15); });
+  at(3100, function(){ step(.18); breath(.1); });
+  at(3700, function(){ woodCrack(3); });
+  at(4100, function(){ step(.21); inhale(.9, .18); });
 
-  /* ---------- 4 → 11 s : la porte ---------- */
-  at(4000, function(){
+  /* ---------- 5 → 12 s : la porte ---------- */
+  at(5000, function(){
     set("set-door"); torchOn("doorLayer", true);
     lum(.95); beam(1); torchTo("62%", "52%");
     fade(0, 900);
-    crack(.26, 5200); blast(true);
+    crack(.3, 5200); blast("soft"); metal(.07);
     cam("0px","0px",1.04,0,100);
   });
-  at(4300, function(){ cam("0px","0px",1.14,0,6200); });
-  at(5100, function(){ torchTo("70%", "36%"); step(.17); });   /* la plaque B12 */
-  at(6300, function(){ torchTo("42%", "40%"); step(.15); });   /* l'affichette */
-  at(7400, function(){ torchTo("60%", "56%"); });              /* la poignee */
-  at(8200, function(){ creak(1.5); riser(2.6, .26); });
-  at(8600, function(){ cam("0px","0px",1.55,0,2300,"cubic-bezier(.6,0,.8,1)"); });
-  at(9900, function(){ whoosh(.9); });
-  at(10350, function(){ fade(1, 420); });
+  at(5300, function(){ cam("0px","0px",1.14,0,6800); });
+  at(6000, function(){ torchTo("70%", "36%"); step(.17); });
+  at(6900, function(){ strings(1.1, .07, 760); });          /* la plaque B12 */
+  at(7300, function(){ torchTo("42%", "40%"); step(.15); whispers(1.8, .05); });
+  at(8500, function(){ torchTo("60%", "56%"); });
+  at(9200, function(){ creak(1.8); riser(3, .26); heartStart(1000, .2); });
+  at(9600, function(){ cam("0px","0px",1.6,0,2600,"cubic-bezier(.65,0,.85,1)"); });
+  at(11000, function(){ whoosh(1); glitch(); chroma(); });
+  at(11450, function(){ fade(1, 380); });
 
-  /* ---------- 11 → 20 s : la salle, a la torche ---------- */
-  at(10900, function(){
+  /* ---------- 12 → 21 s : la salle ---------- */
+  at(12000, function(){
     set("set-room"); torchOn("bg", true); torchOn("fg", true);
     lum(.9); beam(1); torchTo("50%", "74%");
     cam("0px","0px",1.06,0,100);
-    fade(0, 700); step(.2);
+    fade(0, 700); step(.2); heartStop();
   });
-  at(11300, function(){ cam("-40px","0px",1.1,0,9000); });
-  at(11900, function(){ torchTo("22%", "44%"); step(.16); });     /* la fenetre */
-  at(13300, function(){ torchTo("56%", "40%"); chalk(); });       /* le tableau */
-  at(14700, function(){ torchTo("76%", "24%"); tick(false,.07); });/* l'horloge */
-  at(15500, function(){ clockOn = true; tick(false,.07); });
-  at(16100, function(){ torchTo("50%", "58%"); riser(1.8, .22); });
+  at(12400, function(){ cam("-40px","0px",1.1,0,9500); });
+  at(13000, function(){ torchTo("22%", "44%"); step(.16); });
+  at(14300, function(){ torchTo("56%", "40%"); chalk(); whispers(2.2, .055); });
+  at(15700, function(){ torchTo("76%", "24%"); tick(false,.07); strings(.9, .06, 980); });
+  at(16400, function(){ clockOn = true; tick(false,.07); });
+  at(17000, function(){ torchTo("50%", "58%"); riser(2, .24); });
+  at(18100, function(){ scrape(.7, .1); woodCrack(4); });
 
   /* le neon prend le relais */
-  at(17300, function(){
-    torchOn("bg", false); torchOn("fg", false);
-    beam(0); lum(0);
+  at(18600, function(){ torchOn("bg", false); torchOn("fg", false); beam(0); lum(0); });
+  at(18800, function(){ lum(1);  flickerSnd(); blast(); at(90, function(){ lum(0); }); });
+  at(19100, function(){ lum(.35); flickerSnd(); at(60, function(){ lum(0); }); });
+  at(19500, function(){ lum(1);  flickerSnd(); crack(.24, 4200); at(120, function(){ lum(.1); }); });
+  at(19900, function(){
+    lum(.92); buzzOn(); droneTo(1.3, 2);
+    cam("0px","0px",1.16,0,15000);
+    ageStage(1);
   });
-  at(17500, function(){ lum(1);  flickerSnd(); blast(); at(90, function(){ lum(0); }); });
-  at(17800, function(){ lum(.35); flickerSnd(); at(60, function(){ lum(0); }); });
-  at(18200, function(){ lum(1);  flickerSnd(); crack(.22, 4200); at(120, function(){ lum(.1); }); });
-  at(18600, function(){
-    lum(.92); buzzOn(); droneTo(1.25, 2);
-    cam("0px","0px",1.16,0,14000);
-  });
-  [19400, 20800, 23100, 26200, 29000].forEach(function(t){
+  [20800, 22200, 24500, 27600, 30400].forEach(function(t){
     at(t, function(){ lum(.5); flickerSnd(); });
-    at(t + 60, function(){ lum(.92); });
+    at(t+60, function(){ lum(.92); });
   });
-  var tk = 19000;
-  while (tk < 31000){ (function(x){ at(x, function(){ tick(false, .045); }); })(tk); tk += 1000; }
+  var tk = 20400;
+  while (tk < 33000){ (function(x){ at(x, function(){ tick(false, .045); }); })(tk); tk += 1000; }
 
-  /* ---------- 20 → 31 s : l'ombre parle ---------- */
-  at(19600, function(){
-    $("manWrap").classList.add("in");
-    riser(1.4, .2); breath(.1);
-  });
-  at(21400, function(){ say("Tu entres ici à vingt ans.", 1); });
-  at(24200, unsay);
-  at(24700, function(){ say("Chaque salle t’en prendra vingt de plus.", 2); });
-  at(27800, unsay);
-  at(28300, function(){ say("À la dernière, tu auras quatre-vingts ans.", 3); });
-  at(31200, unsay);
+  /* ---------- 21 → 33 s : l'ombre ---------- */
+  at(20900, function(){ $("manWrap").classList.add("in"); strSlide(1.6, .12); breath(.1); });
+  at(22600, function(){ say("Tu entres ici à vingt ans.", 1); });
+  at(25400, unsay);
+  at(25900, function(){ say("Chaque salle t’en prendra vingt de plus.", 2); });
+  at(29000, unsay);
+  at(29500, function(){ say("À la dernière, tu auras quatre-vingts ans.", 3); });
+  at(32400, unsay);
 
-  /* ---------- 31 → 39 s : le temps s'emballe ---------- */
-  at(31400, function(){ riser(2.6, .38); droneTo(1.6, 2.4); });
-  var ages = [[32000,20],[32850,40],[33650,65],[34450,80]];
+  /* ---------- 33 → 42 s : le lieu pourrit ---------- */
+  at(32600, function(){ riser(3, .34); droneTo(1.7, 2.6); heartStart(760, .26); });
+  var ages = [[33200,20,1],[34100,40,2],[35000,65,3],[35900,80,4]];
   ages.forEach(function(p, i){
     at(p[0], function(){
       var n = $("ageN");
       n.textContent = p[1];
       n.className = ""; void n.offsetWidth; n.classList.add("hit");
-      css("--age", (i+1)/4);
-      cSpeed = 1 + i*9;
-      crack(.3, 2200); tick(true, .08); chroma();
-      if (i === 1) $("manWrap").classList.add("old");
-      if (i >= 2){ blast(); }
+      ageStage(p[2]);
+      cSpeed = 1 + i*10;
+      crack(.3, 2200); tick(true, .08); chroma(); glitch(); shake(2 + i*2, 420);
+      strings(.7, .1 + i*.035, 900 + i*180);
+      if (i === 1){ $("manWrap").classList.add("old"); woodCrack(6); }
+      if (i === 2){ scrape(.9, .14); $("fgW") && $("fgW").setAttribute("opacity", ".5"); }
+      if (i === 3){
+        metal(.12); subDrop(1.4, .34);
+        $("fgW") && $("fgW").setAttribute("opacity", ".92");
+        blast("red");
+      }
     });
   });
-  at(34900, function(){ $("cam").classList.add("jitter"); });
-  at(35200, function(){ riser(1.6, .42); });
-  /* stroboscope final */
-  [35300,35420,35540,35680,35820,35980,36160,36360].forEach(function(t, i){
-    at(t, function(){ lum(i % 2 ? .15 : 1); flickerSnd(); });
+  at(36500, function(){ shake(5, 1100); strSlide(1.5, .2); riser(1.4, .4); });
+  /* stroboscope, le neon agonise */
+  [36700,36830,36960,37100,37250,37420,37600,37800,38020].forEach(function(t, i){
+    at(t, function(){ lum(i % 2 ? .1 : 1); flickerSnd(); });
   });
-  at(36600, function(){
-    $("cam").classList.remove("jitter");
-    lum(0); beam(0); clockOn = false; buzzOff();
-    boom(.8); whoosh(1.2); droneStop();
-    css("--age", 0);
-    blast();
+  at(38200, function(){ lum(.06); buzzOff(); });
+
+  /* le silence, puis le choc */
+  at(38300, function(){ hush(900); heartStop(); clockOn = false; });
+  at(39250, function(){
+    lum(0); beam(0); droneStop();
+    boom(.85); metal(.1); whoosh(1.3);
+    blast(); shake(9, 500);
+    ageStage(0);
   });
 
-  /* ---------- 37 → 43 s : le titre ---------- */
-  at(37400, function(){ $("end").classList.add("on"); });
-  at(37900, function(){ $("eK").classList.add("fin"); });
-  at(38250, function(){ $("eH").classList.add("fin"); boom(.3); });
-  at(39200, function(){ $("eA").classList.add("fin"); });
+  /* ---------- 40 → 46 s : le titre ---------- */
+  at(40100, function(){ $("end").classList.add("on"); });
+  at(40600, function(){ $("eK").classList.add("fin"); });
+  at(40950, function(){ $("eH").classList.add("fin"); boom(.26); });
+  at(41900, function(){ $("eA").classList.add("fin"); });
 }
-
-/* parallaxe suivie en continu */
-(function px(){ parallax(.35, 1.25); requestAnimationFrame(px); })();
 
 /* =====================================================================
    LANCEMENT
    ===================================================================== */
+buildDecay();
 var started = false;
 function start(){
   if (started) return; started = true;
