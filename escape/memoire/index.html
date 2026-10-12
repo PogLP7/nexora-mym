@@ -223,7 +223,7 @@ p.lead{font-size:min(3vmin,4vw);font-weight:300;line-height:1.5;max-width:46ch;o
   <section class="scene" id="s-end">
     <h2>Vos quatre chiffres</h2>
     <div class="code" id="eCode">····</div>
-    <p class="lead" style="margin-top:3vmin">Un sujet de 80 ans en retient deux.<br>Le cadenas vous attend.</p>
+    <p class="lead" style="margin-top:3vmin">Un sujet de 80 ans en retient deux.<br><span id="dest">Le distributeur vous attend.</span></p>
   </section>
 
 </div>
@@ -251,6 +251,8 @@ var SERIES = [
   {age:80, digits:[8,3,7,2,5,1], ms:700,  rev:true,  noise:.5}
 ];
 var GAP = 190;
+/* Ou le code a quatre chiffres doit etre saisi. Une seule ligne a changer. */
+var DEST = "Le distributeur vous attend.";
 
 var idx = 0, timers = [], entry = [], tries = 0, locked = true, replayLeft = 1;
 var $ = function(id){ return document.getElementById(id); };
@@ -479,6 +481,7 @@ function nextSeries(){
 function finish(){
   clearTimers(); stopNoise(); locked = true;
   $("eCode").textContent = SERIES.map(function(s){ return s.digits[0]; }).join(" ");
+  $("dest").textContent = DEST;
   show("s-end");
   $("steps").classList.remove("hide");
   markSteps(-1, SERIES.length);
