@@ -1,0 +1,183 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1a0d0a">
+<title>Marion</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --fm:ui-monospace,"SF Mono",Menlo,monospace;
+  --g1:#FF6B6B;--g2:#FFB85C;
+  --bg:#1a0d0a;--ink:#fff;--mut:rgba(255,255,255,.62)
+}
+html,body{min-height:100%}
+body{
+  font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--ink);
+  background:
+    radial-gradient(120% 55% at 50% -8%,rgba(255,107,107,.30),transparent 58%),
+    radial-gradient(110% 55% at 100% 104%,rgba(255,184,92,.20),transparent 55%),
+    var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 16px;min-height:100vh;
+  /* masqué tant que le filtre pays n'a pas tranché — révélé par le script */
+  visibility:hidden
+}
+.card{width:100%;max-width:400px;text-align:center;
+  animation:in .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.city{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--g1);margin-bottom:18px;min-height:13px}
+
+.av{width:112px;height:112px;border-radius:50%;margin:0 auto 16px;position:relative;
+  padding:3px;background:linear-gradient(135deg,var(--g1),var(--g2))}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;
+  border:3px solid var(--bg)}
+
+.name{display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.name b{font-size:25px;font-weight:850;letter-spacing:-.015em}
+.vf{width:18px;height:18px;flex:0 0 auto}
+
+.chan{font-family:var(--fm);font-size:12px;color:var(--mut);margin-top:4px}
+
+.hook{font-size:17px;font-weight:800;line-height:1.45;margin:20px 0 6px}
+.hook b{background:linear-gradient(96deg,var(--g1),var(--g2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:14px;color:var(--mut);line-height:1.45}
+
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+  text-decoration:none;color:#2a0f08;font-weight:850;font-size:16.5px;
+  text-transform:uppercase;letter-spacing:.01em;border-radius:16px;padding:18px;
+  margin-top:26px;background:linear-gradient(96deg,var(--g1),var(--g2));
+  box-shadow:0 12px 32px rgba(255,107,107,.32);
+  position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease,box-shadow .15s ease}
+.cta:active{transform:scale(.98);box-shadow:0 6px 18px rgba(255,107,107,.3)}
+.cta .sh{position:absolute;top:0;left:-40%;width:40%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);
+  animation:sh 3.4s cubic-bezier(.16,1,.3,1) infinite}
+@keyframes sh{0%{left:-45%}55%,100%{left:130%}}
+
+.note{font-size:12px;color:rgba(255,255,255,.42);margin-top:12px;line-height:1.45}
+
+.foot{display:flex;align-items:center;justify-content:center;margin-top:26px;
+  padding-top:14px;border-top:1px solid rgba(255,255,255,.09);
+  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.4)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="card">
+
+  <span class="city" id="city"></span>
+
+  <div class="av"><img src="avatar.jpg" alt="Marion" fetchpriority="high"></div>
+
+  <div class="name"><b>Marion</b>&nbsp;🤍
+    <svg class="vf" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3b9eff"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="chan">Marion Privé</div>
+
+  <div class="hook">Mon seul canal,<br><b>le seul que je gère</b> 🤍</div>
+  <div class="sub">Je réponds qu'ici 👇</div>
+
+  <a class="cta" id="cta" href="#" rel="noopener"><span class="sh"></span>🤍 Rejoindre le canal</a>
+  <div class="note">L'entrée se fait sur demande — je valide à la main.</div>
+
+  <div class="foot"><span>🔞 +18 · privé</span></div>
+</div>
+
+<script>
+/* ============ CONFIG — tout se règle ici ============ */
+
+/* La cible est le CANAL, jamais le profil DM (@marionpv).
+   Un clic qui atterrit sur la fiche profil du compte DM ne produit
+   aucune demande d'adhésion, donc aucun membre et aucun événement Wysper.
+   Voir telegram-marion/orbit-liens-marion.sql. */
+var DEST = "https://t.me/marionprive";
+/* Variante tracking (log orbit_clicks puis 302 — les 3 slugs sont déjà actifs) :
+   var DEST = "https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go?l=marion-tg-bio&x=1"; */
+
+var CITY_HOOK = true;
+
+/* --- Filtre géographique (même liste que la landing Amandine) --- */
+var GEO_ON    = true;
+var GEO_ALLOW = ["FR", "BE", "CH", "CA", "LU", "MC", "AD"];
+var GEO_FAIL_OPEN = false;
+var GEO_REDIRECT = "";
+/* ==================================================== */
+
+(function () {
+  var c = new URLSearchParams(location.search).get("c");
+  var dest = DEST;
+  if (dest.indexOf("t.me/") === -1 && c) {
+    dest += (dest.indexOf("?") > -1 ? "&" : "?") + "c=" + encodeURIComponent(c);
+  }
+  document.getElementById("cta").href = dest;
+
+  function withTimeout(url, ms) {
+    return new Promise(function (ok, ko) {
+      var done = false;
+      var t = setTimeout(function () { if (!done) { done = true; ko(); } }, ms);
+      fetch(url, { mode: "cors", cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { if (!done) { done = true; clearTimeout(t); ok(j); } })
+        .catch(function () { if (!done) { done = true; clearTimeout(t); ko(); } });
+    });
+  }
+
+  function lookup() {
+    return withTimeout("https://ipwho.is/", 4000)
+      .then(function (g) {
+        if (!g || g.success === false || !g.country_code) { throw 0; }
+        return { cc: String(g.country_code).toUpperCase(), city: g.city || "" };
+      })
+      .catch(function () {
+        return withTimeout("https://get.geojs.io/v1/ip/country.json", 4000)
+          .then(function (g) {
+            if (!g || !g.country) { throw 0; }
+            return { cc: String(g.country).toUpperCase(), city: "" };
+          });
+      });
+  }
+
+  function block() {
+    if (GEO_REDIRECT) { location.replace(GEO_REDIRECT); return; }
+    document.body.innerHTML =
+      '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px">' +
+      '<div style="text-align:center;max-width:320px">' +
+      '<div style="font-size:15px;font-weight:800;margin-bottom:8px">Page indisponible</div>' +
+      '<div style="font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.55)">' +
+      "Ce contenu n'est pas accessible depuis ton pays." +
+      "</div></div></div>";
+    document.body.style.visibility = "visible";
+  }
+
+  function reveal(city) {
+    if (city && CITY_HOOK) {
+      document.getElementById("city").textContent = city + " 🤍";
+    }
+    document.body.style.visibility = "visible";
+  }
+
+  /* Sur Cloudflare Pages, _middleware.js a déjà filtré le pays côté serveur
+     et injecté la ville : aucun appel API, aucun quota. */
+  if (window.__GEO) {
+    reveal(window.__GEO.city || "");
+  } else if (!GEO_ON) {
+    reveal("");
+    lookup().then(function (g) { if (g.city) { reveal(g.city); } }).catch(function () {});
+  } else {
+    lookup()
+      .then(function (g) {
+        if (GEO_ALLOW.indexOf(g.cc) === -1) { block(); } else { reveal(g.city); }
+      })
+      .catch(function () {
+        if (GEO_FAIL_OPEN) { reveal(""); } else { block(); }
+      });
+  }
+})();
+</script>
+</body></html>
