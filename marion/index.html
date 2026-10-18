@@ -10,54 +10,48 @@
 :root{
   --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --fm:ui-monospace,"SF Mono",Menlo,monospace;
-  /* DA Vault — registre repris de la page alycia : noir dense, accent émeraude unique */
+  /* DA Vault — registre alycia : noir dense, accent émeraude unique */
   --g1:#10B981;--g2:#34D399;
-  --bg:#05080A;--ink:#fff;--mut:rgba(255,255,255,.52)
+  --bg:#05080A;--ink:#fff;--mut:rgba(255,255,255,.55)
 }
 html,body{min-height:100%}
 body{
   font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--ink);
-  background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 16px;min-height:100vh;
+  background:
+    radial-gradient(120% 55% at 50% -10%,rgba(16,185,129,.22),transparent 60%),
+    var(--bg);
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 16px 36px;min-height:100vh;
   /* masqué tant que le filtre pays n'a pas tranché — révélé par le script */
   visibility:hidden
 }
-.card{width:100%;max-width:400px;text-align:center;
-  animation:in .5s cubic-bezier(.16,1,.3,1) both}
+.card{width:100%;max-width:440px;animation:in .5s cubic-bezier(.16,1,.3,1) both}
 @keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-.city{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--g1);margin-bottom:18px;min-height:13px}
+.photo{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;
+  border:2px solid rgba(16,185,129,.45);background:#0a1512;
+  box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 60px rgba(16,185,129,.12)}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:center 18%;display:block}
+.photo::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(5,8,10,.82),transparent 44%);pointer-events:none}
 
-.av{width:112px;height:112px;border-radius:50%;margin:0 auto 16px;position:relative;z-index:2}
-.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;
-  box-shadow:0 0 0 2px var(--g1),0 0 38px rgba(16,185,129,.5)}
-/* halo qui respire derrière l'avatar — le ressort visuel de la DA Vault */
-.av::before{content:"";position:absolute;left:50%;top:50%;width:280px;height:280px;
-  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
-  background:radial-gradient(circle,rgba(16,185,129,.40),transparent 68%);
-  animation:halo 3.6s ease-in-out infinite}
-@keyframes halo{
-  0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(.92)}
-  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
-
-.name{display:inline-flex;align-items:center;gap:7px;justify-content:center}
-.name b{font-size:25px;font-weight:850;letter-spacing:-.015em}
+.id{position:absolute;left:16px;right:16px;bottom:14px;z-index:2}
+.name{display:flex;align-items:center;gap:7px}
+.name b{font-size:26px;font-weight:850;letter-spacing:-.015em;text-shadow:0 2px 14px rgba(0,0,0,.7)}
 .vf{width:18px;height:18px;flex:0 0 auto}
+.chan{font-family:var(--fm);font-size:12.5px;color:rgba(255,255,255,.72);margin-top:2px}
 
-.chan{font-family:var(--fm);font-size:12px;color:var(--mut);margin-top:4px}
-
-.hook{font-size:17px;font-weight:800;line-height:1.45;margin:20px 0 6px}
-.hook b{background:linear-gradient(96deg,var(--g1),var(--g2));
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{font-size:14px;color:var(--mut);line-height:1.45}
+.city{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--g1);margin:16px 0 6px;min-height:13px}
+.hook{font-size:19px;font-weight:850;line-height:1.38;letter-spacing:-.01em}
+.hook b{color:var(--g1)}
+.sub{font-size:14px;color:var(--mut);line-height:1.45;margin-top:7px}
 
 .cta{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
   text-decoration:none;color:#04221A;font-weight:850;font-size:16.5px;
   text-transform:uppercase;letter-spacing:.02em;border-radius:16px;padding:18px;
-  margin-top:26px;background:var(--g1);
-  box-shadow:0 12px 32px rgba(16,185,129,.35);
+  margin-top:20px;background:var(--g1);
+  box-shadow:0 12px 32px rgba(16,185,129,.34);
   position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;
   transition:transform .15s ease,box-shadow .15s ease}
 .cta:active{transform:scale(.98);box-shadow:0 6px 18px rgba(16,185,129,.3)}
@@ -66,25 +60,31 @@ body{
   animation:sh 3.4s cubic-bezier(.16,1,.3,1) infinite}
 @keyframes sh{0%{left:-45%}55%,100%{left:130%}}
 
-.note{font-size:12px;color:rgba(255,255,255,.42);margin-top:12px;line-height:1.45}
-
-.foot{display:flex;align-items:center;justify-content:center;margin-top:26px;
-  padding-top:14px;border-top:1px solid rgba(255,255,255,.09);
-  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.4)}
+.foot{display:flex;align-items:center;justify-content:center;margin-top:18px;
+  padding-top:13px;border-top:1px solid rgba(255,255,255,.09);
+  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.38)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head>
 <body>
 <div class="card">
 
-  <span class="city" id="city"></span>
-
-  <div class="av"><img src="avatar.jpg" alt="Marion" fetchpriority="high"></div>
-
-  <div class="name"><b>Marion</b>&nbsp;🤍
-    <svg class="vf" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3b9eff"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="photo">
+    <img id="hero" alt="Marion" fetchpriority="high">
+    <script>
+      /* Pool de photos — une au hasard à chaque ouverture.
+         Ajoute les fichiers ici, ils doivent être à côté de index.html. */
+      var POOL = ["p1.jpg"];
+      document.getElementById("hero").src = POOL[Math.floor(Math.random() * POOL.length)];
+    </script>
+    <div class="id">
+      <div class="name"><b>Marion</b>&nbsp;🤍
+        <svg class="vf" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3b9eff"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="chan">Marion Privé</div>
+    </div>
   </div>
-  <div class="chan">Marion Privé</div>
 
+  <span class="city" id="city"></span>
   <div class="hook">Mon seul canal,<br><b>le seul que je gère</b> 🤍</div>
   <div class="sub">Je réponds qu'ici 👇</div>
 
@@ -98,7 +98,7 @@ body{
 
 /* La cible est le CANAL, jamais le profil DM (@marionpv).
    Un clic qui atterrit sur la fiche profil du compte DM ne produit
-   aucune demande d'adhésion, donc aucun membre et aucun événement Wysper.
+   aucune adhésion et aucun événement Wysper.
    Voir telegram-marion/orbit-liens-marion.sql. */
 var DEST = "https://t.me/marionprive";
 /* Variante tracking (log orbit_clicks puis 302 — les 3 slugs sont déjà actifs) :
@@ -116,8 +116,9 @@ var GEO_REDIRECT = "";
 (function () {
   var c = new URLSearchParams(location.search).get("c");
   var dest = DEST;
-  if (dest.indexOf("t.me/") === -1 && c) {
-    dest += (dest.indexOf("?") > -1 ? "&" : "?") + "c=" + encodeURIComponent(c);
+  if (dest.indexOf("t.me/") === -1) {
+    if (c) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "c=" + encodeURIComponent(c); }
+    if (window.__photo) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "p=" + encodeURIComponent(window.__photo); }
   }
   document.getElementById("cta").href = dest;
 
