@@ -21,7 +21,9 @@ body{
     radial-gradient(110% 55% at 100% 104%,rgba(37,232,195,.22),transparent 55%),
     var(--bg);
   display:flex;flex-direction:column;align-items:center;
-  padding:24px 16px 36px;min-height:100vh
+  padding:24px 16px 36px;min-height:100vh;
+  /* masqué tant que le filtre pays n'a pas tranché — révélé par le script */
+  visibility:hidden
 }
 .card{width:100%;max-width:440px;animation:in .5s cubic-bezier(.16,1,.3,1) both}
 @keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
@@ -156,6 +158,20 @@ var SUBS = "4 000 abonnés";
 var CITY_HOOK = true;   /* la ville du visiteur passe en surtitre du hook */
 var COUNTDOWN_ON = false;   /* true = reaffiche le bloc "gratuit pendant" */
 var COUNTDOWN = 59 * 60 + 49;
+
+/* --- Filtre géographique (repris de la restriction GeoFilter GMS) --- */
+var GEO_ON    = true;
+var GEO_ALLOW = ["FR", "BE", "CH", "CA", "LU", "MC", "AD"];
+/* FR France · BE Belgique · CH Suisse · CA Canada · LU Luxembourg · MC Monaco · AD Andorre */
+
+/* Que faire si AUCUNE des deux API géo ne répond ?
+   false = on bloque (on protège, au prix de quelques visiteurs légitimes perdus)
+   true  = on laisse passer (on convertit, au prix du filtre qui saute) */
+var GEO_FAIL_OPEN = false;
+
+/* Visiteur hors zone : laisser "" pour la page de blocage,
+   ou mettre une URL pour le rediriger ailleurs. */
+var GEO_REDIRECT = "";
 /* ==================================================== */
 
 (function () {
@@ -186,22 +202,77 @@ var COUNTDOWN = 59 * 60 + 49;
   box.innerHTML = html;
   if (!ALT.length) { box.style.display = "none"; }
 
-  /* --- Ville (best-effort, échoue en silence) --- */
-  try {
-    fetch("https://ipapi.co/json/", { mode: "cors" })
-      .then(function (r) { return r.json(); })
+  /* --- Géo : filtre pays + ville du hook, en un seul appel --------------
+     Deux sources en cascade, toutes deux CORS et sans quota serré.
+     ipapi.co a été retiré : son offre gratuite est rate-limitée et renvoyait
+     déjà des erreurs, ce qui aurait ouvert le filtre sous charge.           */
+
+  function withTimeout(url, ms) {
+    return new Promise(function (ok, ko) {
+      var done = false;
+      var t = setTimeout(function () { if (!done) { done = true; ko(); } }, ms);
+      fetch(url, { mode: "cors", cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { if (!done) { done = true; clearTimeout(t); ok(j); } })
+        .catch(function () { if (!done) { done = true; clearTimeout(t); ko(); } });
+    });
+  }
+
+  function lookup() {
+    /* 1er : pays + ville */
+    return withTimeout("https://ipwho.is/", 4000)
       .then(function (g) {
-        if (g && g.city) {
-          document.getElementById("loc").textContent = g.city;
-          if (!CITY_HOOK) { document.getElementById("locwrap").style.display = "inline-flex"; }
-          if (CITY_HOOK) {
-            document.getElementById("hook").insertAdjacentHTML("afterbegin",
-              '<span class="city">' + g.city + ' 🔥</span>');
-          }
-        }
+        if (!g || g.success === false || !g.country_code) { throw 0; }
+        return { cc: String(g.country_code).toUpperCase(), city: g.city || "" };
       })
-      .catch(function () {});
-  } catch (e) {}
+      /* 2e : pays seul, si le premier tombe */
+      .catch(function () {
+        return withTimeout("https://get.geojs.io/v1/ip/country.json", 4000)
+          .then(function (g) {
+            if (!g || !g.country) { throw 0; }
+            return { cc: String(g.country).toUpperCase(), city: "" };
+          });
+      });
+  }
+
+  function block() {
+    if (GEO_REDIRECT) { location.replace(GEO_REDIRECT); return; }
+    document.body.innerHTML =
+      '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px">' +
+      '<div style="text-align:center;max-width:320px">' +
+      '<div style="font-size:15px;font-weight:800;margin-bottom:8px">Page indisponible</div>' +
+      '<div style="font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.55)">' +
+      "Ce contenu n'est pas accessible depuis ton pays." +
+      "</div></div></div>";
+    document.body.style.visibility = "visible";
+  }
+
+  function reveal(city) {
+    if (city) {
+      document.getElementById("loc").textContent = city;
+      if (CITY_HOOK) {
+        document.getElementById("hook").insertAdjacentHTML("afterbegin",
+          '<span class="city">' + city + ' 🔥</span>');
+      } else {
+        document.getElementById("locwrap").style.display = "inline-flex";
+      }
+    }
+    document.body.style.visibility = "visible";
+  }
+
+  if (!GEO_ON) {
+    reveal("");
+    lookup().then(function (g) { if (g.city) { reveal(g.city); } }).catch(function () {});
+  } else {
+    lookup()
+      .then(function (g) {
+        if (GEO_ALLOW.indexOf(g.cc) === -1) { block(); } else { reveal(g.city); }
+      })
+      .catch(function () {
+        /* aucune source n'a répondu */
+        if (GEO_FAIL_OPEN) { reveal(""); } else { block(); }
+      });
+  }
 
   /* --- Compte à rebours --- */
   if (!COUNTDOWN_ON) {
