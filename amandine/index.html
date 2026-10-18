@@ -260,7 +260,11 @@ var GEO_REDIRECT = "";
     document.body.style.visibility = "visible";
   }
 
-  if (!GEO_ON) {
+  /* Sur Cloudflare Pages, _middleware.js a déjà filtré le pays côté serveur
+     et injecté la ville : aucun appel API à faire, aucun quota à subir. */
+  if (window.__GEO) {
+    reveal(window.__GEO.city || "");
+  } else if (!GEO_ON) {
     reveal("");
     lookup().then(function (g) { if (g.city) { reveal(g.city); } }).catch(function () {});
   } else {
