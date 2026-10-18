@@ -1,0 +1,224 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#061412">
+<title>Amandine</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --fm:ui-monospace,"SF Mono",Menlo,monospace;
+  --g1:#3FD07E;--g2:#25E8C3;
+  --bg:#061412;--ink:#fff;--mut:rgba(255,255,255,.62)
+}
+html,body{min-height:100%}
+body{
+  font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--ink);
+  background:
+    radial-gradient(120% 55% at 50% -8%,rgba(63,208,126,.30),transparent 58%),
+    radial-gradient(110% 55% at 100% 104%,rgba(37,232,195,.22),transparent 55%),
+    var(--bg);
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 16px 36px;min-height:100vh
+}
+.card{width:100%;max-width:440px;animation:in .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.loc{margin-bottom:14px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
+  padding:6px 12px;border-radius:999px;color:#fff;
+  background:rgba(63,208,126,.16);border:1px solid rgba(63,208,126,.45)}
+.pin{width:11px;height:11px;position:relative;display:inline-block}
+.pin::before{content:"";position:absolute;inset:0;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:currentColor}
+.pin::after{content:"";position:absolute;left:3.3px;top:2.8px;width:4.4px;height:4.4px;border-radius:50%;background:#061412;opacity:.55}
+
+.photo{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;margin:0 0 0;
+  border:2px solid rgba(63,208,126,.45);background:#0d1f1b;
+  box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
+.photo::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(6,20,18,.78),transparent 42%);pointer-events:none}
+.on{position:absolute;left:11px;top:11px;display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;color:#fff;
+  background:rgba(0,0,0,.52);border:1px solid rgba(63,208,126,.55);backdrop-filter:blur(4px);z-index:2}
+.on .d{width:7px;height:7px;border-radius:50%;background:var(--g1);box-shadow:0 0 8px var(--g1);animation:bl 1.3s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.cnt{position:absolute;right:11px;top:11px;font-family:var(--fm);font-size:10.5px;font-weight:700;
+  padding:5px 10px;border-radius:999px;color:#fff;background:rgba(0,0,0,.52);
+  border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(4px);z-index:2}
+
+.id{position:absolute;left:16px;right:16px;bottom:14px;z-index:2}
+.name{display:flex;align-items:center;gap:8px}
+.name b{font-size:26px;font-weight:850;letter-spacing:-.015em;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.vf{width:19px;height:19px;flex:0 0 auto}
+.handle{font-family:var(--fm);font-size:12.5px;color:rgba(255,255,255,.72);margin-top:2px}
+
+.hook{font-size:19px;font-weight:850;line-height:1.38;margin:16px 0 10px;letter-spacing:-.01em}
+.hook .city{display:block;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--g1);margin-bottom:5px}
+.proof{font-size:13.5px;color:var(--mut);margin:0 0 7px}
+.proof b{color:#fff;font-weight:800}
+.queue{display:flex;align-items:flex-start;gap:7px;font-size:13.5px;line-height:1.4;color:var(--mut);margin:0 0 16px}
+.qd{width:6px;height:6px;border-radius:50%;margin-top:6px;flex:0 0 auto;background:var(--g1);box-shadow:0 0 7px var(--g1)}
+.hook b{background:linear-gradient(96deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.cdlab{font-family:var(--fm);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  text-align:center;margin-bottom:8px;color:var(--g1)}
+.cd{display:flex;gap:8px;justify-content:center}
+.cd .b{flex:1;text-align:center;border-radius:12px;padding:10px 0;
+  background:rgba(63,208,126,.10);border:1px solid rgba(63,208,126,.30)}
+.cd .n{font-size:23px;font-weight:850;font-variant-numeric:tabular-nums}
+.cd .u{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(63,208,126,.85)}
+
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+  text-decoration:none;color:#06201a;font-weight:850;font-size:16.5px;text-transform:uppercase;
+  letter-spacing:.01em;border-radius:16px;padding:18px;margin-top:16px;
+  background:linear-gradient(96deg,var(--g1),var(--g2));
+  box-shadow:0 12px 32px rgba(63,208,126,.34);
+  position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease,box-shadow .15s ease}
+.cta:active{transform:scale(.98);box-shadow:0 6px 18px rgba(63,208,126,.3)}
+.cta .sh{position:absolute;top:0;left:-40%;width:40%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);
+  animation:sh 3.4s cubic-bezier(.16,1,.3,1) infinite}
+@keyframes sh{0%{left:-45%}55%,100%{left:130%}}
+
+.alt{display:flex;gap:9px;margin-top:10px}
+.alt a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+  text-decoration:none;color:#fff;font-size:13.5px;font-weight:700;
+  border-radius:13px;padding:13px 10px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);-webkit-tap-highlight-color:transparent;
+  transition:background .15s ease}
+.alt a:active{background:rgba(255,255,255,.12)}
+.alt svg{width:16px;height:16px;flex:0 0 auto}
+
+.foot{display:flex;align-items:center;justify-content:center;margin-top:18px;
+  padding-top:13px;border-top:1px solid rgba(255,255,255,.09);
+  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.4)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body>
+<div class="card">
+
+  <span class="loc" id="locwrap" style="display:none"><span class="pin"></span> <span id="loc"></span></span>
+
+  <div class="photo">
+    <img id="hero" alt="Amandine" fetchpriority="high">
+    <script>
+      /* Pool de photos — une au hasard à chaque ouverture.
+         Ajoute/retire des fichiers ici, ils doivent être à côté de index.html. */
+      var POOL = ["p1.jpg", "p2.jpg", "p3.jpg"];
+      var PICK = POOL[Math.floor(Math.random() * POOL.length)];
+      document.getElementById("hero").src = PICK;
+      /* mémorisé pour l'attribution : on saura quelle photo a produit le clic */
+      window.__photo = PICK.replace(".jpg", "");
+    </script>
+    <span class="cnt" id="cnt">4 000 abonnés</span>
+    <div class="id">
+      <div class="name"><b>Amandine</b>
+        <svg class="vf" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3b9eff"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="handle">@amandineprive</div>
+    </div>
+  </div>
+
+  <div class="hook" id="hook">Mon côté privé, sans filtre.<br><b>Je réponds à tout</b>&nbsp;🤍</div>
+  <div class="proof" id="proof">🤍&nbsp; <b>4 000</b> personnes me suivent déjà</div>
+  <div class="queue"><span class="qd"></span>J'ouvre les DM par vagues — je réponds dans l'ordre d'arrivée</div>
+
+  <div class="cdlab">🎁 Gratuit pendant</div>
+  <div class="cd">
+    <div class="b"><div class="n" id="h">00</div><div class="u">h</div></div>
+    <div class="b"><div class="n" id="m">59</div><div class="u">min</div></div>
+    <div class="b"><div class="n" id="s">49</div><div class="u">sec</div></div>
+  </div>
+
+  <a class="cta" id="cta" href="#" rel="noopener"><span class="sh"></span>💬 M'écrire en privé</a>
+
+  <div class="alt" id="alt"></div>
+
+  <div class="foot"><span>🔞 +18 · privé</span></div>
+</div>
+
+<script>
+/* ============ CONFIG — tout se règle ici ============ */
+var DEST = "https://t.me/amandineprive";
+/* Variantes :
+   OF direct   : var DEST = "https://onlyfans.com/amandinedlc";
+   avec tracking (log orbit_clicks puis 302, slug deja prepare dans orbit-liens.sql) :
+                 var DEST = "https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go?l=amandine-tg-insta&x=1"; */
+
+var ALT = [
+  /* {label:"Telegram", url:"https://t.me/XXXXX", icon:"tg"}, */
+  /* {label:"Instagram", url:"https://instagram.com/XXXXX", icon:"ig"} */
+];
+var SUBS = "4 000 abonnés";
+var CITY_HOOK = true;   /* la ville du visiteur passe en surtitre du hook */
+var COUNTDOWN_ON = false;   /* true = reaffiche le bloc "gratuit pendant" */
+var COUNTDOWN = 59 * 60 + 49;
+/* ==================================================== */
+
+(function () {
+  /* --- CTA : garde le param clippeur (?c=) pour l'attribution --- */
+  var c = new URLSearchParams(location.search).get("c");
+  var dest = DEST;
+  /* t.me ignore les query params : on n'ajoute le clippeur que sur une cible qui sait le lire */
+  if (dest.indexOf("t.me/") === -1) {
+    if (c) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "c=" + encodeURIComponent(c); }
+    /* quelle photo était affichée au moment du clic */
+    if (window.__photo) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "p=" + encodeURIComponent(window.__photo); }
+  }
+  document.getElementById("cta").href = dest;
+
+  document.getElementById("cnt").textContent = SUBS;
+
+  /* --- Liens secondaires --- */
+  var ICONS = {
+    tg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.6 8.5-7.7c.4-.3-.1-.5-.6-.2L7.2 13 2.7 11.6c-1-.3-1-1 .2-1.4l17.6-6.8c.8-.3 1.5.2 1.4 1.1z"/></svg>',
+    ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>',
+    tt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2h-3v13.3a2.7 2.7 0 1 1-2.7-2.7c.3 0 .5 0 .8.1V9.6a6 6 0 1 0 5 5.9V9.2a6.7 6.7 0 0 0 3.9 1.2V7.3a3.8 3.8 0 0 1-4-3.5z"/></svg>'
+  };
+  var box = document.getElementById("alt"), html = "";
+  for (var i = 0; i < ALT.length; i++) {
+    var a = ALT[i];
+    html += '<a href="' + a.url + '" rel="noopener">' + (ICONS[a.icon] || "") + a.label + "</a>";
+  }
+  box.innerHTML = html;
+  if (!ALT.length) { box.style.display = "none"; }
+
+  /* --- Ville (best-effort, échoue en silence) --- */
+  try {
+    fetch("https://ipapi.co/json/", { mode: "cors" })
+      .then(function (r) { return r.json(); })
+      .then(function (g) {
+        if (g && g.city) {
+          document.getElementById("loc").textContent = g.city;
+          if (!CITY_HOOK) { document.getElementById("locwrap").style.display = "inline-flex"; }
+          if (CITY_HOOK) {
+            document.getElementById("hook").insertAdjacentHTML("afterbegin",
+              '<span class="city">' + g.city + ' 🔥</span>');
+          }
+        }
+      })
+      .catch(function () {});
+  } catch (e) {}
+
+  /* --- Compte à rebours --- */
+  if (!COUNTDOWN_ON) {
+    document.querySelector(".cdlab").style.display = "none";
+    document.querySelector(".cd").style.display = "none";
+    document.getElementById("cta").style.marginTop = "4px";
+    return;
+  }
+  var t = COUNTDOWN;
+  function p(n) { return (n < 10 ? "0" : "") + n; }
+  function r() {
+    document.getElementById("h").textContent = p(Math.floor(t / 3600));
+    document.getElementById("m").textContent = p(Math.floor(t % 3600 / 60));
+    document.getElementById("s").textContent = p(t % 60);
+  }
+  r();
+  setInterval(function () { t = t > 0 ? t - 1 : COUNTDOWN; r(); }, 1000);
+})();
+</script>
+</body></html>
