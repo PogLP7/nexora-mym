@@ -73,8 +73,11 @@ body{
     <script>
       /* Pool de photos — une au hasard à chaque ouverture.
          Ajoute les fichiers ici, ils doivent être à côté de index.html. */
-      var POOL = ["p1.jpg"];
-      document.getElementById("hero").src = POOL[Math.floor(Math.random() * POOL.length)];
+      var POOL = ["p1.jpg", "p2.jpg", "p3.jpg"];
+      var PICK = POOL[Math.floor(Math.random() * POOL.length)];
+      document.getElementById("hero").src = PICK;
+      /* mémorisé pour l'attribution : on saura quelle photo a produit le clic */
+      window.__photo = PICK.replace(".jpg", "");
     </script>
     <div class="id">
       <div class="name"><b>Marion</b>&nbsp;🤍
