@@ -1076,20 +1076,32 @@ function resetAll(){
 
 /* ===================== DICTÉE ===================== */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-function micSay(msg,cls){var el=$('micState');if(!el)return;el.textContent=msg||'';el.className='micst'+(cls?' '+cls:'')}
+function micSay(msg,cls){var el=$('micState');if(!el)return;el.innerHTML=msg||'';el.className='micst'+(cls?' '+cls:'')}
+var OPEN_TIP='Ce navigateur ne donne pas accès au micro (aperçu intégré, webview…). Ouvre la page dans <b>Chrome</b> : <span class="kbd">getsnexora.com/peda/</span> — ou dicte avec <b>Wispr</b>, le curseur est déjà dans le champ.';
 function toggleMic(){
   if(recOn)return stopMic();
-  if(!SR){
-    micSay("Dictée Chrome indispo sur ce navigateur — utilise le micro de ton clavier (iPhone) ou Wispr, le curseur est déjà dans le champ.",'err');
-    $('ans').focus();return;
-  }
+  if(!SR){micSay(OPEN_TIP,'err');$('ans').focus();return}
   if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.protocol!=='file:'){
     micSay("Le micro exige https — ouvre la page en https.",'err');return;
   }
-  try{rec=new SR()}catch(e){micSay("Micro indisponible sur ce navigateur.",'err');return}
+  micSay("Autorisation du micro…");
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){
+      try{st.getTracks().forEach(function(t){t.stop()})}catch(e){}
+      startRec();
+    },function(err){
+      var n=(err&&err.name)||'';
+      if(n==='NotFoundError'||n==='DevicesNotFoundError')micSay("Aucun micro détecté sur l'appareil.",'err');
+      else if(n==='NotAllowedError'||n==='SecurityError'||n==='PermissionDeniedError')micSay(OPEN_TIP,'err');
+      else micSay(OPEN_TIP,'err');
+    });
+  }else startRec();
+}
+function startRec(){
+  try{rec=new SR()}catch(e){micSay(OPEN_TIP,'err');return}
   rec.lang='fr-FR';rec.continuous=true;rec.interimResults=true;
   var base=$('ans').value, fatal=false;
-  rec.onstart=function(){micSay("🔴 J'écoute… parle, puis reclique sur Dicter (ou ⌘↵ pour corriger).",'on')};
+  rec.onstart=function(){micSay("🔴 J'écoute… parle, puis reclique sur Stop (ou ⌘↵ pour corriger).",'on')};
   rec.onresult=function(e){
     var fin='',itm='';
     for(var i=e.resultIndex;i<e.results.length;i++){
@@ -1104,12 +1116,9 @@ function toggleMic(){
     if(m==='no-speech'){micSay("Je n'ai rien entendu — parle plus près du micro.",'err');return}
     if(m==='aborted')return;
     fatal=true;
-    if(m==='not-allowed'||m==='service-not-allowed')
-      micSay("Micro bloqué : clique sur l'icône 🔒 (ou ⚙) à gauche de l'adresse → Micro → Autoriser, puis recharge.",'err');
-    else if(m==='audio-capture')
-      micSay("Aucun micro détecté sur l'appareil.",'err');
-    else if(m==='network')
-      micSay("La dictée Chrome a besoin d'internet — connexion perdue.",'err');
+    if(m==='not-allowed'||m==='service-not-allowed')micSay(OPEN_TIP,'err');
+    else if(m==='audio-capture')micSay("Aucun micro détecté sur l'appareil.",'err');
+    else if(m==='network')micSay("La dictée Chrome a besoin d'internet — connexion perdue.",'err');
     else micSay('Micro : '+m,'err');
     stopMic(true);
   };
@@ -1118,14 +1127,13 @@ function toggleMic(){
     else if(recOn)stopMic(true);
   };
   try{rec.start();recOn=true;$('micBtn').className='btn mic2 on';$('micBtn').textContent='⏹ Stop';}
-  catch(e){micSay("Micro indisponible — réessaie.",'err')}
+  catch(e){micSay(OPEN_TIP,'err')}
 }
 function stopMic(keepMsg){
   var was=recOn;recOn=false;
   var b=$('micBtn');if(b){b.className='btn mic2';b.textContent='🎙 Dicter'}
   if(rec){try{rec.onend=null;rec.onerror=null;rec.stop()}catch(e){}rec=null}
-  if(!keepMsg)micSay('');
-  if(was&&!keepMsg){micSay('');$('ans').focus()}
+  if(!keepMsg){micSay('');if(was)$('ans').focus()}
 }
 
 /* ===================== RACCOURCIS ===================== */
