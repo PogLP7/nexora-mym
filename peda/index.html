@@ -65,6 +65,11 @@ h1 span{color:var(--vio)}
 .hint{font-size:12px;color:var(--dim2);margin-bottom:14px}
 textarea{width:100%;min-height:130px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--txt);font-family:inherit;font-size:15px;line-height:1.55;resize:vertical;outline:none}
 textarea:focus{border-color:var(--vio);box-shadow:0 0 0 3px rgba(139,92,246,.13)}
+.mic2{background:rgba(34,211,238,.14);border-color:rgba(34,211,238,.45);color:#7dd3fc}
+.mic2.on{background:rgba(251,113,133,.2);border-color:var(--red);color:#fda4af;animation:pulse 1.1s infinite}
+.micst{font-size:12px;color:var(--dim2);margin-top:7px;min-height:16px}
+.micst.on{color:var(--red)}
+.micst.err{color:var(--orange)}
 .mic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:var(--card2);border:1px solid var(--line);cursor:pointer;color:var(--txt);transition:.14s}
 .mic.on{background:rgba(251,113,133,.2);border-color:var(--red);animation:pulse 1.1s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,.5)}50%{box-shadow:0 0 0 9px rgba(251,113,133,0)}}
@@ -141,7 +146,7 @@ a{color:var(--cyan)}
       <button class="btn sm" onclick="copyAll()">📋 Copier mes réponses pour Claude</button>
       <button class="btn sm" onclick="resetAll()">♻️ Remettre les compteurs à zéro</button>
     </div>
-    <div class="sub" style="margin-top:9px">⌘D lance Wispr directement dans le champ (le curseur y est déjà), ou clique le micro 🎙 pour la dictée Chrome (⌘K). Puis « Copier mes réponses pour Claude » et colle-le dans la conv pour la correction fine.</div>
+    <div class="sub" style="margin-top:9px">Bouton « 🎙 Dicter » = dictée Chrome (autorise le micro la 1re fois). Wispr marche aussi : le curseur est déjà dans le champ. Échap ne quitte plus la session. Puis « Copier mes réponses pour Claude » et colle-le dans la conv pour la correction fine.</div>
   </div>
 
   <!-- ============ QUIZ ============ -->
@@ -153,15 +158,13 @@ a{color:var(--cyan)}
       <div class="hint" id="qhint"></div>
 
       <div id="answerZone">
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <textarea id="ans" placeholder="⌘D puis réponds à voix haute. Pas besoin de faire des phrases : balance les mots-clés, auteurs, dates."></textarea>
-          <div class="mic" id="micBtn" onclick="toggleMic()" title="Dictée navigateur (⌘K) — sinon ⌘D pour Wispr">🎙</div>
-        </div>
+        <textarea id="ans" placeholder="Clique sur « Dicter » et parle. Pas besoin de faire des phrases : balance les mots-clés, auteurs, dates."></textarea>
+        <div id="micState" class="micst"></div>
         <div class="acts">
+          <button class="btn mic2" id="micBtn" onclick="toggleMic()">🎙 Dicter</button>
           <button class="btn p" onclick="check()">Corriger</button>
           <button class="btn sm" onclick="showRef()">Je sèche → voir la réponse</button>
           <div class="spacer"></div>
-          <span class="kbd">⌘D dicter</span>
           <span class="kbd">⌘↵ corriger</span>
           <button class="btn sm" onclick="home()">Quitter</button>
         </div>
@@ -969,7 +972,7 @@ function show(){
   $('qmeta').innerHTML=m;
   $('qtext').textContent=q.q;
   $('qhint').textContent=q.k.length+' points attendus — auteurs, dates et mots-clés comptent.';
-  $('ans').value='';
+  $('ans').value='';micSay('');
   $('answerZone').classList.remove('hide');$('corrZone').classList.add('hide');
   $('ans').focus();
 }
@@ -1073,11 +1076,20 @@ function resetAll(){
 
 /* ===================== DICTÉE ===================== */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function micSay(msg,cls){var el=$('micState');if(!el)return;el.textContent=msg||'';el.className='micst'+(cls?' '+cls:'')}
 function toggleMic(){
-  if(!SR){toast('Dictée navigateur indispo ici — utilise Wispr dans le champ');return}
   if(recOn)return stopMic();
-  rec=new SR();rec.lang='fr-FR';rec.continuous=true;rec.interimResults=true;
-  var base=$('ans').value;
+  if(!SR){
+    micSay("Dictée Chrome indispo sur ce navigateur — utilise le micro de ton clavier (iPhone) ou Wispr, le curseur est déjà dans le champ.",'err');
+    $('ans').focus();return;
+  }
+  if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.protocol!=='file:'){
+    micSay("Le micro exige https — ouvre la page en https.",'err');return;
+  }
+  try{rec=new SR()}catch(e){micSay("Micro indisponible sur ce navigateur.",'err');return}
+  rec.lang='fr-FR';rec.continuous=true;rec.interimResults=true;
+  var base=$('ans').value, fatal=false;
+  rec.onstart=function(){micSay("🔴 J'écoute… parle, puis reclique sur Dicter (ou ⌘↵ pour corriger).",'on')};
   rec.onresult=function(e){
     var fin='',itm='';
     for(var i=e.resultIndex;i<e.results.length;i++){
@@ -1087,28 +1099,51 @@ function toggleMic(){
     if(fin)base=(base?base+' ':'')+fin.trim();
     $('ans').value=(base+(itm?' '+itm:'')).trim();
   };
-  rec.onerror=function(e){toast('Micro : '+e.error);stopMic()};
-  rec.onend=function(){if(recOn){try{rec.start()}catch(e){}}};
-  try{rec.start();recOn=true;$('micBtn').className='mic on'}catch(e){toast('Micro indisponible')}
+  rec.onerror=function(e){
+    var m=e.error;
+    if(m==='no-speech'){micSay("Je n'ai rien entendu — parle plus près du micro.",'err');return}
+    if(m==='aborted')return;
+    fatal=true;
+    if(m==='not-allowed'||m==='service-not-allowed')
+      micSay("Micro bloqué : clique sur l'icône 🔒 (ou ⚙) à gauche de l'adresse → Micro → Autoriser, puis recharge.",'err');
+    else if(m==='audio-capture')
+      micSay("Aucun micro détecté sur l'appareil.",'err');
+    else if(m==='network')
+      micSay("La dictée Chrome a besoin d'internet — connexion perdue.",'err');
+    else micSay('Micro : '+m,'err');
+    stopMic(true);
+  };
+  rec.onend=function(){
+    if(recOn&&!fatal){try{rec.start()}catch(e){stopMic(true)}}
+    else if(recOn)stopMic(true);
+  };
+  try{rec.start();recOn=true;$('micBtn').className='btn mic2 on';$('micBtn').textContent='⏹ Stop';}
+  catch(e){micSay("Micro indisponible — réessaie.",'err')}
 }
-function stopMic(){
-  recOn=false;$('micBtn').className='mic';
-  if(rec){try{rec.onend=null;rec.stop()}catch(e){}rec=null}
+function stopMic(keepMsg){
+  var was=recOn;recOn=false;
+  var b=$('micBtn');if(b){b.className='btn mic2';b.textContent='🎙 Dicter'}
+  if(rec){try{rec.onend=null;rec.onerror=null;rec.stop()}catch(e){}rec=null}
+  if(!keepMsg)micSay('');
+  if(was&&!keepMsg){micSay('');$('ans').focus()}
 }
 
 /* ===================== RACCOURCIS ===================== */
 document.addEventListener('keydown',function(e){
   var quizOn=!$('quiz').classList.contains('hide');
   if(!quizOn)return;
-  if((e.metaKey||e.ctrlKey)&&(e.key==='d'||e.key==='D')){ /* réservé à Wispr : on ne capture rien, on s'assure juste du focus */
-    if(!$('answerZone').classList.contains('hide'))$('ans').focus();
+  var corr=!$('corrZone').classList.contains('hide');
+  /* ⌘D / ⌘K : si Wispr tourne, il capte avant le navigateur et on ne voit jamais l'event.
+     Sinon on lance la dictée Chrome — et surtout on bloque le popup favoris de Chrome. */
+  if((e.metaKey||e.ctrlKey)&&(e.key==='d'||e.key==='D'||e.key==='k'||e.key==='K')){
+    e.preventDefault();
+    if(!corr)toggleMic();
     return;
   }
-  var corr=!$('corrZone').classList.contains('hide');
   if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();corr?next():check();return}
-  if((e.metaKey||e.ctrlKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();toggleMic();return}
   if(corr&&e.key==='Enter'&&e.target.tagName!=='TEXTAREA'){e.preventDefault();next()}
-  if(e.key==='Escape')home();
+  /* Escape NE quitte PAS la session : les outils de dictée l'envoient en fin de dictée. */
+  if(e.key==='Escape'){if(recOn){e.preventDefault();stopMic()}}
 });
 renderHome();
 </script>
