@@ -146,7 +146,7 @@ a{color:var(--cyan)}
       <button class="btn sm" onclick="copyAll()">📋 Copier mes réponses pour Claude</button>
       <button class="btn sm" onclick="resetAll()">♻️ Remettre les compteurs à zéro</button>
     </div>
-    <div class="sub" style="margin-top:9px">Bouton « 🎙 Dicter » = dictée Chrome (autorise le micro la 1re fois). Wispr marche aussi : le curseur est déjà dans le champ. Échap ne quitte plus la session. Puis « Copier mes réponses pour Claude » et colle-le dans la conv pour la correction fine.</div>
+    <div class="sub" style="margin-top:9px"><b>Pour répondre à l&rsquo;oral : double-appui sur la touche Ctrl</b> (dictée macOS : elle écrit dans le champ partout, Chrome comme panneau Claude). Le bouton 🎙 Dicter est une alternative qui passe par le micro du navigateur. Puis « Copier mes réponses pour Claude » et colle-le dans la conv pour la correction fine.</div>
   </div>
 
   <!-- ============ QUIZ ============ -->
@@ -158,10 +158,10 @@ a{color:var(--cyan)}
       <div class="hint" id="qhint"></div>
 
       <div id="answerZone">
-        <textarea id="ans" placeholder="Clique sur « Dicter » et parle. Pas besoin de faire des phrases : balance les mots-clés, auteurs, dates."></textarea>
+        <textarea id="ans" placeholder="Double-appui sur Ctrl (ou touche 🎤 F5) puis parle. Mots-clés, auteurs, dates — pas besoin de phrases."></textarea>
         <div id="micState" class="micst"></div>
         <div class="acts">
-          <button class="btn mic2" id="micBtn" onclick="toggleMic()">🎙 Dicter</button>
+          <button class="btn mic2" id="micBtn" onclick="toggleMic()" title="Dictée navigateur. Sinon : double-appui sur Ctrl (dictée macOS)">🎙 Dicter</button>
           <button class="btn p" onclick="check()">Corriger</button>
           <button class="btn sm" onclick="showRef()">Je sèche → voir la réponse</button>
           <div class="spacer"></div>
@@ -972,7 +972,7 @@ function show(){
   $('qmeta').innerHTML=m;
   $('qtext').textContent=q.q;
   $('qhint').textContent=q.k.length+' points attendus — auteurs, dates et mots-clés comptent.';
-  $('ans').value='';micSay('');
+  $('ans').value='';micSay('Astuce : double-appui sur <b>Ctrl</b> pour dicter.');
   $('answerZone').classList.remove('hide');$('corrZone').classList.add('hide');
   $('ans').focus();
 }
@@ -1077,7 +1077,7 @@ function resetAll(){
 /* ===================== DICTÉE ===================== */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 function micSay(msg,cls){var el=$('micState');if(!el)return;el.innerHTML=msg||'';el.className='micst'+(cls?' '+cls:'')}
-var OPEN_TIP='Ce navigateur ne donne pas accès au micro (aperçu intégré, webview…). Ouvre la page dans <b>Chrome</b> : <span class="kbd">getsnexora.com/peda/</span> — ou dicte avec <b>Wispr</b>, le curseur est déjà dans le champ.';
+var OPEN_TIP='Micro navigateur indisponible ici. Utilise la <b>dictée macOS</b> : clique dans le champ et <b>appuie 2 fois sur Ctrl</b> (ou la touche 🎤 F5), parle, puis re-appuie 2 fois pour arrêter.';
 function toggleMic(){
   if(recOn)return stopMic();
   if(!SR){micSay(OPEN_TIP,'err');$('ans').focus();return}
