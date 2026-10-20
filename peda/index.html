@@ -33,8 +33,8 @@ h1 span{color:var(--vio)}
 .btn.sm{padding:7px 11px;font-size:12.5px}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .row{display:flex;gap:9px;flex-wrap:wrap}
-.lvl{display:flex;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:14px}
-.lv{flex:1;background:transparent;border:0;border-radius:9px;padding:9px 11px;cursor:pointer;color:var(--dim);font-family:inherit;text-align:center;transition:.14s;display:flex;flex-direction:column;gap:2px}
+.lvl{display:flex;flex-wrap:wrap;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:14px}
+.lv{flex:1 1 120px;background:transparent;border:0;border-radius:9px;padding:9px 11px;cursor:pointer;color:var(--dim);font-family:inherit;text-align:center;transition:.14s;display:flex;flex-direction:column;gap:2px}
 .lv b{font-size:13.5px;font-weight:700}
 .lv i{font-style:normal;font-size:11px;color:var(--dim2)}
 .lv.on{background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(34,211,238,.14));color:var(--txt);box-shadow:inset 0 0 0 1px rgba(139,92,246,.45)}
@@ -67,6 +67,13 @@ textarea{width:100%;min-height:130px;background:var(--bg2);border:1px solid var(
 textarea:focus{border-color:var(--vio);box-shadow:0 0 0 3px rgba(139,92,246,.13)}
 .mic2{background:rgba(34,211,238,.14);border-color:rgba(34,211,238,.45);color:#7dd3fc}
 .mic2.on{background:rgba(251,113,133,.2);border-color:var(--red);color:#fda4af;animation:pulse 1.1s infinite}
+.defbox{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--vio);border-radius:12px;padding:16px 18px;font-size:15px;line-height:1.62}
+.defbox .hidden{color:var(--dim2);font-style:italic}
+.pack{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 13px;cursor:pointer;font-family:inherit;color:var(--txt);text-align:left;width:100%;transition:.12s}
+.pack:hover{border-color:var(--vio);background:var(--card2)}
+.pack.done{border-color:rgba(52,211,153,.4)}
+.pack .nm{flex:1;font-size:13.5px;font-weight:600}
+.pack .mt{font-size:11px;color:var(--dim2)}
 .opts{display:grid;gap:8px;margin:2px 0 4px}
 .opt{text-align:left;padding:13px 15px;border-radius:12px;background:var(--card2);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:14.5px;line-height:1.45;cursor:pointer;display:flex;gap:11px;align-items:flex-start;transition:.12s;width:100%}
 .opt:hover:not(.done){border-color:var(--vio);transform:translateX(2px)}
@@ -132,9 +139,10 @@ a{color:var(--cyan)}
     <div class="lvl">
       <button class="lv" id="lvMini" onclick="setLevel('mini')"><b>⚡ Express</b><i id="nMini"></i></button>
       <button class="lv" id="lvQcm" onclick="setLevel('qcm')"><b>✅ QCM</b><i id="nQcm"></i></button>
+      <button class="lv" id="lvDefs" onclick="setLevel('defs')"><b>📖 Défs</b><i id="nDefs"></i></button>
       <button class="lv" id="lvFull" onclick="setLevel('full')"><b>📚 Complet</b><i id="nFull"></i></button>
     </div>
-    <div class="modes">
+    <div class="modes" id="modes">
       <button class="mode hero" onclick="start('express')">
         <div class="t">⚡ Révision express</div>
         <div class="d" id="expCount">tous les thèmes, priorité à ce que tu rates</div>
@@ -194,6 +202,11 @@ a{color:var(--cyan)}
           <span class="kbd">1-4 répondre</span>
           <button class="btn sm" onclick="home()">Quitter</button>
         </div>
+      </div>
+
+      <div id="defZone" class="hide">
+        <div class="defbox" id="defBox"></div>
+        <div class="acts" id="defActs"></div>
       </div>
 
       <div id="corrZone" class="hide">
@@ -260,6 +273,118 @@ var THEMES=[
 ];
 
 /* k = points attendus. Format "Label|variante|variante…" (le label compte aussi comme variante) */
+var DEFS=[
+{g:"1 · La relation pédagogique",s:"S1",items:[
+ {t:"Relation pédagogique",d:"Postic (1979), La relation éducative, PUF : « l'ensemble des rapports sociaux qui s'établissent entre l'éducateur et ceux qu'il éduque, pour aller vers des objectifs éducatifs, dans une structure institutionnelle donnée, rapports qui possèdent des caractéristiques cognitives et affectives identifiables, qui ont un déroulement, et vivent une histoire ».",k:["Postic 1979","rapports sociaux","objectifs éducatifs","structure institutionnelle","cognitives / affectives","vivent une histoire"]},
+ {t:"Quand la relation devient éducative",d:"Postic (1979) : quand, au lieu de se réduire à la transmission du savoir, elle engage des êtres dans une rencontre, une aventure humaine par laquelle l'adulte va naître en l'enfant.",k:["pas que transmettre","rencontre","aventure humaine","l'adulte naît en l'enfant"]},
+ {t:"La double posture de l'éducateur",d:"Meirieu (1997) : se vouloir le plus efficace possible dans le domaine des conditions qui favorisent le développement et les apprentissages, et se savoir totalement impuissant quand il s'agit de prendre des décisions que seul l'autre (l'élève) peut prendre.",k:["Meirieu 1997","efficace sur les conditions","impuissant sur les décisions","seul l'élève décide"]},
+ {t:"Didactique vs pédagogie",d:"La didactique est centrée sur les SAVOIRS (les contenus et leur transmission). La pédagogie est centrée sur l'ENFANT, l'apprenant (la relation, le sujet qui apprend).",k:["didactique = savoirs","pédagogie = apprenant"]}
+]},
+{g:"2 · Le triangle de Houssaye",s:"S1",items:[
+ {t:"Le triangle : auteur et pôles",d:"Jean Houssaye, 1986. Trois pôles : le FORMATEUR (transmetteur, guide, il structure l'expérience), l'APPRENANT (il reçoit, cherche, construit la compétence), le SAVOIR (notion, connaissance, compétence, contenu à acquérir).",k:["Houssaye 1986","formateur : guide, structure","apprenant : reçoit, cherche, construit","savoir : contenu à acquérir"]},
+ {t:"Les 3 relations du triangle",d:"La relation PÉDAGOGIQUE relie formateur et apprenant. La relation DIDACTIQUE relie formateur et savoir. La relation d'APPRENTISSAGE relie apprenant et savoir.",k:["pédagogique = formateur-apprenant","didactique = formateur-savoir","apprentissage = apprenant-savoir"]},
+ {t:"La place du mort",d:"Houssaye fait l'hypothèse qu'une situation d'enseignement classique mobilise principalement 2 des sommets, en mettant le troisième « à la place du mort ». Ex. : un CM privilégie l'axe enseignant-savoir et laisse l'élève passif ; des révisions avant un examen privilégient l'axe apprenant-savoir, le prof n'étant pas présent.",k:["2 sommets sur 3","le 3e à la place du mort","CM = enseignant-savoir","révisions = apprenant-savoir"]},
+ {t:"À quoi sert le triangle",d:"C'est une grille de lecture de ce qui se joue dans une relation. Aucune approche n'est fondamentalement bonne ou mauvaise, chacune a ses avantages et ses inconvénients : l'équilibre évite d'ennuyer, de parler sur rien, ou de perdre les apprenants par trop de liberté.",k:["grille de lecture","aucune n'est bonne ou mauvaise","équilibre","ennuyer / parler sur rien / trop de liberté"]}
+]},
+{g:"3 · Orientations de valeurs (1/2)",s:"S2",items:[
+ {t:"Orientations de valeurs : définition",d:"Jewett et Bain (1985), en EPS : les systèmes de croyances des enseignants à propos des contenus qu'ils enseignent, de la façon dont ils sont enseignés et, par extension, des contenus qui sont appris. Ces 5 OV guident leurs choix didactiques et pédagogiques.",k:["Jewett & Bain 1985","systèmes de croyances","contenus + façon d'enseigner","guident les choix didactiques"]},
+ {t:"Les 5 orientations de valeurs",d:"1) la maîtrise de la discipline, 2) le processus d'apprentissage, 3) l'auto-actualisation, 4) la responsabilisation sociale, 5) l'intégration écologique.",k:["maîtrise de la discipline","processus d'apprentissage","auto-actualisation","responsabilisation sociale","intégration écologique"]},
+ {t:"OV — Maîtrise de la discipline",d:"Centrage de l'enseignement sur les connaissances jugées les plus fondamentales, enseignées dans des environnements dont le contrôle favorise leur apprentissage. C'est l'orientation la plus traditionnelle.",k:["connaissances fondamentales","environnement contrôlé","la plus traditionnelle"]},
+ {t:"OV — Processus d'apprentissage",d:"Accent sur les procédés cognitifs de l'apprentissage (le « comment on apprend ») plutôt que sur les contenus (le « qu'est-ce qu'on apprend »). Le développement de la capacité à apprendre est central.",k:["procédés cognitifs","comment plutôt que quoi","capacité à apprendre"]}
+]},
+{g:"4 · Orientations de valeurs (2/2)",s:"S2",items:[
+ {t:"OV — Auto-actualisation",d:"Grande priorité au développement personnel et à l'autonomie de l'élève. Les situations visent le bien-être, la connaissance de soi, la participation et la responsabilité personnelle.",k:["développement personnel","autonomie","bien-être, connaissance de soi","responsabilité personnelle"]},
+ {t:"OV — Responsabilisation sociale",d:"Vise le changement social et la construction d'un monde plus solidaire : les besoins sociaux prennent le pas sur les besoins individuels. Les contenus sont définis en termes de coopération, de travail d'équipe et de respect des autres.",k:["changement social","besoins sociaux > individuels","coopération, équipe, respect"]},
+ {t:"OV — Intégration écologique",d:"Favorise la compréhension des relations entre les individus, les contenus de la discipline et l'environnement. Centrage sur le développement holistique de la personne : une personne unique dans un environnement complexe.",k:["individus / contenus / environnement","développement holistique","personne unique, environnement complexe"]}
+]},
+{g:"5 · Les sciences de l'intervention",s:"S2",items:[
+ {t:"Sciences de l'intervention : définition",d:"Loquet, Musard & Carlier (2016) : une diversité d'approches complémentaires qui ont pour visée principale de décrire et de comprendre les pratiques d'intervention, avant de déterminer quelles pratiques sont les plus efficaces ou d'envisager comment les transformer et les améliorer.",k:["Loquet, Musard & Carlier 2016","décrire et comprendre","avant de juger l'efficacité","transformer, améliorer"]},
+ {t:"Les 3 phases de l'intervention",d:"PLANIFICATION (concevoir une séquence, un programme d'entraînement, un événement), INTERACTION (conduite du groupe pour développer les compétences de chacun), ÉVALUATION (analyse des effets sur les apprentissages et les perceptions).",k:["planification","interaction","évaluation"]},
+ {t:"On ne naît pas intervenant",d:"Margnes, Carnus, Leca & Loizon (2018) : loin de l'image de sens commun d'un intervenant animé d'une vocation, les écrits ont rationalisé l'acte d'intervention en mettant en évidence des compétences professionnelles précises selon différentes phases. « On ne naît pas intervenant… on le devient ! »",k:["Margnes et al. 2018","pas une vocation","rationaliser l'acte","compétences professionnelles"]}
+]},
+{g:"6 · Les 5 approches (lunettes)",s:"S2",items:[
+ {t:"Psychologie sociale",d:"Deci & Ryan (2000) : comprendre comment les comportements, cognitions et affects sont déterminés par les interactions entre individus, ou entre les individus et le contexte social.",k:["Deci & Ryan 2000","comportements, cognitions, affects","interactions / contexte social"]},
+ {t:"Anthropologie culturaliste",d:"Escalié (2020) : se former nécessite le respect et l'intégration de règles avant d'entrevoir leur appropriation. L'enseignant gagne à proposer un enseignement ostensif des règles, à s'assurer de leur suivi, et à accompagner leur appropriation dans d'autres contextes.",k:["Escalié 2020","règles avant appropriation","enseignement ostensif","suivi puis appropriation"]},
+ {t:"Psychanalyse",d:"Montagne (2010), Freud (1913) : les dimensions inconscientes à l'œuvre dans tout acte éducatif et sportif. Comprendre ce qui se joue dans l'individu, du fait de ses expériences, et qui génère des « arrêts d'apprentissage » ou des facilités.",k:["Montagne 2010 / Freud 1913","dimensions inconscientes","arrêts d'apprentissage"]},
+ {t:"Anthropologie cognitive",d:"Gal-Petitfaux, Sève, Cizeron & Adé (2010) : c'est l'individu qui détermine, par son activité, les éléments de l'environnement avec lesquels il interagit, et qui construit à chaque instant sa propre situation. Comment la culture influence-t-elle les processus cognitifs ?",k:["Gal-Petitfaux et al. 2010","par son activité","construit sa propre situation","culture et cognition"]},
+ {t:"Didactique",d:"Amade-Escot (2010) : « faire parler » les systèmes étudiés, afin de produire des connaissances sur les pratiques des intervenants et des élèves quant à l'acte pédagogique. Notion liée : le triangle de Houssaye.",k:["Amade-Escot 2010","faire parler les systèmes","pratiques intervenants/élèves","triangle de Houssaye"]}
+]},
+{g:"7 · Frise 1880 → 1959",s:"Frise",items:[
+ {t:"1880-1918 — Pédagogie militaire",d:"Contexte de guerre. École : pédagogie traditionnelle/martiale, descendante, axée sur l'ordre, la rigueur et l'autorité ; l'EP transmet des valeurs patriotiques. Hors école : moins de cadre, des militaires recrutés comme enseignants.",k:["guerre","descendante / martiale","ordre, rigueur, autorité","valeurs patriotiques","militaires enseignants"]},
+ {t:"1919-1939 — Méthode française",d:"Les « années folles » : reconstruction, optimisme, 2e révolution industrielle, dénonciation du militarisme. École : pédagogie bienveillante alternant apprentissage et jeu (éducation des sens, plaisir), mais la maîtrise de la discipline par des CM reste privilégiée, avec contrôle total de l'élève. Hors école : demi-journées de plein air et rencontres sportives scolaires.",k:["années folles","bienveillante, jeu + apprentissage","mais CM et contrôle total","plein air, rencontres scolaires"]},
+ {t:"1940-1959 — Hébertisme et modèle sportif",d:"Après-guerre, gouvernement de Vichy : discipline et obéissance comme piliers. La méthode naturelle d'Hébert (rouler, sauter, courir, franchir, lancer, ramper) valorise l'action et l'effort. La compétition n'est plus un but mais un MOYEN pédagogique, source de motivation et d'autonomie (Baquet, revue de l'INS). Le sport sert aussi à discipliner et encadrer les jeunes.",k:["Vichy, discipline, obéissance","méthode naturelle d'Hébert","compétition = moyen, pas un but","Baquet, revue de l'INS"]}
+]},
+{g:"8 · Frise 1960 → 2010",s:"Frise",items:[
+ {t:"1960-1967 — Remise en cause des pédagogies traditionnelles",d:"Baby boom. École : rénovation de l'acte éducatif par les enseignants, pédagogies encore descendantes, volonté de responsabiliser les élèves. Hors école : « la république des sports ».",k:["baby boom","rénovation de l'acte éducatif","responsabiliser","république des sports"]},
+ {t:"1968-1989 — Quête de nouveaux modes",d:"Mai 68 : manifestations étudiantes, revendications sociales. Dès 1970 les enseignants recentrent l'élève. En 1981, Savary charge Legrand de « réformer le collège » ; 1985-1988 : montée des évaluations formatives. Hors école : diminution des inégalités sociales.",k:["mai 68","recentrage de l'élève","Savary charge Legrand (1981)","évaluations formatives"]},
+ {t:"1990-2010 — Réussite de tous / différenciation",d:"Situations de référence, groupes de niveau de jeu, pédagogie différenciée, élèves associés à leur propre évaluation, autorité bienveillante. La loi de 1989 crée les IUFM, la circulaire de 1997 leur demande de « créer les conditions favorables à la réussite de tous ». TICE et classe inversée. MAIS la réussite reste socialement déterminée et l'échec scolaire persiste.",k:["situations de référence","groupes de niveau","IUFM (loi 1989)","circulaire 1997","réussite socialement déterminée"]}
+]},
+{g:"9 · Les styles d'enseignement",s:"S3",items:[
+ {t:"Le continuum des styles",d:"Les styles se placent sur un continuum allant du style CONTRÔLANT au style SOUTENANT L'AUTONOMIE. Référence : Sarrazin, Tessier & Trouilloud (2006, Revue française de pédagogie), inspiré de Reeve, Deci & Ryan (2004).",k:["contrôlant ↔ soutenant l'autonomie","Sarrazin, Tessier & Trouilloud 2006","d'après Reeve, Deci & Ryan 2004"]},
+ {t:"Les 4 caractéristiques du style soutenant l'autonomie",d:"Plus PROCHE (il respecte, écoute, cherche à comprendre), plus POSITIF (il encourage et valorise les progrès), plus FLEXIBLE (il laisse des choix et du temps pour résoudre seuls), plus EXPLICATIF (il explique l'utilité ou l'importance de la tâche).",k:["proche : écoute","positif : valorise les progrès","flexible : choix et temps","explicatif : utilité de la tâche"]},
+ {t:"Autonomie ≠ permissivité",d:"Un style soutenant l'autonomie est STRUCTURÉ, contrairement à un style permissif. Soutenir l'autonomie n'est pas laisser faire.",k:["structuré","≠ permissif","pas laisser faire"]}
+]},
+{g:"10 · Montessori",s:"S4",items:[
+ {t:"Montessori — qui et pour qui",d:"Maria Montessori, l'une des premières femmes médecins, pionnière scientifique (1896, Italie, Rome). Elle crée sa pédagogie pour les enfants pauvres ou négligés de la société, voués à l'exil, observés dans une clinique psychiatrique.",k:["1re femme médecin","1896, Rome","enfants pauvres / négligés","clinique psychiatrique"]},
+ {t:"Montessori — principe et étapes",d:"On passe de « l'enseignant au centre » à « l'enfant au centre », l'enseignant devient guide : « aide-moi à faire seul ». Trois étapes : préparer l'environnement, présenter le matériel, observer l'enfant faire. L'enfant a la liberté de choix.",k:["enfant au centre","aide-moi à faire seul","préparer / présenter / observer","liberté de choix"]},
+ {t:"Montessori — fenêtres et critiques",d:"L'autonomie s'apprend : on donne les moyens d'être autonome. Fenêtres d'apprentissage : proposer la bonne activité au bon moment. Critiques : pédagogie accaparée, dénuée de son sens premier, devenue permissive — enfants rois, élitiste, pour les riches.",k:["l'autonomie s'apprend","bonne activité au bon moment","devenue permissive","enfants rois, élitiste"]}
+]},
+{g:"11 · Freinet",s:"S4",items:[
+ {t:"Freinet — le diagnostic",d:"Pour Freinet, l'école est absurde et inefficace, synonyme de caserne et d'ennui. Il met en place une pédagogie rebelle : l'école de la vie, où l'on apprend à VIVRE ENSEMBLE, avec créativité.",k:["absurde, inefficace","caserne, ennui","pédagogie rebelle","école de la vie"]},
+ {t:"Freinet — le rapport à l'erreur",d:"Au centre : la curiosité naturelle, l'expérience, l'épanouissement de l'enfant. L'enseignant aide à comprendre les erreurs et à avancer : laisser l'élève TÂTONNER et EXPÉRIMENTER sans le blâmer ni le rabaisser. L'école est faite pour collaborer, pas pour être corrigé à chaque erreur.",k:["curiosité naturelle, expérience","tâtonner, expérimenter","sans blâmer ni rabaisser","collaborer"]},
+ {t:"Freinet — Vence 1934",d:"Création d'une école auto-suffisante à Vence en 1934 : le travail intellectuel et le travail manuel sont au même niveau. Un lieu de régénération des corps et des esprits face à une société capitaliste épuisante.",k:["Vence 1934","auto-suffisante","intellectuel = manuel","société capitaliste épuisante"]}
+]},
+{g:"12 · Pédagogies : sens, projet, contrat",s:"Cartes",items:[
+ {t:"Pédagogie du sens",d:"Meirieu (sens des apprentissages) et Charlot (rapport au savoir). L'apprentissage est plus efficace quand l'élève comprend pourquoi il apprend et à quoi cela lui sert. Le prof explique le but, donne des objectifs compréhensibles, part des représentations et donne des feedbacks. Ex. : 1500 m, gérer son allure.",k:["Meirieu & Charlot","comprendre pourquoi on apprend","but, objectifs, feedbacks","ex. demi-fond 1500 m"]},
+ {t:"Pédagogie du projet",d:"Dewey, Decroly, Freinet. Méthode active : on apprend en réalisant une production concrète et collective (journal, exposition, spectacle, maquette) ou en résolvant un problème réel. Théories : socioconstructivisme et pragmatisme. Triangle : processus « apprendre », l'enseignant devient accompagnateur.",k:["Dewey, Decroly, Freinet","production concrète et collective","socioconstructivisme + pragmatisme","processus apprendre"]},
+ {t:"Pédagogie du contrat",d:"Un accord entre l'enseignant et l'élève pour un objectif commun. Deux théories : le contrat PÉDAGOGIQUE (explicite, négocié — ex. feuille de projet en escalade avec barème selon l'engagement, approche cognitive) et le contrat DIDACTIQUE (implicite, inconscient — ex. en ping-pong le prof brise le contrat avec « bonus ! » = 3 points, approche écologique). Triangle : entre formateur et apprenant.",k:["accord pour un objectif commun","pédagogique = explicite, négocié","didactique = implicite, inconscient","escalade / ping-pong","axe formateur-apprenant"]}
+]},
+{g:"13 · Pédagogies : milieu, expériences, découverte",s:"Cartes",items:[
+ {t:"Pédagogie de l'aménagement du milieu",d:"Gréhaigne, Piaget, et Parlebas pour la logique interne des APSA. Style non-directif/guidé : l'enseignant aménage la situation, l'élève cherche, teste, décide, guidé par le matériel et les règles. Constructivisme, approche écologique, théorie des contraintes. Ex. : 3c3 en handball, changer de zone après la passe pour apprendre à se démarquer.",k:["Gréhaigne, Piaget, Parlebas","non-directif / guidé","constructivisme + écologique","ex. handball 3c3, se démarquer"]},
+ {t:"Pédagogie des expériences significatives",d:"Dewey (père de l'apprentissage expérientiel), Montessori, les Freinet (tâtonnement expérimental). C'est la réflexion sur l'expérience qui génère l'apprentissage. Science de l'intervention : la recherche-action. Ex. : l'élève se perd en course d'orientation, verbalise, puis formalise la règle (orienter la carte avant chaque décision).",k:["Dewey, Montessori, Freinet","réflexion sur l'expérience","recherche-action","ex. course d'orientation"]},
+ {t:"Pédagogie de la découverte",d:"En amont Piaget et Dewey ; en EPS Famose et Dhellemmes, avec les situations-problèmes. Style INDIRECT : le prof fixe le problème, l'élève choisit ses solutions ; ni démonstration ni modèle, il aménage le milieu, questionne, puis fait formuler la règle d'action. Constructivisme et versant cognitiviste, dévolution du problème. Ex. : badminton, fond de court compte double.",k:["Famose & Dhellemmes","situations-problèmes","style indirect, dévolution","ex. badminton fond de court"]},
+ {t:"Définition d'une tâche",d:"Une tâche se définit par son BUT, ses CONDITIONS et ses CRITÈRES DE RÉUSSITE.",k:["but","conditions","critères de réussite"]}
+]},
+{g:"14 · Pédagogie différenciée",s:"Cartes",items:[
+ {t:"Pédagogie différenciée",d:"Meirieu et Perrenoud. Théorie : socio-constructivisme de Vygotski — l'apprentissage se fait par l'interaction sociale. Ex. : course d'orientation avec une difficulté d'itinéraire adaptée à chacun.",k:["Meirieu & Perrenoud","socio-constructivisme","Vygotski","difficulté adaptée à chacun"]},
+ {t:"Zone proximale de développement",d:"La zone située entre ce que l'élève sait faire seul et ce qu'il peut accomplir avec de l'aide. C'est là qu'agit la différenciation.",k:["entre faire seul","et faire avec de l'aide","Vygotski"]},
+ {t:"Les 3 styles de la différenciation",d:"Le style INCITATEUR pour responsabiliser et faire chercher, le style COOPÉRATIF pour faire apprendre par les pairs, le style DIRECTIF pour guider pas à pas les élèves en grande difficulté.",k:["incitateur : responsabiliser","coopératif : par les pairs","directif : grande difficulté"]}
+]},
+{g:"15 · Préoccupations et sécurité",s:"S5",items:[
+ {t:"Les 5 préoccupations de l'intervenant",d:"Marc Durand (1996), L'enseignement en milieu scolaire : ORDRE, PARTICIPATION, TRAVAIL, APPRENTISSAGE MOTEUR, DÉVELOPPEMENT. Ces phases ne se suivent pas de manière imperméable ni obligatoirement séquentielle : elles peuvent s'enchevêtrer.",k:["Durand 1996","ordre, participation, travail","apprentissage moteur, développement","elles s'enchevêtrent"]},
+ {t:"Les 3 sécurités",d:"Sécurité PHYSIQUE (lieux, matériel, échauffement, espace, progressivité, adaptation), sécurité AFFECTIVE (émotions, communication bienveillante), sécurité « SOCIALE » (moqueries et harcèlement, respect de la timidité, regard des autres, une place pour chacun).",k:["physique : matériel, échauffement","affective : émotions, bienveillance","sociale : moqueries, regard des autres"]},
+ {t:"Autorité conciliante (Vors, 2012)",d:"Deux formes opposées de management pour mettre l'ordre : soit un CADRAGE de tous les comportements déviants (ne rien laisser passer, règles explicites, charte, sanctions, permis à points — mais ça prend du temps si les déviances sont nombreuses), soit à l'opposé une TOLÉRANCE EMPATHIQUE (focalisation sur les comportements attendus, tolérance de certaines déviances, peu de remarques négatives — ça évite la crispation).",k:["Vors 2012","cadrage de tous les déviants","tolérance empathique","évite la crispation"]},
+ {t:"Management participatif",d:"Proposer de créer les règles ensemble, évaluer ensemble la vie de groupe, partager l'élaboration des objectifs, viser des progrès collectifs et individuels complémentaires.",k:["règles ensemble","évaluer la vie de groupe","objectifs partagés","progrès collectifs et individuels"]}
+]},
+{g:"16 · Vague et atelier",s:"S5",items:[
+ {t:"Dispositif en VAGUE",d:"Cizeron & Gal-Petitfaux (2006). Le prof dirige, supervise, contrôle, cadre l'espace : sécurité optimisée, il voit tous les élèves et est vu de tous. Quantité de travail importante et identique quel que soit le niveau, ça maintient l'élève au travail. Inconvénients : moins d'observation des progrès individuels, sécurité affective difficile si l'estime de soi est faible. À utiliser en échauffement.",k:["dirige, contrôle, cadre l'espace","travail identique pour tous","moins de progrès individuels observés","à utiliser en échauffement"]},
+ {t:"Dispositif en ATELIER",d:"Le prof supervise à distance et alterne avec des temps bien plus proches et de qualité (sécurité, conseils) ; ateliers espacés en cercle, avec rotation. L'élève performant a plus de temps de pratique, la pratique dépend de la motivation, fiche d'observation possible. Plus ludique, soutient l'autonomie, conseils personnalisés mais moins fréquents. Inconvénient : progrès moins élevés qu'en vague, surtout si le niveau est faible.",k:["supervise à distance, rotation","pratique selon la motivation","ludique, autonomie, conseils personnalisés","progrès moins élevés qu'en vague"]}
+]},
+{g:"17 · De novice à expert",s:"S6",items:[
+ {t:"L'expertise : le problème de définition",d:"Visioli & Ria (2010), « L'expertise des enseignants d'EPS : quelle prise en compte du contexte et des émotions ? ». Le terme d'enseignant expert se confond avec efficace, expérimenté, chevronné, compétent, professionnel : la difficulté majeure réside dans la définition même de l'expertise.",k:["Visioli & Ria 2010","contexte et émotions","confusion : efficace, expérimenté…","pas de définition claire"]},
+ {t:"L'opposition classique",d:"Soit l'expert est celui qui est EFFICACE — mais le critère devient alors les résultats à des tests standardisés (PISA) ; soit il est celui qui est EXPÉRIMENTÉ — le critère étant le nombre d'années de pratique.",k:["efficace → tests standardisés, PISA","expérimenté → années de pratique"]},
+ {t:"Pas de consensus, et l'évolution",d:"Les différentes sciences de l'intervention posent des regards différents et complémentaires. L'expertise n'est pas figée : l'activité varie énormément d'un contexte à l'autre (spatial, social, culturel), d'autant plus en EPS et APAS où les APSA sont multiples. La définition évolue vers une dimension non rationnelle : comportements intuitifs et fortement émotionnels — présence, charisme, persuasion, art de convaincre ou d'enrôler — difficilement objectivable.",k:["pas de consensus","expertise non figée","variabilité des contextes","dimension non rationnelle : charisme, présence"]}
+]},
+{g:"18 · Les théories de l'émotion",s:"S6",items:[
+ {t:"Théories physiologiques",d:"Fin 19e – début 20e siècle : les expériences émotionnelles sont des sensations corporelles causées par nos propres réactions physiologiques, telles que la respiration ou les battements cardiaques.",k:["fin 19e – début 20e","sensations corporelles","réactions physiologiques"]},
+ {t:"Théories cognitives et appraisal",d:"Fin 20e – début 21e : les processus cognitifs précéderaient les modifications physiologiques ; l'émotion ne se réduit donc pas à la perception de modifications périphériques. On distingue la perception et l'évaluation cognitive du stimulus, qu'on appelle l'APPRAISAL.",k:["processus cognitifs d'abord","pas que du périphérique","appraisal = évaluation cognitive"]},
+ {t:"Théories néodarwiniennes",d:"Les émotions sont universelles et innées (Darwin, The expression of the emotions in man and animals). Ekman (1993) : reconnaissance universelle de l'expression des émotions primaires, mais une expression régie par des règles variables d'une culture à l'autre.",k:["universelles et innées","Darwin","Ekman 1993","règles culturelles variables"]},
+ {t:"Théories sociales",d:"L'émotion est constituée de rôles sociaux transitoires — des ensembles de réponses socialement prescrites — qui se réfèrent à des normes sociales ou à des attentes partagées.",k:["rôles sociaux transitoires","réponses socialement prescrites","normes et attentes partagées"]}
+]},
+{g:"19 · Émotion : définir et décomposer",s:"S6",items:[
+ {t:"Définition de l'émotion",d:"Damasio (2003) : réaction psycho-physiologique intense à une situation, comportant un début brutal et une durée relativement brève. On distingue émotions primaires et secondaires.",k:["Damasio 2003","psycho-physiologique intense","début brutal","durée brève"]},
+ {t:"La roue des émotions",d:"Plutchik (1980) : elle représente les émotions primaires et secondaires.",k:["Plutchik 1980","primaires et secondaires"]},
+ {t:"Un phénomène multicomponentiel",d:"Sander & Scherer (2009) : établir une définition de travail de l'émotion en la décomposant en plusieurs composantes. Les 5 composantes : l'évaluation cognitive (appraisal), la composante physiologique, l'expression motrice, la tendance à l'action (motivationnelle) et le sentiment subjectif.",k:["Sander & Scherer 2009","définition de travail","appraisal, physiologique, expression motrice","tendance à l'action, sentiment subjectif"]},
+ {t:"Le stress",d:"Lazarus & Folkman (1984) : relation entre la personne et l'environnement qui est évaluée comme sollicitante voire dangereuse.",k:["Lazarus & Folkman 1984","personne ↔ environnement","sollicitante voire dangereuse"]},
+ {t:"Le burnout en sport",d:"Isoard et al. (2017, Movement and Sport Sciences) : lié au stress, à un sentiment d'être piégé, à une identité sportive exclusive, à la perception d'un fort contrôle des autrui significatifs, à la non-satisfaction des besoins psychologiques fondamentaux, à une faible motivation autodéterminée, aux buts d'évitement et au perfectionnisme inadapté.",k:["Isoard et al. 2017","sentiment d'être piégé","identité sportive exclusive","besoins psychologiques non satisfaits","perfectionnisme inadapté"]}
+]},
+{g:"20 · Gérer ses émotions",s:"S6",items:[
+ {t:"L'intelligence émotionnelle",d:"Mikolajczak (2014) : elle se construit en 5 étapes — l'identification, la compréhension, l'expression, la régulation, l'utilisation.",k:["Mikolajczak 2014","identification, compréhension","expression, régulation, utilisation"]},
+ {t:"Le travail émotionnel",d:"Hochschild (2003) : « l'acte par lequel on essaie de changer le degré ou la qualité d'une émotion ou d'un sentiment ». Position passive → expression authentique (ressentir et exprimer du plaisir). Position active → jeu en profondeur (relativiser sa tristesse) et jeu en surface (masquer sa colère).",k:["Hochschild 2003","changer le degré ou la qualité","authentique / profondeur / surface","plaisir / tristesse / colère"]},
+ {t:"L'état de flow",d:"État d'engagement optimal : immersion, concentration, perte de la notion du temps, plaisir. Il apparaît quand il y a équilibre entre le défi perçu de la tâche et les compétences perçues.",k:["engagement optimal","immersion, concentration","équilibre défi / compétences"]}
+]}
+];
+
 var QC=[
 /* ===== T0 — Relation pédagogique & triangle ===== */
 {t:0,s:"S1",q:"Qui définit la relation pédagogique comme « l'ensemble des rapports sociaux qui s'établissent entre l'éducateur et ceux qu'il éduque » ?",o:["Postic (1979)","Houssaye (1986)","Meirieu (1997)","Durand (1996)"],a:0,e:"Postic, La relation éducative, PUF, 1979."},
@@ -1032,10 +1157,13 @@ function variantHit(v,aNorm,words){
 function hash(s){var h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))&0x7fffffff;return 'q'+h.toString(36)}
 function indexQ(a){for(var i=0;i<a.length;i++){a[i].id=hash(norm(a[i].q));a[i].i=i}return a}
 indexQ(QM);indexQ(QF);indexQ(QC);
+var ALLDEFS=[];
+for(var gi=0;gi<DEFS.length;gi++){for(var ii=0;ii<DEFS[gi].items.length;ii++){var it=DEFS[gi].items[ii];it.id=hash(norm(it.t));it.gi=gi;it.s=DEFS[gi].s;ALLDEFS.push(it)}}
 var LEVEL=(function(){try{return localStorage.getItem('peda_level')||'mini'}catch(e){return 'mini'}})();
 function pick(l){return l==='full'?QF:(l==='qcm'?QC:QM)}
+function defStat(){var m=0;for(var i=0;i<ALLDEFS.length;i++){var r=ST[ALLDEFS[i].id];if(r&&r.mastered)m++}return m}
 var Q=pick(LEVEL);
-function setLevel(l){if(l===LEVEL)return;LEVEL=l;Q=pick(l);try{localStorage.setItem('peda_level',l)}catch(e){}renderHome();toast(l==='full'?'Mode complet : questions de synthèse':(l==='qcm'?'Mode QCM : que du clic':'Mode express : questions courtes'))}
+function setLevel(l){if(l===LEVEL)return;LEVEL=l;Q=pick(l);try{localStorage.setItem('peda_level',l)}catch(e){}renderHome();toast(l==='defs'?'Mode définitions : par paquets de 3 à 5':(l==='full'?'Mode complet : questions de synthèse':(l==='qcm'?'Mode QCM : que du clic':'Mode express : questions courtes')))}
 
 function thr(n){return n>=14?60:n>=10?68:75}
 function evaluate(q,ans){
@@ -1058,11 +1186,16 @@ function rowOf(id){if(!ST[id])ST[id]={seen:0,best:0,last:'',fail:false};return S
 function toast(m){var t=$('toast');t.textContent=m;t.className='toast show';setTimeout(function(){t.className='toast'},1900)}
 
 /* ===================== HOME ===================== */
+var MODES_HTML=null;
 function renderHome(){
-  var d=new Date(2026,9,21),now=new Date(),j=Math.ceil((d-now)/86400000);
-  $('pillJ').innerHTML='Contrôle intermédiaire : <b>21 oct.</b>'+(j>=0?' · J-'+j:'');
-  $("lvMini").className="lv"+(LEVEL==="mini"?" on":"");$("lvFull").className="lv"+(LEVEL==="full"?" on":"");$("lvQcm").className="lv"+(LEVEL==="qcm"?" on":"");
-  $("nMini").textContent=QM.length+" questions courtes";$("nFull").textContent=QF.length+" questions de synthèse";$("nQcm").textContent=QC.length+" questions à choix";
+  if(MODES_HTML===null)MODES_HTML=$('modes').innerHTML;
+  $('pillJ').innerHTML='Séances <b>1 → 6</b>';
+  $("lvMini").className="lv"+(LEVEL==="mini"?" on":"");$("lvFull").className="lv"+(LEVEL==="full"?" on":"");
+  $("lvQcm").className="lv"+(LEVEL==="qcm"?" on":"");$("lvDefs").className="lv"+(LEVEL==="defs"?" on":"");
+  $("nMini").textContent=QM.length+" questions courtes";$("nFull").textContent=QF.length+" questions de synthèse";
+  $("nQcm").textContent=QC.length+" questions à choix";$("nDefs").textContent=ALLDEFS.length+" défs en "+DEFS.length+" paquets";
+  if(LEVEL==='defs'){renderDefsHome();$('home').classList.remove('hide');$('quiz').classList.add('hide');$('done').classList.add('hide');return}
+  if($('modes').innerHTML!==MODES_HTML)$('modes').innerHTML=MODES_HTML;
   $("expCount").textContent=(LEVEL==="mini"?30:20)+" questions, tous les thèmes, priorité à ce que tu rates";
   var seen=0,fails=0,sum=0;
   for(var i=0;i<Q.length;i++){var r=ST[Q[i].id];if(r&&r.seen){seen++;sum+=r.best;if(r.fail)fails++}}
@@ -1086,6 +1219,117 @@ function renderHome(){
   $('home').classList.remove('hide');$('quiz').classList.add('hide');$('done').classList.add('hide');
 }
 function home(){stopMic();renderHome()}
+
+/* ===================== DÉFINITIONS ===================== */
+function packState(gi){
+  var it=DEFS[gi].items,m=0;
+  for(var i=0;i<it.length;i++){var r=ST[it[i].id];if(r&&r.mastered)m++}
+  return {m:m,n:it.length};
+}
+function firstUnfinished(){
+  for(var g=0;g<DEFS.length;g++){var st=packState(g);if(st.m<st.n)return g}
+  return -1;
+}
+function renderDefsHome(){
+  var next=firstUnfinished(),tot=defStat();
+  var h='';
+  h+='<button class="mode hero" onclick="startDefs('+(next<0?0:next)+')"><div class="t">▶️ '+(next<0?'Tout revoir':'Continuer')+'</div><div class="d">'+(next<0?'Tous les paquets sont acquis — repasse dessus':'Paquet « '+esc(DEFS[next<0?0:next].g)+' »')+'</div></button>';
+  h+='<button class="mode" onclick="startDefs(-1)"><div class="t">🔁 Les pas sûres</div><div class="d">'+(ALLDEFS.length-tot)+' définition'+((ALLDEFS.length-tot)>1?'s':'')+' pas encore acquise'+((ALLDEFS.length-tot)>1?'s':'')+'</div></button>';
+  $('modes').innerHTML=h;
+  var t='';
+  for(var g=0;g<DEFS.length;g++){
+    var st=packState(g),pc=Math.round(100*st.m/st.n);
+    t+='<button class="pack'+(st.m===st.n?' done':'')+'" onclick="startDefs('+g+')">'
+      +'<span class="dot" style="background:'+(st.m===st.n?'var(--green)':'var(--vio)')+'"></span>'
+      +'<span class="nm">'+esc(DEFS[g].g)+'</span>'
+      +'<span class="mt">'+st.m+'/'+st.n+'</span>'
+      +'<span class="bar"><i style="width:'+pc+'%"></i></span>'
+      +(st.m===st.n?'<span class="mt">✓</span>':'<span class="mt">'+DEFS[g].s+'</span>')
+      +'</button>';
+  }
+  $('themes').innerHTML=t;
+}
+function startDefs(gi){
+  var items;
+  if(gi<0){
+    items=[];
+    for(var i=0;i<ALLDEFS.length;i++){var r=ST[ALLDEFS[i].id];if(!r||!r.mastered)items.push(ALLDEFS[i])}
+    if(!items.length){toast('Tout est déjà acquis 👌');return}
+    items=shuffle(items.slice()).slice(0,12);
+  }else{
+    items=DEFS[gi].items.slice();
+  }
+  var queue=[];
+  for(var k=0;k<items.length;k++)queue.push({it:items[k],st:0});
+  S={defs:true,gi:gi,queue:queue,total:queue.length,done:0,t0:Date.now(),res:[],list:[],i:0};
+  $('home').classList.add('hide');$('done').classList.add('hide');$('quiz').classList.remove('hide');
+  showDef();
+}
+function showDef(){
+  if(!S.queue.length)return finishDefs();
+  var c=S.queue[0],q=c.it;
+  $('prog').style.width=Math.round(100*S.done/S.total)+'%';
+  $('qmeta').innerHTML='<span class="tag">'+esc(S.gi<0?'Les pas sûres':DEFS[S.gi].g)+'</span>'
+    +'<span class="tag s">'+esc(q.s)+'</span>'
+    +'<span class="tag s">'+S.done+'/'+S.total+' acquises</span>'
+    +(c.st>0?'<span class="tag n">1 sur 2</span>':'');
+  $('qtext').textContent=q.t;
+  $('qhint').textContent='Récite-la à voix haute, puis révèle pour vérifier.';
+  $('answerZone').classList.add('hide');$('qcmZone').classList.add('hide');$('corrZone').classList.add('hide');
+  $('defZone').classList.remove('hide');
+  $('defBox').innerHTML='<span class="hidden">Essaie de la restituer de mémoire…</span>';
+  $('defActs').innerHTML='<button class="btn p" onclick="revealDef()">Révéler</button><div class="spacer"></div><span class="kbd">↵ révéler</span><button class="btn sm" onclick="home()">Quitter</button>';
+  window.scrollTo(0,0);
+}
+function revealDef(){
+  var q=S.queue[0].it,h=esc(q.d);
+  if(q.k&&q.k.length){
+    h+='<div class="chips" style="margin:12px 0 0">';
+    for(var i=0;i<q.k.length;i++)h+='<span class="chip ok">'+esc(q.k[i])+'</span>';
+    h+='</div>';
+  }
+  $('defBox').innerHTML=h;
+  $('defActs').innerHTML='<button class="btn g sm" onclick="gradeDef(2)">✓ Je savais</button>'
+    +'<button class="btn sm" onclick="gradeDef(1)">~ Presque</button>'
+    +'<button class="btn r sm" onclick="gradeDef(0)">✗ Pas du tout</button>'
+    +'<div class="spacer"></div><span class="kbd">1 2 3</span><button class="btn sm" onclick="home()">Quitter</button>';
+}
+function gradeDef(g){
+  var c=S.queue.shift(),q=c.it,r=rowOf(q.id);
+  r.seen=(r.seen||0)+1;
+  if(g===2){
+    c.st++;
+    if(c.st>=2){
+      r.mastered=true;r.best=100;r.fail=false;S.done++;
+      toast('Acquise 🔒');
+    }else{
+      S.queue.push(c);
+    }
+  }else{
+    c.st=0;r.mastered=false;r.fail=true;
+    if(g===0)S.queue.splice(Math.min(2,S.queue.length),0,c);
+    else S.queue.push(c);
+  }
+  save();
+  if(!S.queue.length)return finishDefs();
+  showDef();
+}
+function finishDefs(){
+  var sec=Math.round((Date.now()-S.t0)/1000);
+  $('dTitle').textContent='Paquet bouclé 🔒';
+  $('dPct').textContent=S.total;$('dOk').textContent=S.done;$('dKo').textContent='0';
+  $('dTime').textContent=(sec>=60?Math.floor(sec/60)+'m'+(sec%60<10?'0':'')+(sec%60):sec+'s');
+  document.querySelectorAll('#done .stat .k')[0].textContent='définitions';
+  document.querySelectorAll('#done .stat .k')[1].textContent='acquises';
+  document.querySelectorAll('#done .stat .k')[2].textContent='restantes';
+  var nx=firstUnfinished();
+  $('dList').innerHTML='<span class="chip ok">Chaque définition a été sortie juste 2 fois d\'affilée.</span>';
+  var a='<button class="btn p" onclick="'+(nx>=0?'startDefs('+nx+')':'home()')+'">'+(nx>=0?'Paquet suivant →':'Accueil')+'</button>'
+    +'<button class="btn" onclick="startDefs('+S.gi+')">🔁 Rebosser celui-ci</button>'
+    +'<div class="spacer"></div><button class="btn sm" onclick="home()">Accueil</button>';
+  $('done').querySelector('.acts').innerHTML=a;
+  $('quiz').classList.add('hide');$('done').classList.remove('hide');window.scrollTo(0,0);
+}
 
 /* ===================== SESSION ===================== */
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
@@ -1203,6 +1447,10 @@ function next(){
 }
 function finish(){
   stopMic();
+  document.querySelectorAll('#done .stat .k')[0].textContent='moyenne';
+  document.querySelectorAll('#done .stat .k')[1].textContent='maîtrisées';
+  document.querySelectorAll('#done .stat .k')[2].textContent='à revoir';
+  $('done').querySelector('.acts').innerHTML='<button class="btn p" onclick="copySession()">📋 Copier cette session pour Claude</button><button class="btn" onclick="replayFails()">🔥 Rejouer les ratées</button><button class="btn sm" onclick="home()">Accueil</button>';
   var n=S.res.length,sum=0,ok=0,ko=[];
   for(var i=0;i<n;i++){var R=S.res[i];sum+=R.ev.pct;
     var good=R.manual?R.manual==='ok':R.ev.pct>=thr(R.ev.n);
@@ -1357,6 +1605,14 @@ function stopMic(keepMsg){
 document.addEventListener('keydown',function(e){
   var quizOn=!$('quiz').classList.contains('hide');
   if(!quizOn)return;
+  var defOn=!$('defZone').classList.contains('hide');
+  if(defOn){
+    var revealed=$('defBox').innerHTML.indexOf('class="hidden"')<0;
+    if(!revealed&&(e.key==='Enter'||e.key===' ')){e.preventDefault();revealDef();return}
+    if(revealed&&(e.key==='1'||e.key==='2'||e.key==='3')){e.preventDefault();gradeDef(e.key==='1'?2:(e.key==='2'?1:0));return}
+    if(revealed&&e.key==='Enter'){e.preventDefault();gradeDef(2);return}
+    return;
+  }
   var qcmOn=!$('qcmZone').classList.contains('hide');
   if(qcmOn){
     if(!S.locked&&e.key>='1'&&e.key<='9'){var n=parseInt(e.key,10)-1;if(n<S.map.length){e.preventDefault();answerQCM(n)}return}
