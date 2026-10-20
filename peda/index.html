@@ -136,10 +136,11 @@ a{color:var(--cyan)}
 
   <!-- ============ HOME ============ -->
   <div id="home">
-    <div class="lvl">
+    <div class="lvl hide" id="lvl">
       <button class="lv" id="lvMini" onclick="setLevel('mini')"><b>⚡ Express</b><i id="nMini"></i></button>
       <button class="lv" id="lvQcm" onclick="setLevel('qcm')"><b>✅ QCM</b><i id="nQcm"></i></button>
       <button class="lv" id="lvDefs" onclick="setLevel('defs')"><b>📖 Défs</b><i id="nDefs"></i></button>
+      <button class="lv" onclick="setLevel('core')"><b>⭐ Essentiel</b><i>revenir au noyau</i></button>
       <button class="lv" id="lvFull" onclick="setLevel('full')"><b>📚 Complet</b><i id="nFull"></i></button>
     </div>
     <div class="modes" id="modes">
@@ -163,6 +164,10 @@ a{color:var(--cyan)}
 
     <div class="sect">Par thème</div>
     <div class="themes" id="themes"></div>
+
+    <div id="moreBar" style="margin-top:16px">
+      <button class="btn sm" onclick="setLevel('qcm')">Afficher tout le contenu (100 QCM, 125 questions, 69 défs)</button>
+    </div>
 
     <div class="sect">Outils</div>
     <div class="row">
@@ -387,124 +392,124 @@ var DEFS=[
 
 var QC=[
 /* ===== T0 — Relation pédagogique & triangle ===== */
-{t:0,s:"S1",q:"Qui définit la relation pédagogique comme « l'ensemble des rapports sociaux qui s'établissent entre l'éducateur et ceux qu'il éduque » ?",o:["Postic (1979)","Houssaye (1986)","Meirieu (1997)","Durand (1996)"],a:0,e:"Postic, La relation éducative, PUF, 1979."},
-{t:0,s:"S1",q:"Dans la définition de Postic, les rapports possèdent des caractéristiques…",o:["cognitives et affectives","motrices et sociales","techniques et tactiques","normatives et juridiques"],a:0,e:"…identifiables, qui ont un déroulement et vivent une histoire."},
-{t:0,s:"S1",q:"« L'éducateur doit se vouloir le plus efficace possible… et se savoir totalement impuissant quand il s'agit de prendre des décisions que seul l'élève peut prendre. » C'est de qui ?",o:["Meirieu (1997)","Postic (1979)","Vygotski (1934)","Perrenoud (1997)"],a:0,e:"Meirieu, Revue française de pédagogie n°120, 1997."},
-{t:0,s:"S1",q:"La didactique est centrée sur… et la pédagogie sur… ?",o:["les savoirs / l'apprenant","l'apprenant / les savoirs","l'évaluation / la planification","l'institution / la classe"],a:0,e:"Didactique = les savoirs. Pédagogie = l'enfant, l'apprenant."},
-{t:0,s:"S1",q:"Le triangle pédagogique, c'est…",o:["Houssaye, 1986","Postic, 1979","Durand, 1996","Jewett & Bain, 1985"],a:0,e:"Jean Houssaye, 1986."},
-{t:0,s:"S1",q:"Les 3 pôles du triangle de Houssaye sont :",o:["formateur – apprenant – savoir","enseignant – institution – élève","savoir – évaluation – contenu","prof – classe – programme"],a:0,e:"Formateur, Apprenant, Savoir."},
-{t:0,s:"S1",q:"La relation DIDACTIQUE relie quels pôles ?",o:["formateur – savoir","formateur – apprenant","apprenant – savoir","apprenant – institution"],a:0,e:"Pédagogique = formateur-apprenant ; didactique = formateur-savoir ; apprentissage = apprenant-savoir."},
-{t:0,s:"S1",q:"La relation PÉDAGOGIQUE relie quels pôles ?",o:["formateur – apprenant","formateur – savoir","apprenant – savoir","savoir – institution"],a:0,e:"C'est l'axe de la relation humaine prof-élève."},
-{t:0,s:"S1",q:"Un cours magistral (CM) privilégie quel axe ?",o:["enseignant – savoir, l'élève est passif","apprenant – savoir, le prof est absent","formateur – apprenant, le savoir est absent","les trois à égalité"],a:0,e:"Priorité à la clarté du contenu et à sa transmission fidèle ; l'élève est à la place du mort."},
+{c:1,t:0,s:"S1",q:"Qui définit la relation pédagogique comme « l'ensemble des rapports sociaux qui s'établissent entre l'éducateur et ceux qu'il éduque » ?",o:["Postic (1979)","Houssaye (1986)","Meirieu (1997)","Durand (1996)"],a:0,e:"Postic, La relation éducative, PUF, 1979."},
+{c:1,t:0,s:"S1",q:"Dans la définition de Postic, les rapports possèdent des caractéristiques…",o:["cognitives et affectives","motrices et sociales","techniques et tactiques","normatives et juridiques"],a:0,e:"…identifiables, qui ont un déroulement et vivent une histoire."},
+{c:1,t:0,s:"S1",q:"« L'éducateur doit se vouloir le plus efficace possible… et se savoir totalement impuissant quand il s'agit de prendre des décisions que seul l'élève peut prendre. » C'est de qui ?",o:["Meirieu (1997)","Postic (1979)","Vygotski (1934)","Perrenoud (1997)"],a:0,e:"Meirieu, Revue française de pédagogie n°120, 1997."},
+{c:1,t:0,s:"S1",q:"La didactique est centrée sur… et la pédagogie sur… ?",o:["les savoirs / l'apprenant","l'apprenant / les savoirs","l'évaluation / la planification","l'institution / la classe"],a:0,e:"Didactique = les savoirs. Pédagogie = l'enfant, l'apprenant."},
+{c:1,t:0,s:"S1",q:"Le triangle pédagogique, c'est…",o:["Houssaye, 1986","Postic, 1979","Durand, 1996","Jewett & Bain, 1985"],a:0,e:"Jean Houssaye, 1986."},
+{c:1,t:0,s:"S1",q:"Les 3 pôles du triangle de Houssaye sont :",o:["formateur – apprenant – savoir","enseignant – institution – élève","savoir – évaluation – contenu","prof – classe – programme"],a:0,e:"Formateur, Apprenant, Savoir."},
+{c:1,t:0,s:"S1",q:"La relation DIDACTIQUE relie quels pôles ?",o:["formateur – savoir","formateur – apprenant","apprenant – savoir","apprenant – institution"],a:0,e:"Pédagogique = formateur-apprenant ; didactique = formateur-savoir ; apprentissage = apprenant-savoir."},
+{c:1,t:0,s:"S1",q:"La relation PÉDAGOGIQUE relie quels pôles ?",o:["formateur – apprenant","formateur – savoir","apprenant – savoir","savoir – institution"],a:0,e:"C'est l'axe de la relation humaine prof-élève."},
+{c:1,t:0,s:"S1",q:"Un cours magistral (CM) privilégie quel axe ?",o:["enseignant – savoir, l'élève est passif","apprenant – savoir, le prof est absent","formateur – apprenant, le savoir est absent","les trois à égalité"],a:0,e:"Priorité à la clarté du contenu et à sa transmission fidèle ; l'élève est à la place du mort."},
 {t:0,s:"S1",q:"Des révisions avant un examen privilégient quel axe ?",o:["apprenant – savoir","enseignant – savoir","formateur – apprenant","aucun, c'est hors triangle"],a:0,e:"Le prof a pu donner des outils, mais il n'est pas présent."},
-{t:0,s:"S1",q:"« La place du mort », chez Houssaye, désigne :",o:["le pôle laissé de côté par la situation","l'élève en échec scolaire","le savoir obsolète","le prof qui ne parle pas"],a:0,e:"Une situation classique mobilise 2 sommets et met le 3e à la place du mort."},
-{t:0,s:"S1",q:"Selon le cours, quel axe du triangle est le meilleur ?",o:["aucun : c'est une grille de lecture, l'équilibre compte","l'axe apprenant-savoir, le plus moderne","l'axe formateur-apprenant, le plus humain","l'axe formateur-savoir, le plus rigoureux"],a:0,e:"Aucune approche n'est bonne ou mauvaise : chacune a ses avantages et inconvénients."},
+{c:1,t:0,s:"S1",q:"« La place du mort », chez Houssaye, désigne :",o:["le pôle laissé de côté par la situation","l'élève en échec scolaire","le savoir obsolète","le prof qui ne parle pas"],a:0,e:"Une situation classique mobilise 2 sommets et met le 3e à la place du mort."},
+{c:1,t:0,s:"S1",q:"Selon le cours, quel axe du triangle est le meilleur ?",o:["aucun : c'est une grille de lecture, l'équilibre compte","l'axe apprenant-savoir, le plus moderne","l'axe formateur-apprenant, le plus humain","l'axe formateur-savoir, le plus rigoureux"],a:0,e:"Aucune approche n'est bonne ou mauvaise : chacune a ses avantages et inconvénients."},
 
 /* ===== T1 — Orientations de valeurs ===== */
-{t:1,s:"S2",q:"Les orientations de valeurs sont décrites par…",o:["Jewett et Bain (1985)","Sarrazin et Tessier (2006)","Deci et Ryan (2000)","Lazarus et Folkman (1984)"],a:0,e:"Jewett & Bain, 1985, en EPS."},
-{t:1,s:"S2",q:"Combien y a-t-il d'orientations de valeurs ?",o:["5","3","4","7"],a:0,e:"Maîtrise de la discipline, processus d'apprentissage, auto-actualisation, responsabilisation sociale, intégration écologique."},
+{c:1,t:1,s:"S2",q:"Les orientations de valeurs sont décrites par…",o:["Jewett et Bain (1985)","Sarrazin et Tessier (2006)","Deci et Ryan (2000)","Lazarus et Folkman (1984)"],a:0,e:"Jewett & Bain, 1985, en EPS."},
+{c:1,t:1,s:"S2",q:"Combien y a-t-il d'orientations de valeurs ?",o:["5","3","4","7"],a:0,e:"Maîtrise de la discipline, processus d'apprentissage, auto-actualisation, responsabilisation sociale, intégration écologique."},
 {t:1,s:"S2",q:"Une orientation de valeurs, c'est :",o:["le système de croyances de l'enseignant sur les contenus et leur enseignement","un style de commandement","une méthode d'évaluation","un niveau de compétence de l'élève"],a:0,e:"Elles guident ses choix didactiques et pédagogiques."},
-{t:1,s:"S2",q:"Quelle OV est qualifiée de « la plus traditionnelle » ?",o:["la maîtrise de la discipline","l'auto-actualisation","l'intégration écologique","la responsabilisation sociale"],a:0,e:"Connaissances jugées fondamentales, enseignées dans des environnements contrôlés."},
-{t:1,s:"S2",q:"« Le comment on apprend plutôt que le qu'est-ce qu'on apprend » correspond à :",o:["le processus d'apprentissage","la maîtrise de la discipline","l'auto-actualisation","l'intégration écologique"],a:0,e:"L'accent est mis sur les procédés cognitifs et la capacité à apprendre."},
+{c:1,t:1,s:"S2",q:"Quelle OV est qualifiée de « la plus traditionnelle » ?",o:["la maîtrise de la discipline","l'auto-actualisation","l'intégration écologique","la responsabilisation sociale"],a:0,e:"Connaissances jugées fondamentales, enseignées dans des environnements contrôlés."},
+{c:1,t:1,s:"S2",q:"« Le comment on apprend plutôt que le qu'est-ce qu'on apprend » correspond à :",o:["le processus d'apprentissage","la maîtrise de la discipline","l'auto-actualisation","l'intégration écologique"],a:0,e:"L'accent est mis sur les procédés cognitifs et la capacité à apprendre."},
 {t:1,s:"S2",q:"Bien-être, connaissance de soi, autonomie et responsabilité personnelle : quelle OV ?",o:["l'auto-actualisation","la responsabilisation sociale","le processus d'apprentissage","la maîtrise de la discipline"],a:0,e:"Priorité au développement personnel de l'élève."},
-{t:1,s:"S2",q:"Coopération, travail d'équipe, respect des autres, les besoins sociaux avant les besoins individuels :",o:["la responsabilisation sociale","l'auto-actualisation","l'intégration écologique","le processus d'apprentissage"],a:0,e:"Elle vise le changement social et un monde plus solidaire."},
+{c:1,t:1,s:"S2",q:"Coopération, travail d'équipe, respect des autres, les besoins sociaux avant les besoins individuels :",o:["la responsabilisation sociale","l'auto-actualisation","l'intégration écologique","le processus d'apprentissage"],a:0,e:"Elle vise le changement social et un monde plus solidaire."},
 {t:1,s:"S2",q:"« Une personne unique dans un environnement complexe », développement holistique :",o:["l'intégration écologique","la responsabilisation sociale","l'auto-actualisation","la maîtrise de la discipline"],a:0,e:"Comprendre les relations entre individus, contenus et environnement."},
 
 /* ===== T2 — Sciences de l'intervention ===== */
-{t:2,s:"S2",q:"Les 3 phases de l'intervention sont :",o:["planification – interaction – évaluation","préparation – exécution – correction","conception – animation – notation","échauffement – corps de séance – retour au calme"],a:0,e:"Planifier, conduire le groupe, analyser les effets."},
-{t:2,s:"S2",q:"Concevoir une séquence d'apprentissage ou un programme d'entraînement relève de la phase…",o:["de planification","d'interaction","d'évaluation","de régulation"],a:0,e:"La planification, en amont."},
+{c:1,t:2,s:"S2",q:"Les 3 phases de l'intervention sont :",o:["planification – interaction – évaluation","préparation – exécution – correction","conception – animation – notation","échauffement – corps de séance – retour au calme"],a:0,e:"Planifier, conduire le groupe, analyser les effets."},
+{c:1,t:2,s:"S2",q:"Concevoir une séquence d'apprentissage ou un programme d'entraînement relève de la phase…",o:["de planification","d'interaction","d'évaluation","de régulation"],a:0,e:"La planification, en amont."},
 {t:2,s:"S2",q:"Analyser les effets de l'intervention sur les apprentissages et les perceptions, c'est la phase…",o:["d'évaluation","d'interaction","de planification","de conception"],a:0,e:"L'évaluation vient après l'action."},
-{t:2,s:"S2",q:"« On ne naît pas intervenant… on le devient ! » renvoie à :",o:["Margnes, Carnus, Leca & Loizon (2018)","Loquet, Musard & Carlier (2016)","Durand (1996)","Visioli & Ria (2010)"],a:0,e:"L'acte d'intervention est rationalisé en compétences professionnelles, loin de l'idée de vocation."},
-{t:2,s:"S2",q:"Selon Loquet, Musard & Carlier (2016), la visée des sciences de l'intervention est d'abord de :",o:["décrire et comprendre les pratiques d'intervention","classer les enseignants efficaces","produire des tests standardisés","imposer une méthode unique"],a:0,e:"…avant de déterminer les plus efficaces ou de les transformer."},
+{c:1,t:2,s:"S2",q:"« On ne naît pas intervenant… on le devient ! » renvoie à :",o:["Margnes, Carnus, Leca & Loizon (2018)","Loquet, Musard & Carlier (2016)","Durand (1996)","Visioli & Ria (2010)"],a:0,e:"L'acte d'intervention est rationalisé en compétences professionnelles, loin de l'idée de vocation."},
+{c:1,t:2,s:"S2",q:"Selon Loquet, Musard & Carlier (2016), la visée des sciences de l'intervention est d'abord de :",o:["décrire et comprendre les pratiques d'intervention","classer les enseignants efficaces","produire des tests standardisés","imposer une méthode unique"],a:0,e:"…avant de déterminer les plus efficaces ou de les transformer."},
 {t:2,s:"S2",q:"Deci et Ryan (2000) sont rattachés à quelle science de l'intervention ?",o:["la psychologie sociale","la psychanalyse","la didactique","l'anthropologie cognitive"],a:0,e:"Comportements, cognitions et affects déterminés par les interactions et le contexte social."},
 {t:2,s:"S2",q:"« Enseignement ostensif des règles, suivi des règles, puis accompagnement de leur appropriation » : quelle approche, quel auteur ?",o:["anthropologie culturaliste, Escalié (2020)","didactique, Amade-Escot (2010)","psychanalyse, Montagne (2010)","psychologie sociale, Deci & Ryan"],a:0,e:"Se former = intégrer les règles avant de se les approprier."},
 {t:2,s:"S2",q:"Les « arrêts d'apprentissage » liés aux dimensions inconscientes relèvent de :",o:["la psychanalyse (Montagne, Freud)","l'anthropologie cognitive","la psychologie sociale","la didactique"],a:0,e:"Montagne (2010), Freud (1913)."},
 {t:2,s:"S2",q:"« L'individu construit à chaque instant sa propre situation » correspond à :",o:["l'anthropologie cognitive","l'anthropologie culturaliste","la didactique","la psychologie sociale"],a:0,e:"Gal-Petitfaux, Sève, Cizeron & Adé (2010)."},
 
 /* ===== T3 — Frise ===== */
-{t:3,s:"Frise",q:"1880-1918 correspond à quelle période de la frise ?",o:["la pédagogie militaire","la méthode française","l'hébertisme et le modèle sportif","la pédagogie différenciée"],a:0,e:"Contexte de guerre, pédagogie martiale et descendante."},
+{c:1,t:3,s:"Frise",q:"1880-1918 correspond à quelle période de la frise ?",o:["la pédagogie militaire","la méthode française","l'hébertisme et le modèle sportif","la pédagogie différenciée"],a:0,e:"Contexte de guerre, pédagogie martiale et descendante."},
 {t:3,s:"Frise",q:"1919-1939, c'est :",o:["la méthode française","la pédagogie militaire","la remise en cause des pédagogies traditionnelles","la quête de nouveaux modes"],a:0,e:"Les années folles : reconstruction, optimisme, dénonciation du militarisme."},
-{t:3,s:"Frise",q:"1940-1959, c'est :",o:["l'hébertisme et le modèle sportif","la méthode française","la pédagogie différenciée","la quête de nouveaux modes"],a:0,e:"Après-guerre, Vichy : discipline et obéissance ; méthode naturelle d'Hébert."},
+{c:1,t:3,s:"Frise",q:"1940-1959, c'est :",o:["l'hébertisme et le modèle sportif","la méthode française","la pédagogie différenciée","la quête de nouveaux modes"],a:0,e:"Après-guerre, Vichy : discipline et obéissance ; méthode naturelle d'Hébert."},
 {t:3,s:"Frise",q:"1968-1989, c'est :",o:["la quête de nouveaux modes d'interaction","la remise en cause des pédagogies traditionnelles","la réussite de tous","le modèle sportif"],a:0,e:"Mai 68, puis recentrage de l'élève, Savary-Legrand, évaluations formatives."},
-{t:3,s:"Frise",q:"1990-2010, c'est :",o:["la réussite de tous / la pédagogie différenciée","la quête de nouveaux modes","la méthode française","l'hébertisme"],a:0,e:"Situations de référence, groupes de niveau, IUFM, autorité bienveillante."},
+{c:1,t:3,s:"Frise",q:"1990-2010, c'est :",o:["la réussite de tous / la pédagogie différenciée","la quête de nouveaux modes","la méthode française","l'hébertisme"],a:0,e:"Situations de référence, groupes de niveau, IUFM, autorité bienveillante."},
 {t:3,s:"Frise",q:"En 1880-1918, qui enseigne souvent l'éducation physique ?",o:["des militaires recrutés comme enseignants","des médecins hygiénistes","des entraîneurs sportifs","des instituteurs formés en IUFM"],a:0,e:"Pédagogie descendante, ordre, rigueur, autorité, valeurs patriotiques."},
 {t:3,s:"Frise",q:"Quelle est la LIMITE de la méthode française (1919-1939) ?",o:["l'approche maîtrise de la discipline par des CM reste privilégiée","les élèves ne font plus de sport","la discipline disparaît totalement","l'école devient non-directive"],a:0,e:"Pédagogie bienveillante en apparence, mais contrôle total de ce que fait l'élève."},
-{t:3,s:"Frise",q:"La méthode naturelle (hébertisme), c'est :",o:["des parcours : courir, sauter, ramper, franchir, lancer","la compétition sportive codifiée","la gymnastique suédoise au sol","le jeu collectif en équipe"],a:0,e:"Elle valorise l'action, l'effort et le développement du corps."},
-{t:3,s:"Frise",q:"À partir de 1940-1959, la compétition sportive devient :",o:["un MOYEN pédagogique et non un but","un but en soi","interdite à l'école","réservée au haut niveau"],a:0,e:"Source de motivation et de travail en autonomie (Baquet, revue de l'INS)."},
+{c:1,t:3,s:"Frise",q:"La méthode naturelle (hébertisme), c'est :",o:["des parcours : courir, sauter, ramper, franchir, lancer","la compétition sportive codifiée","la gymnastique suédoise au sol","le jeu collectif en équipe"],a:0,e:"Elle valorise l'action, l'effort et le développement du corps."},
+{c:1,t:3,s:"Frise",q:"À partir de 1940-1959, la compétition sportive devient :",o:["un MOYEN pédagogique et non un but","un but en soi","interdite à l'école","réservée au haut niveau"],a:0,e:"Source de motivation et de travail en autonomie (Baquet, revue de l'INS)."},
 {t:3,s:"Frise",q:"Le contexte sociétal de 1960-1967, c'est :",o:["le baby boom","mai 68","les années folles","la guerre"],a:0,e:"Rénovation de l'acte éducatif ; hors école : la république des sports."},
 {t:3,s:"Frise",q:"En 1981, A. Savary charge L. Legrand de :",o:["réformer le collège","créer les IUFM","supprimer les notes","instaurer le sport scolaire"],a:0,e:"1985-1988 : montée des évaluations formatives."},
-{t:3,s:"Frise",q:"Les IUFM sont créés par :",o:["la loi de 1989","la circulaire de 1997","la réforme Savary de 1981","la loi de 1975"],a:0,e:"La circulaire de 1997 leur demande de créer les conditions favorables à la réussite de tous."},
-{t:3,s:"Frise",q:"Malgré les avancées de 1990-2010, quelle limite persiste ?",o:["la réussite reste socialement déterminée, l'échec scolaire demeure","les élèves ne sont plus évalués","les enseignants ne sont plus formés","le sport disparaît de l'école"],a:0,e:"L'écart entre établissements continue même de se creuser."},
+{c:1,t:3,s:"Frise",q:"Les IUFM sont créés par :",o:["la loi de 1989","la circulaire de 1997","la réforme Savary de 1981","la loi de 1975"],a:0,e:"La circulaire de 1997 leur demande de créer les conditions favorables à la réussite de tous."},
+{c:1,t:3,s:"Frise",q:"Malgré les avancées de 1990-2010, quelle limite persiste ?",o:["la réussite reste socialement déterminée, l'échec scolaire demeure","les élèves ne sont plus évalués","les enseignants ne sont plus formés","le sport disparaît de l'école"],a:0,e:"L'écart entre établissements continue même de se creuser."},
 
 /* ===== T4 — Styles d'enseignement ===== */
-{t:4,s:"S3",q:"Le continuum des styles d'enseignement va de :",o:["contrôlant à soutenant l'autonomie","directif à permissif","traditionnel à moderne","collectif à individuel"],a:0,e:"Sarrazin, Tessier & Trouilloud (2006), inspiré de Reeve, Deci & Ryan (2004)."},
-{t:4,s:"S3",q:"L'article de référence sur le climat motivationnel est de :",o:["Sarrazin, Tessier & Trouilloud (2006)","Cizeron & Gal-Petitfaux (2006)","Visioli & Ria (2010)","Jewett & Bain (1985)"],a:0,e:"Revue française de pédagogie, 2006."},
-{t:4,s:"S3",q:"Les 4 caractéristiques de l'enseignant qui soutient l'autonomie :",o:["plus proche, plus positif, plus flexible, plus explicatif","plus strict, plus rapide, plus clair, plus fort","plus technique, plus tactique, plus physique, plus mental","plus présent, plus silencieux, plus neutre, plus distant"],a:0,e:"Proche = écoute ; positif = valorise ; flexible = laisse des choix ; explicatif = dit l'utilité."},
+{c:1,t:4,s:"S3",q:"Le continuum des styles d'enseignement va de :",o:["contrôlant à soutenant l'autonomie","directif à permissif","traditionnel à moderne","collectif à individuel"],a:0,e:"Sarrazin, Tessier & Trouilloud (2006), inspiré de Reeve, Deci & Ryan (2004)."},
+{c:1,t:4,s:"S3",q:"L'article de référence sur le climat motivationnel est de :",o:["Sarrazin, Tessier & Trouilloud (2006)","Cizeron & Gal-Petitfaux (2006)","Visioli & Ria (2010)","Jewett & Bain (1985)"],a:0,e:"Revue française de pédagogie, 2006."},
+{c:1,t:4,s:"S3",q:"Les 4 caractéristiques de l'enseignant qui soutient l'autonomie :",o:["plus proche, plus positif, plus flexible, plus explicatif","plus strict, plus rapide, plus clair, plus fort","plus technique, plus tactique, plus physique, plus mental","plus présent, plus silencieux, plus neutre, plus distant"],a:0,e:"Proche = écoute ; positif = valorise ; flexible = laisse des choix ; explicatif = dit l'utilité."},
 {t:4,s:"S3",q:"« Plus flexible » signifie concrètement :",o:["il laisse des choix et du temps pour résoudre les problèmes seuls","il change de programme sans prévenir","il accepte tous les comportements","il adapte sa voix au groupe"],a:0,e:"La flexibilité porte sur les choix laissés à l'élève."},
-{t:4,s:"S3",q:"Vrai ou faux : un style soutenant l'autonomie est un style permissif.",o:["Faux : il est structuré","Vrai : il laisse tout faire","Vrai, mais seulement en EPS","Faux : il est directif"],a:0,e:"C'est l'item 8 du vrai/faux : soutenir l'autonomie n'est pas laisser faire."},
+{c:1,t:4,s:"S3",q:"Vrai ou faux : un style soutenant l'autonomie est un style permissif.",o:["Faux : il est structuré","Vrai : il laisse tout faire","Vrai, mais seulement en EPS","Faux : il est directif"],a:0,e:"C'est l'item 8 du vrai/faux : soutenir l'autonomie n'est pas laisser faire."},
 
 /* ===== T5 — Montessori / Freinet ===== */
 {t:5,s:"S4",q:"Maria Montessori était :",o:["l'une des premières femmes médecins","institutrice de campagne","professeure d'EPS","philosophe américaine"],a:0,e:"1896, Italie, Rome : pionnière scientifique."},
 {t:5,s:"S4",q:"Pour quel public Montessori conçoit-elle d'abord sa pédagogie ?",o:["les enfants pauvres ou négligés, observés en clinique psychiatrique","les enfants de l'élite romaine","les enfants sportifs","les adultes en formation"],a:0,e:"D'où la critique actuelle : pédagogie devenue élitiste, détournée de son sens premier."},
-{t:5,s:"S4",q:"La formule de Montessori est :",o:["« Aide-moi à faire seul »","« Apprendre en faisant »","« L'école de la vie »","« Le tâtonnement expérimental »"],a:0,e:"On passe de l'enseignant au centre à l'enfant au centre ; l'enseignant devient guide."},
-{t:5,s:"S4",q:"Les 3 étapes de la méthode Montessori :",o:["préparer l'environnement, présenter le matériel, observer l'enfant","expliquer, démontrer, corriger","motiver, entraîner, évaluer","tâtonner, échouer, recommencer"],a:0,e:"L'enseignant est grand préparateur, puis guide."},
+{c:1,t:5,s:"S4",q:"La formule de Montessori est :",o:["« Aide-moi à faire seul »","« Apprendre en faisant »","« L'école de la vie »","« Le tâtonnement expérimental »"],a:0,e:"On passe de l'enseignant au centre à l'enfant au centre ; l'enseignant devient guide."},
+{c:1,t:5,s:"S4",q:"Les 3 étapes de la méthode Montessori :",o:["préparer l'environnement, présenter le matériel, observer l'enfant","expliquer, démontrer, corriger","motiver, entraîner, évaluer","tâtonner, échouer, recommencer"],a:0,e:"L'enseignant est grand préparateur, puis guide."},
 {t:5,s:"S4",q:"Les « fenêtres d'apprentissage » signifient :",o:["proposer la bonne activité au bon moment","ouvrir la classe sur l'extérieur","travailler par créneaux horaires","limiter le temps d'écran"],a:0,e:"Et l'autonomie, ça s'apprend : on donne les moyens d'être autonome."},
-{t:5,s:"S4",q:"Pour Freinet, l'école traditionnelle est :",o:["absurde et inefficace, synonyme de caserne et d'ennui","trop permissive","trop sportive","trop coûteuse"],a:0,e:"Il propose une pédagogie rebelle : l'école de la vie."},
-{t:5,s:"S4",q:"Le « tâtonnement expérimental » est associé à :",o:["Freinet","Montessori","Houssaye","Perrenoud"],a:0,e:"Laisser l'élève tâtonner et expérimenter, sans le blâmer ni le rabaisser."},
+{c:1,t:5,s:"S4",q:"Pour Freinet, l'école traditionnelle est :",o:["absurde et inefficace, synonyme de caserne et d'ennui","trop permissive","trop sportive","trop coûteuse"],a:0,e:"Il propose une pédagogie rebelle : l'école de la vie."},
+{c:1,t:5,s:"S4",q:"Le « tâtonnement expérimental » est associé à :",o:["Freinet","Montessori","Houssaye","Perrenoud"],a:0,e:"Laisser l'élève tâtonner et expérimenter, sans le blâmer ni le rabaisser."},
 {t:5,s:"S4",q:"En 1934, Freinet crée à Vence :",o:["une école auto-suffisante où travail intellectuel et manuel sont au même niveau","un centre de formation sportive","le premier IUFM","une revue pédagogique"],a:0,e:"Lieu de régénération des corps et des esprits face à une société capitaliste épuisante."},
 
 /* ===== T6 — Les 7 pédagogies ===== */
-{t:6,s:"Cartes",q:"Pédagogie DU SENS : quels auteurs ?",o:["Meirieu et Charlot","Dewey et Decroly","Piaget et Parlebas","Famose et Dhellemmes"],a:0,e:"Meirieu : sens des apprentissages ; Charlot : rapport au savoir."},
+{c:1,t:6,s:"Cartes",q:"Pédagogie DU SENS : quels auteurs ?",o:["Meirieu et Charlot","Dewey et Decroly","Piaget et Parlebas","Famose et Dhellemmes"],a:0,e:"Meirieu : sens des apprentissages ; Charlot : rapport au savoir."},
 {t:6,s:"Cartes",q:"L'exemple d'APSA de la pédagogie du sens est :",o:["le demi-fond : gérer son allure sur 1500 m","le badminton : le fond de court","le handball : se démarquer","la course d'orientation : lire la carte"],a:0,e:"L'élève comprend le problème et voit l'utilité de ce qu'il apprend."},
-{t:6,s:"Cartes",q:"Pédagogie DU PROJET : quels auteurs ?",o:["Dewey, Decroly, Freinet","Meirieu et Perrenoud","Piaget et Vygotski","Gréhaigne et Parlebas"],a:0,e:"Théories : socioconstructivisme et pragmatisme."},
+{c:1,t:6,s:"Cartes",q:"Pédagogie DU PROJET : quels auteurs ?",o:["Dewey, Decroly, Freinet","Meirieu et Perrenoud","Piaget et Vygotski","Gréhaigne et Parlebas"],a:0,e:"Théories : socioconstructivisme et pragmatisme."},
 {t:6,s:"Cartes",q:"La pédagogie du projet s'inscrit dans quel processus du triangle ?",o:["le processus « apprendre »","le processus « enseigner »","le processus « former »","aucun des trois"],a:0,e:"L'élève est au centre ; l'enseignant devient accompagnateur."},
-{t:6,s:"Cartes",q:"Les 2 types de contrat en pédagogie du contrat sont :",o:["le contrat pédagogique (explicite, négocié) et le contrat didactique (implicite, inconscient)","le contrat écrit et le contrat oral","le contrat individuel et le contrat collectif","le contrat de niveau et le contrat de progrès"],a:0,e:"Place sur le triangle : entre le formateur et l'apprenant."},
+{c:1,t:6,s:"Cartes",q:"Les 2 types de contrat en pédagogie du contrat sont :",o:["le contrat pédagogique (explicite, négocié) et le contrat didactique (implicite, inconscient)","le contrat écrit et le contrat oral","le contrat individuel et le contrat collectif","le contrat de niveau et le contrat de progrès"],a:0,e:"Place sur le triangle : entre le formateur et l'apprenant."},
 {t:6,s:"Cartes",q:"En ping-pong, le prof annonce « bonus ! » = 3 points pour casser les habitudes. C'est :",o:["une rupture du contrat didactique (approche écologique)","un contrat pédagogique explicite","une situation-problème de découverte","un aménagement du milieu constructiviste"],a:0,e:"L'exemple explicite, lui, c'est la feuille de projet en escalade (approche cognitive)."},
-{t:6,s:"Cartes",q:"Pédagogie de l'AMÉNAGEMENT DU MILIEU : quels auteurs ?",o:["Gréhaigne, Piaget, Parlebas","Meirieu et Charlot","Dewey et Montessori","Visioli et Ria"],a:0,e:"Constructivisme + approche écologique et théorie des contraintes."},
+{c:1,t:6,s:"Cartes",q:"Pédagogie de l'AMÉNAGEMENT DU MILIEU : quels auteurs ?",o:["Gréhaigne, Piaget, Parlebas","Meirieu et Charlot","Dewey et Montessori","Visioli et Ria"],a:0,e:"Constructivisme + approche écologique et théorie des contraintes."},
 {t:6,s:"Cartes",q:"Le 3 contre 3 en handball où le joueur sans ballon doit changer de zone après la passe illustre :",o:["l'aménagement du milieu","la pédagogie du contrat","la pédagogie du sens","la pédagogie différenciée"],a:0,e:"Objectif : apprendre à se démarquer, en comprenant qu'il faut créer de l'espace."},
 {t:6,s:"Cartes",q:"Qui est le « père de l'apprentissage expérientiel » ?",o:["John Dewey","Célestin Freinet","Jean Piaget","Philippe Meirieu"],a:0,e:"Dewey (1859-1952), dans la pédagogie des expériences significatives."},
 {t:6,s:"Cartes",q:"La science de l'intervention associée aux expériences significatives est :",o:["la recherche-action","la psychanalyse","la psychologie sociale","la didactique"],a:0,e:"Le prof observe, évalue l'impact, ajuste sa posture, théorise sa pratique."},
-{t:6,s:"Cartes",q:"Pédagogie de la DÉCOUVERTE en EPS : quels auteurs ?",o:["Famose et Dhellemmes","Gréhaigne et Parlebas","Meirieu et Perrenoud","Jewett et Bain"],a:0,e:"Avec les situations-problèmes ; en amont : Piaget et Dewey."},
+{c:1,t:6,s:"Cartes",q:"Pédagogie de la DÉCOUVERTE en EPS : quels auteurs ?",o:["Famose et Dhellemmes","Gréhaigne et Parlebas","Meirieu et Perrenoud","Jewett et Bain"],a:0,e:"Avec les situations-problèmes ; en amont : Piaget et Dewey."},
 {t:6,s:"Cartes",q:"Le badminton avec fond de court qui compte double, sans consigne technique, illustre :",o:["la pédagogie de la découverte (style indirect)","la pédagogie du contrat","la pédagogie du projet","la pédagogie différenciée"],a:0,e:"Le prof ne corrige pas le geste, il questionne, puis fait formuler la règle d'action."},
-{t:6,s:"Cartes",q:"Une tâche se définit par :",o:["son but, ses conditions et ses critères de réussite","sa durée, son intensité et son volume","son niveau, son groupe et son matériel","sa consigne, sa démonstration et sa correction"],a:0,e:"Avec la dévolution du problème à l'élève."},
-{t:6,s:"Cartes",q:"La zone proximale de développement, c'est :",o:["entre ce que l'élève fait seul et ce qu'il fait avec de l'aide","le niveau moyen de la classe","l'écart entre deux élèves","la zone de confort de l'élève"],a:0,e:"Vygotski ; c'est là qu'agit la pédagogie différenciée."},
-{t:6,s:"Cartes",q:"La pédagogie différenciée combine quels 3 styles ?",o:["incitateur, coopératif, directif","directif, permissif, neutre","magistral, actif, inversé","contrôlant, autonome, mixte"],a:0,e:"Meirieu et Perrenoud ; théorie : socio-constructivisme de Vygotski."},
+{c:1,t:6,s:"Cartes",q:"Une tâche se définit par :",o:["son but, ses conditions et ses critères de réussite","sa durée, son intensité et son volume","son niveau, son groupe et son matériel","sa consigne, sa démonstration et sa correction"],a:0,e:"Avec la dévolution du problème à l'élève."},
+{c:1,t:6,s:"Cartes",q:"La zone proximale de développement, c'est :",o:["entre ce que l'élève fait seul et ce qu'il fait avec de l'aide","le niveau moyen de la classe","l'écart entre deux élèves","la zone de confort de l'élève"],a:0,e:"Vygotski ; c'est là qu'agit la pédagogie différenciée."},
+{c:1,t:6,s:"Cartes",q:"La pédagogie différenciée combine quels 3 styles ?",o:["incitateur, coopératif, directif","directif, permissif, neutre","magistral, actif, inversé","contrôlant, autonome, mixte"],a:0,e:"Meirieu et Perrenoud ; théorie : socio-constructivisme de Vygotski."},
 
 /* ===== T7 — Préoccupations des intervenants ===== */
-{t:7,s:"S5",q:"Les 5 préoccupations de l'intervenant sont décrites par :",o:["Marc Durand (1996)","Olivier Vors (2012)","Marc Cizeron (2006)","Jérôme Visioli (2010)"],a:0,e:"L'enseignement en milieu scolaire, 1996."},
-{t:7,s:"S5",q:"L'ordre correct des 5 préoccupations est :",o:["ordre, participation, travail, apprentissage moteur, développement","participation, ordre, travail, développement, apprentissage","travail, ordre, participation, apprentissage, développement","ordre, travail, participation, développement, apprentissage"],a:0,e:"Elles ne sont pas forcément séquentielles : elles peuvent s'enchevêtrer."},
-{t:7,s:"S5",q:"Ces 5 étapes se suivent-elles obligatoirement dans l'ordre ?",o:["non, elles peuvent s'enchevêtrer","oui, strictement","oui, sauf en EPS","non, elles sont indépendantes et sans lien"],a:0,e:"Plus ou moins longues et entremêlées selon le contexte."},
-{t:7,s:"S5",q:"Les 3 types de sécurité sont :",o:["physique, affective, sociale","physique, technique, tactique","matérielle, humaine, réglementaire","individuelle, collective, institutionnelle"],a:0,e:"Affective = émotions et communication bienveillante."},
+{c:1,t:7,s:"S5",q:"Les 5 préoccupations de l'intervenant sont décrites par :",o:["Marc Durand (1996)","Olivier Vors (2012)","Marc Cizeron (2006)","Jérôme Visioli (2010)"],a:0,e:"L'enseignement en milieu scolaire, 1996."},
+{c:1,t:7,s:"S5",q:"L'ordre correct des 5 préoccupations est :",o:["ordre, participation, travail, apprentissage moteur, développement","participation, ordre, travail, développement, apprentissage","travail, ordre, participation, apprentissage, développement","ordre, travail, participation, développement, apprentissage"],a:0,e:"Elles ne sont pas forcément séquentielles : elles peuvent s'enchevêtrer."},
+{c:1,t:7,s:"S5",q:"Ces 5 étapes se suivent-elles obligatoirement dans l'ordre ?",o:["non, elles peuvent s'enchevêtrer","oui, strictement","oui, sauf en EPS","non, elles sont indépendantes et sans lien"],a:0,e:"Plus ou moins longues et entremêlées selon le contexte."},
+{c:1,t:7,s:"S5",q:"Les 3 types de sécurité sont :",o:["physique, affective, sociale","physique, technique, tactique","matérielle, humaine, réglementaire","individuelle, collective, institutionnelle"],a:0,e:"Affective = émotions et communication bienveillante."},
 {t:7,s:"S5",q:"Moqueries, harcèlement, respect de la timidité, regard des autres relèvent de la sécurité :",o:["sociale","physique","affective","réglementaire"],a:0,e:"« Une place pour chacun »."},
-{t:7,s:"S5",q:"Les 2 formes opposées de management de la classe (Vors, 2012) sont :",o:["le cadrage de tous les comportements déviants / la tolérance empathique","le style directif / le style permissif","la sanction / la récompense","le contrat / la découverte"],a:0,e:"Olivier Vors, prof d'EPS dans des classes difficiles."},
+{c:1,t:7,s:"S5",q:"Les 2 formes opposées de management de la classe (Vors, 2012) sont :",o:["le cadrage de tous les comportements déviants / la tolérance empathique","le style directif / le style permissif","la sanction / la récompense","le contrat / la découverte"],a:0,e:"Olivier Vors, prof d'EPS dans des classes difficiles."},
 {t:7,s:"S5",q:"Permis à points, charte, règles de vie explicites, sanctions élaborées : c'est…",o:["le cadrage de tous les comportements déviants","la tolérance empathique","le management participatif","l'autorité bienveillante"],a:0,e:"Limite : ça prend du temps si les déviances sont nombreuses."},
 {t:7,s:"S5",q:"Se focaliser sur les comportements attendus et limiter les remarques négatives, c'est :",o:["la tolérance empathique","le cadrage strict","la pédagogie du contrat","le style contrôlant"],a:0,e:"Avantage : ça évite la crispation de la classe."},
-{t:7,s:"S5",q:"Le dispositif en VAGUE se caractérise par :",o:["une quantité de travail importante et identique pour tous","des conseils personnalisés fréquents","une rotation en cercle","une pratique selon la motivation"],a:0,e:"Le prof dirige, contrôle, voit tous les élèves. À utiliser en échauffement."},
-{t:7,s:"S5",q:"Principal inconvénient du dispositif en ATELIER :",o:["des progrès moins élevés qu'en vague, surtout si le niveau est faible","aucune sécurité possible","aucune autonomie","le prof ne voit jamais les élèves"],a:0,e:"Avantages : plus ludique, soutient l'autonomie, conseils personnalisés mais moins fréquents. Article : Cizeron & Gal-Petitfaux, 2006."},
+{c:1,t:7,s:"S5",q:"Le dispositif en VAGUE se caractérise par :",o:["une quantité de travail importante et identique pour tous","des conseils personnalisés fréquents","une rotation en cercle","une pratique selon la motivation"],a:0,e:"Le prof dirige, contrôle, voit tous les élèves. À utiliser en échauffement."},
+{c:1,t:7,s:"S5",q:"Principal inconvénient du dispositif en ATELIER :",o:["des progrès moins élevés qu'en vague, surtout si le niveau est faible","aucune sécurité possible","aucune autonomie","le prof ne voit jamais les élèves"],a:0,e:"Avantages : plus ludique, soutient l'autonomie, conseils personnalisés mais moins fréquents. Article : Cizeron & Gal-Petitfaux, 2006."},
 
 /* ===== T8 — Expertise ===== */
-{t:8,s:"S6",q:"L'article sur l'expertise des enseignants d'EPS est de :",o:["Visioli & Ria (2010)","Durand (1996)","Vors (2012)","Sarrazin & Tessier (2006)"],a:0,e:"« Quelle prise en compte du contexte et des émotions ? »"},
-{t:8,s:"S6",q:"Si être expert c'est être EFFICACE, le critère devient :",o:["les résultats à des tests standardisés (PISA)","le nombre d'années de pratique","le diplôme obtenu","l'avis des élèves"],a:0,e:"L'autre position définit l'expert comme l'enseignant expérimenté (années de pratique)."},
+{c:1,t:8,s:"S6",q:"L'article sur l'expertise des enseignants d'EPS est de :",o:["Visioli & Ria (2010)","Durand (1996)","Vors (2012)","Sarrazin & Tessier (2006)"],a:0,e:"« Quelle prise en compte du contexte et des émotions ? »"},
+{c:1,t:8,s:"S6",q:"Si être expert c'est être EFFICACE, le critère devient :",o:["les résultats à des tests standardisés (PISA)","le nombre d'années de pratique","le diplôme obtenu","l'avis des élèves"],a:0,e:"L'autre position définit l'expert comme l'enseignant expérimenté (années de pratique)."},
 {t:8,s:"S6",q:"Pourquoi l'expertise ne fait-elle pas consensus ?",o:["elle n'est pas figée et varie énormément selon les contextes","personne ne l'a étudiée","elle dépend uniquement du diplôme","elle est interdite de recherche"],a:0,e:"Variabilité spatiale, sociale, culturelle, d'autant plus en EPS où les APSA sont multiples."},
 {t:8,s:"S6",q:"Vers quelle dimension la définition de l'expertise évolue-t-elle ?",o:["une dimension non rationnelle : présence, charisme, persuasion","une dimension purement statistique","une dimension administrative","une dimension physiologique"],a:0,e:"Comportements intuitifs et fortement émotionnels, difficilement objectivables."},
 
 /* ===== T9 — Émotions ===== */
-{t:9,s:"S6",q:"Pour les théories PHYSIOLOGIQUES, l'émotion est :",o:["une sensation corporelle causée par nos réactions physiologiques","une évaluation cognitive du stimulus","un rôle social transitoire","un comportement inné et universel"],a:0,e:"Fin 19e – début 20e : respiration, battements cardiaques."},
-{t:9,s:"S6",q:"Pour les théories COGNITIVES :",o:["les processus cognitifs précèdent les modifications physiologiques","les modifications physiologiques précèdent tout","l'émotion est purement sociale","l'émotion est innée"],a:0,e:"L'émotion ne se réduit pas à la perception de modifications périphériques."},
-{t:9,s:"S6",q:"L'« appraisal » désigne :",o:["l'évaluation cognitive du stimulus","la réaction physiologique","l'expression faciale","la régulation de l'émotion"],a:0,e:"À distinguer de la simple perception du stimulus."},
-{t:9,s:"S6",q:"Pour les théories NÉODARWINIENNES, les émotions sont :",o:["universelles et innées","entièrement culturelles","purement cognitives","socialement prescrites"],a:0,e:"Darwin, The expression of the emotions in man and animals."},
+{c:1,t:9,s:"S6",q:"Pour les théories PHYSIOLOGIQUES, l'émotion est :",o:["une sensation corporelle causée par nos réactions physiologiques","une évaluation cognitive du stimulus","un rôle social transitoire","un comportement inné et universel"],a:0,e:"Fin 19e – début 20e : respiration, battements cardiaques."},
+{c:1,t:9,s:"S6",q:"Pour les théories COGNITIVES :",o:["les processus cognitifs précèdent les modifications physiologiques","les modifications physiologiques précèdent tout","l'émotion est purement sociale","l'émotion est innée"],a:0,e:"L'émotion ne se réduit pas à la perception de modifications périphériques."},
+{c:1,t:9,s:"S6",q:"L'« appraisal » désigne :",o:["l'évaluation cognitive du stimulus","la réaction physiologique","l'expression faciale","la régulation de l'émotion"],a:0,e:"À distinguer de la simple perception du stimulus."},
+{c:1,t:9,s:"S6",q:"Pour les théories NÉODARWINIENNES, les émotions sont :",o:["universelles et innées","entièrement culturelles","purement cognitives","socialement prescrites"],a:0,e:"Darwin, The expression of the emotions in man and animals."},
 {t:9,s:"S6",q:"Ekman (1993) apporte quelle nuance ?",o:["reconnaissance universelle des émotions primaires, mais expression régie par des règles culturelles","les émotions ne sont pas reconnaissables","toutes les émotions sont apprises","les émotions n'ont pas d'expression faciale"],a:0,e:"Universel dans la reconnaissance, variable dans l'expression."},
-{t:9,s:"S6",q:"Pour les théories SOCIALES, l'émotion est constituée de :",o:["rôles sociaux transitoires, réponses socialement prescrites","réflexes innés","sensations corporelles","évaluations cognitives"],a:0,e:"Elles renvoient à des normes sociales ou à des attentes partagées."},
-{t:9,s:"S6",q:"« Réaction psycho-physiologique intense, à début brutal et de durée brève » :",o:["Damasio (2003)","Plutchik (1980)","Ekman (1993)","Scherer (2009)"],a:0,e:"C'est la définition de l'émotion retenue dans le cours."},
-{t:9,s:"S6",q:"La roue des émotions, c'est :",o:["Plutchik (1980)","Damasio (2003)","Darwin (1872)","Mikolajczak (2014)"],a:0,e:"Elle illustre émotions primaires et secondaires."},
+{c:1,t:9,s:"S6",q:"Pour les théories SOCIALES, l'émotion est constituée de :",o:["rôles sociaux transitoires, réponses socialement prescrites","réflexes innés","sensations corporelles","évaluations cognitives"],a:0,e:"Elles renvoient à des normes sociales ou à des attentes partagées."},
+{c:1,t:9,s:"S6",q:"« Réaction psycho-physiologique intense, à début brutal et de durée brève » :",o:["Damasio (2003)","Plutchik (1980)","Ekman (1993)","Scherer (2009)"],a:0,e:"C'est la définition de l'émotion retenue dans le cours."},
+{c:1,t:9,s:"S6",q:"La roue des émotions, c'est :",o:["Plutchik (1980)","Damasio (2003)","Darwin (1872)","Mikolajczak (2014)"],a:0,e:"Elle illustre émotions primaires et secondaires."},
 {t:9,s:"S6",q:"Dire que l'émotion est « multicomponentielle » (Sander & Scherer, 2009), c'est :",o:["la décomposer en plusieurs composantes","dire qu'elle a plusieurs causes","dire qu'elle dure longtemps","dire qu'elle est partagée par un groupe"],a:0,e:"C'est une « définition de travail » de l'émotion."},
-{t:9,s:"S6",q:"Laquelle N'EST PAS une des 5 composantes de l'émotion ?",o:["la composante sociale","l'évaluation cognitive (appraisal)","l'expression motrice","le sentiment subjectif"],a:0,e:"Les 5 : appraisal, physiologique, expression motrice, tendance à l'action, sentiment subjectif."},
-{t:9,s:"S6",q:"Le stress, « relation entre la personne et l'environnement évaluée comme sollicitante voire dangereuse » :",o:["Lazarus & Folkman (1984)","Isoard et al. (2017)","Hochschild (2003)","Damasio (2003)"],a:0,e:"Définition transactionnelle du stress."},
+{c:1,t:9,s:"S6",q:"Laquelle N'EST PAS une des 5 composantes de l'émotion ?",o:["la composante sociale","l'évaluation cognitive (appraisal)","l'expression motrice","le sentiment subjectif"],a:0,e:"Les 5 : appraisal, physiologique, expression motrice, tendance à l'action, sentiment subjectif."},
+{c:1,t:9,s:"S6",q:"Le stress, « relation entre la personne et l'environnement évaluée comme sollicitante voire dangereuse » :",o:["Lazarus & Folkman (1984)","Isoard et al. (2017)","Hochschild (2003)","Damasio (2003)"],a:0,e:"Définition transactionnelle du stress."},
 {t:9,s:"S6",q:"Le burnout en sport (Isoard et al., 2017) est lié à :",o:["un sentiment d'être piégé et une identité sportive exclusive","un excès de temps libre","un manque d'entraînement physique","une trop grande autonomie"],a:0,e:"Aussi : fort contrôle des autrui significatifs, besoins psychologiques non satisfaits, buts d'évitement, perfectionnisme inadapté."},
-{t:9,s:"S6",q:"Les 5 étapes de l'intelligence émotionnelle (Mikolajczak, 2014) :",o:["identification, compréhension, expression, régulation, utilisation","perception, analyse, décision, action, bilan","ordre, participation, travail, apprentissage, développement","éveil, contrôle, partage, maîtrise, transmission"],a:0,e:"Dans cet ordre."},
-{t:9,s:"S6",q:"Le « travail émotionnel » (Hochschild, 2003), c'est :",o:["essayer de changer le degré ou la qualité d'une émotion","cacher systématiquement ses émotions","travailler sur le stress des élèves","évaluer les émotions des autres"],a:0,e:"Formes : expression authentique (passive), jeu en profondeur et jeu en surface (actives)."},
+{c:1,t:9,s:"S6",q:"Les 5 étapes de l'intelligence émotionnelle (Mikolajczak, 2014) :",o:["identification, compréhension, expression, régulation, utilisation","perception, analyse, décision, action, bilan","ordre, participation, travail, apprentissage, développement","éveil, contrôle, partage, maîtrise, transmission"],a:0,e:"Dans cet ordre."},
+{c:1,t:9,s:"S6",q:"Le « travail émotionnel » (Hochschild, 2003), c'est :",o:["essayer de changer le degré ou la qualité d'une émotion","cacher systématiquement ses émotions","travailler sur le stress des élèves","évaluer les émotions des autres"],a:0,e:"Formes : expression authentique (passive), jeu en profondeur et jeu en surface (actives)."},
 {t:9,s:"S6",q:"« Masquer sa colère » correspond à :",o:["un jeu en surface","un jeu en profondeur","une expression authentique","une position passive"],a:0,e:"Jeu en profondeur = relativiser sa tristesse ; expression authentique = ressentir et exprimer du plaisir."},
-{t:9,s:"S6",q:"L'état de flow apparaît quand :",o:["il y a équilibre entre le défi de la tâche et les compétences perçues","la tâche est très facile","la tâche est impossible","l'élève est seul"],a:0,e:"Immersion, concentration, perte de la notion du temps, plaisir."}
+{c:1,t:9,s:"S6",q:"L'état de flow apparaît quand :",o:["il y a équilibre entre le défi de la tâche et les compétences perçues","la tâche est très facile","la tâche est impossible","l'élève est seul"],a:0,e:"Immersion, concentration, perte de la notion du temps, plaisir."}
 ];
 
 var QM=[
@@ -1159,14 +1164,15 @@ function indexQ(a){for(var i=0;i<a.length;i++){a[i].id=hash(norm(a[i].q));a[i].i
 indexQ(QM);indexQ(QF);indexQ(QC);
 var ALLDEFS=[];
 for(var gi=0;gi<DEFS.length;gi++){for(var ii=0;ii<DEFS[gi].items.length;ii++){var it=DEFS[gi].items[ii];it.id=hash(norm(it.t));it.gi=gi;it.s=DEFS[gi].s;ALLDEFS.push(it)}}
-var LEVEL=(function(){try{return localStorage.getItem('peda_level')||'mini'}catch(e){return 'mini'}})();
-function pick(l){return l==='full'?QF:(l==='qcm'?QC:QM)}
+var LEVEL=(function(){try{return localStorage.getItem('peda_level')||'core'}catch(e){return 'core'}})();
+var QCC=[];for(var ci=0;ci<QC.length;ci++)if(QC[ci].c)QCC.push(QC[ci]);
+function pick(l){return l==='full'?QF:(l==='qcm'?QC:(l==='core'?QCC:QM))}
 var COREDEFS=[];
 function coreCount(){if(!COREDEFS.length)for(var i=0;i<ALLDEFS.length;i++)if(ALLDEFS[i].c)COREDEFS.push(ALLDEFS[i]);return COREDEFS.length}
 function coreLeft(){coreCount();var n=0;for(var i=0;i<COREDEFS.length;i++){var r=ST[COREDEFS[i].id];if(!r||!r.mastered)n++}return n}
 function defStat(){var m=0;for(var i=0;i<ALLDEFS.length;i++){var r=ST[ALLDEFS[i].id];if(r&&r.mastered)m++}return m}
 var Q=pick(LEVEL);
-function setLevel(l){if(l===LEVEL)return;LEVEL=l;Q=pick(l);try{localStorage.setItem('peda_level',l)}catch(e){}renderHome();toast(l==='defs'?'Mode définitions : par paquets de 3 à 5':(l==='full'?'Mode complet : questions de synthèse':(l==='qcm'?'Mode QCM : que du clic':'Mode express : questions courtes')))}
+function setLevel(l){if(l===LEVEL)return;LEVEL=l;Q=pick(l);try{localStorage.setItem('peda_level',l)}catch(e){}renderHome();toast(l==='core'?'Essentiel uniquement':(l==='defs'?'Mode définitions : par paquets de 3 à 5':(l==='full'?'Mode complet : questions de synthèse':(l==='qcm'?'Mode QCM : tout le contenu':'Mode express : questions courtes'))))}
 
 function thr(n){return n>=14?60:n>=10?68:75}
 function evaluate(q,ans){
@@ -1197,7 +1203,10 @@ function renderHome(){
   $("lvQcm").className="lv"+(LEVEL==="qcm"?" on":"");$("lvDefs").className="lv"+(LEVEL==="defs"?" on":"");
   $("nMini").textContent=QM.length+" questions courtes";$("nFull").textContent=QF.length+" questions de synthèse";
   $("nQcm").textContent=QC.length+" questions à choix";$("nDefs").textContent=coreCount()+" essentielles (+ "+(ALLDEFS.length-coreCount())+" en bonus)";
+  $('lvl').className=(LEVEL==='core'?'lvl hide':'lvl');
+  $('moreBar').className=(LEVEL==='core'?'':'hide');
   if(LEVEL==='defs'){renderDefsHome();$('home').classList.remove('hide');$('quiz').classList.add('hide');$('done').classList.add('hide');return}
+  if(LEVEL==='core'){renderCoreHome();$('home').classList.remove('hide');$('quiz').classList.add('hide');$('done').classList.add('hide');return}
   if($('modes').innerHTML!==MODES_HTML)$('modes').innerHTML=MODES_HTML;
   $("expCount").textContent=(LEVEL==="mini"?30:20)+" questions, tous les thèmes, priorité à ce que tu rates";
   var seen=0,fails=0,sum=0;
@@ -1232,6 +1241,31 @@ function packState(gi){
 function firstUnfinished(){
   for(var g=0;g<DEFS.length;g++){var st=packState(g);if(st.m<st.n)return g}
   return -1;
+}
+function renderCoreHome(){
+  coreCount();
+  var dl=coreLeft(),qs=0,qf=0;
+  for(var i=0;i<QCC.length;i++){var r=ST[QCC[i].id];if(r&&r.seen){qs++;if(r.fail)qf++}}
+  $('pillQ').innerHTML='<b>'+(COREDEFS.length-dl)+'</b>/'+COREDEFS.length+' défs · <b>'+qs+'</b>/'+QCC.length+' QCM';
+  var h='';
+  h+='<button class="mode hero" onclick="setLevel(\'defs\');startDefs(-2)"><div class="t">📖 Les '+COREDEFS.length+' définitions</div><div class="d">'+(dl?dl+' pas encore acquise'+(dl>1?'s':'')+' · sessions de 7 cartes':'toutes acquises 🔒 · repasse dessus')+'</div></button>';
+  h+='<button class="mode" onclick="start(\'all\')"><div class="t">✅ '+QCC.length+' QCM</div><div class="d">'+(qs?qs+' vues'+(qf?' · '+qf+' à revoir':''):'que du clic, 4 propositions')+'</div></button>';
+  h+='<button class="mode" onclick="start(\'fail\')"><div class="t">🔥 Mes ratées</div><div class="d">'+(qf?qf+' QCM à reprendre':'rien en attente')+'</div></button>';
+  $('modes').innerHTML=h;
+  var t='',TH=[0,1,2,3,4,5,6,7,8,9];
+  for(var k=0;k<TH.length;k++){
+    var th=TH[k],qq=QCC.filter(function(x){return x.t===th}),sn=0,sm=0;
+    for(var z=0;z<qq.length;z++){var rr=ST[qq[z].id];if(rr&&rr.seen){sn++;sm+=rr.best}}
+    if(!qq.length)continue;
+    var pc=sn?Math.round(sm/sn):0;
+    t+='<button class="th" onclick="start(\'theme\','+th+')">'
+      +'<span class="dot" style="background:'+THEMES[th].c+'"></span>'
+      +'<span class="nm">'+THEMES[th].n+'</span>'
+      +'<span class="mt">'+sn+'/'+qq.length+'</span>'
+      +'<span class="bar"><i style="width:'+pc+'%"></i></span>'
+      +'<span class="mt">'+(sn?pc+'%':'—')+'</span></button>';
+  }
+  $('themes').innerHTML=t;
 }
 function renderDefsHome(){
   var next=firstUnfinished(),tot=defStat(),cn=coreCount(),cl=coreLeft();
