@@ -146,13 +146,13 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 @keyframes manIn{0%{opacity:0;transform:translateX(-50%) translateY(4%) scale(.8)}
   45%{opacity:1}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
 #manWrap.old{animation:old 3.2s cubic-bezier(.3,0,.3,1) forwards}
-@keyframes old{to{transform:translateX(-50%) translateY(4%) scale(.88) skewX(-3deg)}}
+@keyframes old{to{transform:translateX(-50%) translateY(5%) scale(.9,.85) skewX(-2deg)}}
 #man{position:absolute;inset:0;overflow:visible}
 #breath{transform-origin:50% 42%;animation:br 4.4s ease-in-out infinite}
 @keyframes br{0%,100%{transform:scale(1,1)}50%{transform:scale(1.014,1.008)}}
 #head{transform-origin:50% 100%;animation:look 11s ease-in-out infinite}
 @keyframes look{0%,62%,100%{transform:rotate(0)}70%{transform:rotate(-4.5deg)}86%{transform:rotate(2deg)}}
-#armR{transform-origin:78% 32%;animation:arm 7.5s ease-in-out infinite}
+#armR{transform-origin:79% 52%;animation:arm 7.5s ease-in-out infinite}
 #armL{transform-origin:22% 32%;animation:arm 9.2s ease-in-out infinite reverse}
 @keyframes arm{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-7deg)}}
 #manShadow{position:absolute;left:50%;bottom:-2%;width:62%;height:7%;
@@ -197,6 +197,33 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
   text-decoration:none;color:#000;background:#eee;padding:1.8vmin 4.2vmin;border-radius:99px;opacity:0}
 .fin{animation:fin 1.1s cubic-bezier(.16,1,.3,1) forwards}
 @keyframes fin{from{opacity:0;transform:translateY(1.8vmin)}to{opacity:1;transform:none}}
+
+/* la chambre, avant le sommeil : une lueur de chevet qui respire */
+#bedglow{position:fixed;right:-12%;bottom:-16%;width:64vmin;height:64vmin;z-index:3;pointer-events:none;
+  background:radial-gradient(circle at 60% 70%,rgba(255,196,120,.34),rgba(255,170,90,.1) 46%,transparent 72%);
+  filter:blur(2.5vmin);opacity:0;transition:opacity 2.8s ease}
+#bedglow.on{opacity:1;animation:bed 5.5s ease-in-out infinite}
+@keyframes bed{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+
+/* le monde sans lunettes */
+#cam{filter:blur(var(--blur,0px));transition:transform 0s, filter 2s ease}
+
+/* les lunettes de la mission */
+#specs{position:fixed;inset:0;z-index:13;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;opacity:0}
+#specs.on{opacity:1;transition:opacity 1.6s ease}
+#specs.off{opacity:0;transition:opacity 1.8s ease}
+#specs svg{width:min(52vmin,70vw);height:auto;
+  filter:drop-shadow(0 0 3.5vmin rgba(255,206,120,.55));
+  animation:specFloat 6s ease-in-out infinite}
+@keyframes specFloat{0%,100%{transform:translateY(0) rotate(-1.2deg)}50%{transform:translateY(-1.8vmin) rotate(1.2deg)}}
+
+/* cinq cents fois */
+#five{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;font-size:min(44vmin,54vw);font-weight:150;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;color:#fff;opacity:0;transition:opacity 2.2s ease}
+#five.on{opacity:.09}
+#five.hot{opacity:.16;transition:opacity .9s ease}
 
 /* ================= LE SURGISSEMENT ================= */
 #scream{position:fixed;inset:0;z-index:19;display:flex;align-items:center;justify-content:center;
@@ -372,31 +399,31 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
         </defs>
         <g id="breath">
           <g id="head">
-            <path d="M100 16 C78 16 61 32 59 54 C58 67 61 79 67 87 L75 97 L125 97 L133 87
-                     C139 79 142 67 141 54 C139 32 122 16 100 16 Z" fill="#000"/>
-            <path d="M100 16 C78 16 61 32 59 54 C58 67 61 79 67 87 L75 97"
-                  fill="none" stroke="url(#rim)" stroke-width="2.6"/>
+            <circle cx="114" cy="28" r="13" fill="#000"/>
+            <ellipse cx="96" cy="62" rx="27" ry="31" fill="#000" transform="rotate(9 96 62)"/>
+            <path d="M74 44 C66 56 64 72 70 84" fill="none" stroke="url(#rim)" stroke-width="2.4"/>
+            <g id="eyes">
+              <ellipse cx="84" cy="60" rx="9" ry="4.5" fill="#ff9a4a" opacity=".3"/>
+              <ellipse cx="107" cy="62" rx="9" ry="4.5" fill="#ff9a4a" opacity=".3"/>
+              <ellipse cx="84" cy="60" rx="4.4" ry="2.1" fill="#ffd9a8"/>
+              <ellipse cx="107" cy="62" rx="4.4" ry="2.1" fill="#ffd9a8"/>
+            </g>
           </g>
           <path id="torso" fill="#000"
-            d="M100 90 C86 90 76 94 71 100 L58 106 C42 113 33 126 30 145 L21 222
-               C19 235 25 242 35 243 L41 243 L46 404 C46 415 52 422 62 422 L75 422
-               C85 422 90 415 90 404 L97 286 L103 286 L110 404 C110 415 115 422 125 422
-               L138 422 C148 422 154 415 154 404 L159 243 L165 243 C175 242 181 235 179 222
-               L170 145 C167 126 158 113 142 106 L129 100 C124 94 114 90 100 90 Z"/>
+            d="M96 86 C80 90 66 100 57 116 C46 138 40 168 38 204 L32 296
+               C30 330 34 362 42 392 L46 420 L158 420 L162 392
+               C170 358 172 322 168 288 L160 196 C156 158 148 128 136 110
+               C126 95 112 87 96 86 Z"/>
           <path fill="none" stroke="url(#rim)" stroke-width="2.6"
-            d="M100 90 C86 90 76 94 71 100 L58 106 C42 113 33 126 30 145 L21 222
-               C19 235 25 242 35 243 L41 243 L46 404 C46 415 52 422 62 422"/>
+            d="M96 86 C80 90 66 100 57 116 C46 138 40 168 38 204 L32 296
+               C30 330 34 362 42 392 L46 420"/>
           <path id="armL" fill="#000"
-            d="M33 144 C26 150 23 159 22 170 L16 240 C15 250 19 256 26 256
-               C33 256 37 251 38 242 L46 174 Z"/>
-          <path id="armR" fill="#000"
-            d="M167 144 C174 150 177 159 178 170 L184 240 C185 250 181 256 174 256
-               C167 256 163 251 162 242 L154 174 Z"/>
-          <g id="eyes">
-            <ellipse cx="86" cy="56" rx="11" ry="5.5" fill="#ff9a4a" opacity=".3"/>
-            <ellipse cx="114" cy="56" rx="11" ry="5.5" fill="#ff9a4a" opacity=".3"/>
-            <ellipse cx="86" cy="56" rx="5.4" ry="2.5" fill="#ffd9a8"/>
-            <ellipse cx="114" cy="56" rx="5.4" ry="2.5" fill="#ffd9a8"/>
+            d="M52 150 C40 162 34 180 33 200 L30 250 C29 262 34 269 43 269
+               C51 269 56 263 57 252 L62 196 Z"/>
+          <g id="armR">
+            <path fill="#000" d="M148 190 C158 196 164 206 166 218 L168 236 L150 240 L142 214 Z"/>
+            <rect x="158" y="228" width="7" height="192" rx="3.5" fill="#000" transform="rotate(5 161 228)"/>
+            <ellipse cx="156" cy="229" rx="12" ry="8" fill="#000"/>
           </g>
         </g>
       </svg>
@@ -417,12 +444,26 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 <div id="fade"></div>
 <div id="flash"></div>
 
+<div id="bedglow"></div>
+<div id="five">500</div>
+<div id="specs">
+  <svg viewBox="0 0 420 180" aria-hidden="true">
+    <g fill="none" stroke="#ffd9a0" stroke-width="7" stroke-linecap="round">
+      <circle cx="128" cy="98" r="54" fill="rgba(255,217,160,.07)"/>
+      <circle cx="292" cy="98" r="54" fill="rgba(255,217,160,.07)"/>
+      <path d="M182 92 q28 -20 56 0"/>
+      <path d="M74 92 L30 72 M346 92 L390 72"/>
+    </g>
+  </svg>
+</div>
+
 <div id="scream">
   <svg viewBox="0 0 400 400" aria-hidden="true">
     <defs>
       <radialGradient id="eyeGlow"><stop offset="0" stop-color="#ffb062" stop-opacity=".9"/>
         <stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/></radialGradient>
     </defs>
+    <circle cx="262" cy="26" r="34" fill="#06050a"/>
     <path d="M200 10 C104 10 44 76 40 166 C36 236 56 300 92 352 L308 352 C344 300 364 236 360 166
              C356 76 296 10 200 10 Z" fill="#06050a"/>
     <ellipse cx="200" cy="204" rx="106" ry="132" fill="#0a090d"/>
@@ -1001,36 +1042,37 @@ function hush(ms){
 /* =====================================================================
    VOIX — depose voix-1.m4a, voix-2.m4a, voix-3.m4a dans ce dossier
    ===================================================================== */
-var vbuf = {};
-function loadVoices(){
-  var a = audio(); if (!a) return;
-  [1,2,3].forEach(function(n){
-    var x = new XMLHttpRequest();
-    x.open("GET", "voix-" + n + ".m4a", true);
-    x.responseType = "arraybuffer";
-    x.onload = function(){
-      if (x.status !== 200) return;
-      a.decodeAudioData(x.response, function(b){ vbuf[n] = b; }, function(){});
-    };
-    try { x.send(); } catch(e){}
-  });
+var narr = null;
+function loadNarration(done){
+  var a = audio(); if (!a){ done(); return; }
+  var x = new XMLHttpRequest();
+  x.open("GET", "narration.m4a", true);
+  x.responseType = "arraybuffer";
+  x.onload = function(){
+    if (x.status !== 200){ done(); return; }
+    a.decodeAudioData(x.response, function(b){ narr = b; done(); }, function(){ done(); });
+  };
+  x.onerror = function(){ done(); };
+  try { x.send(); } catch(e){ done(); }
 }
-function duck(on){
+/* la voix passe a cote du filtre d'etouffement : elle reste intelligible */
+function playNarration(){
+  if (!AC || !narr) return;
+  var s = AC.createBufferSource(); s.buffer = narr;
+  var hp = AC.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 90;
+  var g = AC.createGain(); g.gain.value = 1;
+  s.connect(hp); hp.connect(g); g.connect(bus);
+  var w = AC.createGain(); w.gain.value = .3;
+  g.connect(w); w.connect(hallIn);
+  s.start();
+}
+/* l'ambiance se range derriere la voix */
+function ambient(v){
   if (!master || !AC) return;
   try {
     master.gain.cancelScheduledValues(now());
-    master.gain.linearRampToValueAtTime(on ? .34 : .9, now()+.3);
+    master.gain.linearRampToValueAtTime(v, now()+.9);
   } catch(e){}
-}
-function voice(n){
-  if (!AC || !vbuf[n]) return;
-  var s = AC.createBufferSource(); s.buffer = vbuf[n];
-  var hp = AC.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 95;
-  var pr = AC.createBiquadFilter(); pr.type = "peaking"; pr.frequency.value = 2600; pr.Q.value = .9; pr.gain.value = 3;
-  var g = AC.createGain();
-  s.connect(hp); hp.connect(pr); pr.connect(g); g.connect(master); send(g, .3);
-  duck(true); s.onended = function(){ duck(false); };
-  s.start();
 }
 
 /* =====================================================================
@@ -1252,10 +1294,9 @@ function glitch(){
   g.className = ""; void g.offsetWidth; g.classList.add("hit");
 }
 function fade(v, ms){ var f = $("fade"); f.style.transition = "opacity " + ms + "ms linear"; f.style.opacity = v; }
-function say(txt, n){
+function say(txt){
   var s = $("sub"); s.className = ""; void s.offsetWidth;
   s.textContent = txt; s.classList.add("on");
-  if (n) voice(n);
 }
 function unsay(){ var s = $("sub"); s.classList.remove("on"); s.classList.add("off"); }
 function card(txt){ var c = $("cardT"); c.className = ""; void c.offsetWidth; c.textContent = txt; c.classList.add("on"); }
@@ -1268,154 +1309,141 @@ function ageStage(n){
 /* =====================================================================
    LE FILM
    ===================================================================== */
+/* reperes des phrases dans narration.m4a, mesures sur le fichier */
+var VOFF = 1300;
+var SUBS = [
+  [ 300,  "Demain, c\u2019est mon premier cours d\u2019enseignant en APA,"],
+  [3540,  "et je ne sais plus par o\u00f9 commencer."],
+  [6340,  "Je m\u2019endors\u2026"],
+  [8140,  "Me voil\u00e0 dans un r\u00eave, enferm\u00e9 dans une pi\u00e8ce o\u00f9 rien ne s\u2019ouvre."],
+  [9240,  "L\u00e0, une vieille dame m\u2019attend, l\u2019air perdu :"],
+  [12920, "\u00ab Je ne retrouve plus mes lunettes. Sans elles, je ne vois plus rien\u2026 \u00bb"],
+  [15640, "Une voix murmure alors :"],
+  [19300, "\u00ab Ici, on avance en descendant et en poussant."],
+  [23040, "Cinq cents fois, et la porte s\u2019ouvrira ailleurs. \u00bb"],
+  [25820, "Votre mission : retrouver ses lunettes avant la fin du r\u00eave."],
+  [31040, "Pour y arriver, il faudra comprendre comment l\u2019\u00eatre humain change,"],
+  [34240, "grandit et se transforme \u00e0 chaque \u00e2ge de la vie,"],
+  [38740, "de la conception jusqu\u2019\u00e0 la fin de vie."]
+];
+
 function run(){
   drone(); roomTone(); rumble();
+  at(VOFF, playNarration);
+  at(VOFF + 100, function(){ ambient(.6); });
+  SUBS.forEach(function(sline){ at(VOFF + sline[0], function(){ say(sline[1]); }); });
 
-  /* ---------- 0 → 5 s : on entend avant de voir ---------- */
-  at(300,  function(){ breath(.12); whispers(3.2, .05); dripsStart(); });
-  at(1200, function(){ card("Après la fermeture"); });
-  at(1600, function(){ step(.13); });
-  at(2400, function(){ step(.15); });
-  at(3100, function(){ step(.18); breath(.1); });
-  at(3700, function(){ woodCrack(3); });
-  at(4100, function(){ step(.21); inhale(.9, .18); });
+  /* ----- la chambre : une lueur de chevet, puis le sommeil ----- */
+  at(400,  function(){ $("bedglow").classList.add("on"); fade(0, 1200); breath(.07); });
+  at(VOFF + 6340, function(){ $("bedglow").classList.remove("on"); dripsStart(); });
 
-  /* ---------- 5 → 12 s : la porte ---------- */
-  at(5000, function(){
+  /* ----- le reve : la porte close, une seconde ----- */
+  at(VOFF + 8140, function(){
     set("set-door"); torchOn("doorLayer", true);
-    lum(.95); beam(1); torchTo("62%", "52%");
-    fade(0, 900);
-    crack(.3, 5200); blast("soft"); metal(.07);
-    cam("0px","0px",1.04,0,100);
+    lum(.95); beam(1); torchTo("60%", "56%");
+    crack(.26, 5200); blast("soft");
+    cam("0px","0px",1.1,0,2300);
   });
-  at(5300, function(){ cam("0px","0px",1.14,0,6800); });
-  at(6000, function(){ torchTo("70%", "36%"); step(.17); });
-  at(6900, function(){ strings(1.1, .07, 760); });          /* la plaque B12 */
-  at(7300, function(){ torchTo("42%", "40%"); step(.15); whispers(1.8, .05); });
-  at(8500, function(){ torchTo("60%", "56%"); });
-  at(9200, function(){ creak(1.8); riser(3, .26); heartStart(1000, .2); });
-  at(9600, function(){ cam("0px","0px",1.6,0,2600,"cubic-bezier(.65,0,.85,1)"); });
-  at(11000, function(){ whoosh(1); glitch(); chroma(); });
-  at(11450, function(){ fade(1, 380); });
+  at(VOFF + 8800, function(){ creak(1); });
 
-  /* ---------- 12 → 21 s : la salle ---------- */
-  at(12000, function(){
-    set("set-room"); torchOn("bg", true); torchOn("fg", true);
-    lum(.9); beam(1); torchTo("50%", "74%");
-    cam("0px","0px",1.06,0,100);
-    fade(0, 700); step(.2); heartStop();
+  /* ----- la salle, au neon ----- */
+  at(VOFF + 9240, function(){ whoosh(.8); fade(1, 260); });
+  at(VOFF + 9600, function(){
+    set("set-room"); torchOn("doorLayer", false); beam(0);
+    lum(0); fade(0, 500);
+    cam("0px","0px",1.05,0,100);
   });
-  at(12400, function(){ cam("-40px","0px",1.1,0,9500); });
-  at(13000, function(){ torchTo("22%", "44%"); step(.16); });
-  at(14300, function(){ torchTo("56%", "40%"); chalk(); whispers(2.2, .055); });
-  at(15700, function(){ torchTo("76%", "24%"); tick(false,.07); strings(.9, .06, 980); });
-  at(16400, function(){ clockOn = true; tick(false,.07); });
-  at(17000, function(){ torchTo("50%", "58%"); riser(2, .24); });
-  /* elle est la une fraction de seconde, puis plus rien */
-  at(17350, function(){
-    var m = $("manWrap");
-    m.style.transition = "none"; m.style.opacity = "1";
-    crack(.36, 5200); strings(.32, .15, 1560); chroma();
-    setTimeout(function(){ m.style.opacity = ""; m.style.transition = ""; }, 130);
-  });
-  at(17700, function(){ breath(.16); inhale(.7, .14); });
-  at(18100, function(){ scrape(.7, .1); woodCrack(4); });
-
-  /* le neon prend le relais */
-  at(18600, function(){ torchOn("bg", false); torchOn("fg", false); beam(0); lum(0); });
-  at(18800, function(){ lum(1);  flickerSnd(); blast(); at(90, function(){ lum(0); }); });
-  at(19100, function(){ lum(.35); flickerSnd(); at(60, function(){ lum(0); }); });
-  at(19500, function(){ lum(1);  flickerSnd(); crack(.24, 4200); at(120, function(){ lum(.1); }); });
-  at(19900, function(){
-    lum(.92); buzzOn(); droneTo(1.3, 2);
-    cam("0px","0px",1.16,0,15000);
-    ageStage(1);
+  at(VOFF + 9800,  function(){ lum(1);  flickerSnd(); at(80, function(){ lum(0); }); });
+  at(VOFF + 10050, function(){ lum(.3); flickerSnd(); at(60, function(){ lum(0); }); });
+  at(VOFF + 10350, function(){
+    lum(.92); buzzOn();
     $("lamp").classList.add("on");
     $("mist").classList.add("on");
     $("dim").classList.add("on");
-    breathingStart(.07);
+    cam("0px","0px",1.17,0,17000);
   });
-  [20800, 22200, 24500, 27600, 30400].forEach(function(t){
-    at(t, function(){ lum(.5); flickerSnd(); });
-    at(t+60, function(){ lum(.92); });
+  [14200, 19600, 25400, 30800].forEach(function(x){
+    at(VOFF + x, function(){ lum(.5); flickerSnd(); });
+    at(VOFF + x + 60, function(){ lum(.92); });
   });
-  var tk = 20400;
-  while (tk < 33000){ (function(x){ at(x, function(){ tick(false, .045); }); })(tk); tk += 1000; }
 
-  /* ---------- 21 → 33 s : l'ombre ---------- */
-  at(20900, function(){ $("manWrap").classList.add("in"); strSlide(1.6, .12); breath(.1); });
-  at(21600, function(){ $("manShade").classList.add("on"); });
-  at(22600, function(){ say("Tu entres ici à vingt ans.", 1); });
-  at(25400, unsay);
-  at(25900, function(){ say("Chaque salle t’en prendra vingt de plus.", 2); });
-  at(29000, unsay);
-  at(29500, function(){ say("À la dernière, tu auras quatre-vingts ans.", 3); });
-  at(32400, unsay);
-  at(31600, function(){ $("eyes").classList.add("on"); strings(1.3, .08, 1440); });
+  /* ----- la dame ----- */
+  at(VOFF + 10600, function(){ $("manWrap").classList.add("in"); strSlide(1.4, .08); });
+  at(VOFF + 11600, function(){ $("manShade").classList.add("on"); breathingStart(.055); });
+  at(VOFF + 12200, function(){ clockOn = true; cSpeed = .5; });
 
-  /* ---------- 33 → 42 s : le lieu pourrit ---------- */
-  at(30000, function(){ chokeTo(5200, 6); });
-  at(32600, function(){
-    riser(3, .34); droneTo(1.7, 2.6); heartStart(760, .26);
-    $("eyes").classList.add("burn"); chokeTo(2400, 5);
+  /* ----- sans les lunettes, le monde se trouble ----- */
+  at(VOFF + 12920, function(){ css("--blur", "13px"); whispers(2.2, .05); });
+  at(VOFF + 15200, function(){ css("--blur", "4px"); });
+
+  /* ----- la voix qui murmure ----- */
+  at(VOFF + 15640, function(){ whispers(3.1, .075); droneTo(1.2, 2.5); });
+  at(VOFF + 19300, function(){ $("five").classList.add("on"); boom(.16); });
+  at(VOFF + 23040, function(){ $("five").classList.add("hot"); tick(true, .06); });
+  at(VOFF + 25300, function(){ $("five").className = ""; });
+
+  /* ----- la mission : les lunettes ----- */
+  at(VOFF + 25820, function(){
+    $("specs").classList.add("on");
+    css("--blur", "0px");
+    strings(1.5, .05, 620); metal(.05);
   });
-  var ages = [[33200,20,1],[34100,40,2],[35000,65,3],[35900,80,4]];
-  ages.forEach(function(p, i){
-    at(p[0], function(){
+  at(VOFF + 30400, function(){ $("specs").classList.remove("on"); $("specs").classList.add("off"); });
+
+  /* ----- les ages de la vie : le lieu vieillit ----- */
+  at(VOFF + 31040, function(){ ageStage(1); cSpeed = 2; heartStart(1150, .15); });
+  var ages = [
+    [35000, "0",  1,  3],
+    [36900, "20", 1,  6],
+    [40300, "40", 2, 12],
+    [42100, "65", 3, 24],
+    [43900, "80", 4, 42]
+  ];
+  ages.forEach(function(pt, i){
+    at(VOFF + pt[0], function(){
       var n = $("ageN");
-      n.textContent = p[1];
+      n.textContent = pt[1];
       n.className = ""; void n.offsetWidth; n.classList.add("hit");
-      ageStage(p[2]);
-      cSpeed = 1 + i*10;
-      crack(.3, 2200); tick(true, .08); chroma(); glitch(); shake(2 + i*2, 420);
-      strings(.7, .1 + i*.035, 900 + i*180);
-      if (i === 1){ $("manWrap").classList.add("old"); woodCrack(6); }
-      if (i === 2){ scrape(.9, .14); $("fgW") && $("fgW").setAttribute("opacity", ".5"); }
-      if (i === 3){
-        metal(.12); subDrop(1.4, .34);
-        $("fgW") && $("fgW").setAttribute("opacity", ".92");
-        blast("red");
-      }
+      ageStage(pt[2]); cSpeed = pt[3];
+      crack(.24 + i*.03, 2400); tick(true, .07); chroma();
+      if (i >= 2){ glitch(); shake(2 + i*2, 400); }
+      strings(.6, .07 + i*.03, 880 + i*170);
+      if (i === 3){ $("manWrap").classList.add("old"); woodCrack(5); }
+      if (i === 4){ metal(.1); subDrop(1.2, .3); blast("red"); }
     });
   });
-  at(36500, function(){ shake(5, 1100); strSlide(1.5, .2); riser(1.4, .4); });
-  /* stroboscope, le neon agonise */
-  [36700,36830,36960,37100,37250,37420,37600,37800,38020].forEach(function(t, i){
-    at(t, function(){ lum(i % 2 ? .1 : 1); flickerSnd(); });
+  at(VOFF + 43300, function(){ $("eyes").classList.add("on"); chokeTo(2600, 3.5); });
+  at(VOFF + 44800, function(){ riser(2.4, .38); droneTo(1.65, 2); $("eyes").classList.add("burn"); heartStart(640, .24); });
+  [45600, 45740, 45880, 46040, 46220, 46420, 46640, 46880].forEach(function(x, i){
+    at(VOFF + x, function(){ lum(i % 2 ? .1 : 1); flickerSnd(); });
   });
-  at(38200, function(){ lum(.06); buzzOff(); });
+  at(VOFF + 45700, function(){ unsay(); });
 
-  /* le silence, puis le choc */
-  /* le vide : plus un son, presque plus d'image. Une seconde entiere. */
-  at(38300, function(){
+  /* ----- le vide, puis le reveil en sursaut ----- */
+  at(VOFF + 47100, function(){
     hush(1000); heartStop(); breathingStop(); dripsStop(); clockOn = false;
-    lum(.03); buzzOff(); chokeTo(620, .5);
+    lum(.03); buzzOff(); chokeTo(620, .4);
     $("lamp").classList.remove("on");
     $("manShade").classList.remove("on");
     $("dim").classList.remove("on");
   });
-
-  /* et il est la, plein cadre */
-  at(39300, function(){
+  at(VOFF + 48200, function(){
     lum(0); beam(0); droneStop(); rumbleStop(); roomToneStop();
     chokeTo(20000, .02); ageStage(0);
     $("mist").classList.remove("on");
-    $("eyes").setAttribute("class", "");   /* className est en lecture seule sur un element SVG */
+    $("eyes").setAttribute("class", "");
     $("scream").classList.add("on");
     scream(); blast(); chroma(); shake(16, 760);
   });
-  at(39700, function(){ glitch(); });
-  at(40050, function(){ boom(.6); });
-  at(40150, function(){
-    $("scream").classList.remove("on");
-    whoosh(1.2); shake(0, 0);
-  });
+  at(VOFF + 48600, function(){ glitch(); });
+  at(VOFF + 48950, function(){ boom(.6); });
+  at(VOFF + 49050, function(){ $("scream").classList.remove("on"); whoosh(1.2); });
 
-  /* ---------- 41 → 47 s : le titre ---------- */
-  at(41000, function(){ $("end").classList.add("on"); });
-  at(41500, function(){ $("eK").classList.add("fin"); });
-  at(41850, function(){ $("eH").classList.add("fin"); boom(.24); });
-  at(42800, function(){ $("eA").classList.add("fin"); });
+  /* ----- le titre ----- */
+  at(VOFF + 49900, function(){ $("end").classList.add("on"); });
+  at(VOFF + 50400, function(){ $("eK").classList.add("fin"); });
+  at(VOFF + 50750, function(){ $("eH").classList.add("fin"); boom(.24); });
+  at(VOFF + 51700, function(){ $("eA").classList.add("fin"); });
 }
 
 /* =====================================================================
@@ -1425,9 +1453,12 @@ buildDecay();
 var started = false;
 function start(){
   if (started) return; started = true;
-  audio(); loadVoices();
+  audio();
   $("go").classList.add("gone");
-  at(900, run);
+  var launched = false;
+  function launch(){ if (launched) return; launched = true; at(500, run); }
+  loadNarration(launch);
+  setTimeout(launch, 3500);     /* si la voix ne charge pas, le film part quand meme */
 }
 $("go").addEventListener("click", start);
 document.addEventListener("keydown", function(e){
