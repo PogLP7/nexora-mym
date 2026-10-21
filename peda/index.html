@@ -1246,6 +1246,36 @@ function renderHome(){
 }
 function home(){stopMic();renderHome()}
 
+/* ---------- Boucle sur une carte ---------- */
+function currentId(){
+  if(!S)return null;
+  if(S.defs)return S.queue.length?S.queue[0].it.id:null;
+  return S.list&&S.list[S.i]?S.list[S.i].id:null;
+}
+function loopBtn(){
+  var on=S&&S.loop&&S.loop===currentId();
+  return '<button id="loopB" class="btn sm'+(on?' r':'')+'" onclick="toggleLoop()">'+(on?'⏹ Stop boucle':'🔁 En boucle')+'</button>';
+}
+function paintLoop(){
+  var b=$('loopB');if(!b)return;
+  var on=S&&S.loop&&S.loop===currentId();
+  b.className='btn sm'+(on?' r':'');
+  b.textContent=on?'⏹ Stop boucle':'🔁 En boucle';
+}
+function toggleLoop(){
+  var id=currentId();if(!id)return;
+  if(S.loop===id){S.loop=null;toast('Boucle arrêtée')}
+  else{S.loop=id;toast('En boucle : elle revient jusqu\'à ce que ça rentre')}
+  paintLoop();refreshMeta();
+}
+function refreshMeta(){
+  var m=$('qmeta');if(!m)return;
+  var has=m.innerHTML.indexOf('id="loopTag"')>=0;
+  var on=S&&S.loop&&S.loop===currentId();
+  if(on&&!has)m.innerHTML+='<span class="tag n" id="loopTag">🔁 en boucle</span>';
+  if(!on&&has)m.innerHTML=m.innerHTML.replace(/<span class="tag n" id="loopTag">[^<]*<\/span>/,'');
+}
+
 /* ===================== DÉFINITIONS ===================== */
 function packState(gi){
   var it=DEFS[gi].items,m=0;
@@ -1320,7 +1350,7 @@ function startDefs(gi){
   }
   var queue=[];
   for(var k=0;k<items.length;k++)queue.push({it:items[k],st:0});
-  S={defs:true,gi:gi,queue:queue,total:queue.length,done:0,t0:Date.now(),res:[],list:[],i:0};
+  S={defs:true,gi:gi,queue:queue,total:queue.length,done:0,t0:Date.now(),res:[],list:[],i:0,loop:null};
   $('home').classList.add('hide');$('done').classList.add('hide');$('quiz').classList.remove('hide');
   showDef();
 }
@@ -1338,8 +1368,9 @@ function showDef(){
   $('defZone').classList.remove('hide');
   $('defBox').innerHTML='<textarea id="defAns" placeholder="Écris la définition de mémoire — mots-clés, auteur… pas besoin de faire des phrases."></textarea>';
   $('defActs').innerHTML='<button class="btn p" onclick="checkDef()">Corriger</button>'
-    +'<button class="btn sm" onclick="revealDef()">Je sèche → révéler</button>'
+    +'<button class="btn sm" onclick="revealDef()">Je sèche → révéler</button>'+loopBtn()
     +'<div class="spacer"></div><span class="kbd">⌘↵ corriger</span><button class="btn sm" onclick="home()">Quitter</button>';
+  refreshMeta();paintLoop();
   var ta=$('defAns');if(ta)ta.focus();
   window.scrollTo(0,0);
 }
@@ -1380,8 +1411,9 @@ function gradeButtons(pct){
   var sug=pct>=70?2:(pct>=40?1:0);
   $('defActs').innerHTML='<button class="btn g sm'+(sug===2?' p':'')+'" onclick="gradeDef(2)">✓ Je savais</button>'
     +'<button class="btn sm" onclick="gradeDef(1)">~ Presque</button>'
-    +'<button class="btn r sm" onclick="gradeDef(0)">✗ Pas du tout</button>'
+    +'<button class="btn r sm" onclick="gradeDef(0)">✗ Pas du tout</button>'+loopBtn()
     +'<div class="spacer"></div><span class="kbd">1 2 3</span><button class="btn sm" onclick="home()">Quitter</button>';
+  refreshMeta();paintLoop();
 }
 function gradeDef(g){
   var c=S.queue.shift(),q=c.it,r=rowOf(q.id);
@@ -1398,6 +1430,13 @@ function gradeDef(g){
     c.st=0;r.mastered=false;r.fail=true;
     if(g===0)S.queue.splice(Math.min(2,S.queue.length),0,c);
     else S.queue.push(c);
+  }
+  if(S.loop&&S.loop===q.id){
+    if(g===2&&c.st>=2){S.loop=null;toast('Acquise, boucle terminée 🔒')}
+    else{
+      for(var z=S.queue.length-1;z>=0;z--)if(S.queue[z]===c)S.queue.splice(z,1);
+      S.queue.unshift(c);
+    }
   }
   save();
   if(!S.queue.length)return finishDefs();
@@ -1442,7 +1481,7 @@ function start(mode,arg){
     }
     list=shuffle(list);
   }
-  S={list:list,i:0,res:[],t0:Date.now()};
+  S={list:list,i:0,res:[],t0:Date.now(),loop:null};
   $('home').classList.add('hide');$('done').classList.add('hide');$('quiz').classList.remove('hide');
   show();
 }
@@ -1480,7 +1519,8 @@ function renderOpts(q){
     h+='<button class="opt" onclick="answerQCM('+i+')"><u>'+(i+1)+'</u><span>'+esc(q.o[idx[i]])+'</span></button>';
   $('opts').innerHTML=h;
   $('qcmFb').className='fb hide';$('qcmFb').innerHTML='';
-  $('qcmActs').innerHTML='<div class="spacer"></div><span class="kbd">1-4 répondre</span><button class="btn sm" onclick="home()">Quitter</button>';
+  $('qcmActs').innerHTML=loopBtn()+'<div class="spacer"></div><span class="kbd">1-4 répondre</span><button class="btn sm" onclick="home()">Quitter</button>';
+  refreshMeta();paintLoop();
 }
 function answerQCM(pos){
   if(S.locked)return;
@@ -1494,8 +1534,9 @@ function answerQCM(pos){
   $('qcmFb').innerHTML=(good?'<b>✓ Correct.</b> ':'<b>✗ Non — la bonne réponse est surlignée.</b> ')+esc(q.e||'');
   var r=rowOf(q.id);r.seen++;r.best=Math.max(r.best,good?100:0);r.fail=!good;r.last=q.o[orig];save();
   S.res[S.i]={q:q,a:q.o[orig],ev:{pct:good?100:0,ok:good?['bonne réponse']:[],ko:good?[]:[q.o[q.a]],n:1}};
-  $('qcmActs').innerHTML='<button class="btn p" onclick="next()">Suivante →</button><div class="spacer"></div><span class="kbd">↵ suivante</span><button class="btn sm" onclick="home()">Quitter</button>';
-  if(good)setTimeout(function(){if(S&&S.locked&&S.list[S.i]===q)next()},850);
+  $('qcmActs').innerHTML='<button class="btn p" onclick="next()">Suivante →</button>'+loopBtn()+'<div class="spacer"></div><span class="kbd">↵ suivante</span><button class="btn sm" onclick="home()">Quitter</button>';
+  refreshMeta();paintLoop();
+  if(good&&!(S.loop&&S.loop===q.id))setTimeout(function(){if(S&&S.locked&&S.list[S.i]===q)next()},850);
 }
 function check(){
   var q=S.list[S.i],a=$('ans').value.trim();
@@ -1532,6 +1573,7 @@ function override(good){
   next();
 }
 function next(){
+  if(S.loop&&S.list&&S.list[S.i]&&S.list[S.i].id===S.loop){show();return}
   S.i++;
   if(S.i>=S.list.length)return finish();
   show();
@@ -1557,7 +1599,7 @@ function finish(){
 }
 function replayFails(){
   if(!S||!S.fails||!S.fails.length){toast('Aucune ratée sur cette session');return}
-  var l=shuffle(S.fails.slice());S={list:l,i:0,res:[],t0:Date.now()};
+  var l=shuffle(S.fails.slice());S={list:l,i:0,res:[],t0:Date.now(),loop:null};
   $('done').classList.add('hide');$('quiz').classList.remove('hide');show();
 }
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
