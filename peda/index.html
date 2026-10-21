@@ -392,6 +392,77 @@ var DEFS=[
 ]}
 ];
 
+var EXO=[
+/* ---------- VRAI / FAUX (format séance 3) ---------- */
+{t:4,s:"V/F",q:"VRAI ou FAUX : « Un style soutenant l'autonomie est un style permissif. »",o:["Faux","Vrai"],a:0,e:"FAUX — un style soutenant l'autonomie est STRUCTURÉ, contrairement à un style permissif. C'est l'item 8 du vrai/faux du cours."},
+{t:7,s:"V/F",q:"VRAI ou FAUX : « Les 5 préoccupations de Durand se succèdent toujours dans le même ordre. »",o:["Faux","Vrai"],a:0,e:"FAUX — elles ne sont ni imperméables ni obligatoirement séquentielles : elles s'enchevêtrent selon le contexte."},
+{t:0,s:"V/F",q:"VRAI ou FAUX : « La didactique est centrée sur l'apprenant. »",o:["Faux","Vrai"],a:0,e:"FAUX — la didactique est centrée sur les SAVOIRS. C'est la pédagogie qui est centrée sur l'apprenant."},
+{t:0,s:"V/F",q:"VRAI ou FAUX : « Dans un cours magistral, l'élève est à la place du mort. »",o:["Vrai","Faux"],a:0,e:"VRAI — le CM mobilise l'axe enseignant-savoir et laisse l'élève en position passive."},
+{t:8,s:"V/F",q:"VRAI ou FAUX : « L'enseignant expert est celui qui a le plus d'années de pratique. »",o:["Faux","Vrai"],a:0,e:"FAUX — c'est UNE des deux positions (expert = expérimenté), mais il n'y a pas de consensus : l'autre définit l'expert par l'efficacité, et l'expertise n'est pas figée."},
+{t:6,s:"V/F",q:"VRAI ou FAUX : « Le contrat didactique est explicite et négocié. »",o:["Faux","Vrai"],a:0,e:"FAUX — le contrat DIDACTIQUE est implicite et inconscient. C'est le contrat PÉDAGOGIQUE qui est explicite et négocié."},
+{t:7,s:"V/F",q:"VRAI ou FAUX : « Le dispositif en vague permet un meilleur suivi individuel que l'atelier. »",o:["Faux","Vrai"],a:0,e:"FAUX — en vague on observe MOINS les progrès individuels ; l'atelier permet des conseils personnalisés (mais moins fréquents)."},
+{t:9,s:"V/F",q:"VRAI ou FAUX : « Pour Ekman, l'expression des émotions est totalement universelle. »",o:["Faux","Vrai"],a:0,e:"FAUX — reconnaissance universelle des émotions primaires, MAIS une expression régie par des règles variables d'une culture à l'autre."},
+{t:6,s:"V/F",q:"VRAI ou FAUX : « La pédagogie différenciée s'appuie sur le socio-constructivisme de Vygotski. »",o:["Vrai","Faux"],a:0,e:"VRAI — elle agit dans la zone proximale de développement."},
+{t:5,s:"V/F",q:"VRAI ou FAUX : « Montessori place l'enseignant au centre de l'apprentissage. »",o:["Faux","Vrai"],a:0,e:"FAUX — c'est exactement l'inverse : on passe de l'enseignant au centre à l'ENFANT au centre, l'enseignant devient guide."},
+{t:3,s:"V/F",q:"VRAI ou FAUX : « À partir de 1940-1959, la compétition sportive devient un moyen pédagogique et non un but. »",o:["Vrai","Faux"],a:0,e:"VRAI — source de motivation et de travail en autonomie (Baquet, revue de l'INS)."},
+{t:3,s:"V/F",q:"VRAI ou FAUX : « À partir de 1990, la pédagogie différenciée règle le problème de l'échec scolaire. »",o:["Faux","Vrai"],a:0,e:"FAUX — la réussite reste socialement déterminée, l'écart entre établissements se creuse et l'échec scolaire persiste."},
+
+/* ---------- SITUATIONS → IDENTIFIER LA PÉDAGOGIE ---------- */
+{t:6,s:"Situation",q:"En escalade, chaque élève remplit une feuille de projet : il choisit ses voies et la note dépend du niveau de difficulté qu'il s'engage à tenter. De quoi s'agit-il ?",o:["Un contrat pédagogique explicite et négocié","Un contrat didactique implicite","Une situation-problème de découverte","Un aménagement du milieu"],a:0,e:"Contrat PÉDAGOGIQUE : accord explicite et négocié entre le prof et l'élève. Approche cognitive."},
+{t:6,s:"Situation",q:"En ping-pong, les élèves cherchent à faire durer l'échange. En cours de jeu, le prof annonce : « point marqué après un appel de BONUS = 3 points ». Que fait-il ?",o:["Il brise le contrat didactique","Il négocie un contrat pédagogique","Il différencie la tâche","Il aménage le milieu matériel"],a:0,e:"Le contrat didactique est implicite : en le rompant, le prof fait apparaître la compétence d'identification des conditions de rupture d'échange. Approche écologique."},
+{t:6,s:"Situation",q:"En badminton, terrain rétréci en largeur et allongé, le fond de court compte double, aucune consigne technique. Le prof observe et questionne. Quelle pédagogie ?",o:["La pédagogie de la découverte","La pédagogie du contrat","La pédagogie du projet","La pédagogie du sens"],a:0,e:"Style indirect (Famose, Dhellemmes) : le prof pose le problème, l'élève construit la solution, puis on formule la règle d'action en mise en commun."},
+{t:6,s:"Situation",q:"En handball, jeu 3 contre 3 avec une règle : le joueur sans ballon doit changer de zone après chaque passe. L'espace est élargi. Quelle pédagogie ?",o:["L'aménagement du milieu","La pédagogie du contrat","La pédagogie différenciée","La pédagogie du projet"],a:0,e:"Gréhaigne, Piaget, Parlebas : le prof aménage, les contraintes du milieu font émerger le démarquage. Constructivisme + approche écologique."},
+{t:6,s:"Situation",q:"Un élève se perd en course d'orientation. Le prof lui demande : « que s'est-il passé au croisement ? ». L'élève verbalise, on formalise la règle, il repart en l'appliquant. Quelle pédagogie ?",o:["La pédagogie des expériences significatives","La pédagogie de la découverte","La pédagogie du sens","La pédagogie du contrat"],a:0,e:"C'est la RÉFLEXION SUR L'EXPÉRIENCE qui génère l'apprentissage (Dewey). Science de l'intervention : la recherche-action."},
+{t:6,s:"Situation",q:"Même parcours de course d'orientation pour tout le monde, mais la difficulté d'itinéraire est adaptée à la capacité de course et d'orientation de chacun. Quelle pédagogie ?",o:["La pédagogie différenciée","La pédagogie du contrat","La pédagogie de la découverte","L'aménagement du milieu"],a:0,e:"Meirieu, Perrenoud — on agit dans la zone proximale de développement de chaque élève (Vygotski)."},
+{t:6,s:"Situation",q:"Au lieu d'annoncer « vous courez un 1500 m », le prof demande : « comment gérer son effort pour ne pas partir trop vite ? ». Les élèves courent, analysent leur allure, recommencent. Quelle pédagogie ?",o:["La pédagogie du sens","La pédagogie du projet","La pédagogie de la découverte","La pédagogie du contrat"],a:0,e:"Meirieu, Charlot : l'élève comprend le problème, l'intérêt de l'apprentissage et l'utilité de ce qu'il apprend."},
+{t:6,s:"Situation",q:"Une classe prépare un spectacle d'acrosport qui sera présenté aux parents en fin de cycle. Quelle pédagogie ?",o:["La pédagogie du projet","La pédagogie du sens","La pédagogie du contrat","La pédagogie des expériences significatives"],a:0,e:"Dewey, Decroly, Freinet : une production concrète et collective. Triangle : processus « apprendre », le prof est accompagnateur."},
+
+/* ---------- SITUATIONS → STYLE D'ENSEIGNEMENT ---------- */
+{t:4,s:"Situation",q:"Avant chaque tâche, le prof prend 30 secondes pour expliquer à quoi elle sert et en quoi elle fera progresser. Quelle caractéristique ?",o:["Plus explicatif (soutient l'autonomie)","Plus flexible","Plus positif","Style contrôlant"],a:0,e:"« Explicatif » = il explique l'utilité ou l'importance de faire telle tâche."},
+{t:4,s:"Situation",q:"Le prof laisse les élèves choisir entre trois ateliers et leur donne du temps pour chercher seuls la solution. Quelle caractéristique ?",o:["Plus flexible (soutient l'autonomie)","Plus proche","Plus explicatif","Style permissif"],a:0,e:"« Flexible » = opportunités de faire des choix et temps pour résoudre les problèmes par eux-mêmes. Attention : c'est structuré, ce n'est pas du laisser-faire."},
+{t:4,s:"Situation",q:"Un prof de musique humilie son élève, impose son tempo, hurle pour obtenir la performance (type Whiplash). Où le placer ?",o:["À l'extrême du style contrôlant","Au centre du continuum","Style soutenant l'autonomie","Style permissif"],a:0,e:"Le continuum va du contrôlant au soutenant l'autonomie (Sarrazin, Tessier & Trouilloud, d'après Reeve, Deci & Ryan)."},
+{t:7,s:"Situation",q:"Un prof d'EPS a instauré une charte de classe, un permis à points et une sanction pour chaque écart. Quelle forme de management ?",o:["Le cadrage de tous les comportements déviants","La tolérance empathique","Le management participatif","Le style soutenant l'autonomie"],a:0,e:"Vors (2012). Limite : ça prend du temps quand les déviances sont nombreuses."},
+{t:7,s:"Situation",q:"Un prof laisse passer deux bavardages, mais félicite bruyamment les trois élèves déjà en activité. Quelle forme de management ?",o:["La tolérance empathique","Le cadrage strict","La pédagogie du contrat","L'auto-actualisation"],a:0,e:"Vors (2012) : focalisation sur les comportements attendus, peu de remarques négatives — ça évite la crispation de la classe."},
+{t:7,s:"Situation",q:"En début de cycle, le prof fait établir les règles de vie par la classe et fait fixer les objectifs collectifs avec les élèves. De quoi s'agit-il ?",o:["Du management participatif","Du cadrage des déviances","De la pédagogie du contrat didactique","De l'intégration écologique"],a:0,e:"Créer les règles ensemble, évaluer ensemble la vie de groupe, partager l'élaboration des objectifs, viser des progrès collectifs et individuels."},
+
+/* ---------- SITUATIONS → DISPOSITIF ---------- */
+{t:7,s:"Situation",q:"En gymnastique, toute la classe passe sur un même parcours, les uns après les autres, le prof placé face au groupe. Quel dispositif ?",o:["La vague","L'atelier","Le travail par contrat","Le travail en autonomie"],a:0,e:"Le prof dirige, contrôle, voit tous les élèves et est vu de tous ; quantité de travail identique pour tous. Idéal à l'échauffement."},
+{t:7,s:"Situation",q:"Quatre postes disposés en cercle, les groupes tournent toutes les 6 minutes, le prof va d'un poste à l'autre. Quel dispositif ?",o:["L'atelier","La vague","Le cours magistral","La situation de référence"],a:0,e:"Supervision à distance alternée avec des temps plus proches et de qualité. Plus ludique, soutient l'autonomie, mais progrès moins élevés qu'en vague."},
+{t:7,s:"Situation",q:"Le prof veut un maximum de temps de pratique et des exercices accessibles à tous pendant l'échauffement. Que choisit-il ?",o:["La vague","L'atelier","Un travail par groupes de niveau","Une situation-problème"],a:0,e:"C'est l'usage recommandé de la vague : temps de pratique élevé, exercices accessibles à tous."},
+
+/* ---------- CITATIONS → AUTEUR ---------- */
+{t:0,s:"Qui l'a dit ?",q:"« L'ensemble des rapports sociaux qui s'établissent entre l'éducateur et ceux qu'il éduque… » Qui ?",o:["Postic","Houssaye","Meirieu","Durand"],a:0,e:"Postic, La relation éducative, 1979."},
+{t:0,s:"Qui l'a dit ?",q:"« Se vouloir le plus efficace possible… et se savoir totalement impuissant quand il s'agit de décisions que seul l'élève peut prendre. » Qui ?",o:["Meirieu","Postic","Perrenoud","Vygotski"],a:0,e:"Meirieu, 1997."},
+{t:9,s:"Qui l'a dit ?",q:"« Réaction psycho-physiologique intense à une situation, début brutal, durée brève. » Qui ?",o:["Damasio","Plutchik","Scherer","Ekman"],a:0,e:"Damasio, 2003."},
+{t:9,s:"Qui l'a dit ?",q:"« Relation entre la personne et l'environnement évaluée comme sollicitante voire dangereuse. » Qui ?",o:["Lazarus & Folkman","Damasio","Isoard","Hochschild"],a:0,e:"Lazarus & Folkman, 1984 — c'est la définition du stress."},
+{t:9,s:"Qui l'a dit ?",q:"« L'acte par lequel on essaie de changer le degré ou la qualité d'une émotion ou d'un sentiment. » Qui ?",o:["Hochschild","Mikolajczak","Damasio","Scherer"],a:0,e:"Hochschild, 2003 — le travail émotionnel."},
+{t:1,s:"Qui l'a dit ?",q:"Qui décrit les 5 orientations de valeurs en EPS ?",o:["Jewett & Bain","Sarrazin & Tessier","Deci & Ryan","Loquet & Musard"],a:0,e:"Jewett & Bain, 1985."},
+
+/* ---------- PLACER SUR LE TRIANGLE ---------- */
+{t:0,s:"Triangle",q:"Un élève révise seul son cours la veille du contrôle, avec la fiche donnée par le prof. Quel axe du triangle ?",o:["Apprenant – savoir","Formateur – savoir","Formateur – apprenant","Les trois à égalité"],a:0,e:"Le prof a donné des outils mais il n'est pas présent : il est à la place du mort."},
+{t:0,s:"Triangle",q:"Le prof s'engage à faire acquérir une compétence, l'élève s'engage à produire un travail pour obtenir sa note. Quel axe ?",o:["Formateur – apprenant","Apprenant – savoir","Formateur – savoir","Aucun"],a:0,e:"C'est la place de la pédagogie du contrat : l'accord se joue entre les deux personnes."},
+{t:0,s:"Triangle",q:"Le prof déroule un contenu clair et structuré devant une classe qui écoute. Quel axe, et quelle est sa priorité ?",o:["Formateur – savoir : la clarté et la transmission fidèle du contenu","Apprenant – savoir : la construction par l'élève","Formateur – apprenant : la relation","Les trois en équilibre"],a:0,e:"Le CM : l'élève est en position passive, à la place du mort."},
+{t:0,s:"Triangle",q:"Dans une situation-problème où l'élève cherche seul la solution dans un milieu aménagé, quel processus est dominant ?",o:["« Apprendre » (apprenant – savoir)","« Enseigner » (formateur – savoir)","« Former » (formateur – apprenant)","Aucun des trois"],a:0,e:"C'est la place des pédagogies de la découverte, du projet et de l'aménagement du milieu."},
+
+/* ---------- ÉMOTIONS APPLIQUÉES ---------- */
+{t:9,s:"Situation",q:"Un entraîneur est furieux contre son joueur mais garde un visage neutre et une voix posée. De quoi s'agit-il ?",o:["Un jeu en surface","Un jeu en profondeur","Une expression authentique","De l'intelligence émotionnelle"],a:0,e:"Hochschild : jeu en surface = masquer sa colère. Jeu en profondeur = relativiser sa tristesse. Authentique = ressentir et exprimer réellement."},
+{t:9,s:"Situation",q:"Un joueur déçu se dit « ce n'est qu'un match de poule, l'essentiel arrive » et finit par ressentir moins de tristesse. De quoi s'agit-il ?",o:["Un jeu en profondeur","Un jeu en surface","Une expression authentique","Une émotion primaire"],a:0,e:"Position active : il travaille réellement son ressenti, il ne se contente pas de le masquer."},
+{t:9,s:"Situation",q:"Un grimpeur est totalement absorbé par sa voie, ne voit pas le temps passer et se sent parfaitement à la hauteur de la difficulté. Quel état ?",o:["Le flow","Le stress","Le burnout","L'appraisal"],a:0,e:"Équilibre entre le défi perçu et les compétences perçues."},
+{t:9,s:"Situation",q:"Un sportif se sent piégé dans son sport, ne trouve plus de sens, et son identité se réduit à son statut d'athlète. De quoi parle-t-on ?",o:["Du burnout","Du stress aigu","Du flow","Du travail émotionnel"],a:0,e:"Isoard et al. (2017) : sentiment d'être piégé, identité sportive exclusive, besoins psychologiques non satisfaits."},
+{t:9,s:"Situation",q:"Avant un match, un joueur évalue l'adversaire comme « dangereux pour moi » et son cœur s'accélère ensuite. Quelle théorie de l'émotion ?",o:["Les théories cognitives (l'appraisal précède)","Les théories physiologiques","Les théories sociales","Les théories néodarwiniennes"],a:0,e:"Les processus cognitifs précéderaient les modifications physiologiques : l'évaluation du stimulus, c'est l'appraisal."},
+
+/* ---------- SÉCURITÉS / PRÉOCCUPATIONS ---------- */
+{t:7,s:"Situation",q:"Une élève refuse de passer en démonstration devant la classe parce qu'elle a peur des moqueries. Quelle sécurité est en jeu ?",o:["La sécurité affective et sociale","La sécurité physique uniquement","Aucune, c'est de la motivation","L'intégration écologique"],a:0,e:"Affective (émotions, communication bienveillante) et sociale (moqueries, regard des autres, une place pour chacun)."},
+{t:7,s:"Situation",q:"En début d'année avec une classe agitée, le prof se concentre d'abord sur le calme et le respect des règles avant tout apprentissage technique. Quelle préoccupation ?",o:["L'ordre","Le travail","L'apprentissage moteur","Le développement"],a:0,e:"Durand (1996) : ordre → participation → travail → apprentissage moteur → développement. Mais ces phases s'enchevêtrent."},
+{t:7,s:"Situation",q:"La classe est calme et engagée ; le prof cherche désormais à transformer réellement la motricité de chacun. Quelle préoccupation ?",o:["L'apprentissage moteur","L'ordre","La participation","Le développement"],a:0,e:"On est à l'avant-dernière étape : le travail est installé, on vise la transformation motrice."},
+
+/* ---------- FRISE APPLIQUÉE ---------- */
+{t:3,s:"Frise",q:"Des militaires sont recrutés comme enseignants, l'EP sert à transmettre des valeurs patriotiques. Quelle période ?",o:["1880-1918","1919-1939","1960-1967","1990-2010"],a:0,e:"La pédagogie militaire : contexte de guerre, pédagogie descendante et martiale."},
+{t:3,s:"Frise",q:"Demi-journées de plein air, rencontres sportives scolaires, éducation des sens et notion de plaisir… mais le contrôle de l'élève reste total. Quelle période ?",o:["1919-1939","1880-1918","1940-1959","1968-1989"],a:0,e:"La méthode française : pédagogie bienveillante en apparence, mais l'approche maîtrise de la discipline reste privilégiée."},
+{t:3,s:"Frise",q:"Manifestations étudiantes, revendications sociales, puis recentrage de l'élève et réforme du collège confiée à Legrand. Quelle période ?",o:["1968-1989","1960-1967","1940-1959","1990-2010"],a:0,e:"La quête de nouveaux modes d'interaction : mai 68, Savary charge Legrand en 1981, évaluations formatives en 1985-1988."},
+{t:3,s:"Frise",q:"Situations de référence, groupes de niveau de jeu, élèves associés à leur propre évaluation, création des IUFM. Quelle période ?",o:["1990-2010","1968-1989","1960-1967","1919-1939"],a:0,e:"La réussite de tous / différenciation. Mais la réussite reste socialement déterminée."}
+];
+
 var QC=[
 /* ===== T0 — Relation pédagogique & triangle ===== */
 {c:1,t:0,s:"S1",q:"Qui définit la relation pédagogique comme « l'ensemble des rapports sociaux qui s'établissent entre l'éducateur et ceux qu'il éduque » ?",o:["Postic (1979)","Houssaye (1986)","Meirieu (1997)","Durand (1996)"],a:0,e:"Postic, La relation éducative, PUF, 1979."},
@@ -1176,12 +1247,12 @@ function variantHit(v,aNorm,words){
 }
 function hash(s){var h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))&0x7fffffff;return 'q'+h.toString(36)}
 function indexQ(a){for(var i=0;i<a.length;i++){a[i].id=hash(norm(a[i].q));a[i].i=i}return a}
-indexQ(QM);indexQ(QF);indexQ(QC);
+indexQ(QM);indexQ(QF);indexQ(QC);indexQ(EXO);
 var ALLDEFS=[];
 for(var gi=0;gi<DEFS.length;gi++){for(var ii=0;ii<DEFS[gi].items.length;ii++){var it=DEFS[gi].items[ii];it.id=hash(norm(it.t));it.gi=gi;it.s=DEFS[gi].s;ALLDEFS.push(it)}}
 var LEVEL=(function(){try{return localStorage.getItem('peda_level')||'core'}catch(e){return 'core'}})();
 var QCC=[];for(var ci=0;ci<QC.length;ci++)if(QC[ci].c)QCC.push(QC[ci]);
-function pick(l){return l==='full'?QF:(l==='qcm'?QC:(l==='core'?QCC:QM))}
+function pick(l){return l==='full'?QF:(l==='qcm'?QC:(l==='core'?QCC:(l==='exo'?EXO:QM)))}
 var COREDEFS=[];
 function coreCount(){if(!COREDEFS.length)for(var i=0;i<ALLDEFS.length;i++)if(ALLDEFS[i].c)COREDEFS.push(ALLDEFS[i]);return COREDEFS.length}
 function coreLeft(){coreCount();var n=0;for(var i=0;i<COREDEFS.length;i++){var r=ST[COREDEFS[i].id];if(!r||!r.mastered)n++}return n}
@@ -1257,7 +1328,7 @@ function renderHome(){
   $('themes').innerHTML=h;
   $('home').classList.remove('hide');$('quiz').classList.add('hide');$('done').classList.add('hide');
 }
-function home(){stopMic();renderHome()}
+function home(){stopMic();if(S&&S.exo&&S.back){LEVEL=S.back;Q=pick(LEVEL)}renderHome()}
 
 /* ---------- Boucle sur une carte ---------- */
 function currentId(){
@@ -1307,7 +1378,10 @@ function renderCoreHome(){
   var h='';
   h+='<button class="mode hero" onclick="setLevel(\'defs\');startDefs(-2)"><div class="t">📖 Les '+COREDEFS.length+' définitions</div><div class="d">'+(dl?dl+' pas encore acquise'+(dl>1?'s':'')+' · sessions de 7 cartes':'toutes acquises 🔒 · repasse dessus')+'</div></button>';
   h+='<button class="mode" onclick="start(\'all\')"><div class="t">✅ '+QCC.length+' QCM</div><div class="d">'+(qs?qs+' vues'+(qf?' · '+qf+' à revoir':''):'que du clic, 4 propositions')+'</div></button>';
-  h+='<button class="mode" onclick="start(\'fail\')"><div class="t">🔥 Mes ratées</div><div class="d">'+(qf?qf+' QCM à reprendre':'rien en attente')+'</div></button>';
+  var xs=0,xf=0;
+  for(var e=0;e<EXO.length;e++){var rx=ST[EXO[e].id];if(rx&&rx.seen){xs++;if(rx.fail)xf++}}
+  h+='<button class="mode" onclick="startExo()"><div class="t">🎯 '+EXO.length+' exercices</div><div class="d">'+(xs?xs+' faits'+(xf?' · '+xf+' à revoir':''):'vrai/faux, situations à analyser, « qui l\'a dit ? »')+'</div></button>';
+  h+='<button class="mode" onclick="start(\'fail\')"><div class="t">🔥 Mes ratées</div><div class="d">'+(qf+xf?(qf+xf)+' à reprendre':'rien en attente')+'</div></button>';
   $('modes').innerHTML=h;
   var t='',TH=[0,1,2,3,4,5,6,7,8,9];
   for(var k=0;k<TH.length;k++){
@@ -1344,6 +1418,13 @@ function renderDefsHome(){
       +'</button>';
   }
   $('themes').innerHTML=t;
+}
+function startExo(){
+  var prev=LEVEL;LEVEL='exo';Q=EXO;
+  var list=shuffle(EXO.slice());
+  S={list:list,i:0,res:[],t0:Date.now(),loop:null,exo:true,back:prev};
+  $('home').classList.add('hide');$('done').classList.add('hide');$('quiz').classList.remove('hide');
+  show();
 }
 function startDefs(gi){
   var items;
