@@ -2660,6 +2660,32 @@ function initSkel(){
     var tt=rnd();
     push((rnd()-0.5)*0.016,-0.2-tt*0.14,-0.085-tt*0.015,9,0.95,1);
   }
+  MID=2; /* texte sur le devant : un mot, rendu en points via un canvas 2D */
+  (function(mot){
+    var cvt,ctx,W=320,H=78;
+    try{
+      cvt=document.createElement("canvas");cvt.width=W;cvt.height=H;
+      ctx=cvt.getContext("2d");
+      if(!ctx)return;
+      ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);
+      ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";
+      var size=58;
+      do{ctx.font="800 "+size+"px -apple-system,Segoe UI,Helvetica,Arial,sans-serif";size-=2}
+      while(size>12&&ctx.measureText(mot).width>W-24);
+      ctx.fillText(mot,W/2,H/2+2);
+      var d=ctx.getImageData(0,0,W,H).data;
+      for(var py=0;py<H;py+=2)for(var px=0;px<W;px+=2){
+        if(d[(py*W+px)*4]<128)continue;
+        var u=px/W,v=py/H;
+        var pp=0.07+v*0.26;
+        var hw=0.095*(1-pp*0.82);
+        var xx=(u-0.5)*2*hw*0.86;
+        var yy=-0.2-pp*0.135;
+        var zz=0.104-pp*0.02+0.012*(1-Math.abs(xx)/Math.max(0.001,hw))-0.16*xx*xx;
+        push(xx+(rnd()-0.5)*0.0025,yy+(rnd()-0.5)*0.0025,zz+0.004,9,0.85,1);
+      }
+    }catch(e){}
+  })("ANATOMIE");
   MID=1; /* lunettes */
   for(s=-1;s<=1;s+=2){
     for(i=0;i<240;i++){
@@ -2674,7 +2700,7 @@ function initSkel(){
   var N=kind.length;
   var VS=
     "attribute vec3 aPos;attribute vec3 aScatter;attribute vec3 aExtra;attribute float aKind;attribute vec2 aMeta;"+
-    "uniform float uIntro,uRotY,uRotX,uAspect,uFocal,uCam,uScale,uDpr,uFocus,uBreath,uT,uAlphaK,uDim,uShowB,uShowM,uMus;"+
+    "uniform float uIntro,uRotY,uRotX,uAspect,uFocal,uCam,uScale,uDpr,uFocus,uBreath,uT,uAlphaK,uDim,uShowB,uShowM,uMus,uZoom;"+
     "uniform vec3 uCenter,uBrand,uBone,uMusCol;"+
     "varying vec3 vCol;varying float vAlpha;"+
     "void main(){"+
@@ -2694,14 +2720,15 @@ function initSkel(){
     "  float cy=cos(uRotY),sy=sin(uRotY);"+
     "  p=vec3(cy*p.x+sy*p.z,p.y,-sy*p.x+cy*p.z);"+
     "  float d=max(uCam-p.z,0.4);"+
-    "  gl_Position=vec4(p.x*uFocal/uAspect,p.y*uFocal,0.0,d);"+
+    "  float f=uFocal*uZoom;"+
+    "  gl_Position=vec4(p.x*f/uAspect,p.y*f,0.0,d);"+
     "  float hi=max(sel*any,msel*many);"+
     "  float pulse=1.0+0.12*sin(uT*2.2)*hi;"+
-    "  gl_PointSize=aExtra.x*uScale*uDpr*(1.0+0.45*hi)*pulse/d;"+
+    "  gl_PointSize=aExtra.x*uScale*uZoom*uDpr*(1.0+0.45*hi)*pulse/d;"+
     "  vec3 col;float a;"+
     "  if(lay<0.5){col=mix(uBone,uBone*1.06,aExtra.y);a=(0.42+0.34*aExtra.y)*uAlphaK*uShowB;}"+
     "  else if(lay<1.5){col=mix(uMusCol,uMusCol*1.18,aExtra.y);a=(0.42+0.34*aExtra.y)*uAlphaK*uShowM;}"+
-    "  else{col=aMeta.y<0.5?vec3(1.0,0.14,0.55):vec3(0.30,0.60,1.0);a=0.9;}"+
+    "  else{col=aMeta.y<0.5?vec3(1.0,0.14,0.55):(aMeta.y<1.5?vec3(0.30,0.60,1.0):vec3(1.0,0.97,0.99));a=0.9;}"+
     "  col=mix(col,uBrand,hi*0.9);"+
     "  if(lay<1.5){"+
     "    a*=mix(1.0,mix(uDim,1.5,sel),any);"+
@@ -2724,7 +2751,7 @@ function initSkel(){
   gl.useProgram(prog);
   var A={aPos:3,aScatter:3,aExtra:3,aKind:1,aMeta:2},loc={},U={};
   for(var nm in A){loc[nm]=gl.getAttribLocation(prog,nm);gl.enableVertexAttribArray(loc[nm])}
-  var un=["uIntro","uRotY","uRotX","uAspect","uFocal","uCam","uScale","uDpr","uFocus","uBreath","uT","uAlphaK","uDim","uShowB","uShowM","uMus","uCenter","uBrand","uBone","uMusCol"];
+  var un=["uIntro","uRotY","uRotX","uAspect","uFocal","uCam","uScale","uDpr","uFocus","uBreath","uT","uAlphaK","uDim","uShowB","uShowM","uMus","uZoom","uCenter","uBrand","uBone","uMusCol"];
   for(i=0;i<un.length;i++)U[un[i]]=gl.getUniformLocation(prog,un[i]);
   function buf(d){var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,d,gl.STATIC_DRAW);return b}
   var BUFS={aPos:buf(new Float32Array(pos)),aScatter:buf(new Float32Array(scat)),aExtra:buf(new Float32Array(ext)),aKind:buf(new Float32Array(kind)),aMeta:buf(new Float32Array(meta))};
@@ -2744,7 +2771,7 @@ function initSkel(){
   }
   var RM=false;try{RM=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
   var st={rotY:0.34,rotX:0.03,vel:0,focus:-1,mus:-1,showB:1,showM:0.75,intro:0,t0:Date.now(),
-          drag:false,px:0,py:0,on:true,raf:null,brand:[0.8,1,0.24],bone:[0.93,0.91,0.85],mcol:[0.88,0.3,0.32],light:false};
+          drag:false,px:0,py:0,on:true,raf:null,zoom:1,ctr:[0,-0.2,0],ctrT:[0,-0.2,0],pinch:0,brand:[0.8,1,0.24],bone:[0.93,0.91,0.85],mcol:[0.88,0.3,0.32],light:false};
   function brand(){
     var c=getComputedStyle(document.documentElement).getPropertyValue("--brand").trim();
     var m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(c.replace("#",""));
@@ -2787,7 +2814,9 @@ function initSkel(){
     gl.uniform1f(U.uShowM,st.showM);
     gl.uniform1f(U.uT,el);
     gl.uniform1f(U.uBreath,RM?0:0.5+0.5*Math.sin(el*0.85));
-    gl.uniform3f(U.uCenter,0,-0.2,0);
+    for(var ci=0;ci<3;ci++)st.ctr[ci]+=(st.ctrT[ci]-st.ctr[ci])*0.08;
+    gl.uniform1f(U.uZoom,st.zoom);
+    gl.uniform3f(U.uCenter,st.ctr[0],st.ctr[1],st.ctr[2]);
     gl.uniform3f(U.uBrand,st.brand[0],st.brand[1],st.brand[2]);
     gl.drawArrays(gl.POINTS,0,ACC);
     /* accessoires en alpha classique : en additif le rose saturerait en blanc */
@@ -2808,7 +2837,21 @@ function initSkel(){
     st.rotX=Math.max(-0.55,Math.min(0.55,st.rotX+dy*1.6));
     if(e.cancelable&&Math.abs(x-ox)>=Math.abs(y-oy))e.preventDefault();
   }
-  function up(){st.drag=false}
+  function up(){st.drag=false;st.pinch=0}
+  function setZoom(z){st.zoom=Math.max(1,Math.min(4.2,z))}
+  cv.addEventListener("wheel",function(e){
+    setZoom(st.zoom*(1-e.deltaY*0.0016));
+    if(e.cancelable)e.preventDefault();
+  },{passive:false});
+  function dist2(t){var a=t[0],b=t[1];return Math.sqrt((a.clientX-b.clientX)*(a.clientX-b.clientX)+(a.clientY-b.clientY)*(a.clientY-b.clientY))}
+  cv.addEventListener("touchstart",function(e){if(e.touches.length===2){st.drag=false;st.pinch=dist2(e.touches)}},{passive:true});
+  cv.addEventListener("touchmove",function(e){
+    if(e.touches.length!==2||!st.pinch)return;
+    var d=dist2(e.touches);
+    setZoom(st.zoom*(d/st.pinch));st.pinch=d;
+    if(e.cancelable)e.preventDefault();
+  },{passive:false});
+  cv.addEventListener("dblclick",function(){st.zoom=st.zoom>1.4?1:2.6});
   cv.addEventListener("mousedown",down);cv.addEventListener("touchstart",down,{passive:true});
   addEventListener("mousemove",move);cv.addEventListener("touchmove",move,{passive:false});
   addEventListener("mouseup",up);addEventListener("touchend",up);
@@ -2817,7 +2860,14 @@ function initSkel(){
   return {
     resize:resize,start:start,stop:stop,brand:brand,
     show:function(v){st.on=v;if(v){resize();start()}else stop()},
-    focus:function(k){st.focus=(k===null||k===undefined)?-1:k},
+    focus:function(k){
+      st.focus=(k===null||k===undefined)?-1:k;
+      var CY={0:0.92,1:0.16,2:0.3,3:0.22,4:-0.25,5:-0.72};
+      st.ctrT=[0,(st.focus<0||CY[st.focus]===undefined)?-0.2:CY[st.focus],0];
+      if(st.focus>=0&&st.zoom<1.25)st.zoom=1.8;
+      if(st.focus<0)st.zoom=1;
+    },
+    zoom:function(z){st.zoom=Math.max(1,Math.min(4.2,z))},
     mus:function(m){st.mus=(m===null||m===undefined)?-1:m},
     layers:function(b,m){st.showB=b;st.showM=m}
   };
@@ -2852,7 +2902,7 @@ function renderHero3D(){
   var host=$("hero3d");if(!host)return;
   host.className="h3dwrap";
   var h='<div class="h3d" id="h3dstage"><canvas id="gl"></canvas><div class="h3dgrad"></div>'+
-    '<div class="h3dtop"><span class="h3dtag">Corps · vue 3D</span>'+
+    '<div class="h3dtop"><span class="h3dtag">Corps · vue 3D</span><span class="h3dhint">Tourne au doigt · pince ou molette pour zoomer</span>'+
     '<div class="h3dseg" id="h3dseg">'+
       '<button data-m="os">Os</button><button data-m="muscles">Muscles</button><button class="on" data-m="both">Les deux</button>'+
     '</div></div>'+
