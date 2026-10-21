@@ -272,8 +272,13 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 #five{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;
   pointer-events:none;font-size:min(44vmin,54vw);font-weight:150;letter-spacing:-.04em;
   font-variant-numeric:tabular-nums;color:#fff;opacity:0;transition:opacity 2.2s ease}
-#five.on{opacity:.09}
-#five.hot{opacity:.16;transition:opacity .9s ease}
+#five.on{opacity:.17}
+#five.hot{opacity:.3;transition:opacity .5s ease}
+#five .ghost{position:absolute;font-size:min(13vmin,16vw);font-weight:200;opacity:0;color:#fff}
+#five .g1{top:14%;left:12%}#five .g2{top:20%;right:11%;font-size:min(9vmin,11vw)}
+#five .g3{bottom:17%;left:19%;font-size:min(8vmin,10vw)}#five .g4{bottom:23%;right:16%}
+#five .ghost.pop{animation:ghostPop .6s ease-out}
+@keyframes ghostPop{0%{opacity:0;transform:scale(1.5)}25%{opacity:.5;transform:scale(1)}100%{opacity:0;transform:scale(.92)}}
 
 /* ================= LE SURGISSEMENT ================= */
 #scream{position:fixed;inset:0;z-index:19;display:flex;align-items:center;justify-content:center;
@@ -597,7 +602,7 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 <div id="carlight"></div>
 <div id="tunnel"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div id="bedglow"></div>
-<div id="five">500</div>
+<div id="five"><span id="fiveN">500</span><b class="ghost g1">500</b><b class="ghost g2">500</b><b class="ghost g3">500</b><b class="ghost g4">500</b></div>
 <div id="specs">
   <svg viewBox="0 0 420 180" aria-hidden="true">
     <g fill="none" stroke="#ffd9a0" stroke-width="7" stroke-linecap="round">
@@ -988,6 +993,24 @@ function boom(vol){
   s.connect(lp); lp.connect(ng); ng.connect(master); send(ng, .65);
   s.start();
 }
+/* ---- un coup frappe : poing sur la porte ---- */
+function knock(vol){
+  var a = audio(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(96, now());
+  o.frequency.exponentialRampToValueAtTime(37, now()+.16);
+  g.gain.setValueAtTime(vol || .3, now());
+  g.gain.exponentialRampToValueAtTime(.0001, now()+.24);
+  o.connect(g); g.connect(master); send(g, .55, .25);
+  o.start(); o.stop(now()+.3);
+  var s = a.createBufferSource(); s.buffer = noiseBuf(.05, function(x){ return Math.pow(1-x, 4); });
+  var lp = a.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 760;
+  var ng = a.createGain(); ng.gain.value = (vol || .3)*.6;
+  s.connect(lp); lp.connect(ng); ng.connect(master); send(ng, .5);
+  s.start();
+}
+
 /* ---- chute de sub ---- */
 function subDrop(sec, vol){
   var a = audio(); if (!a) return;
@@ -1333,6 +1356,37 @@ function buildDecay(){
     '<path d="' + webPath(620, 200, 118, 0, Math.PI/2, 5, 3) + '" stroke="#9d9686" fill="none" stroke-width=".85"/>';
 }
 
+/* ---- cinq cents fois : le compte defile, les coups accelerent ---- */
+function countTo500(dur){
+  var el = $("fiveN"), t0 = Date.now();
+  (function step(){
+    var x = Math.min(1, (Date.now()-t0)/dur);
+    var eased = x*x*(3-2*x);
+    var v = Math.max(1, Math.round(eased*500));
+    el.textContent = v;
+    if (x < 1) requestAnimationFrame(step);
+    else el.textContent = "500";
+  })();
+  /* le martelement : d'un coup par seconde a un roulement */
+  var kt = 0, gap = 300;
+  (function hit(){
+    if (Date.now()-t0 >= dur) return;
+    knock(.2 + .25*Math.min(1,(Date.now()-t0)/dur));
+    gap = Math.max(72, gap*.86);
+    kt = setTimeout(hit, gap); T.push(kt);
+  })();
+}
+function fiveGhosts(){
+  var gs = document.querySelectorAll("#five .ghost");
+  for (var i=0;i<gs.length;i++){
+    (function(el, k){
+      setTimeout(function(){
+        el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+      }, 90*k);
+    })(gs[i], i);
+  }
+}
+
 /* =====================================================================
    GRAIN + POUSSIERE
    ===================================================================== */
@@ -1568,11 +1622,19 @@ function run(){
   /* ----- la voix qui murmure ----- */
   at(VOFF + 15640, function(){ whispers(3.1, .075); droneTo(1.25, 2.5); });
   at(VOFF + 22300, function(){ whispers(2.4, .055); });
-  at(VOFF + 19300, function(){ $("five").classList.add("on"); boom(.16); });
+  at(VOFF + 19300, function(){ boom(.16); });
   at(VOFF + 19700, function(){ pushups(3, 1100); });
-  [20250, 21350, 22450].forEach(function(x){ at(VOFF + x, function(){ boom(.11); }); });
-  at(VOFF + 23040, function(){ $("five").classList.add("hot"); tick(true, .06); });
-  at(VOFF + 25300, function(){ $("five").className = ""; });
+  [20250, 21350, 22450].forEach(function(x){ at(VOFF + x, function(){ knock(.5); }); });
+  at(VOFF + 23040, function(){
+    $("five").classList.add("on");
+    countTo500(2350);
+  });
+  at(VOFF + 25450, function(){
+    $("five").classList.add("hot");
+    knock(.6); boom(.26); chroma(); shake(3, 300);
+    fiveGhosts();
+  });
+  at(VOFF + 26600, function(){ $("five").className = ""; });
 
   /* ----- la mission : les lunettes ----- */
   at(VOFF + 25820, function(){
