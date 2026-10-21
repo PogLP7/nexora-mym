@@ -1328,7 +1328,7 @@ function renderHome(){
   $('themes').innerHTML=h;
   $('home').classList.remove('hide');$('quiz').classList.add('hide');$('done').classList.add('hide');
 }
-function home(){stopMic();if(S&&S.exo&&S.back){LEVEL=S.back;Q=pick(LEVEL)}renderHome()}
+function home(){stopMic();if(S&&S.back){LEVEL=S.back;Q=pick(LEVEL);try{localStorage.setItem('peda_level',LEVEL)}catch(e){}}renderHome()}
 
 /* ---------- Boucle sur une carte ---------- */
 function currentId(){
@@ -1376,13 +1376,15 @@ function renderCoreHome(){
   for(var i=0;i<QCC.length;i++){var r=ST[QCC[i].id];if(r&&r.seen){qs++;if(r.fail)qf++}}
   $('pillQ').innerHTML='<b>'+(COREDEFS.length-dl)+'</b>/'+COREDEFS.length+' défs · <b>'+qs+'</b>/'+QCC.length+' QCM';
   var h='';
-  h+='<button class="mode hero" onclick="setLevel(\'defs\');startDefs(-2)"><div class="t">📖 Les '+COREDEFS.length+' définitions</div><div class="d">'+(dl?dl+' pas encore acquise'+(dl>1?'s':'')+' · sessions de 7 cartes':'toutes acquises 🔒 · repasse dessus')+'</div></button>';
+  h+='<button class="mode hero" onclick="coreDefs()"><div class="t">📖 Les '+COREDEFS.length+' définitions</div><div class="d">'+(dl?dl+' pas encore acquise'+(dl>1?'s':'')+' · sessions de 7 cartes':'toutes acquises 🔒 · repasse dessus')+'</div></button>';
   h+='<button class="mode" onclick="start(\'all\')"><div class="t">✅ '+QCC.length+' QCM</div><div class="d">'+(qs?qs+' vues'+(qf?' · '+qf+' à revoir':''):'que du clic, 4 propositions')+'</div></button>';
   var xs=0,xf=0;
   for(var e=0;e<EXO.length;e++){var rx=ST[EXO[e].id];if(rx&&rx.seen){xs++;if(rx.fail)xf++}}
   h+='<button class="mode" onclick="startExo()"><div class="t">🎯 '+EXO.length+' exercices</div><div class="d">'+(xs?xs+' faits'+(xf?' · '+xf+' à revoir':''):'vrai/faux, situations à analyser, « qui l\'a dit ? »')+'</div></button>';
   h+='<button class="mode" onclick="start(\'fail\')"><div class="t">🔥 Mes ratées</div><div class="d">'+(qf+xf?(qf+xf)+' à reprendre':'rien en attente')+'</div></button>';
   $('modes').innerHTML=h;
+  var sect=document.querySelector('#home .sect');
+  if(sect)sect.textContent='Par thème (QCM essentiels)';
   var t='',TH=[0,1,2,3,4,5,6,7,8,9];
   for(var k=0;k<TH.length;k++){
     var th=TH[k],qq=QCC.filter(function(x){return x.t===th}),sn=0,sm=0;
@@ -1419,10 +1421,15 @@ function renderDefsHome(){
   }
   $('themes').innerHTML=t;
 }
+function coreDefs(){
+  var prev=LEVEL;LEVEL='defs';Q=pick('defs');
+  startDefs(-2);
+  if(S)S.back=prev;
+}
 function startExo(){
   var prev=LEVEL;LEVEL='exo';Q=EXO;
   var list=shuffle(EXO.slice());
-  S={list:list,i:0,res:[],t0:Date.now(),loop:null,exo:true,back:prev};
+  S={list:list,i:0,res:[],t0:Date.now(),loop:null,back:prev};
   $('home').classList.add('hide');$('done').classList.add('hide');$('quiz').classList.remove('hide');
   show();
 }
@@ -1575,7 +1582,7 @@ function start(mode,arg){
     }
     list=shuffle(list);
   }
-  S={list:list,i:0,res:[],t0:Date.now(),loop:null};
+  S={list:list,i:0,res:[],t0:Date.now(),loop:null,back:(LEVEL==='core'?'core':null)};
   $('home').classList.add('hide');$('done').classList.add('hide');$('quiz').classList.remove('hide');
   show();
 }
