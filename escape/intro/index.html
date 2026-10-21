@@ -204,6 +204,28 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 .fin{animation:fin 1.1s cubic-bezier(.16,1,.3,1) forwards}
 @keyframes fin{from{opacity:0;transform:translateY(1.8vmin)}to{opacity:1;transform:none}}
 
+/* les paupieres : on est derriere les yeux du narrateur */
+#lids{position:fixed;inset:0;z-index:11;pointer-events:none}
+#lids b{position:absolute;left:-6%;right:-6%;height:60%;background:#000;display:block}
+#lids .lt{top:0;transform:translateY(-101%);border-radius:0 0 50% 50% / 0 0 26% 26%;
+  transition:transform .3s cubic-bezier(.6,0,.8,1)}
+#lids .lb{bottom:0;transform:translateY(101%);border-radius:50% 50% 0 0 / 30% 30% 0 0;
+  transition:transform .3s cubic-bezier(.6,0,.8,1)}
+#lids.shut .lt{transform:translateY(-44%)}
+#lids.shut .lb{transform:translateY(46%)}
+#lids.slow .lt,#lids.slow .lb{transition-duration:1.6s;transition-timing-function:cubic-bezier(.4,0,.6,1)}
+
+/* une voiture passe dans la rue : ses phares balaient le mur */
+#carlight{position:fixed;top:0;bottom:44%;width:36%;left:-44%;z-index:4;pointer-events:none;opacity:0;
+  background:linear-gradient(100deg,transparent,rgba(195,205,235,.16) 38%,rgba(195,205,235,.24) 55%,transparent);
+  transform:skewX(-14deg)}
+#carlight.go{animation:car 3.4s ease-in-out forwards}
+@keyframes car{0%{opacity:0;left:-44%}16%{opacity:1}80%{opacity:1}100%{opacity:0;left:118%}}
+
+/* le dormeur respire : toute la vue se souleve doucement */
+#bedLayer{animation:povBreath 4.6s ease-in-out infinite;transform-origin:50% 76%}
+@keyframes povBreath{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1.009) translateY(-5px)}}
+
 /* la chute dans le sommeil : un tunnel d'anneaux */
 #tunnel{position:fixed;inset:0;z-index:12;pointer-events:none;opacity:0;transition:opacity .7s ease;
   background:radial-gradient(circle at 50% 50%,rgba(26,34,66,.85),rgba(4,5,12,.95) 72%)}
@@ -301,40 +323,63 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 
 <div id="cam">
 
-  <!-- ===== LA CHAMBRE ===== -->
+  <!-- ===== LA CHAMBRE, VUE DU LIT ===== -->
   <div class="set" id="set-bed">
     <div class="layer lit" id="bedLayer">
       <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <linearGradient id="nightwall" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#11141f"/><stop offset="1" stop-color="#060709"/></linearGradient>
-          <radialGradient id="moonhalo"><stop offset="0" stop-color="#dfe6f2" stop-opacity=".5"/>
-            <stop offset="1" stop-color="#dfe6f2" stop-opacity="0"/></radialGradient>
+            <stop offset="0" stop-color="#272d46"/><stop offset="1" stop-color="#101320"/></linearGradient>
+          <radialGradient id="moonhalo"><stop offset="0" stop-color="#e3e9f5" stop-opacity=".55"/>
+            <stop offset="1" stop-color="#e3e9f5" stop-opacity="0"/></radialGradient>
+          <linearGradient id="moonray" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9fb4e8" stop-opacity=".3"/>
+            <stop offset="1" stop-color="#9fb4e8" stop-opacity="0"/></linearGradient>
+          <radialGradient id="lampglow"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".75"/>
+            <stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient>
+          <linearGradient id="duvet" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#4a537e"/><stop offset="1" stop-color="#2b3150"/></linearGradient>
         </defs>
         <rect width="1600" height="900" fill="url(#nightwall)"/>
-        <!-- fenetre, lune, rideau -->
-        <rect x="1020" y="110" width="360" height="430" rx="4" fill="#0b1424" stroke="#2b3042" stroke-width="5"/>
-        <line x1="1200" y1="110" x2="1200" y2="540" stroke="#2b3042" stroke-width="5"/>
-        <line x1="1020" y1="325" x2="1380" y2="325" stroke="#2b3042" stroke-width="5"/>
-        <circle cx="1255" cy="235" r="86" fill="url(#moonhalo)"/>
-        <circle cx="1255" cy="235" r="44" fill="#e9e6d8"/>
-        <circle cx="1241" cy="226" r="9" fill="#cfccbd"/><circle cx="1268" cy="248" r="6" fill="#d6d3c4"/>
-        <path d="M1035 150 q40 190 0 380 l-45 20 l0 -430 z" fill="#171a28" opacity=".9"/>
-        <path d="M1368 150 q-36 190 0 380 l40 18 l0 -420 z" fill="#161926" opacity=".9"/>
-        <!-- cadre au mur -->
-        <rect x="320" y="200" width="150" height="110" fill="#10131c" stroke="#2a2e3d" stroke-width="4" transform="rotate(-2 395 255)"/>
-        <!-- table de chevet et reveil -->
-        <rect x="1150" y="660" width="250" height="26" rx="4" fill="#1a1512"/>
-        <rect x="1168" y="686" width="20" height="90" fill="#140f0c"/>
-        <rect x="1360" y="686" width="20" height="90" fill="#140f0c"/>
-        <rect x="1216" y="596" width="128" height="62" rx="8" fill="#0d0e12" stroke="#23242c" stroke-width="3"/>
-        <text id="wakeTime" x="1280" y="640" text-anchor="middle" font-family="ui-monospace,Menlo,monospace"
-              font-size="34" font-weight="700" style="fill:#c23b2e" opacity=".92">23:47</text>
-        <!-- le lit, au premier plan -->
-        <path d="M-20 900 L-20 710 Q 240 668 520 690 Q 760 706 980 750 L1040 900 Z" fill="#0c0e14"/>
-        <path d="M-20 736 Q 200 700 430 714" stroke="#1d2130" stroke-width="7" fill="none" opacity=".8"/>
-        <path d="M60 790 Q 300 756 560 776" stroke="#1a1e2b" stroke-width="6" fill="none" opacity=".7"/>
-        <ellipse cx="150" cy="700" rx="150" ry="46" fill="#171b29"/>
+        <!-- plafond au-dessus de nous -->
+        <rect width="1600" height="150" fill="#0a0c14" opacity=".85"/>
+        <rect y="146" width="1600" height="10" fill="#1d2234"/>
+        <!-- la porte de la chambre, fermee, en face -->
+        <rect x="540" y="208" width="286" height="452" rx="4" fill="#191527" stroke="#39405c" stroke-width="6"/>
+        <rect x="572" y="240" width="222" height="180" rx="3" fill="#141126" stroke="#2c3048" stroke-width="4"/>
+        <rect x="572" y="446" width="222" height="182" rx="3" fill="#141126" stroke="#2c3048" stroke-width="4"/>
+        <circle cx="796" cy="440" r="11" fill="#8d8468"/>
+        <!-- fenetre et lune, a droite de la porte -->
+        <rect x="1010" y="150" width="330" height="398" rx="5" fill="#0c1526" stroke="#39405c" stroke-width="7"/>
+        <line x1="1175" y1="150" x2="1175" y2="548" stroke="#39405c" stroke-width="6"/>
+        <line x1="1010" y1="348" x2="1340" y2="348" stroke="#39405c" stroke-width="6"/>
+        <circle cx="1165" cy="258" r="92" fill="url(#moonhalo)"/>
+        <circle cx="1165" cy="258" r="46" fill="#edeadb"/>
+        <circle cx="1150" cy="248" r="10" fill="#d3d0c0"/><circle cx="1180" cy="272" r="7" fill="#dad7c7"/>
+        <path d="M1024 190 q38 170 0 338 l-44 18 l0 -376 z" fill="#1d2235"/>
+        <path d="M1326 190 q-34 170 0 338 l40 16 l0 -372 z" fill="#1c2133"/>
+        <g style="mix-blend-mode:screen">
+          <polygon points="1020,548 1336,548 1180,820 880,820" fill="url(#moonray)"/>
+        </g>
+        <!-- cadre au mur, a gauche -->
+        <rect x="236" y="240" width="168" height="124" fill="#141827" stroke="#343a52" stroke-width="5" transform="rotate(-2 320 302)"/>
+        <rect x="258" y="262" width="124" height="82" fill="#1d2235" transform="rotate(-2 320 302)"/>
+        <!-- table de chevet toute proche, a droite : la lampe et le reveil en gros -->
+        <rect x="1368" y="610" width="240" height="30" rx="6" fill="#241c12"/>
+        <ellipse cx="1500" cy="452" rx="170" ry="140" fill="url(#lampglow)"/>
+        <rect x="1494" y="500" width="14" height="110" fill="#3d3526"/>
+        <path d="M1434 508 L1568 508 L1542 408 L1460 408 Z" fill="#e8c289"/>
+        <path d="M1434 508 L1568 508 L1560 494 L1442 494 Z" fill="#c9a269" opacity=".85"/>
+        <rect x="1378" y="528" width="178" height="82" rx="11" fill="#101117" stroke="#2b2c38" stroke-width="4"/>
+        <text id="wakeTime" x="1467" y="588" text-anchor="middle" font-family="ui-monospace,Menlo,monospace"
+              font-size="50" font-weight="700" style="fill:#e04b3a" opacity=".95">23:47</text>
+        <!-- notre corps : la couette en premier plan, les pieds qui depassent en bosses -->
+        <path d="M0 900 L0 758 Q 150 700 330 684 Q 470 672 560 640 Q 640 614 720 640 Q 800 664 900 648
+                 Q 990 634 1060 660 Q 1180 700 1340 740 Q 1480 772 1600 800 L1600 900 Z" fill="url(#duvet)"/>
+        <path d="M0 772 Q 180 712 360 692 M 480 668 Q 620 616 760 650 M 900 652 Q 1040 636 1180 688"
+              stroke="#222844" stroke-width="7" fill="none" opacity=".85"/>
+        <path d="M120 900 Q 240 790 330 712 M 1020 900 Q 1080 780 1120 700" stroke="#242a48" stroke-width="6" fill="none" opacity=".7"/>
+        <path d="M560 640 Q 640 612 720 640 M 900 648 Q 980 630 1060 660" stroke="#5a648f" stroke-width="6" fill="none" opacity=".9"/>
       </svg>
     </div>
   </div>
@@ -548,6 +593,8 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 <div id="fade"></div>
 <div id="flash"></div>
 
+<div id="lids"><b class="lt"></b><b class="lb"></b></div>
+<div id="carlight"></div>
 <div id="tunnel"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div id="bedglow"></div>
 <div id="five">500</div>
@@ -1168,7 +1215,7 @@ function playNarration(){
   if (!AC || !narr) return;
   var s = AC.createBufferSource(); s.buffer = narr;
   var hp = AC.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 90;
-  var g = AC.createGain(); g.gain.value = 1;
+  var g = AC.createGain(); g.gain.value = .74;      /* la voix se pose SUR le lit de sons, elle ne l'ecrase pas */
   s.connect(hp); hp.connect(g); g.connect(bus);
   var w = AC.createGain(); w.gain.value = .3;
   g.connect(w); w.connect(hallIn);
@@ -1429,7 +1476,7 @@ function ageStage(n){
    LE FILM
    ===================================================================== */
 /* reperes des phrases dans narration.m4a, mesures sur le fichier */
-var VOFF = 1300;
+var VOFF = 2600;
 var SUBS = [
   [ 1600, "Demain, c\u2019est mon premier cours d\u2019enseignant en APA,"],
   [ 4840, "et je ne sais plus par o\u00f9 commencer."],
@@ -1447,20 +1494,31 @@ var SUBS = [
 function run(){
   drone(); roomTone(); rumble();
   at(VOFF, playNarration);
-  at(VOFF + 100, function(){ ambient(.6); });
+  at(VOFF + 100, function(){ ambient(.82); });
   SUBS.forEach(function(sline){ at(VOFF + sline[0], function(){ say(sline[1]); }); });
 
   /* ----- la chambre : une lueur de chevet, puis le sommeil ----- */
   at(400,  function(){
-    set("set-bed"); lum(.62);
+    set("set-bed"); lum(.92);
     $("bedglow").classList.add("on");
-    fade(0, 1400); breath(.07);
-    cam("0px","0px",1.07,0,8200);
+    fade(0, 1700); breath(.07);
+    cam("0px","0px",1.07,0,9500);
   });
-  at(VOFF + 5600, function(){ var w = $("wakeTime"); if (w) w.textContent = "23:48"; tick(false, .04); });
-  at(VOFF + 6600, function(){ lum(.34); });
-  at(VOFF + 7000, function(){ lum(.15); });
-  at(VOFF + 6340, function(){ $("bedglow").classList.remove("on"); dripsStart(); });
+  at(VOFF + 1900, function(){ $("lids").classList.add("shut"); });
+  at(VOFF + 2090, function(){ $("lids").classList.remove("shut"); });
+  at(VOFF + 3400, function(){ $("carlight").classList.add("go"); });
+  at(VOFF + 4700, function(){ $("lids").classList.add("shut"); });
+  at(VOFF + 4960, function(){ $("lids").classList.remove("shut"); css("--blur", "1.6px"); });
+  at(VOFF + 5600, function(){ var w = $("wakeTime"); if (w) w.textContent = "23:48"; tick(false, .04); css("--blur", "0px"); });
+  at(VOFF + 6700, function(){ lum(.26); });
+  at(VOFF + 7000, function(){ lum(.1); });
+  at(VOFF + 6340, function(){
+    $("bedglow").classList.remove("on"); dripsStart();
+    tick(false, .09);                       /* le clic de l'interrupteur */
+    lum(.5);
+    $("lids").classList.add("slow"); $("lids").classList.add("shut");
+  });
+  at(VOFF + 8100, function(){ $("lids").className = ""; });
   at(VOFF + 7100, function(){
     $("tunnel").classList.add("on");
     whoosh(1.5); subDrop(1.9, .32); riser(2, .14);
@@ -1491,6 +1549,7 @@ function run(){
     $("mist").classList.add("on");
     $("dim").classList.add("on");
     cam("0px","0px",1.17,0,17000);
+    heartStart(1500, .1);                   /* le coeur, sourd, des qu'on est dans la salle */
   });
   [14200, 19600, 25400, 30800].forEach(function(x){
     at(VOFF + x, function(){ lum(.5); flickerSnd(); });
@@ -1507,7 +1566,8 @@ function run(){
   at(VOFF + 15200, function(){ css("--blur", "4px"); });
 
   /* ----- la voix qui murmure ----- */
-  at(VOFF + 15640, function(){ whispers(3.1, .075); droneTo(1.2, 2.5); });
+  at(VOFF + 15640, function(){ whispers(3.1, .075); droneTo(1.25, 2.5); });
+  at(VOFF + 22300, function(){ whispers(2.4, .055); });
   at(VOFF + 19300, function(){ $("five").classList.add("on"); boom(.16); });
   at(VOFF + 19700, function(){ pushups(3, 1100); });
   [20250, 21350, 22450].forEach(function(x){ at(VOFF + x, function(){ boom(.11); }); });
@@ -1644,7 +1704,7 @@ function recStart(){
     var el = document.documentElement;
     if (el.requestFullscreen){ el.requestFullscreen().catch(function(){}); }
     start();
-    at(57000, function(){ if (recorder && recorder.state === "recording") recorder.stop(); });
+    at(58500, function(){ if (recorder && recorder.state === "recording") recorder.stop(); });
   }).catch(function(){});
 }
 $("rec").addEventListener("click", function(e){ e.stopPropagation(); recStart(); });
