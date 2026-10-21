@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="robots" content="noindex,nofollow">
+<title>Prompteur — Escape game</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#000;overscroll-behavior:none}
+body{font-family:ui-sans-serif,-apple-system,"Helvetica Neue",Arial,sans-serif;color:#f4f2ec;
+  -webkit-font-smoothing:antialiased;user-select:none;-webkit-tap-highlight-color:transparent;
+  --size:5.4vmin; --mirror:1}
+
+/* la zone de lecture */
+#stage{position:fixed;inset:0;overflow:hidden;transform:scaleX(var(--mirror))}
+#text{position:absolute;left:0;right:0;padding:0 9vw;will-change:transform}
+p{font-size:var(--size);line-height:1.5;font-weight:300;letter-spacing:.005em;margin:0 0 1.1em}
+p.q{color:#ffd8a0;font-style:italic}
+p.beat{font-size:calc(var(--size)*.62);opacity:.42;letter-spacing:.3em;text-transform:uppercase;margin:1.6em 0}
+p.end{color:#9ad7a0}
+
+/* repere de lecture */
+#line{position:fixed;left:0;right:0;top:34%;z-index:5;pointer-events:none;
+  border-top:1px solid rgba(255,214,140,.32)}
+#line:before,#line:after{content:"";position:absolute;top:-.9vmin;width:0;height:0;
+  border-top:.9vmin solid transparent;border-bottom:.9vmin solid transparent}
+#line:before{left:0;border-left:1.4vmin solid rgba(255,214,140,.55)}
+#line:after{right:0;border-right:1.4vmin solid rgba(255,214,140,.55)}
+
+/* assombrissement haut et bas */
+#shade{position:fixed;inset:0;z-index:4;pointer-events:none;
+  background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.72) 13%,transparent 30%,transparent 72%,rgba(0,0,0,.9) 96%)}
+
+/* compte a rebours */
+#cd{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.88);font-size:26vmin;font-weight:200;font-variant-numeric:tabular-nums}
+#cd.on{display:flex}
+
+/* barre de commande */
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:8;display:flex;flex-wrap:wrap;gap:1vmin;
+  align-items:center;justify-content:center;padding:2vmin 2vmin calc(2vmin + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,rgba(0,0,0,.92),transparent);transition:opacity .4s}
+#bar.hide{opacity:0;pointer-events:none}
+button{font:inherit;font-size:min(1.9vmin,3.2vw);letter-spacing:.14em;text-transform:uppercase;
+  cursor:pointer;color:#f4f2ec;padding:1.4vmin 2.6vmin;border-radius:99px;
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);transition:all .2s}
+button:hover{background:rgba(255,255,255,.16)}
+button:active{transform:scale(.95)}
+button.main{background:#f4f2ec;color:#000;border-color:#f4f2ec;font-weight:600;padding:1.4vmin 4vmin}
+button.on{background:#ffd8a0;color:#000;border-color:#ffd8a0}
+.val{font-size:min(1.9vmin,3.2vw);letter-spacing:.1em;opacity:.65;min-width:9vmin;text-align:center;
+  font-variant-numeric:tabular-nums}
+#clock{position:fixed;top:2.4vmin;right:3vmin;z-index:8;font-size:min(2.4vmin,3.6vw);
+  font-variant-numeric:tabular-nums;opacity:.5;letter-spacing:.06em;transition:opacity .4s}
+#clock.hide{opacity:0}
+#hint{position:fixed;top:2.4vmin;left:3vmin;z-index:8;font-size:min(1.6vmin,2.6vw);
+  letter-spacing:.14em;text-transform:uppercase;opacity:.3;transition:opacity .4s}
+#hint.hide{opacity:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="stage"><div id="text"></div></div>
+<div id="shade"></div>
+<div id="line"></div>
+<div id="cd">3</div>
+
+<div id="hint">Espace lire · ↑↓ vitesse · F plein écran</div>
+<div id="clock">00:00</div>
+
+<div id="bar">
+  <button class="main" id="play">Lire</button>
+  <button id="slower">− Vitesse</button>
+  <span class="val" id="spd">28</span>
+  <button id="faster">+ Vitesse</button>
+  <button id="smaller">− Texte</button>
+  <button id="bigger">+ Texte</button>
+  <button id="mirror">Miroir</button>
+  <button id="reset">Début</button>
+  <button id="full">Plein écran</button>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var body = document.body;
+
+/* ------- le texte, decoupe pour la respiration ------- */
+var SCRIPT = [
+  ["", "Demain, c’est mon premier cours d’enseignant en APA,"],
+  ["", "et je ne sais plus par où commencer."],
+  ["beat", "— temps —"],
+  ["", "Je m’endors…"],
+  ["", "et me voilà dans un rêve, enfermé dans une pièce où rien ne s’ouvre."],
+  ["beat", "— temps —"],
+  ["", "Là, une vieille dame m’attend, l’air perdu :"],
+  ["q", "« Je ne retrouve plus mes lunettes. Sans elles, je ne vois plus rien… »"],
+  ["beat", "— temps —"],
+  ["", "Une voix murmure alors :"],
+  ["q", "« Ici, on avance en descendant et en poussant."],
+  ["q", "Cinq cents fois, et la porte s’ouvrira ailleurs. »"],
+  ["beat", "— temps —"],
+  ["", "Votre mission : retrouver ses lunettes avant la fin du rêve."],
+  ["beat", "— temps —"],
+  ["", "Pour y arriver, il faudra comprendre comment l’être humain change,"],
+  ["", "grandit et se transforme à chaque âge de la vie,"],
+  ["end", "de la conception jusqu’à la fin de vie."]
+];
+
+(function(){
+  var h = "";
+  /* du vide au-dessus et en dessous pour partir et finir proprement */
+  h += '<div style="height:36vh"></div>';
+  SCRIPT.forEach(function(l){
+    h += "<p" + (l[0] ? ' class="' + l[0] + '"' : "") + ">" + l[1] + "</p>";
+  });
+  h += '<div style="height:60vh"></div>';
+  $("text").innerHTML = h;
+})();
+
+/* ------- defilement ------- */
+var y = 0, speed = 28, running = false, last = 0, t0 = null, elapsed = 0;
+var maxY = 0;
+function measure(){
+  maxY = Math.max(0, $("text").scrollHeight - innerHeight * .34);
+}
+measure(); addEventListener("resize", function(){ measure(); apply(); });
+
+function apply(){
+  $("text").style.transform = "translateY(" + (-y).toFixed(1) + "px)";
+}
+function loop(ts){
+  if (!running) return;
+  if (!last) last = ts;
+  var dt = (ts - last) / 1000; last = ts;
+  y += speed * dt;
+  if (y >= maxY){ y = maxY; stop(); }
+  apply();
+  requestAnimationFrame(loop);
+}
+function go(){
+  if (running) return;
+  running = true; last = 0;
+  if (t0 === null) t0 = Date.now() - elapsed;
+  $("play").textContent = "Pause";
+  $("bar").classList.add("hide");
+  $("hint").classList.add("hide");
+  requestAnimationFrame(loop);
+}
+function stop(){
+  running = false;
+  if (t0 !== null){ elapsed = Date.now() - t0; t0 = null; }
+  $("play").textContent = "Reprendre";
+  $("bar").classList.remove("hide");
+  $("hint").classList.remove("hide");
+}
+function toggle(){ running ? stop() : countdown(); }
+
+var cdT = null;
+function countdown(){
+  if (y > 0){ go(); return; }              /* on ne recompte qu'au depart */
+  var n = 3, el = $("cd");
+  el.classList.add("on"); el.textContent = n;
+  $("bar").classList.add("hide"); $("hint").classList.add("hide");
+  cdT = setInterval(function(){
+    n--;
+    if (n <= 0){
+      clearInterval(cdT); cdT = null;
+      el.classList.remove("on");
+      go();
+    } else el.textContent = n;
+  }, 1000);
+}
+function reset(){
+  stop(); y = 0; elapsed = 0; t0 = null; apply();
+  $("play").textContent = "Lire";
+  $("clock").textContent = "00:00";
+}
+
+setInterval(function(){
+  var ms = t0 !== null ? Date.now() - t0 : elapsed;
+  var s = Math.floor(ms / 1000);
+  $("clock").textContent = ("0" + Math.floor(s/60)).slice(-2) + ":" + ("0" + (s%60)).slice(-2);
+}, 400);
+
+/* ------- reglages ------- */
+function setSpeed(v){
+  speed = Math.max(8, Math.min(120, v));
+  $("spd").textContent = Math.round(speed);
+}
+var size = 5.4;
+function setSize(v){
+  size = Math.max(2.6, Math.min(11, v));
+  body.style.setProperty("--size", size.toFixed(2) + "vmin");
+  measure();
+}
+$("play").addEventListener("click", function(e){ e.stopPropagation(); toggle(); });
+$("slower").addEventListener("click", function(e){ e.stopPropagation(); setSpeed(speed - 3); });
+$("faster").addEventListener("click", function(e){ e.stopPropagation(); setSpeed(speed + 3); });
+$("smaller").addEventListener("click", function(e){ e.stopPropagation(); setSize(size - .5); });
+$("bigger").addEventListener("click", function(e){ e.stopPropagation(); setSize(size + .5); });
+$("reset").addEventListener("click", function(e){ e.stopPropagation(); reset(); });
+$("mirror").addEventListener("click", function(e){
+  e.stopPropagation();
+  var m = getComputedStyle(body).getPropertyValue("--mirror").trim() === "-1" ? 1 : -1;
+  body.style.setProperty("--mirror", m);
+  this.classList.toggle("on", m === -1);
+});
+$("full").addEventListener("click", function(e){
+  e.stopPropagation();
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+});
+
+/* un appui n'importe ou met en pause ou reprend */
+$("stage").addEventListener("click", toggle);
+
+document.addEventListener("keydown", function(e){
+  var k = e.key;
+  if (e.code === "Space"){ e.preventDefault(); toggle(); return; }
+  if (k === "ArrowUp"){ e.preventDefault(); setSpeed(speed + 3); return; }
+  if (k === "ArrowDown"){ e.preventDefault(); setSpeed(speed - 3); return; }
+  if (k === "ArrowLeft"){ e.preventDefault(); y = Math.max(0, y - innerHeight*.2); apply(); return; }
+  if (k === "ArrowRight"){ e.preventDefault(); y = Math.min(maxY, y + innerHeight*.2); apply(); return; }
+  var l = k.toLowerCase();
+  if (l === "f"){ e.preventDefault(); $("full").click(); return; }
+  if (l === "r"){ e.preventDefault(); reset(); return; }
+  if (l === "m"){ e.preventDefault(); $("mirror").click(); return; }
+  if (l === "+" || l === "="){ e.preventDefault(); setSize(size + .5); return; }
+  if (l === "-"){ e.preventDefault(); setSize(size - .5); }
+});
+
+setSpeed(28); setSize(5.4); apply();
+})();
+</script>
+</body>
+</html>
