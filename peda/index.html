@@ -67,6 +67,12 @@ textarea{width:100%;min-height:130px;background:var(--bg2);border:1px solid var(
 textarea:focus{border-color:var(--vio);box-shadow:0 0 0 3px rgba(139,92,246,.13)}
 .mic2{background:rgba(34,211,238,.14);border-color:rgba(34,211,238,.45);color:#7dd3fc}
 .mic2.on{background:rgba(251,113,133,.2);border-color:var(--red);color:#fda4af;animation:pulse 1.1s infinite}
+.rub{margin-bottom:13px}
+.rub .rl{font-size:12.5px;font-weight:700;color:#c4b5fd;margin-bottom:5px}
+.rub textarea{min-height:62px;font-size:14px}
+.rub .fb2{margin-top:7px;font-size:13.5px;line-height:1.55;background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:10px;padding:10px 12px}
+.rub.ok .rl{color:#6ee7b7}
+.rub.ko .rl{color:#fda4af}
 .defbox textarea{min-height:120px;margin:0}
 .defbox .mine{margin:6px 0 12px}
 .defbox{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--vio);border-radius:12px;padding:16px 18px;font-size:15px;line-height:1.62}
@@ -209,6 +215,11 @@ a{color:var(--cyan)}
           <span class="kbd">1-4 répondre</span>
           <button class="btn sm" onclick="home()">Quitter</button>
         </div>
+      </div>
+
+      <div id="cardZone" class="hide">
+        <div id="cardBox"></div>
+        <div class="acts" id="cardActs"></div>
       </div>
 
       <div id="defZone" class="hide">
@@ -390,6 +401,64 @@ var DEFS=[
  {c:1,t:"Le travail émotionnel",d:"Hochschild : changer le degré ou la qualité d'une émotion. Trois formes : authentique (passive), jeu en profondeur et jeu en surface (actives).",k:["Hochschild","changer le degré ou la qualité","authentique","jeu en profondeur","jeu en surface"]},
  {t:"L'état de flow",d:"État d'engagement optimal : immersion, concentration, perte de la notion du temps, plaisir. Il apparaît quand il y a équilibre entre le défi perçu de la tâche et les compétences perçues.",k:["engagement optimal","immersion, concentration","équilibre défi / compétences"]}
 ]}
+];
+
+var RUBS=[
+ {id:"aut",l:"Quels auteurs principaux à l'origine ?"},
+ {id:"th",l:"Quelle théorie sous-jacente ? Quelle science de l'intervention ?"},
+ {id:"st",l:"Quel style d'enseignement ?"},
+ {id:"tr",l:"Quelle place sur le triangle de Houssaye ?"},
+ {id:"ex",l:"Un exemple de situation dans une APSA"}
+];
+var CARTES=[
+{p:"Pédagogie DU SENS",
+ aut:{k:["Meirieu","Charlot"],r:"Philippe Meirieu (le sens des apprentissages) et Bernard Charlot (le rapport au savoir)."},
+ th:{k:["sens","motivation","apprentissage","didactique de l'EPS"],r:"Construction du sens par l'élève. Sciences mobilisées : sciences de l'éducation, psychologie de l'apprentissage, psychologie de la motivation, didactique de l'EPS."},
+ st:{k:["centré sur l'élève","explique le but","objectifs compréhensibles","représentations","feedbacks","accompagnateur"],r:"Enseignement centré sur l'élève : il explique le but et l'intérêt, donne des objectifs compréhensibles, part des représentations des élèves, les met en situation de chercher, donne des feedbacks. Il reste accompagnateur."},
+ tr:{k:["élève","savoir","apprendre","accompagnateur"],r:"Axe élève–savoir (processus « apprendre ») : l'élève construit lui-même une relation signifiante avec le savoir, l'enseignant reste accompagnateur."},
+ ex:{k:["demi-fond","1500","allure","effort","stratégie","progrès"],r:"Athlétisme, demi-fond : un 1500 m à allure régulière. Au lieu de « courez 1500 m », on pose « comment gérer son effort pour ne pas partir trop vite ? » ; les élèves courent, observent leur allure, identifient leur problème, construisent une stratégie et refont la course pour constater leurs progrès."}},
+
+{p:"Pédagogie DU PROJET",
+ aut:{k:["Dewey","Decroly","Freinet"],r:"John Dewey, Ovide Decroly, Célestin Freinet."},
+ th:{k:["socioconstructivisme","pragmatisme","action","interaction sociale"],r:"Socioconstructivisme et pragmatisme : l'apprenant au centre, par l'action et l'interaction sociale."},
+ st:{k:["actif","centré sur l'élève","production concrète","accompagnateur","guide","régule"],r:"Style actif et centré sur l'élève : il réalise une production concrète ou résout un problème réel. L'enseignant devient accompagnateur, il guide et régule les apprentissages."},
+ tr:{k:["apprendre","élève","savoir"],r:"Le processus « apprendre » : l'élève est au centre de la construction de ses savoirs."},
+ ex:{k:["journal","exposition","spectacle","maquette","APSA","objectif concret"],r:"Une production concrète et collective : journal, exposition, spectacle, maquette. En EPS : engager les élèves dans un objectif concret et personnel à travers une APSA (ex. un spectacle d'acrosport présenté en fin de cycle)."}},
+
+{p:"Pédagogie DU CONTRAT",
+ aut:{k:["contrat pédagogique","contrat didactique"],r:"Pas d'auteur unique dans la carte : deux théories sous-jacentes, le contrat pédagogique et le contrat didactique."},
+ th:{k:["explicite","négocié","implicite","inconscient","cognitive","écologique"],r:"Le contrat PÉDAGOGIQUE, explicite et négocié (approche cognitive) ; le contrat DIDACTIQUE, implicite et inconscient (approche écologique)."},
+ st:{k:["accord","enseignant","élève","objectif commun","engagement"],r:"Un style basé sur un accord entre l'enseignant et l'élève pour atteindre un objectif commun : chacun s'engage."},
+ tr:{k:["formateur","apprenant","entre les deux"],r:"Entre le FORMATEUR et l'APPRENANT : le formateur s'engage à enseigner une compétence, l'élève s'engage à travailler pour obtenir sa note."},
+ ex:{k:["escalade","feuille de projet","barème","engagement","ping-pong","bonus","rupture"],r:"Explicite : en escalade, l'élève remplit une feuille de projet avec un barème selon son engagement (approche cognitive). Implicite : en ping-pong, garder la balle sur la table le plus longtemps ; le prof brise le contrat avec « bonus ! » = 3 points, pour faire apparaître l'identification des conditions de rupture d'échange (approche écologique)."}},
+
+{p:"Pédagogie de l'AMÉNAGEMENT DU MILIEU",
+ aut:{k:["Gréhaigne","Piaget","Parlebas"],r:"J.-F. Gréhaigne, Jean Piaget ; approche liée aux travaux de P. Parlebas sur la logique interne des APSA."},
+ th:{k:["constructivisme","didactique","écologique","contraintes"],r:"Constructivisme : l'élève construit en étant confronté à des problèmes. Science de l'intervention : didactique, approche écologique, théorie des contraintes."},
+ st:{k:["non-directif","guidé","aménage","chercher","expérimenter","décisions","matériel","règles"],r:"Non-directif / guidé : l'enseignant aménage la situation mais laisse l'élève chercher, expérimenter et prendre des décisions ; l'élève est guidé par le matériel ou les règles."},
+ tr:{k:["élève","savoir","apprendre","milieu"],r:"Axe élève–savoir : le prof agit en amont sur le milieu, l'élève construit en agissant dessus."},
+ ex:{k:["handball","démarquer","3 contre 3","zone","passe","espace"],r:"Handball, apprendre à se démarquer : jeu 3 contre 3 où le joueur sans ballon doit changer de zone après une passe, espace élargi. L'élève comprend que s'écarter et créer de l'espace facilite la réception."}},
+
+{p:"Pédagogie des EXPÉRIENCES SIGNIFICATIVES",
+ aut:{k:["Dewey","Montessori","Freinet"],r:"John Dewey (père de l'apprentissage expérientiel), Maria Montessori, Célestin et Élise Freinet (le « tâtonnement expérimental »)."},
+ th:{k:["expérientiel","réflexion sur l'expérience","recherche-action"],r:"L'apprentissage expérientiel : c'est la réflexion sur l'expérience qui génère l'apprentissage. Science de l'intervention : la recherche-action (le prof observe, évalue l'impact, ajuste sa posture, théorise sa pratique)."},
+ st:{k:["ne donne pas la solution","aménage","problèmes","cheminement réflexif","guide"],r:"L'enseignant ne donne pas la solution technique : il aménage le milieu, pose des problèmes et guide le cheminement réflexif de l'élève."},
+ tr:{k:["élève","savoir","apprendre"],r:"Axe élève–savoir : l'élève apprend de sa propre expérience, le prof accompagne la verbalisation."},
+ ex:{k:["course d'orientation","croisement","perd","carte","boussole","règle"],r:"Course d'orientation : l'élève hésite à un croisement, choisit au hasard, se perd. Le prof questionne (« que s'est-il passé au croisement ? »), l'élève verbalise, on formalise la règle — orienter la carte avec la boussole avant chaque décision — et il repart en l'appliquant."}},
+
+{p:"Pédagogie de la DÉCOUVERTE",
+ aut:{k:["Piaget","Dewey","Famose","Dhellemmes"],r:"En amont : J. Piaget, J. Dewey. En EPS : J.-P. Famose et R. Dhellemmes, avec les situations-problèmes."},
+ th:{k:["constructivisme","cognitiviste","hypothèses","dévolution","but","conditions","critères de réussite"],r:"Constructivisme : l'élève construit en agissant sur un milieu qui le met en déséquilibre ; versant cognitiviste, il émet des hypothèses et les teste. Psychologie cognitive et didactique des APSA, avec la dévolution du problème et une tâche définie par son but, ses conditions et ses critères de réussite."},
+ st:{k:["indirect","fixe le problème","choisit ses solutions","ni démonstration ni modèle","questions","règle d'action","mise en commun"],r:"Style indirect : l'enseignant fixe le problème, l'élève choisit ses solutions ; ni démonstration ni modèle au départ. Il aménage le milieu, observe, relance par des questions, puis fait formuler la règle d'action en mise en commun."},
+ tr:{k:["élève","savoir","apprendre"],r:"Axe élève–savoir, le processus « apprendre »."},
+ ex:{k:["badminton","fond de court","compte double","rétréci","allongé","reculer"],r:"Badminton : 1 contre 1 sur terrain rétréci en largeur et allongé, le fond de court compte double, aucune consigne technique. L'élève découvre qu'en envoyant loin derrière il fait reculer l'adversaire et gagne du temps. Réussite : trois points de suite en exploitant le fond de court."}},
+
+{p:"Pédagogie DIFFÉRENCIÉE",
+ aut:{k:["Meirieu","Perrenoud"],r:"Philippe Meirieu et Philippe Perrenoud."},
+ th:{k:["socio-constructivisme","Vygotski","interaction sociale","zone proximale de développement","seul","avec de l'aide"],r:"Socio-constructivisme (Vygotski) : l'apprentissage se fait par l'interaction sociale. La différenciation agit dans la zone proximale de développement, entre ce que l'élève sait faire seul et ce qu'il peut accomplir avec de l'aide."},
+ st:{k:["incitateur","coopératif","directif","trois styles","pairs","grande difficulté"],r:"Une composition de trois styles : incitateur (responsabiliser, faire chercher), coopératif (apprendre par les pairs), directif (guider pas à pas les élèves en grande difficulté)."},
+ tr:{k:["élève","savoir","formateur","étayage"],r:"Axe élève–savoir, avec un étayage du formateur ajusté à chacun (c'est le prof qui règle le niveau d'aide)."},
+ ex:{k:["course d'orientation","itinéraire","adaptée","lecture de carte","autonomie"],r:"Course d'orientation : réaliser un parcours en autonomie en optimisant la lecture de carte et le choix d'itinéraire, avec une difficulté d'itinéraire adaptée à chacun selon sa capacité de course ou d'orientation."}}
 ];
 
 var EXO=[
@@ -1248,6 +1317,7 @@ function variantHit(v,aNorm,words){
 function hash(s){var h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))&0x7fffffff;return 'q'+h.toString(36)}
 function indexQ(a){for(var i=0;i<a.length;i++){a[i].id=hash(norm(a[i].q));a[i].i=i}return a}
 indexQ(QM);indexQ(QF);indexQ(QC);indexQ(EXO);
+for(var ki=0;ki<CARTES.length;ki++)CARTES[ki].id=hash(norm(CARTES[ki].p));
 var ALLDEFS=[];
 for(var gi=0;gi<DEFS.length;gi++){for(var ii=0;ii<DEFS[gi].items.length;ii++){var it=DEFS[gi].items[ii];it.id=hash(norm(it.t));it.gi=gi;it.s=DEFS[gi].s;ALLDEFS.push(it)}}
 var LEVEL=(function(){try{return localStorage.getItem('peda_level')||'core'}catch(e){return 'core'}})();
@@ -1380,6 +1450,8 @@ function renderCoreHome(){
   h+='<button class="mode" onclick="start(\'all\')"><div class="t">✅ '+QCC.length+' QCM</div><div class="d">'+(qs?qs+' vues'+(qf?' · '+qf+' à revoir':''):'que du clic, 4 propositions')+'</div></button>';
   var xs=0,xf=0;
   for(var e=0;e<EXO.length;e++){var rx=ST[EXO[e].id];if(rx&&rx.seen){xs++;if(rx.fail)xf++}}
+  var cs=0;for(var cz=0;cz<CARTES.length;cz++){var rc2=ST[CARTES[cz].id];if(rc2&&rc2.seen&&!rc2.fail)cs++}
+  h+='<button class="mode" onclick="startCartes()"><div class="t">🗂 Cartes d\'identité</div><div class="d">'+(cs?cs+'/7 réussies':'les 7 pédagogies, 5 rubriques à remplir')+'</div></button>';
   h+='<button class="mode" onclick="startExo()"><div class="t">🎯 '+EXO.length+' exercices</div><div class="d">'+(xs?xs+' faits'+(xf?' · '+xf+' à revoir':''):'vrai/faux, situations à analyser, « qui l\'a dit ? »')+'</div></button>';
   h+='<button class="mode" onclick="start(\'fail\')"><div class="t">🔥 Mes ratées</div><div class="d">'+(qf+xf?(qf+xf)+' à reprendre':'rien en attente')+'</div></button>';
   $('modes').innerHTML=h;
@@ -1425,6 +1497,75 @@ function coreDefs(){
   var prev=LEVEL;LEVEL='defs';Q=pick('defs');
   startDefs(-2);
   if(S)S.back=prev;
+}
+/* ---------- Carte d'identité ---------- */
+function startCartes(){
+  var prev=LEVEL;LEVEL='carte';
+  S={cartes:true,queue:shuffle(CARTES.slice()),i:0,res:[],list:[],t0:Date.now(),loop:null,back:(prev==='carte'?'core':prev),done:0,total:CARTES.length};
+  $('home').classList.add('hide');$('done').classList.add('hide');$('quiz').classList.remove('hide');
+  showCard();
+}
+function showCard(){
+  if(S.i>=S.queue.length)return finishCartes();
+  var c=S.queue[S.i];
+  $('prog').style.width=Math.round(100*S.i/S.queue.length)+'%';
+  $('qmeta').innerHTML='<span class="tag">Carte d\'identité</span><span class="tag s">Séances 4-5</span><span class="tag s">'+(S.i+1)+'/'+S.queue.length+'</span>';
+  $('qtext').textContent=c.p;
+  $('qhint').textContent='Remplis les 5 rubriques de la grille — mots-clés suffisent.';
+  $('answerZone').classList.add('hide');$('qcmZone').classList.add('hide');$('defZone').classList.add('hide');$('corrZone').classList.add('hide');
+  $('cardZone').classList.remove('hide');
+  var h='';
+  for(var i=0;i<RUBS.length;i++)
+    h+='<div class="rub" id="rub_'+RUBS[i].id+'"><div class="rl">'+(i+1)+'. '+esc(RUBS[i].l)+'</div>'
+      +'<textarea id="ta_'+RUBS[i].id+'" placeholder="…"></textarea></div>';
+  $('cardBox').innerHTML=h;
+  $('cardActs').innerHTML='<button class="btn p" onclick="checkCard()">Corriger la carte</button>'
+    +'<button class="btn sm" onclick="revealCard()">Je sèche → tout afficher</button>'
+    +'<div class="spacer"></div><span class="kbd">⌘↵ corriger</span><button class="btn sm" onclick="home()">Quitter</button>';
+  var f=$('ta_aut');if(f)f.focus();
+  window.scrollTo(0,0);
+}
+function cardFill(blank){
+  var c=S.queue[S.i],tot=0,got=0;
+  for(var i=0;i<RUBS.length;i++){
+    var id=RUBS[i].id,ta=$('ta_'+id),a=ta?ta.value.trim():'',ev=blank?{ok:[],ko:c[id].k.slice(),pct:0,n:c[id].k.length}:evalDef({k:c[id].k},a);
+    tot+=ev.n;got+=ev.ok.length;
+    var box=$('rub_'+id);
+    box.className='rub '+(blank?'':(ev.pct>=50?'ok':'ko'));
+    var h='<div class="rl">'+(i+1)+'. '+esc(RUBS[i].l)+(blank?'':' — <b>'+ev.pct+'%</b>')+'</div>';
+    if(a)h+='<div class="mine">'+esc(a)+'</div>';
+    if(!blank){
+      h+='<div class="chips" style="margin:4px 0 0">';
+      for(var o=0;o<ev.ok.length;o++)h+='<span class="chip ok">✓ '+esc(ev.ok[o])+'</span>';
+      for(var k2=0;k2<ev.ko.length;k2++)h+='<span class="chip ko">✗ '+esc(ev.ko[k2])+'</span>';
+      h+='</div>';
+    }
+    h+='<div class="fb2">'+esc(c[id].r)+'</div>';
+    box.innerHTML=h;
+  }
+  var pct=tot?Math.round(100*got/tot):0;
+  var r=rowOf(c.id);r.seen=(r.seen||0)+1;r.best=Math.max(r.best||0,pct);r.fail=pct<60;r.last=pct+'%';save();
+  if(pct>=60)S.done++;
+  $('qhint').innerHTML='Score de la carte : <b style="color:'+(pct>=60?'var(--green)':'var(--orange)')+'">'+pct+'%</b> — '+got+'/'+tot+' éléments.';
+  $('cardActs').innerHTML='<button class="btn p" onclick="nextCard()">Carte suivante →</button>'
+    +'<button class="btn sm" onclick="showCard()">🔁 Refaire celle-ci</button>'
+    +'<div class="spacer"></div><button class="btn sm" onclick="home()">Quitter</button>';
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+}
+function checkCard(){cardFill(false)}
+function revealCard(){cardFill(true)}
+function nextCard(){S.i++;showCard()}
+function finishCartes(){
+  var sec=Math.round((Date.now()-S.t0)/1000);
+  document.querySelectorAll('#done .stat .k')[0].textContent='cartes';
+  document.querySelectorAll('#done .stat .k')[1].textContent='réussies';
+  document.querySelectorAll('#done .stat .k')[2].textContent='à refaire';
+  $('dTitle').textContent='Cartes d\'identité bouclées';
+  $('dPct').textContent=S.total;$('dOk').textContent=S.done;$('dKo').textContent=Math.max(0,S.total-S.done);
+  $('dTime').textContent=(sec>=60?Math.floor(sec/60)+'m'+(sec%60<10?'0':'')+(sec%60):sec+'s');
+  $('dList').innerHTML='<span class="chip ok">Grille : auteurs · théorie · style · triangle · exemple APSA</span>';
+  $('done').querySelector('.acts').innerHTML='<button class="btn p" onclick="startCartes()">🔁 Refaire les 7</button><div class="spacer"></div><button class="btn sm" onclick="home()">Accueil</button>';
+  $('quiz').classList.add('hide');$('done').classList.remove('hide');window.scrollTo(0,0);
 }
 function startExo(){
   var prev=LEVEL;LEVEL='exo';Q=EXO;
@@ -1839,6 +1980,10 @@ function stopMic(keepMsg){
 document.addEventListener('keydown',function(e){
   var quizOn=!$('quiz').classList.contains('hide');
   if(!quizOn)return;
+  if(!$('cardZone').classList.contains('hide')){
+    if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();checkCard()}
+    return;
+  }
   var defOn=!$('defZone').classList.contains('hide');
   if(defOn){
     var typing=!!$('defAns');
