@@ -67,6 +67,8 @@ textarea{width:100%;min-height:130px;background:var(--bg2);border:1px solid var(
 textarea:focus{border-color:var(--vio);box-shadow:0 0 0 3px rgba(139,92,246,.13)}
 .mic2{background:rgba(34,211,238,.14);border-color:rgba(34,211,238,.45);color:#7dd3fc}
 .mic2.on{background:rgba(251,113,133,.2);border-color:var(--red);color:#fda4af;animation:pulse 1.1s infinite}
+.defbox textarea{min-height:120px;margin:0}
+.defbox .mine{margin:6px 0 12px}
 .defbox{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--vio);border-radius:12px;padding:16px 18px;font-size:15px;line-height:1.62}
 .defbox .hidden{color:var(--dim2);font-style:italic}
 .pack{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 13px;cursor:pointer;font-family:inherit;color:var(--txt);text-align:left;width:100%;transition:.12s}
@@ -1174,6 +1176,18 @@ function defStat(){var m=0;for(var i=0;i<ALLDEFS.length;i++){var r=ST[ALLDEFS[i]
 var Q=pick(LEVEL);
 function setLevel(l){if(l===LEVEL)return;LEVEL=l;Q=pick(l);try{localStorage.setItem('peda_level',l)}catch(e){}renderHome();toast(l==='core'?'Essentiel uniquement':(l==='defs'?'Mode définitions : par paquets de 3 à 5':(l==='full'?'Mode complet : questions de synthèse':(l==='qcm'?'Mode QCM : tout le contenu':'Mode express : questions courtes'))))}
 
+function evalDef(q,ans){
+  var aNorm=norm(ans),words=aNorm.split(' ').filter(function(w){return w});
+  var ok=[],ko=[];
+  for(var i=0;i<q.k.length;i++){
+    var raw=q.k[i].replace(/<[^>]*>/g,''),toks=norm(raw).split(' '),need=[],got=0;
+    for(var j=0;j<toks.length;j++){if(toks[j].length>=4&&!/^[0-9]+$/.test(toks[j]))need.push(toks[j])}
+    if(!need.length)need=toks;
+    for(var n2=0;n2<need.length;n2++)if(wordHit(need[n2],words))got++;
+    (got>0&&got*2>=need.length?ok:ko).push(raw);
+  }
+  return {ok:ok,ko:ko,pct:q.k.length?Math.round(100*ok.length/q.k.length):0,n:q.k.length};
+}
 function thr(n){return n>=14?60:n>=10?68:75}
 function evaluate(q,ans){
   var aNorm=norm(ans),words=aNorm.split(' ').filter(function(w){return w});
@@ -1322,19 +1336,49 @@ function showDef(){
   $('qhint').textContent='Récite-la à voix haute, puis révèle pour vérifier.';
   $('answerZone').classList.add('hide');$('qcmZone').classList.add('hide');$('corrZone').classList.add('hide');
   $('defZone').classList.remove('hide');
-  $('defBox').innerHTML='<span class="hidden">Essaie de la restituer de mémoire…</span>';
-  $('defActs').innerHTML='<button class="btn p" onclick="revealDef()">Révéler</button><div class="spacer"></div><span class="kbd">↵ révéler</span><button class="btn sm" onclick="home()">Quitter</button>';
+  $('defBox').innerHTML='<textarea id="defAns" placeholder="Écris la définition de mémoire — mots-clés, auteur… pas besoin de faire des phrases."></textarea>';
+  $('defActs').innerHTML='<button class="btn p" onclick="checkDef()">Corriger</button>'
+    +'<button class="btn sm" onclick="revealDef()">Je sèche → révéler</button>'
+    +'<div class="spacer"></div><span class="kbd">⌘↵ corriger</span><button class="btn sm" onclick="home()">Quitter</button>';
+  var ta=$('defAns');if(ta)ta.focus();
   window.scrollTo(0,0);
 }
+function checkDef(){
+  var ta=$('defAns'),a=ta?ta.value.trim():'';
+  if(!a){revealDef();return}
+  var q=S.queue[0].it,ev=evalDef(q,a);
+  var col=ev.pct>=70?'var(--green)':ev.pct>=40?'var(--orange)':'var(--red)';
+  var h='<div class="score"><div class="pct" style="color:'+col+'">'+ev.pct+'%</div><div>'
+    +'<div class="verd" style="color:'+col+'">'+(ev.pct>=70?'Bien restituée':ev.pct>=40?'Incomplète':'À reprendre')+'</div>'
+    +'<div class="vsub">'+ev.ok.length+' / '+ev.n+' points-clés retrouvés</div></div></div>';
+  h+='<div class="chips" style="margin:0 0 12px">';
+  for(var i=0;i<ev.ok.length;i++)h+='<span class="chip ok">✓ '+esc(ev.ok[i])+'</span>';
+  for(var j=0;j<ev.ko.length;j++)h+='<span class="chip ko">✗ '+esc(ev.ko[j])+'</span>';
+  h+='</div>';
+  h+='<div class="lbl">Ce que tu as écrit</div><div class="mine">'+esc(a)+'</div>';
+  h+='<div class="lbl">La définition</div>'+esc(q.d);
+  $('defBox').innerHTML=h;
+  gradeButtons(ev.pct);
+  if(ta)ta.blur();
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+}
 function revealDef(){
-  var q=S.queue[0].it,h=esc(q.d);
+  var q=S.queue[0].it,ta=$('defAns'),a=ta?ta.value.trim():'';
+  var h='';
+  if(a)h+='<div class="lbl">Ce que tu as écrit</div><div class="mine">'+esc(a)+'</div><div class="lbl">La définition</div>';
+  h+=esc(q.d);
   if(q.k&&q.k.length){
     h+='<div class="chips" style="margin:12px 0 0">';
     for(var i=0;i<q.k.length;i++)h+='<span class="chip ok">'+esc(q.k[i])+'</span>';
     h+='</div>';
   }
   $('defBox').innerHTML=h;
-  $('defActs').innerHTML='<button class="btn g sm" onclick="gradeDef(2)">✓ Je savais</button>'
+  gradeButtons(-1);
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+}
+function gradeButtons(pct){
+  var sug=pct>=70?2:(pct>=40?1:0);
+  $('defActs').innerHTML='<button class="btn g sm'+(sug===2?' p':'')+'" onclick="gradeDef(2)">✓ Je savais</button>'
     +'<button class="btn sm" onclick="gradeDef(1)">~ Presque</button>'
     +'<button class="btn r sm" onclick="gradeDef(0)">✗ Pas du tout</button>'
     +'<div class="spacer"></div><span class="kbd">1 2 3</span><button class="btn sm" onclick="home()">Quitter</button>';
@@ -1654,10 +1698,11 @@ document.addEventListener('keydown',function(e){
   if(!quizOn)return;
   var defOn=!$('defZone').classList.contains('hide');
   if(defOn){
-    var revealed=$('defBox').innerHTML.indexOf('class="hidden"')<0;
-    if(!revealed&&(e.key==='Enter'||e.key===' ')){e.preventDefault();revealDef();return}
-    if(revealed&&(e.key==='1'||e.key==='2'||e.key==='3')){e.preventDefault();gradeDef(e.key==='1'?2:(e.key==='2'?1:0));return}
-    if(revealed&&e.key==='Enter'){e.preventDefault();gradeDef(2);return}
+    var typing=!!$('defAns');
+    if(typing&&(e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();checkDef();return}
+    if(typing)return;
+    if(e.key==='1'||e.key==='2'||e.key==='3'){e.preventDefault();gradeDef(e.key==='1'?2:(e.key==='2'?1:0));return}
+    if(e.key==='Enter'){e.preventDefault();gradeDef(2);return}
     return;
   }
   var qcmOn=!$('qcmZone').classList.contains('hide');
