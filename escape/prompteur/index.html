@@ -68,14 +68,14 @@ button.on{background:#ffd8a0;color:#000;border-color:#ffd8a0}
 <div id="line"></div>
 <div id="cd">3</div>
 
-<div id="hint">Espace lire · ↑↓ vitesse · F plein écran</div>
+<div id="hint">Espace lire · ↑↓ durée · F plein écran</div>
 <div id="clock">00:00</div>
 
 <div id="bar">
   <button class="main" id="play">Lire</button>
-  <button id="slower">− Vitesse</button>
-  <span class="val" id="spd">28</span>
-  <button id="faster">+ Vitesse</button>
+  <button id="slower">− Lent</button>
+  <span class="val" id="spd">65 s</span>
+  <button id="faster">+ Rapide</button>
   <button id="smaller">− Texte</button>
   <button id="bigger">+ Texte</button>
   <button id="mirror">Miroir</button>
@@ -123,10 +123,11 @@ var SCRIPT = [
 })();
 
 /* ------- defilement ------- */
-var y = 0, speed = 28, running = false, last = 0, t0 = null, elapsed = 0;
-var maxY = 0;
+var y = 0, speed = 0, running = false, last = 0, t0 = null, elapsed = 0;
+var maxY = 0, duration = 65;          /* la duree voulue, en secondes */
 function measure(){
   maxY = Math.max(0, $("text").scrollHeight - innerHeight * .34);
+  speed = maxY / duration;            /* la vitesse en decoule */
 }
 measure(); addEventListener("resize", function(){ measure(); apply(); });
 
@@ -178,29 +179,34 @@ function countdown(){
 function reset(){
   stop(); y = 0; elapsed = 0; t0 = null; apply();
   $("play").textContent = "Lire";
-  $("clock").textContent = "00:00";
+  $("clock").textContent = "00:00  ·  reste " + mmss(duration);
 }
 
+function mmss(s){
+  s = Math.max(0, Math.round(s));
+  return ("0" + Math.floor(s/60)).slice(-2) + ":" + ("0" + (s%60)).slice(-2);
+}
 setInterval(function(){
   var ms = t0 !== null ? Date.now() - t0 : elapsed;
-  var s = Math.floor(ms / 1000);
-  $("clock").textContent = ("0" + Math.floor(s/60)).slice(-2) + ":" + ("0" + (s%60)).slice(-2);
-}, 400);
+  var left = speed > 0 ? (maxY - y)/speed : duration;
+  $("clock").textContent = mmss(ms/1000) + "  ·  reste " + mmss(left);
+}, 300);
 
 /* ------- reglages ------- */
-function setSpeed(v){
-  speed = Math.max(8, Math.min(120, v));
-  $("spd").textContent = Math.round(speed);
+function setDuration(v){
+  duration = Math.max(25, Math.min(180, v));
+  measure();
+  $("spd").textContent = Math.round(duration) + " s";
 }
 var size = 5.4;
 function setSize(v){
   size = Math.max(2.6, Math.min(11, v));
   body.style.setProperty("--size", size.toFixed(2) + "vmin");
-  measure();
+  measure();                          /* la vitesse se reajuste toute seule */
 }
 $("play").addEventListener("click", function(e){ e.stopPropagation(); toggle(); });
-$("slower").addEventListener("click", function(e){ e.stopPropagation(); setSpeed(speed - 3); });
-$("faster").addEventListener("click", function(e){ e.stopPropagation(); setSpeed(speed + 3); });
+$("slower").addEventListener("click", function(e){ e.stopPropagation(); setDuration(duration + 5); });
+$("faster").addEventListener("click", function(e){ e.stopPropagation(); setDuration(duration - 5); });
 $("smaller").addEventListener("click", function(e){ e.stopPropagation(); setSize(size - .5); });
 $("bigger").addEventListener("click", function(e){ e.stopPropagation(); setSize(size + .5); });
 $("reset").addEventListener("click", function(e){ e.stopPropagation(); reset(); });
@@ -222,8 +228,8 @@ $("stage").addEventListener("click", toggle);
 document.addEventListener("keydown", function(e){
   var k = e.key;
   if (e.code === "Space"){ e.preventDefault(); toggle(); return; }
-  if (k === "ArrowUp"){ e.preventDefault(); setSpeed(speed + 3); return; }
-  if (k === "ArrowDown"){ e.preventDefault(); setSpeed(speed - 3); return; }
+  if (k === "ArrowUp"){ e.preventDefault(); setDuration(duration - 5); return; }
+  if (k === "ArrowDown"){ e.preventDefault(); setDuration(duration + 5); return; }
   if (k === "ArrowLeft"){ e.preventDefault(); y = Math.max(0, y - innerHeight*.2); apply(); return; }
   if (k === "ArrowRight"){ e.preventDefault(); y = Math.min(maxY, y + innerHeight*.2); apply(); return; }
   var l = k.toLowerCase();
@@ -234,7 +240,7 @@ document.addEventListener("keydown", function(e){
   if (l === "-"){ e.preventDefault(); setSize(size - .5); }
 });
 
-setSpeed(28); setSize(5.4); apply();
+setDuration(65); setSize(5.4); apply();
 })();
 </script>
 </body>
