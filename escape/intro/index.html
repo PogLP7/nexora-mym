@@ -160,9 +160,15 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
   background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,.85),transparent 72%);
   filter:blur(1.4vmin)}
 
+/* les ages de la vie passent au fond, de gauche a droite */
+.passer{opacity:0;filter:blur(2.5px)}
+.passer.go{animation:cross 9s linear forwards}
+@keyframes cross{0%{opacity:0;transform:translateX(-160px)}8%{opacity:.5}
+  88%{opacity:.5}100%{opacity:0;transform:translateX(1760px)}}
+
 /* ================= TEXTE ================= */
 #subs{position:fixed;left:0;right:0;bottom:10%;z-index:13;text-align:center;padding:0 7vw}
-#sub{display:inline-block;font-size:min(4vmin,5.4vw);font-weight:300;line-height:1.38;
+#sub{display:inline-block;font-size:min(3.7vmin,5vw);font-weight:300;line-height:1.44;max-width:72ch;
   color:#f4f1ea;text-shadow:0 .4vmin 2.6vmin rgba(0,0,0,.95),0 0 .8vmin rgba(0,0,0,.8);opacity:0}
 #sub.on{animation:subIn .8s cubic-bezier(.16,1,.3,1) forwards}
 #sub.off{animation:subOut .5s ease-in forwards}
@@ -295,6 +301,44 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
 
 <div id="cam">
 
+  <!-- ===== LA CHAMBRE ===== -->
+  <div class="set" id="set-bed">
+    <div class="layer lit" id="bedLayer">
+      <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="nightwall" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#11141f"/><stop offset="1" stop-color="#060709"/></linearGradient>
+          <radialGradient id="moonhalo"><stop offset="0" stop-color="#dfe6f2" stop-opacity=".5"/>
+            <stop offset="1" stop-color="#dfe6f2" stop-opacity="0"/></radialGradient>
+        </defs>
+        <rect width="1600" height="900" fill="url(#nightwall)"/>
+        <!-- fenetre, lune, rideau -->
+        <rect x="1020" y="110" width="360" height="430" rx="4" fill="#0b1424" stroke="#2b3042" stroke-width="5"/>
+        <line x1="1200" y1="110" x2="1200" y2="540" stroke="#2b3042" stroke-width="5"/>
+        <line x1="1020" y1="325" x2="1380" y2="325" stroke="#2b3042" stroke-width="5"/>
+        <circle cx="1255" cy="235" r="86" fill="url(#moonhalo)"/>
+        <circle cx="1255" cy="235" r="44" fill="#e9e6d8"/>
+        <circle cx="1241" cy="226" r="9" fill="#cfccbd"/><circle cx="1268" cy="248" r="6" fill="#d6d3c4"/>
+        <path d="M1035 150 q40 190 0 380 l-45 20 l0 -430 z" fill="#171a28" opacity=".9"/>
+        <path d="M1368 150 q-36 190 0 380 l40 18 l0 -420 z" fill="#161926" opacity=".9"/>
+        <!-- cadre au mur -->
+        <rect x="320" y="200" width="150" height="110" fill="#10131c" stroke="#2a2e3d" stroke-width="4" transform="rotate(-2 395 255)"/>
+        <!-- table de chevet et reveil -->
+        <rect x="1150" y="660" width="250" height="26" rx="4" fill="#1a1512"/>
+        <rect x="1168" y="686" width="20" height="90" fill="#140f0c"/>
+        <rect x="1360" y="686" width="20" height="90" fill="#140f0c"/>
+        <rect x="1216" y="596" width="128" height="62" rx="8" fill="#0d0e12" stroke="#23242c" stroke-width="3"/>
+        <text id="wakeTime" x="1280" y="640" text-anchor="middle" font-family="ui-monospace,Menlo,monospace"
+              font-size="34" font-weight="700" style="fill:#c23b2e" opacity=".92">23:47</text>
+        <!-- le lit, au premier plan -->
+        <path d="M-20 900 L-20 710 Q 240 668 520 690 Q 760 706 980 750 L1040 900 Z" fill="#0c0e14"/>
+        <path d="M-20 736 Q 200 700 430 714" stroke="#1d2130" stroke-width="7" fill="none" opacity=".8"/>
+        <path d="M60 790 Q 300 756 560 776" stroke="#1a1e2b" stroke-width="6" fill="none" opacity=".7"/>
+        <ellipse cx="150" cy="700" rx="150" ry="46" fill="#171b29"/>
+      </svg>
+    </div>
+  </div>
+
   <!-- ===== LA PORTE ===== -->
   <div class="set" id="set-door">
     <div class="layer lit" id="doorLayer">
@@ -400,6 +444,30 @@ body.ag2 #chalkMarks{opacity:.16} body.ag3 #chalkMarks{opacity:.09} body.ag4 #ch
         <g opacity=".5">
           <polygon points="84,250 310,250 700,900 240,900" fill="url(#godray)" opacity=".5"/>
           <polygon points="120,300 300,300 620,900 300,900" fill="url(#godray)" opacity=".4"/></g>
+      </svg>
+    </div>
+
+    <div class="layer lit" id="passers">
+      <svg class="art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g transform="translate(0 585)">
+          <g id="pass1" class="passer">
+            <circle cx="0" cy="-118" r="24" fill="#050507"/>
+            <path d="M-20 -98 Q0 -112 20 -98 L26 -30 L12 -30 L8 0 L-8 0 L-12 -30 L-26 -30 Z" fill="#050507"/>
+          </g>
+        </g>
+        <g transform="translate(0 585)">
+          <g id="pass2" class="passer">
+            <circle cx="0" cy="-212" r="27" fill="#050507"/>
+            <path d="M-30 -186 Q0 -200 30 -186 L38 -80 L18 -80 L12 0 L-12 0 L-18 -80 L-38 -80 Z" fill="#050507"/>
+          </g>
+        </g>
+        <g transform="translate(0 585)">
+          <g id="pass3" class="passer">
+            <circle cx="14" cy="-160" r="25" fill="#050507"/>
+            <path d="M-10 -142 Q24 -166 40 -128 Q50 -96 44 -60 L30 0 L8 0 L10 -54 L-16 -60 Q-28 -110 -10 -142 Z" fill="#050507"/>
+            <rect x="52" y="-96" width="6" height="98" rx="3" fill="#050507" transform="rotate(7 55 -96)"/>
+          </g>
+        </g>
       </svg>
     </div>
 
@@ -564,7 +632,8 @@ function audio(){
   bus = AC.createDynamicsCompressor();
   bus.threshold.value = -15; bus.knee.value = 22; bus.ratio.value = 3.6;
   bus.attack.value = .005; bus.release.value = .2;
-  bus.connect(AC.destination);
+  /* ?mute dans l'adresse : tout le film tourne, aucun son ne sort (tests) */
+  if (!/[?&]mute/.test(location.search)) bus.connect(AC.destination);
 
   /* tout le son passe par la : en fermant ce filtre, on etouffe la piece */
   choke = AC.createBiquadFilter(); choke.type = "lowpass";
@@ -1325,7 +1394,7 @@ function shake(amp, ms){
     css("--shk", rnd(-amp, amp).toFixed(2) + "px");
   }, 32);
 }
-function set(id){ ["set-door","set-room"].forEach(function(s){ $(s).classList.toggle("on", s === id); }); }
+function set(id){ ["set-bed","set-door","set-room"].forEach(function(s){ $(s).classList.toggle("on", s === id); }); }
 function torchOn(el, on){ $(el).classList.toggle("torch", on); }
 function blast(kind){
   var f = $("flash");
@@ -1362,19 +1431,17 @@ function ageStage(n){
 /* reperes des phrases dans narration.m4a, mesures sur le fichier */
 var VOFF = 1300;
 var SUBS = [
-  [ 300,  "Demain, c\u2019est mon premier cours d\u2019enseignant en APA,"],
-  [3540,  "et je ne sais plus par o\u00f9 commencer."],
-  [6340,  "Je m\u2019endors\u2026"],
-  [8140,  "Me voil\u00e0 dans un r\u00eave, enferm\u00e9 dans une pi\u00e8ce o\u00f9 rien ne s\u2019ouvre."],
-  [9240,  "L\u00e0, une vieille dame m\u2019attend, l\u2019air perdu :"],
-  [12920, "\u00ab Je ne retrouve plus mes lunettes. Sans elles, je ne vois plus rien\u2026 \u00bb"],
-  [15640, "Une voix murmure alors :"],
-  [19300, "\u00ab Ici, on avance en descendant et en poussant."],
-  [23040, "Cinq cents fois, et la porte s\u2019ouvrira ailleurs. \u00bb"],
-  [25820, "Votre mission : retrouver ses lunettes avant la fin du r\u00eave."],
-  [31040, "Pour y arriver, il faudra comprendre comment l\u2019\u00eatre humain change,"],
-  [34240, "grandit et se transforme \u00e0 chaque \u00e2ge de la vie,"],
-  [38740, "de la conception jusqu\u2019\u00e0 la fin de vie."]
+  [ 1600, "Demain, c\u2019est mon premier cours d\u2019enseignant en APA,"],
+  [ 4840, "et je ne sais plus par o\u00f9 commencer."],
+  [ 7640, "Je m\u2019endors\u2026"],
+  [ 9440, "Me voil\u00e0 dans un r\u00eave, enferm\u00e9 dans une pi\u00e8ce o\u00f9 rien ne s\u2019ouvre. L\u00e0, une vieille dame m\u2019attend, l\u2019air perdu :"],
+  [14220, "\u00ab Je ne retrouve plus mes lunettes. Sans elles, je ne vois plus rien\u2026 \u00bb"],
+  [17800, "Une voix murmure alors :"],
+  [20600, "\u00ab Ici, on avance en descendant et en poussant."],
+  [24340, "Cinq cents fois, et la porte s\u2019ouvrira ailleurs. \u00bb"],
+  [26300, "Votre mission : retrouver ses lunettes avant la fin du r\u00eave."],
+  [31500, "Pour y arriver, il faudra comprendre comment l\u2019\u00eatre humain change, grandit et se transforme \u00e0 chaque \u00e2ge de la vie,"],
+  [39200, "de la conception jusqu\u2019\u00e0 la fin de vie."]
 ];
 
 function run(){
@@ -1384,7 +1451,15 @@ function run(){
   SUBS.forEach(function(sline){ at(VOFF + sline[0], function(){ say(sline[1]); }); });
 
   /* ----- la chambre : une lueur de chevet, puis le sommeil ----- */
-  at(400,  function(){ $("bedglow").classList.add("on"); fade(0, 1200); breath(.07); });
+  at(400,  function(){
+    set("set-bed"); lum(.62);
+    $("bedglow").classList.add("on");
+    fade(0, 1400); breath(.07);
+    cam("0px","0px",1.07,0,8200);
+  });
+  at(VOFF + 5600, function(){ var w = $("wakeTime"); if (w) w.textContent = "23:48"; tick(false, .04); });
+  at(VOFF + 6600, function(){ lum(.34); });
+  at(VOFF + 7000, function(){ lum(.15); });
   at(VOFF + 6340, function(){ $("bedglow").classList.remove("on"); dripsStart(); });
   at(VOFF + 7100, function(){
     $("tunnel").classList.add("on");
@@ -1454,6 +1529,9 @@ function run(){
 
   /* ----- les ages de la vie : le lieu vieillit ----- */
   at(VOFF + 31040, function(){ ageStage(1); cSpeed = 2; heartStart(1150, .15); });
+  at(VOFF + 31400, function(){ $("pass1").classList.add("go"); });
+  at(VOFF + 34100, function(){ $("pass2").classList.add("go"); });
+  at(VOFF + 36800, function(){ $("pass3").classList.add("go"); });
   var ages = [
     [35000, "0",  1,  3],
     [36900, "20", 1,  6],
