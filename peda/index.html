@@ -1146,10 +1146,23 @@ function $(i){return document.getElementById(i)}
 function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/['’`]/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim()}
 function lev(a,b){var m=a.length,n=b.length,i,j,p=[],c=[];if(!m)return n;if(!n)return m;for(j=0;j<=n;j++)p[j]=j;
  for(i=1;i<=m;i++){c[0]=i;for(j=1;j<=n;j++){c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a.charAt(i-1)===b.charAt(j-1)?0:1))}for(j=0;j<=n;j++)p[j]=c[j]}return p[n]}
+function stemHit(a,b){
+  if(a.length<5||b.length<5)return false;
+  if(Math.abs(a.length-b.length)>5)return false;
+  var n=Math.min(a.length,b.length),i=0;
+  while(i<n&&a.charAt(i)===b.charAt(i))i++;
+  if(i<5)return false;
+  return i/n>=0.6;
+}
 function wordHit(w,words){
   if(w.length<4){for(var i=0;i<words.length;i++)if(words[i]===w)return true;return false}
   var tol=w.length>=8?2:1;
-  for(var k=0;k<words.length;k++){var x=words[k];if(x===w)return true;if(Math.abs(x.length-w.length)<=tol&&lev(x,w)<=tol)return true}
+  for(var k=0;k<words.length;k++){
+    var x=words[k];
+    if(x===w)return true;
+    if(Math.abs(x.length-w.length)<=tol&&lev(x,w)<=tol)return true;
+    if(stemHit(x,w))return true;
+  }
   return false;
 }
 function variantHit(v,aNorm,words){
