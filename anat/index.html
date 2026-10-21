@@ -145,11 +145,13 @@ nav::-webkit-scrollbar{display:none}
 /* nav mobile (bas) */
 #bnav{display:none}
 @media(max-width:700px){
-  #bnav{display:grid;grid-template-columns:repeat(7,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;
+  #bnav{display:grid;grid-template-columns:repeat(8,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;
     background:var(--bg);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
-  #bnav button{background:transparent;border:0;color:var(--ink3);cursor:pointer;padding:6px 2px;border-radius:var(--rs);
-    display:flex;flex-direction:column;align-items:center;gap:3px;font:600 8.8px/1 var(--fb);transition:.16s var(--ease)}
-  #bnav button .ic{font-size:16px;line-height:1}
+  #bnav button{background:transparent;border:0;color:var(--ink3);cursor:pointer;padding:6px 1px;border-radius:var(--rs);
+    display:flex;flex-direction:column;align-items:center;gap:3px;font:600 8px/1 var(--fb);transition:.16s var(--ease);
+    overflow:hidden;white-space:nowrap}
+  #bnav button .ic{font-size:15px;line-height:1}
+  @media(max-width:360px){#bnav button{font-size:7.2px}#bnav button .ic{font-size:14px}}
   #bnav button.on{color:var(--brand)}
   [data-theme="noir"] #bnav button.on{color:#000;font-weight:800}
   #bnav button:active{transform:scale(.9)}
@@ -525,6 +527,72 @@ footer{max-width:var(--w);margin:0 auto;padding:30px 18px 10px;text-align:center
 .h3dgo:hover{transform:translateY(-1px)}
 @media(max-width:640px){.h3d{height:clamp(280px,48vh,380px);border-radius:var(--r)}
   .h3dinfo span{font-size:12px}}
+.h3dseg{display:flex;gap:3px;pointer-events:auto;margin-left:auto;background:var(--surfi);
+  border:1px solid var(--line2);border-radius:999px;padding:3px}
+.h3dseg button{border:0;background:transparent;color:var(--ink3);border-radius:999px;
+  padding:6px 11px;font:700 10px/1 var(--fm);letter-spacing:.06em;text-transform:uppercase;
+  cursor:pointer;transition:.18s var(--ease);white-space:nowrap}
+.h3dseg button:hover{color:var(--ink)}
+.h3dseg button.on{background:var(--brand);color:var(--brandink)}
+.h3dmus{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.h3dmchip{border:1px solid var(--line2);background:var(--surf2);color:var(--ink2);border-radius:999px;
+  padding:7px 11px;font:650 11.5px/1 var(--fb);cursor:pointer;transition:.18s var(--ease)}
+.h3dmchip:hover{color:var(--ink);border-color:var(--brand)}
+.h3dmchip.on{background:var(--brand);border-color:var(--brand);color:var(--brandink)}
+@media(max-width:640px){.h3dtop{gap:7px}.h3dseg button{padding:6px 9px;font-size:9.5px}}
+/* ---------- SCHÉMAS ---------- */
+.scbar{display:flex;gap:7px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none}
+.scbar::-webkit-scrollbar{display:none}
+.scchip{flex:0 0 auto;border:1px solid var(--line2);background:var(--surf);color:var(--ink2);
+  border-radius:999px;padding:9px 14px;font:650 12.5px/1 var(--fb);cursor:pointer;
+  transition:.18s var(--ease);white-space:nowrap}
+.scchip:hover{color:var(--ink);border-color:var(--brand)}
+.scchip.on{background:var(--brand);border-color:var(--brand);color:var(--brandink)}
+.scwrap{border:1px solid var(--line);border-radius:var(--r);background:var(--surfi);
+  padding:12px;display:flex;justify-content:center}
+.scsvg{width:100%;max-width:440px;height:auto;display:block;touch-action:manipulation}
+.sgb,.sgb2{fill:var(--surf2);stroke:var(--ink3);stroke-width:2.2;stroke-linejoin:round}
+.sgh{fill:var(--wash);stroke:var(--ink3);stroke-width:2.2;stroke-linejoin:round}
+.sgm{fill:var(--surf2);stroke:var(--ink2);stroke-width:2;stroke-dasharray:4 3}
+.sgcolo{fill:none;stroke:var(--ink3);stroke-width:34;stroke-linecap:round}
+.sgcol{fill:none;stroke:var(--surf2);stroke-width:30;stroke-linecap:round}
+.sgd{fill:none;stroke:var(--ink3);stroke-width:30;stroke-linecap:butt;stroke-dasharray:2 12;opacity:.5}
+.sgb{stroke:var(--ink3)}
+.sgax{stroke:var(--ink3);stroke-width:1.4;opacity:.45;fill:none}
+.sgt{fill:var(--ink3);font:600 11px var(--fm);letter-spacing:.1em;text-transform:uppercase}
+.sgr{stroke:var(--ink3);stroke-width:1.6;opacity:.4}
+.sgr2{stroke:var(--brand3);stroke-width:3.4;opacity:.9}
+.sgr3{stroke:var(--brand2);stroke-width:3.4;opacity:.9}
+.sgr4{stroke:var(--brand);stroke-width:3.4;opacity:.9}
+.scld{stroke:var(--brand);stroke-width:1.6;opacity:.6}
+.scmk{cursor:pointer}
+.scmk circle{fill:var(--surf);stroke:var(--brand);stroke-width:2.4;transition:.2s var(--ease)}
+.scmk text{fill:var(--ink);font:700 14px var(--fm);text-anchor:middle;pointer-events:none}
+.scmk:hover circle{fill:var(--brand)}
+.scmk:hover text{fill:var(--brandink)}
+.scmk.ok circle{fill:var(--ok);stroke:var(--ok)}
+.scmk.ok text{fill:var(--bg)}
+.scmk.no circle{fill:var(--bad);stroke:var(--bad)}
+.scmk.hot circle{fill:var(--brand);stroke:var(--brand)}
+.scmk.hot text{fill:var(--brandink)}
+.sclist{margin-top:16px;display:grid;gap:8px}
+.scli{display:flex;gap:12px;align-items:flex-start;padding:11px 13px;border-radius:var(--rs);
+  border:1px solid var(--line);background:var(--surfi);cursor:pointer;transition:.18s var(--ease)}
+.scli:hover{border-color:var(--brand)}
+.scli.hot{border-color:var(--brand);background:var(--surf2)}
+.scli b{flex:0 0 24px;height:24px;border-radius:999px;background:var(--brand);color:var(--brandink);
+  display:flex;align-items:center;justify-content:center;font:700 12px var(--fm)}
+.scli span{display:block;font-size:14px;font-weight:650;line-height:1.4}
+.scli em{display:block;font-style:normal;font-size:12.5px;line-height:1.5;color:var(--ink2);margin-top:3px}
+.scbankhd{display:flex;align-items:center;gap:12px;margin:18px 0 10px;
+  font:600 11px/1.4 var(--fm);letter-spacing:var(--caps);text-transform:uppercase;color:var(--ink3)}
+.scbankhd .scscore{margin-left:auto;color:var(--brand);white-space:nowrap}
+.scbank{display:flex;flex-wrap:wrap;gap:8px}
+.scbl{border:1px solid var(--line2);background:var(--surf);color:var(--ink);border-radius:999px;
+  padding:10px 14px;font:650 13px/1 var(--fb);cursor:pointer;transition:.18s var(--ease)}
+.scbl:hover{border-color:var(--brand)}
+.scbl.on{background:var(--brand);border-color:var(--brand);color:var(--brandink);transform:translateY(-1px)}
+@media(max-width:640px){.scsvg{max-width:100%}.scli span{font-size:13.5px}}
 </style>
 </head>
 <body>
@@ -553,6 +621,7 @@ footer{max-width:var(--w);margin:0 auto;padding:30px 18px 10px;text-align:center
     <button class="tab" data-t="flash">Flashcards <span class="n" id="nflash">0</span></button>
     <button class="tab" data-t="qcm">QCM</button>
     <button class="tab" data-t="exam">Contrôle blanc</button>
+    <button class="tab" data-t="schemas">Schémas</button>
     <button class="tab" data-t="fiches">Fiches</button>
     <button class="tab" data-t="auteurs">Muscles</button>
   </nav>
@@ -565,6 +634,7 @@ footer{max-width:var(--w);margin:0 auto;padding:30px 18px 10px;text-align:center
   <section class="panel" id="p-flash"></section>
   <section class="panel" id="p-qcm"></section>
   <section class="panel" id="p-exam"></section>
+  <section class="panel" id="p-schemas"></section>
   <section class="panel" id="p-fiches"></section>
   <section class="panel" id="p-auteurs"></section>
   <footer>Anatomie et anatomie fonctionnelle · L2 APA · L. Fradet — contrôle intermédiaire du 23/10</footer>
@@ -576,6 +646,7 @@ footer{max-width:var(--w);margin:0 auto;padding:30px 18px 10px;text-align:center
   <button data-t="flash"><span class="ic">⚡</span>Flash</button>
   <button data-t="qcm"><span class="ic">◉</span>QCM</button>
   <button data-t="exam"><span class="ic">✎</span>Contrôle</button>
+  <button data-t="schemas"><span class="ic">◱</span>Schémas</button>
   <button data-t="fiches"><span class="ic">▤</span>Fiches</button>
   <button data-t="auteurs"><span class="ic">✱</span>Muscles</button>
 </div>
@@ -2029,7 +2100,239 @@ function xTick(){
   c.textContent=(XR.i+1)+" / "+XR.q.length+"　·　"+mmss(Math.floor((Date.now()-XR.t0)/1000));
 }
 /* ============ NAVIGATION ============ */
-var R={cockpit:renderCockpit,express:renderExpress,flash:renderFlash,qcm:renderQCM,exam:renderExam,fiches:renderFiches,auteurs:renderAuteurs};
+/* ============ SCHÉMAS À COMPLÉTER ============ */
+var SCHEMAS=[
+{t:"Le rachis de profil",c:"c1",vb:"0 0 280 470",
+ art:'<path class="sgcolo" d="M152 34 C 166 72, 146 98, 136 126 C 120 172, 114 222, 126 266 C 136 304, 146 332, 158 358"/>'+'<path class="sgcol" d="M152 34 C 166 72, 146 98, 136 126 C 120 172, 114 222, 126 266 C 136 304, 146 332, 158 358"/>'+
+     '<path class="sgd" d="M152 34 C 166 72, 146 98, 136 126 C 120 172, 114 222, 126 266 C 136 304, 146 332, 158 358"/>'+
+     '<path class="sgb2" d="M146 356 L176 362 L170 410 L150 424 L140 404 Z"/>'+
+     '<path class="sgb2" d="M150 424 L166 420 L160 446 L148 444 Z"/>'+
+     '<path class="sgax" d="M196 30 L196 452" stroke-dasharray="5 6"/>'+
+     '<text class="sgt" x="206" y="44">avant</text><text class="sgt" x="24" y="44">arrière</text>',
+ pts:[{x:186,y:70,l:"Lordose cervicale",d:"Convexité antérieure, 7 vertèbres."},
+      {x:92,y:196,l:"Cyphose thoracique",d:"Convexité postérieure, 12 vertèbres."},
+      {x:176,y:318,l:"Lordose lombale",d:"Convexité antérieure, 5 vertèbres."},
+      {x:110,y:410,l:"Cyphose sacrale",d:"Sacrum = fusion de 5 vertèbres."},
+      {x:152,y:40,l:"C1 — atlas",d:"Avec l’occiput : le mouvement du « oui ». Avec C2 : le « non »."},
+      {x:134,y:128,l:"T1",d:"Première thoracique : début des côtes."},
+      {x:132,y:290,l:"L1",d:"Première lombaire : les vertèbres sont les plus grosses, la charge est maximale."},
+      {x:160,y:388,l:"Sacrum",d:"Fusion de 5 vertèbres, s’articule avec les os coxaux (sacro-iliaques)."},
+      {x:156,y:440,l:"Coccyx",d:"Fusion de 3 à 5 vertèbres."},
+      {x:118,y:238,l:"Disque intervertébral",d:"Noyau pulpeux gélatineux + anneau fibreux."}]},
+
+{t:"Vertèbre, vue supérieure",c:"c1",vb:"0 0 380 320",
+ art:'<ellipse class="sgb" cx="190" cy="92" rx="86" ry="52"/>'+
+     '<path class="sgb" d="M118 124 L92 168 L140 196 L190 206 L240 196 L288 168 L262 124 L228 150 L152 150 Z"/>'+
+     '<ellipse class="sgh" cx="190" cy="160" rx="54" ry="36"/>'+
+     '<path class="sgb" d="M178 206 L202 206 L198 276 L190 288 L182 276 Z"/>'+
+     '<path class="sgb" d="M92 168 L28 150 L24 176 L88 190 Z"/>'+
+     '<path class="sgb" d="M288 168 L352 150 L356 176 L292 190 Z"/>'+
+     '<ellipse class="sgb" cx="126" cy="186" rx="22" ry="14"/>'+
+     '<ellipse class="sgb" cx="254" cy="186" rx="22" ry="14"/>'+
+     '<text class="sgt" x="162" y="24">avant</text><text class="sgt" x="158" y="310">arrière</text>',
+ pts:[{x:190,y:92,l:"Corps vertébral",d:"Partie antérieure, porte la charge. Relié au suivant par le disque intervertébral."},
+      {x:190,y:160,l:"Foramen vertébral",d:"L’empilement des foramens forme le canal vertébral."},
+      {x:120,y:132,l:"Pédicule",d:"Relie le corps vertébral à l’arc postérieur."},
+      {x:236,y:176,l:"Lame",d:"Partie postérieure de l’arc, va du pédicule au processus épineux."},
+      {x:190,y:272,l:"Processus épineux",d:"Repère palpable dans le dos. Insertion des muscles profonds."},
+      {x:46,y:166,l:"Processus transverse",d:"Un de chaque côté. Insertion des intertransversaires, des érecteurs…"},
+      {x:126,y:186,l:"Processus articulaire supérieur",d:"Avec les processus articulaires inférieurs de la vertèbre du dessus : 2 des 3 appuis."}]},
+
+{t:"Ceinture scapulaire, vue antérieure",c:"c3",vb:"0 0 400 320",
+ art:'<path class="sgb" d="M46 76 L82 76 L86 214 L50 214 Z"/>'+
+     '<path class="sgb" d="M84 104 C 140 84, 196 78, 244 92 L240 114 C 194 102, 142 108, 86 126 Z"/>'+
+     '<path class="sgb" d="M268 92 L344 118 L300 236 L268 170 Z"/>'+
+     '<path class="sgb" d="M240 82 L276 90 L272 112 L238 106 Z"/>'+
+     '<ellipse class="sgb" cx="238" cy="130" rx="18" ry="13"/>'+
+     '<path class="sgh" d="M262 124 L276 118 L282 158 L266 162 Z"/>'+
+     '<circle class="sgb" cx="276" cy="148" r="28"/>'+
+     '<path class="sgb" d="M268 174 L300 174 L312 300 L282 300 Z"/>'+
+     '<path class="sgr" d="M90 150 C 150 176, 210 196, 250 236" fill="none"/>'+
+     '<path class="sgr" d="M90 182 C 146 208, 198 230, 236 268" fill="none"/>',
+ pts:[{x:64,y:150,l:"Sternum",d:"Le manubrium s’articule avec la clavicule."},
+      {x:160,y:96,l:"Clavicule",d:"Relie le sternum à l’acromion. Origine du deltoïde antérieur et du grand pectoral."},
+      {x:320,y:160,l:"Scapula",d:"Os plat posé sur le thorax. Origine de la coiffe des rotateurs."},
+      {x:268,y:74,lx:258,ly:92,l:"Acromion",d:"Origine du deltoïde médian. S’articule avec la clavicule."},
+      {x:222,y:160,lx:236,ly:132,l:"Processus coracoïde",d:"Origine du chef court du biceps, du coraco-brachial et du petit pectoral."},
+      {x:272,y:138,l:"Glène (cavité glénoïde)",d:"Congruence augmentée par le labrum, anneau de fibrocartilage."},
+      {x:292,y:250,l:"Humérus",d:"Sa tête s’emboîte dans la glène : articulation gléno-humérale."},
+      {x:92,y:52,lx:84,ly:100,l:"Articulation sterno-claviculaire",d:"Surtout une rotation entre le manubrium et la clavicule."},
+      {x:206,y:46,lx:246,ly:96,l:"Articulation acromio-claviculaire",d:"Surfaces planes sans emboîtement, avec un ménisque : mobile mais instable."}]},
+
+{t:"Le genou, vue antérieure",c:"c2",vb:"0 0 300 380",
+ art:'<path class="sgb" d="M126 16 L172 16 L178 170 L120 170 Z"/>'+
+     '<circle class="sgb" cx="118" cy="196" r="38"/>'+
+     '<circle class="sgb" cx="182" cy="196" r="38"/>'+
+     '<ellipse class="sgh" cx="150" cy="190" rx="30" ry="38"/>'+
+     '<path class="sgb" d="M106 232 L196 232 L190 268 L112 268 Z"/>'+
+     '<path class="sgb" d="M118 268 L182 268 L172 356 L130 356 Z"/>'+
+     '<ellipse class="sgb" cx="208" cy="246" rx="17" ry="15"/>'+
+     '<path class="sgb" d="M198 254 L218 254 L212 350 L198 350 Z"/>'+
+     '<path class="sgh" d="M140 226 L162 226 L158 268 L144 268 Z"/>'+
+     '<ellipse class="sgb" cx="150" cy="276" rx="16" ry="11"/>',
+ pts:[{x:150,y:60,l:"Fémur",d:"Os de la cuisse. Sa tête s’articule avec l’acétabulum : articulation coxo-fémorale."},
+      {x:104,y:196,l:"Condyle latéral du fémur",d:"Origine du gastrocnémien latéral et du poplité."},
+      {x:196,y:196,l:"Condyle médial du fémur",d:"Origine du gastrocnémien médial. Insertion du semi-membraneux sur le condyle médial tibial."},
+      {x:150,y:190,l:"Patella",d:"Os sésamoïde dans le tendon du quadriceps. Articulation fémoro-patellaire."},
+      {x:150,y:320,l:"Tibia",d:"Reçoit l’insertion du quadriceps via le ligament patellaire."},
+      {x:212,y:320,l:"Fibula",d:"Insertion du biceps fémoral sur sa tête. Tibio-fibulaire proximale très peu mobile."},
+      {x:150,y:276,l:"Tubérosité tibiale",d:"Insertion du ligament patellaire, donc de tout le quadriceps."},
+      {x:112,y:248,lx:148,ly:246,l:"Ligament patellaire",d:"Prolonge le tendon du quadriceps de la patella à la tubérosité tibiale."}]},
+
+{t:"Paroi abdominale, coupe transversale",c:"c4",vb:"0 0 420 280",
+ art:'<ellipse class="sgh" cx="210" cy="140" rx="182" ry="112"/>'+
+     '<ellipse class="sgr2" cx="210" cy="140" rx="168" ry="99" fill="none"/>'+
+     '<ellipse class="sgr3" cx="210" cy="140" rx="156" ry="88" fill="none"/>'+
+     '<ellipse class="sgr4" cx="210" cy="140" rx="144" ry="78" fill="none"/>'+
+     '<rect class="sgb" x="168" y="32" width="32" height="34" rx="9"/>'+
+     '<rect class="sgb" x="220" y="32" width="32" height="34" rx="9"/>'+
+     '<path class="sgax" d="M210 26 L210 70"/>'+
+     '<ellipse class="sgb" cx="210" cy="222" rx="30" ry="22"/>'+
+     '<path class="sgb" d="M210 240 L218 240 L216 258 L204 258 Z"/>'+
+     '<ellipse class="sgm" cx="166" cy="214" rx="24" ry="18"/>'+
+     '<ellipse class="sgm" cx="254" cy="214" rx="24" ry="18"/>'+
+     '<path class="sgr" d="M60 206 C 130 244, 290 244, 360 206" fill="none"/>',
+ pts:[{x:176,y:48,l:"Droit de l’abdomen",d:"O : cartilages costaux 5-7 et processus xiphoïde → I : pubis. Fléchisseur du tronc."},
+      {x:212,y:92,lx:210,ly:48,l:"Ligne blanche",d:"Raphé médian : origine du transverse, point de convergence des aponévroses."},
+      {x:54,y:52,lx:76,ly:80,l:"Oblique externe",d:"Le plus superficiel. Unilatéral → rotation INTERNE du tronc."},
+      {x:32,y:126,lx:54,ly:140,l:"Oblique interne",d:"Intermédiaire. Unilatéral → rotation EXTERNE du tronc."},
+      {x:62,y:208,lx:86,ly:180,l:"Transverse de l’abdomen",d:"Le plus profond. Comprime les viscères, expiration forcée, stabilité du tronc."},
+      {x:210,y:222,l:"Vertèbre lombaire",d:"Les processus transverses de L1 à L4 donnent origine au carré des lombes."},
+      {x:150,y:252,lx:166,ly:218,l:"Carré des lombes",d:"Le plus profond de la paroi abdominale postérieure. Bilat : extension ; unilat : inclinaison latérale."},
+      {x:330,y:214,l:"Fascia thoraco-lombal",d:"Relais d’insertion du transverse et du grand dorsal."}]},
+
+{t:"Le pied, vue dorsale",c:"c2",vb:"0 0 280 420",
+ art:'<path class="sgb" d="M112 352 L184 352 L178 406 L118 406 Z"/>'+
+     '<path class="sgb" d="M110 300 L186 300 L184 348 L112 348 Z"/>'+
+     '<path class="sgb" d="M112 266 L170 266 L168 296 L114 296 Z"/>'+
+     '<path class="sgb" d="M176 262 L214 268 L210 308 L176 300 Z"/>'+
+     '<rect class="sgb" x="110" y="232" width="24" height="30" rx="5"/>'+
+     '<rect class="sgb" x="136" y="232" width="22" height="30" rx="5"/>'+
+     '<rect class="sgb" x="160" y="234" width="22" height="28" rx="5"/>'+
+     '<path class="sgb" d="M110 228 L132 228 L128 140 L112 140 Z"/>'+
+     '<path class="sgb" d="M136 228 L154 228 L152 132 L138 132 Z"/>'+
+     '<path class="sgb" d="M158 230 L176 230 L176 134 L162 134 Z"/>'+
+     '<path class="sgb" d="M180 234 L198 236 L200 140 L186 138 Z"/>'+
+     '<path class="sgb" d="M202 240 L218 244 L222 150 L208 146 Z"/>'+
+     '<path class="sgb" d="M110 136 L132 136 L130 86 L112 86 Z"/>'+
+     '<path class="sgb" d="M138 128 L154 128 L152 84 L138 84 Z"/>'+
+     '<path class="sgb" d="M162 130 L176 130 L176 88 L164 88 Z"/>'+
+     '<path class="sgb" d="M186 134 L200 136 L202 96 L188 94 Z"/>'+
+     '<path class="sgb" d="M208 142 L222 146 L224 108 L210 104 Z"/>'+
+     '<path class="sgh" d="M108 26 L150 26 L152 92 L106 92 Z"/>'+
+     '<path class="sgh" d="M160 30 L188 30 L190 94 L162 94 Z"/>',
+ pts:[{x:148,y:378,l:"Calcanéus",d:"Le talon. Insertion du tendon calcanéen (triceps sural)."},
+      {x:148,y:324,l:"Talus",d:"Coincé entre tibia et fibula : articulation talo-crurale."},
+      {x:140,y:280,l:"Naviculaire",d:"Insertion du tibial postérieur, l’inverseur principal."},
+      {x:194,y:284,l:"Cuboïde",d:"Avec la talo-calcanéo-naviculaire, forme l’articulation transverse du tarse (Chopart)."},
+      {x:146,y:246,l:"Os cunéiformes",d:"Trois. Le cunéiforme médial reçoit le tibial antérieur."},
+      {x:166,y:186,l:"Métatarsiens",d:"5 os. Le long fibulaire s’insère sur le 1er, le court fibulaire sur le 5e."},
+      {x:150,y:108,l:"Phalanges",d:"14 os. Flexion/extension aux métatarso-phalangiennes et aux interphalangiennes."},
+      {x:128,y:58,l:"Tibia (malléole médiale)",d:"Malléole interne. Avec la fibula, il « coince » le talus."},
+      {x:174,y:60,l:"Fibula (malléole latérale)",d:"Malléole externe. Origine des fibulaires, les éverseurs."}]}
+];
+
+var SCI=0,SCMODE="etude",SCsel=-1,SCdone=[],SCwrong=0;
+function scReset(){SCdone=[];SCwrong=0;SCsel=-1;for(var i=0;i<SCHEMAS[SCI].pts.length;i++)SCdone.push(-1)}
+function scShuffleIdx(n){var a=[],i;for(i=0;i<n;i++)a.push(i);return shuf(a)}
+var SCbank=[];
+function renderSchemas(){
+  var sc=SCHEMAS[SCI];
+  if(SCdone.length!==sc.pts.length)scReset();
+  if(SCbank.length!==sc.pts.length)SCbank=scShuffleIdx(sc.pts.length);
+  var chn="";for(var k=0;k<CHAPS.length;k++)if(CHAPS[k].id===sc.c)chn="Chapitre "+(k+1);
+  var h='<div class="scbar" id="sctabs">';
+  for(var i=0;i<SCHEMAS.length;i++)h+='<button class="scchip'+(i===SCI?" on":"")+'" data-s="'+i+'">'+SCHEMAS[i].t+'</button>';
+  h+='</div>';
+  h+='<div class="card" style="margin-top:14px"><div class="row" style="align-items:center;margin:0 0 14px">'+
+     '<div><div class="lbl">'+chn+'</div><h2 style="margin:8px 0 0;font-size:clamp(18px,3.6vw,23px)">'+sc.t+'</h2></div>'+
+     '<div style="flex:1"></div>'+
+     '<div class="h3dseg" id="scmode"><button'+(SCMODE==="etude"?' class="on"':'')+' data-k="etude">Étude</button>'+
+     '<button'+(SCMODE==="test"?' class="on"':'')+' data-k="test">Test</button></div></div>';
+
+  h+='<div class="scwrap"><svg viewBox="'+sc.vb+'" class="scsvg" id="scsvg">'+sc.art;
+  for(i=0;i<sc.pts.length;i++){
+    var p=sc.pts[i],ok=SCdone[i]===i,lbl=(SCMODE==="etude")?(i+1):(ok?(i+1):"?");
+    if(p.lx!==undefined)h+='<line class="scld" x1="'+p.x+'" y1="'+p.y+'" x2="'+p.lx+'" y2="'+p.ly+'"/>';
+    h+='<g class="scmk'+(ok?" ok":"")+'" data-p="'+i+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="15"/>'+
+       '<text x="'+p.x+'" y="'+(p.y+5)+'">'+lbl+'</text></g>';
+  }
+  h+='</svg></div>';
+
+  if(SCMODE==="etude"){
+    h+='<div class="sclist" id="sclist">';
+    for(i=0;i<sc.pts.length;i++)
+      h+='<div class="scli" data-p="'+i+'"><b>'+(i+1)+'</b><div><span>'+sc.pts[i].l+'</span><em>'+sc.pts[i].d+'</em></div></div>';
+    h+='</div>';
+  }else{
+    var left=0;for(i=0;i<sc.pts.length;i++)if(SCdone[i]!==i)left++;
+    h+='<div class="scbankhd"><span>'+(left?"Touche une étiquette, puis le repère qui lui correspond":"Schéma complet")+'</span>'+
+       '<span class="scscore">'+(sc.pts.length-left)+' / '+sc.pts.length+(SCwrong?' · '+SCwrong+' erreur'+(SCwrong>1?"s":""):"")+'</span></div>';
+    h+='<div class="scbank" id="scbank">';
+    for(i=0;i<SCbank.length;i++){
+      var bi=SCbank[i];
+      if(SCdone[bi]===bi)continue;
+      h+='<button class="scbl'+(SCsel===bi?" on":"")+'" data-b="'+bi+'">'+sc.pts[bi].l+'</button>';
+    }
+    h+='</div>';
+    if(!left){
+      var note=note20(sc.pts.length-Math.min(sc.pts.length,SCwrong*0.5),sc.pts.length);
+      h+='<div class="xverdict '+(note>=12?"win":"lose")+'" style="margin-top:16px"><b>'+note+'<span>/20</span></b>'+
+         '<span>'+(SCwrong===0?"Sans faute.":SCwrong<3?"Bien — "+SCwrong+" erreur"+(SCwrong>1?"s":"")+".":"À refaire, "+SCwrong+" erreurs.")+'</span></div>'+
+         '<div class="row" style="margin-top:14px"><button class="btn pri" id="scagain">Refaire ce schéma</button>'+
+         '<button class="btn" id="scnext">Schéma suivant</button></div>';
+    }
+  }
+  h+='</div>';
+  $("p-schemas").innerHTML=h;
+
+  $("sctabs").onclick=function(e){
+    var b=e.target.closest("[data-s]");if(!b)return;
+    SCI=+b.getAttribute("data-s");scReset();SCbank=scShuffleIdx(SCHEMAS[SCI].pts.length);renderSchemas();buzz(6);
+  };
+  $("scmode").onclick=function(e){
+    var b=e.target.closest("[data-k]");if(!b)return;
+    SCMODE=b.getAttribute("data-k");scReset();SCbank=scShuffleIdx(SCHEMAS[SCI].pts.length);renderSchemas();buzz(8);
+  };
+  var svg=$("scsvg");
+  svg.onclick=function(e){
+    var g=e.target.closest("[data-p]");if(!g)return;
+    var pi=+g.getAttribute("data-p");
+    if(SCMODE==="etude"){scFlash(pi);return}
+    if(SCsel<0){toast("Choisis d’abord une étiquette");return}
+    if(SCdone[pi]===pi)return;
+    if(SCsel===pi){SCdone[pi]=pi;SCsel=-1;buzz(16);renderSchemas();
+      var all=true;for(var i=0;i<SCdone.length;i++)if(SCdone[i]!==i)all=false;
+      if(all)burst(44);
+    }else{
+      SCwrong++;buzz([10,40,10]);
+      g.classList.add("no");toast("Non — c’est un autre repère");
+      setTimeout(function(){var el=svg.querySelector('[data-p="'+pi+'"]');if(el)el.classList.remove("no")},520);
+      renderSchemas();
+    }
+  };
+  if($("sclist"))$("sclist").onclick=function(e){
+    var b=e.target.closest("[data-p]");if(!b)return;scFlash(+b.getAttribute("data-p"));
+  };
+  if($("scbank"))$("scbank").onclick=function(e){
+    var b=e.target.closest("[data-b]");if(!b)return;
+    var bi=+b.getAttribute("data-b");
+    SCsel=(SCsel===bi)?-1:bi;renderSchemas();buzz(6);
+  };
+  if($("scagain"))$("scagain").onclick=function(){scReset();SCbank=scShuffleIdx(SCHEMAS[SCI].pts.length);renderSchemas()};
+  if($("scnext"))$("scnext").onclick=function(){SCI=(SCI+1)%SCHEMAS.length;scReset();SCbank=scShuffleIdx(SCHEMAS[SCI].pts.length);renderSchemas()};
+}
+function scFlash(pi){
+  var sc=SCHEMAS[SCI],p=sc.pts[pi];
+  var g=$("scsvg").querySelector('[data-p="'+pi+'"]');
+  if(g){g.classList.add("hot");setTimeout(function(){g.classList.remove("hot")},1400)}
+  var li=$("sclist")?$("sclist").querySelector('[data-p="'+pi+'"]'):null;
+  if(li){li.classList.add("hot");setTimeout(function(){li.classList.remove("hot")},1400)}
+  toast(p.l);
+  buzz(8);
+}
+
+var R={cockpit:renderCockpit,express:renderExpress,flash:renderFlash,qcm:renderQCM,exam:renderExam,schemas:renderSchemas,fiches:renderFiches,auteurs:renderAuteurs};
 var CUR="cockpit";
 function go(t){
   micStop();
@@ -2075,15 +2378,38 @@ document.addEventListener("keydown",function(e){
 });
 
 
-/* ============ SQUELETTE 3D (WebGL, nuage de points) ============ */
+/* ============ SQUELETTE + MUSCLES 3D (WebGL, nuage de points) ============ */
 var SKEL=null;
 var REGIONS=[
  {k:0,n:"Tête",c:"c1",d:"Crâne et mandibule. Articulation temporo-mandibulaire. L’atlanto-occipitale fait le « oui », C1/C2 le « non »."},
  {k:1,n:"Rachis",c:"c1",d:"24 vertèbres mobiles : 7 cervicales, 12 thoraciques, 5 lombaires. Puis sacrum (5 fusionnées) et coccyx (3 à 5)."},
- {k:2,n:"Thorax",c:"c1",d:"Sternum, côtes et rachis thoracique. Les fausses côtes ne sont pas directement fixées au sternum."},
+ {k:2,n:"Thorax",c:"c1",d:"Sternum, côtes et rachis thoracique. Les fausses côtes ne sont pas directement fixées au sternum. En muscles : la paroi abdominale."},
  {k:4,n:"Pelvis",c:"c1",d:"Deux os coxaux + sacrum + coccyx. Sacro-iliaques synoviales mais peu mobiles, symphyse pubienne cartilagineuse."},
  {k:3,n:"Membre sup.",c:"c3",d:"Ceinture scapulaire (clavicule + scapula), humérus, radius et ulna, carpe. Épaule = gléno-humérale."},
  {k:5,n:"Membre inf.",c:"c2",d:"Fémur, patella, tibia et fibula, 7 tarses, 5 métatarses, 14 phalanges. Cheville = talo-crurale."}
+];
+/* muscles affichables : r = région, i = rappel origine / insertion / action */
+var MUSCLES=[
+ {n:"Érecteurs du rachis",r:1,i:"Iliocostal + longissimus + épineux. Bilat : extension de la zone. Unilat : inclinaison latérale."},
+ {n:"Grand pectoral",r:2,i:"O : clavicule, sternum, cartilages costaux 2-6, gaine du droit → I : humérus. Flexion, adduction, rotation interne."},
+ {n:"Droit de l’abdomen",r:2,i:"O : cartilages costaux 5-7 + processus xiphoïde → I : pubis. Fléchisseur du tronc ; son relâchement accentue la lordose lombaire."},
+ {n:"Obliques",r:2,i:"Interne → rotation EXTERNE du tronc. Externe → rotation INTERNE. Bilat : fléchisseurs et statique du tronc."},
+ {n:"Transverse de l’abdomen",r:2,i:"Le plus profond. O : ligne blanche → I : cartilages costaux 7-12, L1-L5, crête iliaque, ligament inguinal. Sangle de stabilité."},
+ {n:"Trapèze",r:3,i:"Descendante : élève la scapula. Transversale : adduction. Ascendante : baisse la scapula."},
+ {n:"Deltoïde",r:3,i:"Antérieur : flexion. Médian : abduction au-delà des 15° initiaux. Postérieur : extension. I : tubérosité deltoïdienne."},
+ {n:"Grand dorsal",r:3,i:"O : épineuses T7-T12, côtes 9-12, crête iliaque → I : sillon intertuberculaire. Extension, adduction, rotation interne. Le muscle du grimpeur."},
+ {n:"Biceps brachial",r:3,i:"Bi-articulaire. Chef court : coracoïde ; chef long : tubercule supraglénoïdien → tubérosité radiale. Flexion + supination."},
+ {n:"Triceps brachial",r:3,i:"Chef long : tubercule infraglénoïdal ; médial et latéral : face postérieure de l’humérus → olécrâne. Extension de l’avant-bras."},
+ {n:"Fléchisseurs de l’avant-bras",r:3,i:"Fléchisseur radial du carpe, fléchisseur ulnaire du carpe, long palmaire. O : épicondyle médial."},
+ {n:"Extenseurs de l’avant-bras",r:3,i:"Long et court extenseurs radiaux du carpe, extenseur ulnaire du carpe. O : région de l’épicondyle latéral."},
+ {n:"Grand glutéal",r:4,i:"O : fosse iliaque, crête sacrée, coccyx, ligament sacro-tubéral → I : tubérosité glutéale, tractus ilio-tibial. Extension + rotation externe."},
+ {n:"Moyen glutéal",r:4,i:"I : face latérale du grand trochanter. Abduction + rotation interne de la hanche."},
+ {n:"Ilio-psoas",r:4,i:"Iliaque (chef latéral) + grand psoas (chef médial) → petit trochanter. Flexion de hanche, antéversion, lordose lombaire."},
+ {n:"Quadriceps",r:5,i:"Droit fémoral + vastes médial, latéral, intermédiaire → tubérosité tibiale via le ligament patellaire. Extension du genou."},
+ {n:"Ischio-jambiers",r:5,i:"Biceps fémoral, semi-tendineux, semi-membraneux. Tubérosité ischiatique → fibula / tibia. Extension de hanche + flexion du genou."},
+ {n:"Adducteurs",r:5,i:"Long, court et grand adducteurs + gracile. Pubis et branche ischio-pubienne → ligne âpre. Adduction + rotation externe."},
+ {n:"Triceps sural",r:5,i:"Gastrocnémiens (condyles fémoraux, bi-articulaires) + soléaire (tibia et fibula) → tendon calcanéen. Flexion plantaire."},
+ {n:"Tibial antérieur",r:5,i:"O : condyle et face latérale du tibia, membrane interosseuse → I : cunéiforme médial, base du 1er métatarsien. Flexion dorsale + inversion."}
 ];
 function initSkel(){
   var host=$("h3dstage");if(!host)return null;
@@ -2096,13 +2422,13 @@ function initSkel(){
   var seed=20261021;
   function rnd(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}
 
-  var pos=[],scat=[],ext=[],kind=[];
+  var pos=[],scat=[],ext=[],kind=[],meta=[];
+  var LAYER=0,MID=0;
   function push(x,y,z,k,size,bright){
-    pos.push(x,y,z);kind.push(k);ext.push(size,bright,rnd());
+    pos.push(x,y,z);kind.push(k);ext.push(size,bright,rnd());meta.push(LAYER,MID);
     var th=rnd()*6.2832,ph=Math.acos(2*rnd()-1),rad=2.1+rnd()*2.4;
     scat.push(rad*Math.sin(ph)*Math.cos(th),rad*Math.cos(ph)*0.8,rad*Math.sin(ph)*Math.sin(th)*0.6);
   }
-  /* barre osseuse conique entre a et b */
   function bone(a,b,r0,r1,n,k,sz){
     for(var i=0;i<n;i++){
       var t=rnd(),r=r0+(r1-r0)*t;
@@ -2120,7 +2446,6 @@ function initSkel(){
       push(a[0]+dx*t+ox,a[1]+dy*t+oy,a[2]+dz*t+oz,k,sz||1,rr>r*0.72?1:0);
     }
   }
-  /* ellipsoïde, surtout en coque */
   function ell(c,r,n,k,sz){
     for(var i=0;i<n;i++){
       var th=rnd()*6.2832,ph=Math.acos(2*rnd()-1);
@@ -2129,7 +2454,6 @@ function initSkel(){
       push(c[0]+x*r[0],c[1]+y*r[1],c[2]+z*r[2],k,sz||1,q>0.95?1:0);
     }
   }
-  /* plaque incurvée (scapula, ilion) */
   function plate(c,ax,bx,warp,n,k,sz){
     for(var i=0;i<n;i++){
       var u=rnd()*2-1,v=rnd()*2-1;
@@ -2141,28 +2465,57 @@ function initSkel(){
            c[2]+u*ax[2]+v*bx[2]+warp[2]*u*u,k,sz||0.95,e>0.86?1:0);
     }
   }
+  /* ventre musculaire : fuseau renflé au milieu entre a et b */
+  function belly(a,b,r0,r1,n,k,flat){
+    for(var i=0;i<n;i++){
+      var t=rnd();
+      var prof=0.4+0.6*Math.sin(Math.PI*Math.pow(t,0.9));
+      var r=(r0+(r1-r0)*t)*prof;
+      var th=rnd()*6.2832,rr=r*Math.pow(rnd(),0.42);
+      var dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2];
+      var L=Math.sqrt(dx*dx+dy*dy+dz*dz)||1;
+      var ux=dx/L,uy=dy/L,uz=dz/L;
+      var ax=Math.abs(ux)<0.9?1:0,ay=Math.abs(ux)<0.9?0:1;
+      var px=-uz*ay,py=uz*ax,pz=ux*ay-uy*ax;
+      var pl=Math.sqrt(px*px+py*py+pz*pz)||1;px/=pl;py/=pl;pz/=pl;
+      var qx=uy*pz-uz*py,qy=uz*px-ux*pz,qz=ux*py-uy*px;
+      var fz=flat||1;
+      var ox=(px*Math.cos(th)+qx*Math.sin(th)*fz)*rr;
+      var oy=(py*Math.cos(th)+qy*Math.sin(th)*fz)*rr;
+      var oz=(pz*Math.cos(th)+qz*Math.sin(th)*fz)*rr;
+      push(a[0]+dx*t+ox,a[1]+dy*t+oy,a[2]+dz*t+oz,k,0.95,rr>r*0.7?1:0);
+    }
+  }
+  /* nappe musculaire : éventail d’une ligne d’origine vers un point d’insertion */
+  function fan(o1,o2,ins,th,n,k){
+    for(var i=0;i<n;i++){
+      var u=rnd(),t=rnd();
+      var ox=o1[0]+(o2[0]-o1[0])*u,oy=o1[1]+(o2[1]-o1[1])*u,oz=o1[2]+(o2[2]-o1[2])*u;
+      var bow=0.18*Math.sin(Math.PI*t)*(0.4+u*0.6);
+      var x=ox+(ins[0]-ox)*t,y=oy+(ins[1]-oy)*t,z=oz+(ins[2]-oz)*t+bow*0.35;
+      var j=(rnd()-0.5)*th;
+      push(x+j*0.4,y+(rnd()-0.5)*th*0.7,z+j,k,0.95,rnd()>0.55?1:0);
+    }
+  }
 
-  /* ---------- CRÂNE ---------- */
+  /* ================= OS ================= */
+  LAYER=0;MID=0;
   ell([0,0.93,-0.01],[0.145,0.175,0.16],1500,0,1.05);
   ell([0,0.845,0.07],[0.1,0.06,0.09],320,0,1);
   bone([-0.1,0.80,0.06],[0,0.765,0.12],0.02,0.018,110,0,0.95);
   bone([0.1,0.80,0.06],[0,0.765,0.12],0.02,0.018,110,0,0.95);
 
-  /* ---------- RACHIS ---------- */
-  var VB=[];
   function vert(y,z,s,k){
-    ell([0,y,z],[0.045*s,0.022*s,0.038*s],56,k,1.05);              /* corps */
-    ell([0,y+0.004,z-0.052*s],[0.026*s,0.018*s,0.03*s],26,k,0.95); /* arc */
-    bone([0,y+0.004,z-0.06*s],[0,y-0.014,z-0.105*s],0.011,0.007,22,k,0.9); /* épineuse */
+    ell([0,y,z],[0.045*s,0.022*s,0.038*s],56,k,1.05);
+    ell([0,y+0.004,z-0.052*s],[0.026*s,0.018*s,0.03*s],26,k,0.95);
+    bone([0,y+0.004,z-0.06*s],[0,y-0.014,z-0.105*s],0.011,0.007,22,k,0.9);
     bone([-0.02*s,y,z-0.05*s],[-0.058*s,y+0.004,z-0.045*s],0.009,0.006,14,k,0.9);
     bone([0.02*s,y,z-0.05*s],[0.058*s,y+0.004,z-0.045*s],0.009,0.006,14,k,0.9);
-    VB.push([y,z,s]);
   }
-  var i,y,z,t;
-  for(i=0;i<7;i++){t=i/6;y=0.735-t*0.2;z=0.012+0.028*Math.sin(t*3.14);vert(y,z,0.72,1)}     /* cervicales */
-  for(i=0;i<12;i++){t=i/11;y=0.515-t*0.47;z=-0.012-0.05*Math.sin(t*3.14);vert(y,z,0.95+0.18*t,1)} /* thoraciques */
-  for(i=0;i<5;i++){t=i/4;y=0.028-t*0.185;z=0.004+0.048*Math.sin(t*3.14);vert(y,z,1.26,1)}   /* lombaires */
-  /* sacrum + coccyx */
+  var i,y,z,t,s,j;
+  for(i=0;i<7;i++){t=i/6;y=0.735-t*0.2;z=0.012+0.028*Math.sin(t*3.14);vert(y,z,0.72,1)}
+  for(i=0;i<12;i++){t=i/11;y=0.515-t*0.47;z=-0.012-0.05*Math.sin(t*3.14);vert(y,z,0.95+0.18*t,1)}
+  for(i=0;i<5;i++){t=i/4;y=0.028-t*0.185;z=0.004+0.048*Math.sin(t*3.14);vert(y,z,1.26,1)}
   for(i=0;i<620;i++){
     var sv=rnd(),w=0.085*(1-sv*0.72);
     var xx=(rnd()*2-1)*w;
@@ -2171,18 +2524,17 @@ function initSkel(){
   }
   bone([0,-0.355,-0.012],[0.012,-0.415,-0.04],0.016,0.009,90,1,0.95);
 
-  /* ---------- THORAX ---------- */
   bone([0,0.485,0.155],[0,0.33,0.175],0.042,0.05,260,2,1);
   bone([0,0.33,0.175],[0,0.15,0.15],0.05,0.028,220,2,1);
   for(i=0;i<12;i++){
     t=i/11;
     var yv=0.5-t*0.455, zv=-0.02-0.05*Math.sin(t*3.14);
-    var A=0.175+0.135*Math.sin(Math.min(1,t*1.55)*1.9);   /* demi-largeur */
-    var D=0.108+0.075*Math.sin(Math.min(1,t*1.4)*2.1);    /* profondeur */
-    var span=i<7?1.0:(i<10?0.86:0.6);                      /* fausses / flottantes */
-    for(var s=-1;s<=1;s+=2){
+    var A=0.175+0.135*Math.sin(Math.min(1,t*1.55)*1.9);
+    var D=0.108+0.075*Math.sin(Math.min(1,t*1.4)*2.1);
+    var span=i<7?1.0:(i<10?0.86:0.6);
+    for(s=-1;s<=1;s+=2){
       var np=Math.round(150*span);
-      for(var j=0;j<np;j++){
+      for(j=0;j<np;j++){
         var u=(j+rnd())/np*span*3.05;
         var xa=s*A*Math.sin(u),za=zv-0.055+D*(1-Math.cos(u));
         var ya=yv-0.125*(u/3.05)*(u/3.05)-0.02*t;
@@ -2191,20 +2543,18 @@ function initSkel(){
       }
     }
   }
-
-  /* ---------- CEINTURE SCAPULAIRE + MEMBRE SUPÉRIEUR ---------- */
   for(s=-1;s<=1;s+=2){
     bone([0.012*s,0.5,0.15],[0.175*s,0.525,0.075],0.019,0.016,150,3,1);
     bone([0.175*s,0.525,0.075],[0.3*s,0.5,-0.015],0.016,0.02,140,3,1);
     plate([0.2*s,0.355,-0.135],[0.085*s,0.1,0.01],[0.055*s,-0.11,0.045],[0.03*s,0,0.03],620,3,0.95);
-    ell([0.305*s,0.5,-0.025],[0.038,0.026,0.042],120,3,1.05);     /* acromion */
-    ell([0.165*s,0.47,0.055],[0.022,0.02,0.022],60,3,1);          /* coracoïde */
-    ell([0.315*s,0.45,-0.01],[0.042,0.046,0.042],180,3,1.05);     /* tête humérale */
+    ell([0.305*s,0.5,-0.025],[0.038,0.026,0.042],120,3,1.05);
+    ell([0.165*s,0.47,0.055],[0.022,0.02,0.022],60,3,1);
+    ell([0.315*s,0.45,-0.01],[0.042,0.046,0.042],180,3,1.05);
     bone([0.315*s,0.44,-0.01],[0.355*s,0.055,0.012],0.028,0.032,430,3,1);
-    ell([0.357*s,0.045,0.012],[0.04,0.034,0.038],130,3,1.05);     /* coude */
-    bone([0.345*s,0.03,0.03],[0.345*s,-0.33,0.055],0.019,0.014,280,3,1);  /* radius */
-    bone([0.372*s,0.035,-0.005],[0.368*s,-0.325,0.02],0.021,0.013,280,3,1); /* ulna */
-    ell([0.357*s,-0.355,0.045],[0.035,0.025,0.028],150,3,0.95);   /* carpe */
+    ell([0.357*s,0.045,0.012],[0.04,0.034,0.038],130,3,1.05);
+    bone([0.345*s,0.03,0.03],[0.345*s,-0.33,0.055],0.019,0.014,280,3,1);
+    bone([0.372*s,0.035,-0.005],[0.368*s,-0.325,0.02],0.021,0.013,280,3,1);
+    ell([0.357*s,-0.355,0.045],[0.035,0.025,0.028],150,3,0.95);
     for(j=0;j<5;j++){
       var sp=(j-2)*0.023,fx=0.357*s+sp*s,fl=0.115-Math.abs(j-2)*0.012;
       if(j===0)fl=0.075;
@@ -2212,27 +2562,23 @@ function initSkel(){
       bone([fx+0.012*s,-0.375-fl,0.055],[fx+0.018*s,-0.375-fl-0.062,0.05],0.007,0.005,45,3,0.85);
     }
   }
-
-  /* ---------- PELVIS ---------- */
   for(s=-1;s<=1;s+=2){
     plate([0.13*s,-0.195,-0.015],[0.075*s,0.095,0.02],[0.045*s,-0.105,0.075],[0.07*s,0.02,-0.04],840,4,1);
-    bone([0.085*s,-0.3,0.015],[0.055*s,-0.345,0.055],0.024,0.02,150,4,1);   /* ischion */
-    bone([0.055*s,-0.345,0.055],[0.012*s,-0.315,0.095],0.02,0.016,150,4,1); /* pubis */
-    ell([0.145*s,-0.255,0.015],[0.045,0.042,0.04],190,4,1.05);              /* acétabulum */
+    bone([0.085*s,-0.3,0.015],[0.055*s,-0.345,0.055],0.024,0.02,150,4,1);
+    bone([0.055*s,-0.345,0.055],[0.012*s,-0.315,0.095],0.02,0.016,150,4,1);
+    ell([0.145*s,-0.255,0.015],[0.045,0.042,0.04],190,4,1.05);
   }
-  bone([-0.016,-0.312,0.095],[0.016,-0.312,0.095],0.016,0.016,70,4,1);      /* symphyse */
-
-  /* ---------- MEMBRE INFÉRIEUR ---------- */
+  bone([-0.016,-0.312,0.095],[0.016,-0.312,0.095],0.016,0.016,70,4,1);
   for(s=-1;s<=1;s+=2){
-    ell([0.15*s,-0.262,0.012],[0.036,0.036,0.036],130,5,1.05);               /* tête fémorale */
-    bone([0.15*s,-0.268,0.012],[0.205*s,-0.3,-0.005],0.021,0.026,110,5,1);   /* col */
-    ell([0.215*s,-0.288,-0.012],[0.032,0.04,0.03],110,5,1.05);               /* grand trochanter */
-    bone([0.205*s,-0.305,-0.005],[0.158*s,-0.735,0.008],0.03,0.032,600,5,1); /* fémur */
-    ell([0.152*s,-0.755,0.012],[0.05,0.038,0.045],200,5,1.05);               /* condyles */
-    ell([0.152*s,-0.745,0.062],[0.026,0.028,0.014],90,5,1);                  /* patella */
-    bone([0.142*s,-0.78,0.012],[0.135*s,-1.16,0.004],0.027,0.022,540,5,1);   /* tibia */
-    bone([0.186*s,-0.775,-0.008],[0.172*s,-1.15,-0.005],0.014,0.012,260,5,1);/* fibula */
-    ell([0.132*s,-1.185,-0.012],[0.04,0.035,0.055],210,5,1);                 /* talus/calcanéus */
+    ell([0.15*s,-0.262,0.012],[0.036,0.036,0.036],130,5,1.05);
+    bone([0.15*s,-0.268,0.012],[0.205*s,-0.3,-0.005],0.021,0.026,110,5,1);
+    ell([0.215*s,-0.288,-0.012],[0.032,0.04,0.03],110,5,1.05);
+    bone([0.205*s,-0.305,-0.005],[0.158*s,-0.735,0.008],0.03,0.032,600,5,1);
+    ell([0.152*s,-0.755,0.012],[0.05,0.038,0.045],200,5,1.05);
+    ell([0.152*s,-0.745,0.062],[0.026,0.028,0.014],90,5,1);
+    bone([0.142*s,-0.78,0.012],[0.135*s,-1.16,0.004],0.027,0.022,540,5,1);
+    bone([0.186*s,-0.775,-0.008],[0.172*s,-1.15,-0.005],0.014,0.012,260,5,1);
+    ell([0.132*s,-1.185,-0.012],[0.04,0.035,0.055],210,5,1);
     bone([0.132*s,-1.2,-0.055],[0.132*s,-1.225,-0.012],0.032,0.028,120,5,1);
     for(j=0;j<5;j++){
       var tx=0.132*s+(j-2)*0.019*s, tl=0.135-Math.abs(j-2)*0.012;
@@ -2241,17 +2587,103 @@ function initSkel(){
     }
   }
 
+  /* ================= MUSCLES ================= */
+  LAYER=1;
+  function M(name){
+    for(var q=0;q<MUSCLES.length;q++)if(MUSCLES[q].n===name){MID=q;return MUSCLES[q].r}
+    MID=0;return 0;
+  }
+  var r;
+  r=M("Érecteurs du rachis");
+  for(s=-1;s<=1;s+=2)belly([0.05*s,-0.26,-0.055],[0.038*s,0.5,-0.085],0.042,0.03,630,r,0.75);
+  r=M("Transverse de l’abdomen");
+  for(s=-1;s<=1;s+=2)fan([0.02*s,0.03,0.085],[0.02*s,-0.2,0.06],[0.2*s,-0.1,-0.03],0.022,520,r);
+  r=M("Grand pectoral");
+  for(s=-1;s<=1;s+=2)fan([0.025*s,0.455,0.15],[0.025*s,0.17,0.145],[0.3*s,0.45,0.035],0.038,1250,r);
+  r=M("Droit de l’abdomen");
+  for(s=-1;s<=1;s+=2)belly([0.046*s,-0.3,0.105],[0.05*s,0.215,0.142],0.046,0.042,489,r,0.5);
+  r=M("Obliques");
+  for(s=-1;s<=1;s+=2)fan([0.215*s,0.16,0.045],[0.16*s,0.0,0.095],[0.15*s,-0.205,0.02],0.034,900,r);
+  r=M("Trapèze");
+  for(s=-1;s<=1;s+=2)fan([0.015*s,0.73,-0.075],[0.015*s,0.1,-0.125],[0.285*s,0.505,-0.055],0.03,1150,r);
+  r=M("Deltoïde");
+  for(s=-1;s<=1;s+=2){
+    belly([0.265*s,0.515,0.055],[0.345*s,0.215,0.02],0.05,0.028,294,r,1);
+    belly([0.315*s,0.545,-0.01],[0.35*s,0.215,0.0],0.052,0.028,294,r,1);
+    belly([0.285*s,0.5,-0.085],[0.345*s,0.215,-0.02],0.05,0.028,294,r,1);
+  }
+  r=M("Grand dorsal");
+  for(s=-1;s<=1;s+=2)fan([0.035*s,0.02,-0.115],[0.125*s,-0.21,-0.075],[0.3*s,0.425,-0.005],0.032,1250,r);
+  r=M("Biceps brachial");
+  for(s=-1;s<=1;s+=2)belly([0.3*s,0.44,0.03],[0.352*s,0.075,0.042],0.042,0.022,364,r,0.85);
+  r=M("Triceps brachial");
+  for(s=-1;s<=1;s+=2)belly([0.308*s,0.45,-0.052],[0.358*s,0.06,-0.03],0.046,0.024,392,r,0.9);
+  r=M("Fléchisseurs de l’avant-bras");
+  for(s=-1;s<=1;s+=2)belly([0.348*s,0.025,0.05],[0.357*s,-0.29,0.052],0.038,0.016,322,r,0.9);
+  r=M("Extenseurs de l’avant-bras");
+  for(s=-1;s<=1;s+=2)belly([0.372*s,0.025,-0.022],[0.366*s,-0.29,0.0],0.035,0.015,294,r,0.9);
+  r=M("Grand glutéal");
+  for(s=-1;s<=1;s+=2)ell([0.165*s,-0.258,-0.085],[0.105,0.112,0.075],630,r,1);
+  r=M("Moyen glutéal");
+  for(s=-1;s<=1;s+=2)ell([0.185*s,-0.158,-0.035],[0.068,0.072,0.062],294,r,1);
+  r=M("Ilio-psoas");
+  for(s=-1;s<=1;s+=2)belly([0.06*s,0.01,0.012],[0.148*s,-0.3,-0.005],0.036,0.02,336,r,0.9);
+  r=M("Quadriceps");
+  for(s=-1;s<=1;s+=2)belly([0.195*s,-0.315,0.045],[0.155*s,-0.745,0.055],0.078,0.045,770,r,0.95);
+  r=M("Ischio-jambiers");
+  for(s=-1;s<=1;s+=2)belly([0.095*s,-0.33,-0.035],[0.162*s,-0.79,-0.04],0.062,0.038,630,r,0.95);
+  r=M("Adducteurs");
+  for(s=-1;s<=1;s+=2)belly([0.04*s,-0.315,0.03],[0.142*s,-0.63,0.0],0.055,0.03,503,r,0.9);
+  r=M("Triceps sural");
+  for(s=-1;s<=1;s+=2)belly([0.158*s,-0.785,-0.05],[0.134*s,-1.15,-0.028],0.068,0.014,574,r,0.95);
+  r=M("Tibial antérieur");
+  for(s=-1;s<=1;s+=2)belly([0.168*s,-0.815,0.038],[0.14*s,-1.12,0.026],0.034,0.013,266,r,0.9);
+
+  /* ================= ACCESSOIRES ================= */
+  var ACC=kind.length;
+  LAYER=2;
+  MID=0; /* string */
+  for(i=0;i<430;i++){                       /* ceinture */
+    var a=rnd()*6.2832;
+    var yb=-0.185+(rnd()-0.5)*0.028;
+    push(0.182*Math.sin(a),yb+0.012*Math.cos(a*2),0.112*Math.cos(a),9,1.05,1);
+  }
+  for(i=0;i<620;i++){                      /* devant en V */
+    var uu=rnd(),vv=rnd()*2-1;
+    var halfw=0.095*(1-uu*0.82);
+    if(Math.abs(vv)>1)continue;
+    var xv=vv*halfw;
+    var yv2=-0.2-uu*0.135;
+    push(xv,yv2,0.1-uu*0.02+0.012*(1-Math.abs(vv))-0.02*xv*xv*8,9,1.05,1);
+  }
+  for(i=0;i<150;i++){                       /* ficelle arrière */
+    var tt=rnd();
+    push((rnd()-0.5)*0.016,-0.2-tt*0.14,-0.085-tt*0.015,9,0.95,1);
+  }
+  MID=1; /* lunettes */
+  for(s=-1;s<=1;s+=2){
+    for(i=0;i<240;i++){
+      var ga=rnd()*6.2832;
+      var gr=0.052+(rnd()-0.5)*0.008;
+      push(0.062*s+gr*Math.cos(ga)*1.08,0.945+gr*Math.sin(ga)*0.82,0.148+(rnd()-0.5)*0.012,9,1,1);
+    }
+    bone([0.115*s,0.952,0.145],[0.142*s,0.948,0.02],0.006,0.005,150,9,0.95);
+  }
+  bone([-0.015,0.95,0.152],[0.015,0.95,0.152],0.006,0.006,70,9,0.95);
+
   var N=kind.length;
   var VS=
-    "attribute vec3 aPos;attribute vec3 aScatter;attribute vec3 aExtra;attribute float aKind;"+
-    "uniform float uIntro,uRotY,uRotX,uAspect,uFocal,uCam,uScale,uDpr,uFocus,uBreath,uT,uAlphaK,uDim;"+
-    "uniform vec3 uCenter,uBrand,uBone;"+
+    "attribute vec3 aPos;attribute vec3 aScatter;attribute vec3 aExtra;attribute float aKind;attribute vec2 aMeta;"+
+    "uniform float uIntro,uRotY,uRotX,uAspect,uFocal,uCam,uScale,uDpr,uFocus,uBreath,uT,uAlphaK,uDim,uShowB,uShowM,uMus;"+
+    "uniform vec3 uCenter,uBrand,uBone,uMusCol;"+
     "varying vec3 vCol;varying float vAlpha;"+
-    
     "void main(){"+
     "  vec3 p=aPos;"+
+    "  float lay=aMeta.x;"+
     "  float sel=step(abs(aKind-uFocus),0.4);"+
     "  float any=step(0.0,uFocus);"+
+    "  float msel=step(abs(aMeta.y-uMus),0.4)*step(0.5,lay)*step(lay,1.5);"+
+    "  float many=step(0.0,uMus);"+
     "  if(aKind>1.5&&aKind<2.5){vec3 c=vec3(0.0,0.25,0.0);p=c+(p-c)*(1.0+0.028*uBreath);p.y+=0.012*uBreath;}"+
     "  float k=clamp(uIntro*1.4-aExtra.z*0.4,0.0,1.0);"+
     "  k=1.0-pow(1.0-k,3.0);"+
@@ -2263,12 +2695,18 @@ function initSkel(){
     "  p=vec3(cy*p.x+sy*p.z,p.y,-sy*p.x+cy*p.z);"+
     "  float d=max(uCam-p.z,0.4);"+
     "  gl_Position=vec4(p.x*uFocal/uAspect,p.y*uFocal,0.0,d);"+
-    "  float pulse=1.0+0.12*sin(uT*2.2)*sel*any;"+
-    "  gl_PointSize=aExtra.x*uScale*uDpr*(1.0+0.45*sel*any)*pulse/d;"+
-    "  vec3 col=mix(uBone,uBone*1.06,aExtra.y);"+
-    "  col=mix(col,uBrand,sel*any*0.88);"+
-    "  float a=(0.42+0.34*aExtra.y)*uAlphaK;"+
-    "  a*=mix(1.0,mix(uDim,1.5,sel),any);"+
+    "  float hi=max(sel*any,msel*many);"+
+    "  float pulse=1.0+0.12*sin(uT*2.2)*hi;"+
+    "  gl_PointSize=aExtra.x*uScale*uDpr*(1.0+0.45*hi)*pulse/d;"+
+    "  vec3 col;float a;"+
+    "  if(lay<0.5){col=mix(uBone,uBone*1.06,aExtra.y);a=(0.42+0.34*aExtra.y)*uAlphaK*uShowB;}"+
+    "  else if(lay<1.5){col=mix(uMusCol,uMusCol*1.18,aExtra.y);a=(0.42+0.34*aExtra.y)*uAlphaK*uShowM;}"+
+    "  else{col=aMeta.y<0.5?vec3(1.0,0.14,0.55):vec3(0.30,0.60,1.0);a=0.9;}"+
+    "  col=mix(col,uBrand,hi*0.9);"+
+    "  if(lay<1.5){"+
+    "    a*=mix(1.0,mix(uDim,1.5,sel),any);"+
+    "    a*=mix(1.0,mix(uDim*0.8,1.6,msel),many);"+
+    "  }"+
     "  a*=0.28+0.72*k;"+
     "  float near=1.0-smoothstep(uCam-1.1,uCam+1.3,d);"+
     "  vCol=col;vAlpha=a*(0.45+0.55*near);"+
@@ -2284,19 +2722,19 @@ function initSkel(){
   gl.linkProgram(prog);
   if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(prog));
   gl.useProgram(prog);
-  var A={aPos:3,aScatter:3,aExtra:3,aKind:1},loc={},U={};
+  var A={aPos:3,aScatter:3,aExtra:3,aKind:1,aMeta:2},loc={},U={};
   for(var nm in A){loc[nm]=gl.getAttribLocation(prog,nm);gl.enableVertexAttribArray(loc[nm])}
-  var un=["uIntro","uRotY","uRotX","uAspect","uFocal","uCam","uScale","uDpr","uFocus","uBreath","uT","uAlphaK","uDim","uCenter","uBrand","uBone"];
+  var un=["uIntro","uRotY","uRotX","uAspect","uFocal","uCam","uScale","uDpr","uFocus","uBreath","uT","uAlphaK","uDim","uShowB","uShowM","uMus","uCenter","uBrand","uBone","uMusCol"];
   for(i=0;i<un.length;i++)U[un[i]]=gl.getUniformLocation(prog,un[i]);
   function buf(d){var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,d,gl.STATIC_DRAW);return b}
-  var BUFS={aPos:buf(new Float32Array(pos)),aScatter:buf(new Float32Array(scat)),aExtra:buf(new Float32Array(ext)),aKind:buf(new Float32Array(kind))};
+  var BUFS={aPos:buf(new Float32Array(pos)),aScatter:buf(new Float32Array(scat)),aExtra:buf(new Float32Array(ext)),aKind:buf(new Float32Array(kind)),aMeta:buf(new Float32Array(meta))};
   for(nm in A){gl.bindBuffer(gl.ARRAY_BUFFER,BUFS[nm]);gl.vertexAttribPointer(loc[nm],A[nm],gl.FLOAT,false,0,0)}
   gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);gl.clearColor(0,0,0,0);
 
   var V={W:1,H:1,dpr:1,aspect:1,focal:2.2,cam:3.3,scale:9};
   function resize(){
-    var r=host.getBoundingClientRect();
-    V.W=Math.max(1,r.width);V.H=Math.max(1,r.height);
+    var rc=host.getBoundingClientRect();
+    V.W=Math.max(1,rc.width);V.H=Math.max(1,rc.height);
     V.dpr=Math.min(2,window.devicePixelRatio||1);
     cv.width=Math.round(V.W*V.dpr);cv.height=Math.round(V.H*V.dpr);
     gl.viewport(0,0,cv.width,cv.height);
@@ -2305,7 +2743,8 @@ function initSkel(){
     V.scale=0.0205*V.focal*V.H/2;
   }
   var RM=false;try{RM=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
-  var st={rotY:0.34,rotX:0.03,vel:0,focus:-1,intro:0,t0:Date.now(),drag:false,px:0,py:0,on:true,raf:null,brand:[0.8,1,0.24],bone:[0.93,0.91,0.85],light:false};
+  var st={rotY:0.34,rotX:0.03,vel:0,focus:-1,mus:-1,showB:1,showM:0.75,intro:0,t0:Date.now(),
+          drag:false,px:0,py:0,on:true,raf:null,brand:[0.8,1,0.24],bone:[0.93,0.91,0.85],mcol:[0.88,0.3,0.32],light:false};
   function brand(){
     var c=getComputedStyle(document.documentElement).getPropertyValue("--brand").trim();
     var m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(c.replace("#",""));
@@ -2314,8 +2753,9 @@ function initSkel(){
     var g=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(bg.replace("#",""));
     var lum=g?(0.2126*parseInt(g[1],16)+0.7152*parseInt(g[2],16)+0.0722*parseInt(g[3],16))/255:0;
     st.light=lum>0.5;
-    /* en fond clair l\u2019os additif ivoire dispara\u00eetrait : encre sombre + alpha classique */
+    /* en fond clair l’os additif ivoire disparaîtrait : encre sombre + alpha classique */
     st.bone=st.light?[0.12,0.10,0.08]:[0.93,0.91,0.85];
+    st.mcol=st.light?[0.6,0.12,0.13]:[1.0,0.26,0.24];
   }
   brand();
   function frame(){
@@ -2332,6 +2772,7 @@ function initSkel(){
     gl.uniform1f(U.uAlphaK,st.light?1.7:1);
     gl.uniform1f(U.uDim,st.light?0.55:0.33);
     gl.uniform3f(U.uBone,st.bone[0],st.bone[1],st.bone[2]);
+    gl.uniform3f(U.uMusCol,st.mcol[0],st.mcol[1],st.mcol[2]);
     gl.uniform1f(U.uIntro,st.intro);
     gl.uniform1f(U.uRotY,st.rotY);
     gl.uniform1f(U.uRotX,st.rotX);
@@ -2341,17 +2782,21 @@ function initSkel(){
     gl.uniform1f(U.uScale,V.scale);
     gl.uniform1f(U.uDpr,V.dpr);
     gl.uniform1f(U.uFocus,st.focus);
+    gl.uniform1f(U.uMus,st.mus);
+    gl.uniform1f(U.uShowB,st.showB);
+    gl.uniform1f(U.uShowM,st.showM);
     gl.uniform1f(U.uT,el);
     gl.uniform1f(U.uBreath,RM?0:0.5+0.5*Math.sin(el*0.85));
     gl.uniform3f(U.uCenter,0,-0.2,0);
     gl.uniform3f(U.uBrand,st.brand[0],st.brand[1],st.brand[2]);
-    gl.drawArrays(gl.POINTS,0,N);
+    gl.drawArrays(gl.POINTS,0,ACC);
+    /* accessoires en alpha classique : en additif le rose saturerait en blanc */
+    gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArrays(gl.POINTS,ACC,N-ACC);
     st.raf=requestAnimationFrame(frame);
   }
   function start(){if(!st.raf&&st.on)st.raf=requestAnimationFrame(frame)}
   function stop(){if(st.raf){cancelAnimationFrame(st.raf);st.raf=null}}
-
-  /* rotation à la souris / au doigt */
   function down(e){st.drag=true;st.px=(e.touches?e.touches[0]:e).clientX;st.py=(e.touches?e.touches[0]:e).clientY}
   function move(e){
     if(!st.drag)return;
@@ -2372,39 +2817,80 @@ function initSkel(){
   return {
     resize:resize,start:start,stop:stop,brand:brand,
     show:function(v){st.on=v;if(v){resize();start()}else stop()},
-    focus:function(k){st.focus=(k===null||k===undefined)?-1:k}
+    focus:function(k){st.focus=(k===null||k===undefined)?-1:k},
+    mus:function(m){st.mus=(m===null||m===undefined)?-1:m},
+    layers:function(b,m){st.showB=b;st.showM=m}
   };
+}
+var H3MODE="both";
+function h3dApplyMode(){
+  if(!SKEL)return;
+  if(H3MODE==="os")SKEL.layers(1,0);
+  else if(H3MODE==="muscles")SKEL.layers(0.16,1);
+  else SKEL.layers(0.82,0.5);
+}
+function h3dPanel(rk,mid){
+  var box=$("h3dinfo");if(!box)return;
+  var i,r=null;
+  for(i=0;i<REGIONS.length;i++)if(REGIONS[i].k===rk)r=REGIONS[i];
+  if(!r){box.innerHTML="";box.classList.remove("on");return}
+  var ci=0;for(i=0;i<CHAPS.length;i++)if(CHAPS[i].id===r.c)ci=i;
+  var h='<b>'+r.n+'</b><span>'+(mid>=0?MUSCLES[mid].i:r.d)+'</span>';
+  var list=[];
+  for(i=0;i<MUSCLES.length;i++)if(MUSCLES[i].r===rk)list.push(i);
+  if(list.length&&H3MODE!=="os"){
+    h+='<div class="h3dmus" id="h3dmus">';
+    for(i=0;i<list.length;i++)
+      h+='<button class="h3dmchip'+(list[i]===mid?" on":"")+'" data-mi="'+list[i]+'">'+MUSCLES[list[i]].n+'</button>';
+    h+='</div>';
+  }
+  h+='<button class="h3dgo" data-ch="'+r.c+'">Réviser le chapitre '+(ci+1)+' →</button>';
+  box.innerHTML=h;
+  box.classList.add("on");
 }
 function renderHero3D(){
   var host=$("hero3d");if(!host)return;
   host.className="h3dwrap";
   var h='<div class="h3d" id="h3dstage"><canvas id="gl"></canvas><div class="h3dgrad"></div>'+
-    '<div class="h3dtop"><span class="h3dtag">Squelette · vue 3D</span><span class="h3dhint">Fais-le tourner au doigt</span></div>'+
+    '<div class="h3dtop"><span class="h3dtag">Corps · vue 3D</span>'+
+    '<div class="h3dseg" id="h3dseg">'+
+      '<button data-m="os">Os</button><button data-m="muscles">Muscles</button><button class="on" data-m="both">Les deux</button>'+
+    '</div></div>'+
     '<div class="h3dfoot"><div class="h3dchips" id="h3dchips">';
   for(var i=0;i<REGIONS.length;i++)h+='<button class="h3dchip" data-rk="'+REGIONS[i].k+'">'+REGIONS[i].n+'</button>';
   h+='</div></div></div><div class="h3dinfo" id="h3dinfo"></div>';
   host.innerHTML=h;
   try{SKEL=initSkel()}catch(e){SKEL=null}
-  if(!SKEL)host.classList.add("no-gl");
+  if(!SKEL){host.classList.add("no-gl");return}
+  h3dApplyMode();
+  var curR=-1,curM=-1;
+  $("h3dseg").onclick=function(e){
+    var b=e.target.closest("[data-m]");if(!b)return;
+    H3MODE=b.getAttribute("data-m");
+    var bs=$("h3dseg").querySelectorAll("button");
+    for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i]===b);
+    if(H3MODE==="os"&&curM>=0){curM=-1;SKEL.mus(null)}
+    h3dApplyMode();
+    if(curR>=0)h3dPanel(curR,curM);
+    buzz(8);
+  };
   $("h3dchips").onclick=function(e){
     var b=e.target.closest("[data-rk]");if(!b)return;
     var k=+b.getAttribute("data-rk"),was=b.classList.contains("on");
     var bs=$("h3dchips").querySelectorAll(".h3dchip");
     for(var i=0;i<bs.length;i++)bs[i].classList.remove("on");
-    if(was){if(SKEL)SKEL.focus(null);$("h3dinfo").innerHTML="";$("h3dinfo").classList.remove("on");buzz(6);return}
-    b.classList.add("on");
-    if(SKEL)SKEL.focus(k);
-    var r=null;
-    for(i=0;i<REGIONS.length;i++)if(REGIONS[i].k===k)r=REGIONS[i];
-    var ci=0;for(i=0;i<CHAPS.length;i++)if(CHAPS[i].id===r.c)ci=i;
-    $("h3dinfo").innerHTML='<b>'+r.n+'</b><span>'+r.d+'</span>'+
-      '<button class="h3dgo" data-ch="'+r.c+'">Réviser le chapitre '+(ci+1)+' →</button>';
-    $("h3dinfo").classList.add("on");
-    buzz(10);
+    curM=-1;SKEL.mus(null);
+    if(was){curR=-1;SKEL.focus(null);$("h3dinfo").innerHTML="";$("h3dinfo").classList.remove("on");buzz(6);return}
+    b.classList.add("on");curR=k;SKEL.focus(k);h3dPanel(k,-1);buzz(10);
   };
   $("h3dinfo").onclick=function(e){
-    var b=e.target.closest("[data-ch]");if(!b)return;
-    S.chap=b.getAttribute("data-ch");save();go("flash");
+    var g=e.target.closest("[data-ch]");
+    if(g){S.chap=g.getAttribute("data-ch");save();go("flash");return}
+    var m=e.target.closest("[data-mi]");
+    if(!m)return;
+    var mi=+m.getAttribute("data-mi");
+    if(mi===curM){curM=-1;SKEL.mus(null)}else{curM=mi;SKEL.mus(mi)}
+    h3dPanel(curR,curM);buzz(8);
   };
 }
 
