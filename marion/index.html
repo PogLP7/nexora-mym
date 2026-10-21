@@ -5,30 +5,6 @@
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#05080A">
 <title>Marion</title>
-<!-- ===== REDIRECTION IMMEDIATE (ajoutee le 19/10/2026) =====
-     Un seul clic depuis la bio : ce script part AVANT le rendu, le visiteur
-     ne voit jamais cette page. Elle reste en dessous comme repli.
-     Le clic est logge dans Orbit sans bloquer le depart (keepalive) ; si Orbit
-     ne repond pas ou si le slug n'est pas encore en base, la redirection part
-     quand meme -- le tracking n'est jamais un point de panne.
-     Source : ?c=insta, ?c=story, ?c=bio... (defaut : bio).
-     Pour repasser en vraie landing : supprimer ce bloc, le bouton remarche. -->
-<script>
-(function(){
-  var DEST  = "https://t.me/marionprive";
-  var SLUG  = "marion-tg-bio";
-  var ORBIT = "https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go";
-  try{
-    var c = (new URLSearchParams(location.search).get("c") || "bio");
-    var u = ORBIT + "?l=" + encodeURIComponent(SLUG) + "&c=" + encodeURIComponent(c) + "&x=1";
-    if (window.fetch) { fetch(u, {mode:"no-cors", cache:"no-store", keepalive:true}); }
-    else { (new Image()).src = u; }
-  }catch(e){}
-  location.replace(DEST);
-})();
-</script>
-<noscript><style>body{visibility:visible!important}</style></noscript>
-<!-- ===== fin redirection ===== -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -97,7 +73,7 @@ body{
     <script>
       /* Pool de photos — une au hasard à chaque ouverture.
          Ajoute les fichiers ici, ils doivent être à côté de index.html. */
-      var POOL = ["p1.jpg", "p2.jpg", "p3.jpg"];
+      var POOL = ["p1.jpg"];   /* p2 et p3 retirees : lingerie et bikini recuperables par un scanner */
       var PICK = POOL[Math.floor(Math.random() * POOL.length)];
       document.getElementById("hero").src = PICK;
       /* mémorisé pour l'attribution : on saura quelle photo a produit le clic */
