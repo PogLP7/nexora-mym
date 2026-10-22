@@ -541,7 +541,10 @@ footer{max-width:var(--w);margin:0 auto;padding:30px 18px 10px;text-align:center
 .h3dmchip.on{background:var(--brand);border-color:var(--brand);color:var(--brandink)}
 @media(max-width:640px){.h3dtop{gap:7px}.h3dseg button{padding:6px 9px;font-size:9.5px}}
 /* ---------- SCHÉMAS ---------- */
-.cmhint{margin:-2px 0 12px;font:600 11.5px/1.5 var(--fb);color:var(--ink3)}
+/* la barre des CM s’enroule : sur telephone CM 4 et CM 5 sortaient de l’ecran */
+#segcm{flex-wrap:wrap;overflow:visible;margin:16px 0 8px}
+#segcm .seg{flex:0 0 auto}
+.cmhint{margin:0 0 12px;font:600 11.5px/1.5 var(--fb);color:var(--ink3)}
 .pitag{display:inline-block;margin-left:7px;padding:3px 7px;border-radius:999px;border:1px solid var(--line2);background:var(--wash);color:var(--ink3);font:700 9px/1 var(--fm);letter-spacing:.07em;text-transform:uppercase;vertical-align:middle}
 .evbox{border:1px solid var(--brand);border-radius:var(--r);padding:14px 16px;margin-top:14px;background:var(--surfi)}
 .evbox>b:first-child{display:block;font-family:var(--fh);font-size:14px;margin-bottom:6px}
