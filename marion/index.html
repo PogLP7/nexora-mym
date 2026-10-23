@@ -10,120 +10,119 @@
 :root{
   --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --fm:ui-monospace,"SF Mono",Menlo,monospace;
-  /* DA Vault — registre alycia : noir dense, accent émeraude unique */
   --g1:#10B981;--g2:#34D399;
   --bg:#05080A;--ink:#fff;--mut:rgba(255,255,255,.55)
 }
 html,body{min-height:100%}
 body{
   font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--ink);
-  background:
-    radial-gradient(120% 55% at 50% -10%,rgba(16,185,129,.22),transparent 60%),
-    var(--bg);
+  background:radial-gradient(120% 50% at 50% -10%,rgba(16,185,129,.20),transparent 60%),var(--bg);
   display:flex;flex-direction:column;align-items:center;
-  padding:24px 16px 36px;min-height:100vh;
-  /* masqué tant que le filtre pays n'a pas tranché — révélé par le script */
+  padding:30px 16px 36px;min-height:100vh;
   visibility:hidden
 }
-.card{width:100%;max-width:440px;animation:in .5s cubic-bezier(.16,1,.3,1) both}
+.card{width:100%;max-width:400px;text-align:center;
+  animation:in .5s cubic-bezier(.16,1,.3,1) both}
 @keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-.photo{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;
-  border:2px solid rgba(16,185,129,.45);background:#0a1512;
-  box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 60px rgba(16,185,129,.12)}
-.photo img{width:100%;height:100%;object-fit:cover;object-position:center 18%;display:block}
-.photo::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(5,8,10,.82),transparent 44%);pointer-events:none}
+.city{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:16px;min-height:12px}
 
-.id{position:absolute;left:16px;right:16px;bottom:14px;z-index:2}
-.name{display:flex;align-items:center;gap:7px}
-.name b{font-size:26px;font-weight:850;letter-spacing:-.015em;text-shadow:0 2px 14px rgba(0,0,0,.7)}
-.vf{width:18px;height:18px;flex:0 0 auto}
-.chan{font-family:var(--fm);font-size:12.5px;color:rgba(255,255,255,.72);margin-top:2px}
+.av{width:104px;height:104px;border-radius:50%;margin:0 auto 15px;position:relative;z-index:2}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 20%;
+  display:block;box-shadow:0 0 0 2px var(--g1),0 0 34px rgba(16,185,129,.42)}
+.av::before{content:"";position:absolute;left:50%;top:50%;width:240px;height:240px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(16,185,129,.34),transparent 68%);
+  animation:halo 3.6s ease-in-out infinite}
+@keyframes halo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(.92)}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
 
-.city{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--g1);margin:16px 0 6px;min-height:13px}
-.hook{font-size:19px;font-weight:850;line-height:1.38;letter-spacing:-.01em}
-.hook b{color:var(--g1)}
-.sub{font-size:14px;color:var(--mut);line-height:1.45;margin-top:7px}
+h1{font-size:23px;font-weight:800;letter-spacing:-.015em}
+.line{font-size:14px;color:var(--mut);margin-top:6px;line-height:1.5}
 
-.cta{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
-  text-decoration:none;color:#04221A;font-weight:850;font-size:16.5px;
-  text-transform:uppercase;letter-spacing:.02em;border-radius:16px;padding:18px;
-  margin-top:20px;background:var(--g1);
-  box-shadow:0 12px 32px rgba(16,185,129,.34);
-  position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;
-  transition:transform .15s ease,box-shadow .15s ease}
-.cta:active{transform:scale(.98);box-shadow:0 6px 18px rgba(16,185,129,.3)}
-.cta .sh{position:absolute;top:0;left:-40%;width:40%;height:100%;
-  background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);
-  animation:sh 3.4s cubic-bezier(.16,1,.3,1) infinite}
-@keyframes sh{0%{left:-45%}55%,100%{left:130%}}
+.links{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.links a{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;
+  font-size:15px;font-weight:600;text-align:left;
+  padding:15px 16px;border-radius:14px;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11);
+  -webkit-tap-highlight-color:transparent;
+  transition:background .15s ease,transform .12s ease}
+.links a:active{background:rgba(255,255,255,.1);transform:scale(.99)}
+.links a .ic{width:19px;height:19px;flex:0 0 auto;opacity:.85}
+.links a .ar{margin-left:auto;opacity:.3;font-size:16px}
 
-.foot{display:flex;align-items:center;justify-content:center;margin-top:18px;
-  padding-top:13px;border-top:1px solid rgba(255,255,255,.09);
-  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.38)}
+/* la destination principale, mise en avant sans nommer de plateforme */
+.links a.main{color:#04221A;background:var(--g1);border-color:transparent;
+  font-weight:800;box-shadow:0 10px 28px rgba(16,185,129,.3)}
+.links a.main .ic,.links a.main .ar{opacity:.85}
+.links a.main:active{background:var(--g2)}
+
+.foot{margin-top:24px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);
+  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.26)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head>
 <body>
 <div class="card">
 
-  <div class="photo">
-    <img id="hero" alt="Marion" fetchpriority="high">
-    <script>
-      /* Pool de photos — une au hasard à chaque ouverture.
-         Ajoute les fichiers ici, ils doivent être à côté de index.html. */
-      var POOL = ["p1.jpg"];   /* p2 et p3 retirees : lingerie et bikini recuperables par un scanner */
-      var PICK = POOL[Math.floor(Math.random() * POOL.length)];
-      document.getElementById("hero").src = PICK;
-      /* mémorisé pour l'attribution : on saura quelle photo a produit le clic */
-      window.__photo = PICK.replace(".jpg", "");
-    </script>
-    <div class="id">
-      <div class="name"><b>Marion</b>&nbsp;🤍
-        <svg class="vf" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3b9eff"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="chan">Marion Privé</div>
-    </div>
-  </div>
-
   <span class="city" id="city"></span>
-  <div class="hook">Mon seul canal,<br><b>le seul que je gère</b> 🤍</div>
-  <div class="sub">Je réponds qu'ici 👇</div>
 
-  <a class="cta" id="cta" href="#" rel="noopener"><span class="sh"></span>🤍 Rejoindre le canal</a>
+  <div class="av"><img src="p1.jpg" alt="Marion" fetchpriority="high"></div>
 
-  <div class="foot"><span>🔞 +18 · privé</span></div>
+  <h1>Marion</h1>
+  <div class="line">Mes réseaux et mon contenu, au même endroit.</div>
+
+  <div class="links" id="links"></div>
+
+  <div class="foot">Marion · 2026</div>
 </div>
 
 <script>
-/* ============ CONFIG — tout se règle ici ============ */
+/* ============ CONFIG ============
 
-/* La cible est le CANAL, jamais le profil DM (@marionpv).
-   Un clic qui atterrit sur la fiche profil du compte DM ne produit
-   aucune adhésion et aucun événement Wysper.
-   Voir telegram-marion/orbit-liens-marion.sql. */
-var DEST = "https://t.me/marionprive";
-/* Variante tracking (log orbit_clicks puis 302 — les 3 slugs sont déjà actifs) :
-   var DEST = "https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go?l=marion-tg-bio&x=1"; */
+   Structure reprise de la grille GetMySocial pour les créateurs 18+ :
+   plusieurs destinations réelles, libellés sans nom de plateforme pour
+   la destination adulte, et celle-ci placée derrière la porte 18+ de /t/
+   plutôt qu'en clair dans le HTML.
+
+   Le lien Telegram n'apparaît QUE dans /t/index.html, après confirmation d'âge.
+*/
+
+var LINKS = [
+  { label: "Instagram",     url: "https://instagram.com/itsmariion", icon: "ig" },
+  /* { label: "TikTok",     url: "https://tiktok.com/@A_REMPLIR",    icon: "tt" }, */
+  /* { label: "Ma wishlist", url: "https://A_REMPLIR",               icon: "gift" }, */
+  { label: "Accès privé",   url: "t/",                               icon: "lock", main: true }
+];
 
 var CITY_HOOK = true;
 
-/* --- Filtre géographique (même liste que la landing Amandine) --- */
+/* --- Filtre pays ---
+   ⚠️ En JavaScript, il ne s'applique PAS à un crawler : il faut le passer
+   côté serveur (voir MIGRATION-CLOUDFLARE.md). */
 var GEO_ON    = true;
 var GEO_ALLOW = ["FR", "BE", "CH", "CA", "LU", "MC", "AD"];
 var GEO_FAIL_OPEN = false;
-var GEO_REDIRECT = "";
-/* ==================================================== */
+/* ================================= */
 
 (function () {
+  var ICONS = {
+    ig:   '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>',
+    tt:   '<svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2h-3v13.3a2.7 2.7 0 1 1-2.7-2.7c.3 0 .5 0 .8.1V9.6a6 6 0 1 0 5 5.9V9.2a6.7 6.7 0 0 0 3.9 1.2V7.3a3.8 3.8 0 0 1-4-3.5z"/></svg>',
+    gift: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8S10.5 3 8 3a2.5 2.5 0 0 0 0 5zM12 8s1.5-5 4-5a2.5 2.5 0 0 1 0 5z"/></svg>',
+    lock: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>'
+  };
+
   var c = new URLSearchParams(location.search).get("c");
-  var dest = DEST;
-  if (dest.indexOf("t.me/") === -1) {
-    if (c) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "c=" + encodeURIComponent(c); }
-    if (window.__photo) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "p=" + encodeURIComponent(window.__photo); }
+  var html = "";
+  for (var i = 0; i < LINKS.length; i++) {
+    var L = LINKS[i], u = L.url;
+    /* on propage le clippeur vers la porte 18+, qui log le clic dans Orbit */
+    if (L.main && c) { u += "?c=" + encodeURIComponent(c); }
+    html += '<a class="' + (L.main ? "main" : "") + '" href="' + u + '" rel="noopener">'
+          + (ICONS[L.icon] || "") + L.label + '<span class="ar">›</span></a>';
   }
-  document.getElementById("cta").href = dest;
+  document.getElementById("links").innerHTML = html;
 
   function withTimeout(url, ms) {
     return new Promise(function (ok, ko) {
@@ -152,39 +151,31 @@ var GEO_REDIRECT = "";
   }
 
   function block() {
-    if (GEO_REDIRECT) { location.replace(GEO_REDIRECT); return; }
     document.body.innerHTML =
       '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px">' +
       '<div style="text-align:center;max-width:320px">' +
-      '<div style="font-size:15px;font-weight:800;margin-bottom:8px">Page indisponible</div>' +
+      '<div style="font-size:15px;font-weight:700;margin-bottom:8px">Page indisponible</div>' +
       '<div style="font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.55)">' +
-      "Ce contenu n'est pas accessible depuis ton pays." +
+      "Cette page n'est pas accessible depuis ton pays." +
       "</div></div></div>";
     document.body.style.visibility = "visible";
   }
 
   function reveal(city) {
-    if (city && CITY_HOOK) {
-      document.getElementById("city").textContent = city + " 🤍";
-    }
+    if (city && CITY_HOOK) { document.getElementById("city").textContent = city; }
     document.body.style.visibility = "visible";
   }
 
-  /* Sur Cloudflare Pages, _middleware.js a déjà filtré le pays côté serveur
-     et injecté la ville : aucun appel API, aucun quota. */
   if (window.__GEO) {
     reveal(window.__GEO.city || "");
   } else if (!GEO_ON) {
     reveal("");
-    lookup().then(function (g) { if (g.city) { reveal(g.city); } }).catch(function () {});
   } else {
     lookup()
       .then(function (g) {
         if (GEO_ALLOW.indexOf(g.cc) === -1) { block(); } else { reveal(g.city); }
       })
-      .catch(function () {
-        if (GEO_FAIL_OPEN) { reveal(""); } else { block(); }
-      });
+      .catch(function () { if (GEO_FAIL_OPEN) { reveal(""); } else { block(); } });
   }
 })();
 </script>

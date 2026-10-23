@@ -5,231 +5,131 @@
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#061412">
 <title>Amandine</title>
-<!-- ===== REDIRECTION IMMEDIATE (ajoutee le 19/10/2026) =====
-     Un seul clic depuis la bio : ce script part AVANT le rendu, le visiteur
-     ne voit jamais cette page. Elle reste en dessous comme repli.
-     Le clic est logge dans Orbit sans bloquer le depart (keepalive) ; si Orbit
-     ne repond pas ou si le slug n'est pas encore en base, la redirection part
-     quand meme -- le tracking n'est jamais un point de panne.
-     Source : ?c=insta, ?c=story, ?c=bio... (defaut : bio).
-     Pour repasser en vraie landing : supprimer ce bloc, le bouton remarche. -->
-<script>
-(function(){
-  var DEST  = "https://t.me/amandineprive";
-  var SLUG  = "amandine-tg-insta";
-  var ORBIT = "https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go";
-  try{
-    var c = (new URLSearchParams(location.search).get("c") || "bio");
-    var u = ORBIT + "?l=" + encodeURIComponent(SLUG) + "&c=" + encodeURIComponent(c) + "&x=1";
-    if (window.fetch) { fetch(u, {mode:"no-cors", cache:"no-store", keepalive:true}); }
-    else { (new Image()).src = u; }
-  }catch(e){}
-  location.replace(DEST);
-})();
-</script>
-<noscript><style>body{visibility:visible!important}</style></noscript>
-<!-- ===== fin redirection ===== -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --f:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --fm:ui-monospace,"SF Mono",Menlo,monospace;
   --g1:#3FD07E;--g2:#25E8C3;
-  --bg:#061412;--ink:#fff;--mut:rgba(255,255,255,.62)
+  --bg:#061412;--ink:#fff;--mut:rgba(255,255,255,.55)
 }
 html,body{min-height:100%}
 body{
   font-family:var(--f);-webkit-font-smoothing:antialiased;color:var(--ink);
-  background:
-    radial-gradient(120% 55% at 50% -8%,rgba(63,208,126,.30),transparent 58%),
-    radial-gradient(110% 55% at 100% 104%,rgba(37,232,195,.22),transparent 55%),
-    var(--bg);
+  background:radial-gradient(120% 50% at 50% -10%,rgba(63,208,126,.20),transparent 60%),var(--bg);
   display:flex;flex-direction:column;align-items:center;
-  padding:24px 16px 36px;min-height:100vh;
-  /* masqué tant que le filtre pays n'a pas tranché — révélé par le script */
+  padding:30px 16px 36px;min-height:100vh;
   visibility:hidden
 }
-.card{width:100%;max-width:440px;animation:in .5s cubic-bezier(.16,1,.3,1) both}
+.card{width:100%;max-width:400px;text-align:center;
+  animation:in .5s cubic-bezier(.16,1,.3,1) both}
 @keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-.loc{margin-bottom:14px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
-  padding:6px 12px;border-radius:999px;color:#fff;
-  background:rgba(63,208,126,.16);border:1px solid rgba(63,208,126,.45)}
-.pin{width:11px;height:11px;position:relative;display:inline-block}
-.pin::before{content:"";position:absolute;inset:0;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:currentColor}
-.pin::after{content:"";position:absolute;left:3.3px;top:2.8px;width:4.4px;height:4.4px;border-radius:50%;background:#061412;opacity:.55}
+.city{display:block;font-size:10.5px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:16px;min-height:12px}
 
-.photo{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;margin:0 0 0;
-  border:2px solid rgba(63,208,126,.45);background:#0d1f1b;
-  box-shadow:0 18px 50px rgba(0,0,0,.5)}
-.photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
-.photo::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(6,20,18,.78),transparent 42%);pointer-events:none}
-.on{position:absolute;left:11px;top:11px;display:inline-flex;align-items:center;gap:6px;
-  font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;color:#fff;
-  background:rgba(0,0,0,.52);border:1px solid rgba(63,208,126,.55);backdrop-filter:blur(4px);z-index:2}
-.on .d{width:7px;height:7px;border-radius:50%;background:var(--g1);box-shadow:0 0 8px var(--g1);animation:bl 1.3s infinite}
-@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
-.cnt{position:absolute;right:11px;top:11px;font-family:var(--fm);font-size:10.5px;font-weight:700;
-  padding:5px 10px;border-radius:999px;color:#fff;background:rgba(0,0,0,.52);
-  border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(4px);z-index:2}
+.av{width:104px;height:104px;border-radius:50%;margin:0 auto 15px;position:relative;z-index:2}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 20%;
+  display:block;box-shadow:0 0 0 2px var(--g1),0 0 34px rgba(63,208,126,.42)}
+.av::before{content:"";position:absolute;left:50%;top:50%;width:240px;height:240px;
+  transform:translate(-50%,-50%);border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(63,208,126,.34),transparent 68%);
+  animation:halo 3.6s ease-in-out infinite}
+@keyframes halo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(.92)}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}}
 
-.id{position:absolute;left:16px;right:16px;bottom:14px;z-index:2}
-.name{display:flex;align-items:center;gap:8px}
-.name b{font-size:26px;font-weight:850;letter-spacing:-.015em;text-shadow:0 2px 14px rgba(0,0,0,.6)}
-.vf{width:19px;height:19px;flex:0 0 auto}
-.handle{font-family:var(--fm);font-size:12.5px;color:rgba(255,255,255,.72);margin-top:2px}
+h1{font-size:23px;font-weight:800;letter-spacing:-.015em}
+.line{font-size:14px;color:var(--mut);margin-top:6px;line-height:1.5}
 
-.hook{font-size:19px;font-weight:850;line-height:1.38;margin:16px 0 10px;letter-spacing:-.01em}
-.hook .city{display:block;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--g1);margin-bottom:5px}
-.proof{font-size:13.5px;color:var(--mut);margin:0 0 7px}
-.proof b{color:#fff;font-weight:800}
-.queue{display:flex;align-items:flex-start;gap:7px;font-size:13.5px;line-height:1.4;color:var(--mut);margin:0 0 16px}
-.qd{width:6px;height:6px;border-radius:50%;margin-top:6px;flex:0 0 auto;background:var(--g1);box-shadow:0 0 7px var(--g1)}
-.hook b{background:linear-gradient(96deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.links{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.links a{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;
+  font-size:15px;font-weight:600;text-align:left;
+  padding:15px 16px;border-radius:14px;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11);
+  -webkit-tap-highlight-color:transparent;
+  transition:background .15s ease,transform .12s ease}
+.links a:active{background:rgba(255,255,255,.1);transform:scale(.99)}
+.links a .ic{width:19px;height:19px;flex:0 0 auto;opacity:.85}
+.links a .ar{margin-left:auto;opacity:.3;font-size:16px}
 
-.cdlab{font-family:var(--fm);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-  text-align:center;margin-bottom:8px;color:var(--g1)}
-.cd{display:flex;gap:8px;justify-content:center}
-.cd .b{flex:1;text-align:center;border-radius:12px;padding:10px 0;
-  background:rgba(63,208,126,.10);border:1px solid rgba(63,208,126,.30)}
-.cd .n{font-size:23px;font-weight:850;font-variant-numeric:tabular-nums}
-.cd .u{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(63,208,126,.85)}
+/* la destination principale, mise en avant sans nommer de plateforme */
+.links a.main{color:#06201A;background:var(--g1);border-color:transparent;
+  font-weight:800;box-shadow:0 10px 28px rgba(63,208,126,.3)}
+.links a.main .ic,.links a.main .ar{opacity:.85}
+.links a.main:active{background:var(--g2)}
 
-.cta{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
-  text-decoration:none;color:#06201a;font-weight:850;font-size:16.5px;text-transform:uppercase;
-  letter-spacing:.01em;border-radius:16px;padding:18px;margin-top:16px;
-  background:linear-gradient(96deg,var(--g1),var(--g2));
-  box-shadow:0 12px 32px rgba(63,208,126,.34);
-  position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;
-  transition:transform .15s ease,box-shadow .15s ease}
-.cta:active{transform:scale(.98);box-shadow:0 6px 18px rgba(63,208,126,.3)}
-.cta .sh{position:absolute;top:0;left:-40%;width:40%;height:100%;
-  background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);
-  animation:sh 3.4s cubic-bezier(.16,1,.3,1) infinite}
-@keyframes sh{0%{left:-45%}55%,100%{left:130%}}
-
-.alt{display:flex;gap:9px;margin-top:10px}
-.alt a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
-  text-decoration:none;color:#fff;font-size:13.5px;font-weight:700;
-  border-radius:13px;padding:13px 10px;background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.12);-webkit-tap-highlight-color:transparent;
-  transition:background .15s ease}
-.alt a:active{background:rgba(255,255,255,.12)}
-.alt svg{width:16px;height:16px;flex:0 0 auto}
-
-.foot{display:flex;align-items:center;justify-content:center;margin-top:18px;
-  padding-top:13px;border-top:1px solid rgba(255,255,255,.09);
-  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.4)}
+.foot{margin-top:24px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);
+  font-size:10px;font-family:var(--fm);letter-spacing:.05em;color:rgba(255,255,255,.26)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head>
 <body>
 <div class="card">
 
-  <span class="loc" id="locwrap" style="display:none"><span class="pin"></span> <span id="loc"></span></span>
+  <span class="city" id="city"></span>
 
-  <div class="photo">
-    <img id="hero" alt="Amandine" fetchpriority="high">
+  <div class="av"><img id="hero" alt="Amandine" fetchpriority="high">
     <script>
-      /* Pool de photos — une au hasard à chaque ouverture.
-         Ajoute/retire des fichiers ici, ils doivent être à côté de index.html. */
       var POOL = ["p1.jpg", "p2.jpg", "p3.jpg"];
-      var PICK = POOL[Math.floor(Math.random() * POOL.length)];
-      document.getElementById("hero").src = PICK;
-      /* mémorisé pour l'attribution : on saura quelle photo a produit le clic */
-      window.__photo = PICK.replace(".jpg", "");
+      document.getElementById("hero").src = POOL[Math.floor(Math.random() * POOL.length)];
     </script>
-    <span class="cnt" id="cnt">4 000 abonnés</span>
-    <div class="id">
-      <div class="name"><b>Amandine</b>
-        <svg class="vf" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3b9eff"/><path d="M8 12.3l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="handle">@amandineprive</div>
-    </div>
   </div>
 
-  <div class="hook" id="hook">Mon côté privé, sans filtre.<br><b>Je réponds à tout</b>&nbsp;🤍</div>
-  <div class="proof" id="proof">🤍&nbsp; <b>4 000</b> personnes me suivent déjà</div>
-  <div class="queue"><span class="qd"></span>J'ouvre les DM par vagues — je réponds dans l'ordre d'arrivée</div>
+  <h1>Amandine</h1>
+  <div class="line">Mes réseaux et mon contenu, au même endroit.</div>
 
-  <div class="cdlab">🎁 Gratuit pendant</div>
-  <div class="cd">
-    <div class="b"><div class="n" id="h">00</div><div class="u">h</div></div>
-    <div class="b"><div class="n" id="m">59</div><div class="u">min</div></div>
-    <div class="b"><div class="n" id="s">49</div><div class="u">sec</div></div>
-  </div>
+  <div class="links" id="links"></div>
 
-  <a class="cta" id="cta" href="#" rel="noopener"><span class="sh"></span>💬 M'écrire en privé</a>
-
-  <div class="alt" id="alt"></div>
-
-  <div class="foot"><span>🔞 +18 · privé</span></div>
+  <div class="foot">Amandine · 2026</div>
 </div>
 
 <script>
-/* ============ CONFIG — tout se règle ici ============ */
-var DEST = "https://t.me/amandineprive";
-/* Variantes :
-   OF direct   : var DEST = "https://onlyfans.com/amandinedlc";
-   avec tracking (log orbit_clicks puis 302, slug deja prepare dans orbit-liens.sql) :
-                 var DEST = "https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go?l=amandine-tg-insta&x=1"; */
+/* ============ CONFIG ============
 
-var ALT = [
-  /* {label:"Telegram", url:"https://t.me/XXXXX", icon:"tg"}, */
-  /* {label:"Instagram", url:"https://instagram.com/XXXXX", icon:"ig"} */
+   Structure reprise de la grille GetMySocial pour les créateurs 18+ :
+   plusieurs destinations réelles, libellés sans nom de plateforme pour
+   la destination adulte, et celle-ci placée derrière la porte 18+ de /t/
+   plutôt qu'en clair dans le HTML.
+
+   Le lien Telegram n'apparaît QUE dans /t/index.html, après confirmation d'âge.
+*/
+
+var LINKS = [
+  /* ⚠️ Compte Insta tampon à renseigner — il est encore @INSTA_TAMPON
+     dans telegram-amandine/. Tant qu'il est vide, la ligne est ignorée. */
+  { label: "Instagram",   url: "",   icon: "ig" },
+  /* { label: "TikTok",     url: "https://tiktok.com/@A_REMPLIR", icon: "tt" }, */
+  /* { label: "Ma wishlist", url: "https://A_REMPLIR",            icon: "gift" }, */
+  { label: "Accès privé", url: "t/", icon: "lock", main: true }
 ];
-var SUBS = "4 000 abonnés";
-var CITY_HOOK = true;   /* la ville du visiteur passe en surtitre du hook */
-var COUNTDOWN_ON = false;   /* true = reaffiche le bloc "gratuit pendant" */
-var COUNTDOWN = 59 * 60 + 49;
 
-/* --- Filtre géographique (repris de la restriction GeoFilter GMS) --- */
+var CITY_HOOK = true;
+
+/* --- Filtre pays ---
+   ⚠️ En JavaScript, il ne s'applique PAS à un crawler : il faut le passer
+   côté serveur (voir MIGRATION-CLOUDFLARE.md). */
 var GEO_ON    = true;
 var GEO_ALLOW = ["FR", "BE", "CH", "CA", "LU", "MC", "AD"];
-/* FR France · BE Belgique · CH Suisse · CA Canada · LU Luxembourg · MC Monaco · AD Andorre */
-
-/* Que faire si AUCUNE des deux API géo ne répond ?
-   false = on bloque (on protège, au prix de quelques visiteurs légitimes perdus)
-   true  = on laisse passer (on convertit, au prix du filtre qui saute) */
 var GEO_FAIL_OPEN = false;
-
-/* Visiteur hors zone : laisser "" pour la page de blocage,
-   ou mettre une URL pour le rediriger ailleurs. */
-var GEO_REDIRECT = "";
-/* ==================================================== */
+/* ================================= */
 
 (function () {
-  /* --- CTA : garde le param clippeur (?c=) pour l'attribution --- */
-  var c = new URLSearchParams(location.search).get("c");
-  var dest = DEST;
-  /* t.me ignore les query params : on n'ajoute le clippeur que sur une cible qui sait le lire */
-  if (dest.indexOf("t.me/") === -1) {
-    if (c) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "c=" + encodeURIComponent(c); }
-    /* quelle photo était affichée au moment du clic */
-    if (window.__photo) { dest += (dest.indexOf("?") > -1 ? "&" : "?") + "p=" + encodeURIComponent(window.__photo); }
-  }
-  document.getElementById("cta").href = dest;
-
-  document.getElementById("cnt").textContent = SUBS;
-
-  /* --- Liens secondaires --- */
   var ICONS = {
-    tg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.6 8.5-7.7c.4-.3-.1-.5-.6-.2L7.2 13 2.7 11.6c-1-.3-1-1 .2-1.4l17.6-6.8c.8-.3 1.5.2 1.4 1.1z"/></svg>',
-    ig: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>',
-    tt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2h-3v13.3a2.7 2.7 0 1 1-2.7-2.7c.3 0 .5 0 .8.1V9.6a6 6 0 1 0 5 5.9V9.2a6.7 6.7 0 0 0 3.9 1.2V7.3a3.8 3.8 0 0 1-4-3.5z"/></svg>'
+    ig:   '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>',
+    tt:   '<svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 2h-3v13.3a2.7 2.7 0 1 1-2.7-2.7c.3 0 .5 0 .8.1V9.6a6 6 0 1 0 5 5.9V9.2a6.7 6.7 0 0 0 3.9 1.2V7.3a3.8 3.8 0 0 1-4-3.5z"/></svg>',
+    gift: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8S10.5 3 8 3a2.5 2.5 0 0 0 0 5zM12 8s1.5-5 4-5a2.5 2.5 0 0 1 0 5z"/></svg>',
+    lock: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>'
   };
-  var box = document.getElementById("alt"), html = "";
-  for (var i = 0; i < ALT.length; i++) {
-    var a = ALT[i];
-    html += '<a href="' + a.url + '" rel="noopener">' + (ICONS[a.icon] || "") + a.label + "</a>";
-  }
-  box.innerHTML = html;
-  if (!ALT.length) { box.style.display = "none"; }
 
-  /* --- Géo : filtre pays + ville du hook, en un seul appel --------------
-     Deux sources en cascade, toutes deux CORS et sans quota serré.
-     ipapi.co a été retiré : son offre gratuite est rate-limitée et renvoyait
-     déjà des erreurs, ce qui aurait ouvert le filtre sous charge.           */
+  var c = new URLSearchParams(location.search).get("c");
+  var html = "";
+  for (var i = 0; i < LINKS.length; i++) {
+    var L = LINKS[i], u = L.url;
+    if (!u) { continue; }   /* ligne non renseignée : on ne l'affiche pas */
+    if (L.main && c) { u += "?c=" + encodeURIComponent(c); }
+    html += '<a class="' + (L.main ? "main" : "") + '" href="' + u + '" rel="noopener">'
+          + (ICONS[L.icon] || "") + L.label + '<span class="ar">›</span></a>';
+  }
+  document.getElementById("links").innerHTML = html;
 
   function withTimeout(url, ms) {
     return new Promise(function (ok, ko) {
@@ -243,13 +143,11 @@ var GEO_REDIRECT = "";
   }
 
   function lookup() {
-    /* 1er : pays + ville */
     return withTimeout("https://ipwho.is/", 4000)
       .then(function (g) {
         if (!g || g.success === false || !g.country_code) { throw 0; }
         return { cc: String(g.country_code).toUpperCase(), city: g.city || "" };
       })
-      /* 2e : pays seul, si le premier tombe */
       .catch(function () {
         return withTimeout("https://get.geojs.io/v1/ip/country.json", 4000)
           .then(function (g) {
@@ -260,64 +158,32 @@ var GEO_REDIRECT = "";
   }
 
   function block() {
-    if (GEO_REDIRECT) { location.replace(GEO_REDIRECT); return; }
     document.body.innerHTML =
       '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px">' +
       '<div style="text-align:center;max-width:320px">' +
-      '<div style="font-size:15px;font-weight:800;margin-bottom:8px">Page indisponible</div>' +
+      '<div style="font-size:15px;font-weight:700;margin-bottom:8px">Page indisponible</div>' +
       '<div style="font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.55)">' +
-      "Ce contenu n'est pas accessible depuis ton pays." +
+      "Cette page n'est pas accessible depuis ton pays." +
       "</div></div></div>";
     document.body.style.visibility = "visible";
   }
 
   function reveal(city) {
-    if (city) {
-      document.getElementById("loc").textContent = city;
-      if (CITY_HOOK) {
-        document.getElementById("hook").insertAdjacentHTML("afterbegin",
-          '<span class="city">' + city + ' 🔥</span>');
-      } else {
-        document.getElementById("locwrap").style.display = "inline-flex";
-      }
-    }
+    if (city && CITY_HOOK) { document.getElementById("city").textContent = city; }
     document.body.style.visibility = "visible";
   }
 
-  /* Sur Cloudflare Pages, _middleware.js a déjà filtré le pays côté serveur
-     et injecté la ville : aucun appel API à faire, aucun quota à subir. */
   if (window.__GEO) {
     reveal(window.__GEO.city || "");
   } else if (!GEO_ON) {
     reveal("");
-    lookup().then(function (g) { if (g.city) { reveal(g.city); } }).catch(function () {});
   } else {
     lookup()
       .then(function (g) {
         if (GEO_ALLOW.indexOf(g.cc) === -1) { block(); } else { reveal(g.city); }
       })
-      .catch(function () {
-        /* aucune source n'a répondu */
-        if (GEO_FAIL_OPEN) { reveal(""); } else { block(); }
-      });
+      .catch(function () { if (GEO_FAIL_OPEN) { reveal(""); } else { block(); } });
   }
-
-  /* --- Compte à rebours --- */
-  if (!COUNTDOWN_ON) {
-    document.querySelector(".cdlab").style.display = "none";
-    document.querySelector(".cd").style.display = "none";
-    document.getElementById("cta").style.marginTop = "4px";
-    return;
-  }
-  var t = COUNTDOWN;
-  function p(n) { return (n < 10 ? "0" : "") + n; }
-  function r() {
-    document.getElementById("h").textContent = p(Math.floor(t / 3600));
-    document.getElementById("m").textContent = p(Math.floor(t % 3600 / 60));
-    document.getElementById("s").textContent = p(t % 60);
-  }
-  r();
-  setInterval(function () { t = t > 0 ? t - 1 : COUNTDOWN; r(); }, 1000);
 })();
 </script>
 </body></html>
