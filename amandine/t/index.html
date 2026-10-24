@@ -8,10 +8,20 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px;
-background:#061412;color:#fff;
+background:#061412;color:#fff;position:relative;overflow:hidden;
 font:15px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
 -webkit-font-smoothing:antialiased}
-.card{width:100%;max-width:340px;text-align:center}
+/* photo de la modele en fond, floutee — le scale evite les bords transparents du blur */
+body::before{content:"";position:fixed;inset:-40px;z-index:0;
+background:url("../p1.jpg") center 22%/cover no-repeat;
+filter:blur(26px) saturate(1.2);transform:scale(1.12)}
+/* voile sombre : garde le texte lisible et le fond a sa place */
+body::after{content:"";position:fixed;inset:0;z-index:1;
+background:radial-gradient(130% 75% at 50% 38%,rgba(6,20,18,.30),rgba(6,20,18,.72) 72%)}
+.card{width:100%;max-width:340px;text-align:center;position:relative;z-index:2;
+padding:30px 24px;border-radius:22px;
+background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
+backdrop-filter:blur(10px);box-shadow:0 24px 60px rgba(0,0,0,.45)}
 .lock{width:62px;height:62px;margin:0 auto 22px;border-radius:50%;
 background:#3FD07E1a;border:1px solid #3FD07E38;
 display:flex;align-items:center;justify-content:center}
