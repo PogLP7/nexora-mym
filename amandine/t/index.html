@@ -36,7 +36,10 @@ font:600 15.5px/1 inherit;cursor:pointer;-webkit-tap-highlight-color:transparent
 </div>
 <script>
 (function(){
-  var DEST  = "https://t.me/amandineprive";
+  /* Le CANAL (4 297 abonnes), pas le compte DM @amandineprive : un clic qui
+     atterrit sur une fiche profil ne produit aucune adhesion au canal.
+     Le canal renvoie lui-meme vers @amandineprive pour les reponses. */
+  var DEST  = "https://t.me/amandinedlcc";
   var ORBIT = "https://bvcnbtbdfkoiefuedxem.supabase.co/functions/v1/go";
   function log(c){
     try{
