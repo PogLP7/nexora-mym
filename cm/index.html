@@ -241,6 +241,20 @@ textarea:focus{outline:none;border-color:var(--ven);box-shadow:0 0 0 3px rgba(91
 .legend span{display:flex;align-items:center;gap:7px}
 .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
 
+/* mode difficile */
+#hardfx{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(62% 62% at 50% 50%, rgba(255,77,109,.18), rgba(4,7,15,.95));
+  backdrop-filter:blur(8px);animation:hfx 1.5s both;pointer-events:none}
+@keyframes hfx{0%{opacity:0}12%{opacity:1}74%{opacity:1}100%{opacity:0}}
+#hardfx .t{font-family:"Anybody",sans-serif;font-weight:830;font-stretch:122%;text-transform:uppercase;line-height:.84;
+  font-size:clamp(44px,10vw,120px);
+  background:linear-gradient(110deg,#fff 30%,var(--art) 75%,#8f1430 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:hslam .7s cubic-bezier(.2,.9,.25,1.2) both;
+  filter:drop-shadow(0 0 28px rgba(255,77,109,.5))}
+@keyframes hslam{0%{transform:scale(1.8) skewX(-7deg);opacity:0;letter-spacing:.12em}55%{transform:scale(.97) skewX(0);opacity:1;letter-spacing:.005em}72%{transform:scale(1.03)}100%{transform:scale(1)}}
+#hardfx .dotp{margin:18px auto 0}
+.hardrun .fill{background:var(--art)}
 /* footer ECG */
 footer{border-top:1px solid var(--line);padding:26px clamp(18px,4vw,56px);display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .ecg{flex:1;min-width:220px;height:46px}
@@ -648,66 +662,131 @@ var CHAPS=[
 ];
 
 var QCM=[
-{c:"c1",q:"Le Système Nerveux Central regroupe…",o:["Le cerveau et les nerfs périphériques","L’encéphale (cerveau, cervelet, tronc cérébral) et la moelle épinière","Uniquement le cortex cérébral","Le cerveau et les ganglions de base uniquement"],k:1,w:"SNC = encéphale + moelle épinière → intégration des infos, motricité, fonctions cognitives."},
-{c:"c1",q:"La composition du cerveau, c’est…",o:["2 kg dont 60 % d’eau","1,3 kg dont 75 % d’eau, baignant dans le liquide céphalo-rachidien","900 g dont 90 % d’eau","1,3 kg dont 50 % de graisse"],k:1,w:"Le LCR assure la réduction des chocs."},
-{c:"c1",q:"L’ordre des méninges, de l’os vers le cerveau :",o:["Pie-mère, arachnoïde, subarachnoïdienne, dure-mère","Dure-mère, arachnoïde, membrane subarachnoïdienne, pie-mère","Arachnoïde, dure-mère, pie-mère, subarachnoïdienne","Dure-mère, pie-mère, arachnoïde, subarachnoïdienne"],k:1,w:"La dure-mère adhère à l’os ; la pie-mère est en connexion avec le cerveau."},
-{c:"c1",q:"La membrane subarachnoïdienne sert à…",o:["Produire le liquide céphalo-rachidien","Protéger de l’accumulation de substances neurotoxiques","Générer les gaines de myéline","Transmettre l’influx nerveux"],k:1,w:"Repère du CM : l’alcool est nocif — plus on boit, plus le risque neuro monte."},
+{c:"c1",q:"Le Système Nerveux Central regroupe…",o:["Le cerveau, les nerfs périphériques et les récepteurs sensoriels du corps entier","L’encéphale (cerveau, cervelet, tronc cérébral) et la moelle épinière","Le cortex cérébral, les méninges et le liquide céphalo-rachidien","Les deux hémisphères, le corps calleux et les ganglions de base"],k:1,w:"SNC = encéphale + moelle épinière → intégration des infos, motricité, fonctions cognitives."},
+{c:"c1",q:"La composition du cerveau, c’est…",o:["2 kg dont 60 % d’eau, protégé uniquement par la boîte crânienne","1,3 kg dont 75 % d’eau, baignant dans le liquide céphalo-rachidien","900 g dont 90 % d’eau, directement irrigué par le sang artériel sans protection","1,3 kg dont 50 % de graisse, enveloppé dans la dure-mère"],k:1,w:"Le LCR assure la réduction des chocs."},
+{c:"c1",q:"L’ordre des méninges, de l’os vers le cerveau :",o:["Pie-mère, membrane subarachnoïdienne, arachnoïde, dure-mère","Dure-mère, arachnoïde, membrane subarachnoïdienne, pie-mère","Arachnoïde, dure-mère, pie-mère, membrane subarachnoïdienne","Dure-mère, pie-mère, membrane subarachnoïdienne, arachnoïde"],k:1,w:"La dure-mère adhère à l’os ; la pie-mère est en connexion avec le cerveau."},
+{c:"c1",q:"La membrane subarachnoïdienne sert à…",o:["Produire le liquide céphalo-rachidien qui amortit les chocs","Protéger de l’accumulation de substances neurotoxiques","Fabriquer les gaines de myéline le long des axones","Transmettre l’influx nerveux entre les deux hémisphères"],k:1,w:"Repère du CM : l’alcool est nocif — plus on boit, plus le risque neuro monte."},
 {c:"c1",q:"Les deux hémisphères sont rattachés par…",o:["Le thalamus","Le corps calleux","Le sillon central","La capsule interne"],k:1,w:"Et ils travaillent en même temps, avec des aires plus dominantes à certains moments."},
-{c:"c1",q:"Le lobe temporal est le lieu de…",o:["La coordination motrice volontaire","L’encodage des informations : audition, vue et odorat","La conscience du corps et de l’espace","La reconnaissance des formes"],k:1,w:"Frontal = raisonnement/motricité, pariétal = corps/espace, occipital = vision."},
-{c:"c1",q:"L’hypothalamus contrôle…",o:["Les réflexes visuels et auditifs","L’appétit, la défense, la reproduction et le cycle veille-sommeil","Le rythme respiratoire et cardiaque","La coordination des infos sensorielles"],k:1,w:"C’est la partie dite « reptilienne », assez automatique."},
-{c:"c1",q:"Le rhombencéphale contrôle…",o:["Les mouvements volontaires des yeux","Le rythme respiratoire, l’activité cardiaque et le glucose sanguin","L’humeur et la récompense","La posture"],k:1,w:"Le mésencéphale, lui : réflexes visuels/auditifs, transfert vers le thalamus, récompense."},
+{c:"c1",q:"Le lobe temporal est le lieu de…",o:["La coordination motrice volontaire et la planification des gestes","L’encodage des informations : audition, vue et odorat","La conscience du corps et de l’espace environnant","L’intégration des messages nerveux visuels et des formes"],k:1,w:"Frontal = raisonnement/motricité, pariétal = corps/espace, occipital = vision."},
+{c:"c1",q:"L’hypothalamus contrôle…",o:["Les réflexes visuels et auditifs et le transfert vers le thalamus","L’appétit, la défense, la reproduction et le cycle veille-sommeil","Le rythme respiratoire, l’activité cardiaque et le glucose sanguin","La coordination des informations sensorielles vers le cortex"],k:1,w:"C’est la partie dite « reptilienne », assez automatique."},
+{c:"c1",q:"Le rhombencéphale contrôle…",o:["Les réflexes visuels et auditifs et les mécanismes de récompense","Le rythme respiratoire, l’activité cardiaque et le glucose sanguin","Les mouvements volontaires des yeux et le contrôle automatique de la posture","L’appétit, la reproduction et le cycle veille-sommeil"],k:1,w:"Le mésencéphale, lui : réflexes visuels/auditifs, transfert vers le thalamus, récompense."},
 {c:"c1",q:"Les rainures PROFONDES du cortex s’appellent…",o:["Des sillons","Des fissures","Des gyri","Des nœuds de Ranvier"],k:1,w:"Peu profondes = sillons ; les replis = gyri."},
 {c:"c1",q:"Quelle cellule gliale génère les gaines de myéline ?",o:["L’astrocyte","L’oligodendrocyte","La microglie","L’épendymocyte"],k:1,w:"Il génère aussi les nœuds de Ranvier."},
-{c:"c1",q:"L’astrocyte…",o:["Élimine les déchets","Synthétise les neurotransmetteurs et limite leur dispersion dans la fente synaptique","Délimite les cavités du SNC","Transmet l’influx nerveux"],k:1,w:"La microglie = phagocyte ; l’épendymocyte délimite les cavités. Aucune gliale ne transmet d’influx."},
-{c:"c1",q:"La substance grise, c’est…",o:["Des axones myélinisés qui transportent l’influx","Corps cellulaires, dendrites, axones non myélinisés : traitement et intégration de l’info","Le câblage entre les régions du SN","Uniquement le cervelet"],k:1,w:"En surface de l’encéphale, en profondeur de la moelle. L’inverse de la blanche."},
+{c:"c1",q:"L’astrocyte…",o:["Il élimine les déchets du système nerveux en les phagocytant","Il synthétise les neurotransmetteurs et limite leur dispersion dans la fente synaptique","Il délimite les cavités du SNC et fait circuler le liquide céphalo-rachidien dans les ventricules","Il génère les gaines de myéline et les nœuds de Ranvier le long des axones"],k:1,w:"La microglie = phagocyte ; l’épendymocyte délimite les cavités. Aucune gliale ne transmet d’influx."},
+{c:"c1",q:"La substance grise, c’est…",o:["Des axones myélinisés qui transportent l’influx nerveux entre les régions du SN","Corps cellulaires, dendrites, axones non myélinisés : traitement et intégration de l’info","Le câblage du système nerveux, en surface de l’encéphale et au cœur de la moelle","Des cellules gliales compactées qui protègent et nourrissent les neurones corticaux en profondeur"],k:1,w:"En surface de l’encéphale, en profondeur de la moelle. L’inverse de la blanche."},
 {c:"c1",q:"Le faisceau de projection, c’est…",o:["La communication entre les deux hémisphères","Moteur (descendant) et sensitif (ascendant)","Un faisceau en U entre régions adjacentes","Un faisceau qui reste dans la même région"],k:1,w:"Interhémisphérique = entre hémisphères ; courte = en U ; longue = même région ; voisine = même lobe."},
-{c:"c1",q:"Les noyaux cérébraux (ganglions de base) sont au nombre de…",o:["2, un par hémisphère","6, trois par hémisphère","52","12"],k:1,w:"En profondeur au cœur du cerveau : préparation des mouvements volontaires, apprentissage moteur, posture, attention, inhibition."},
-{c:"c1",q:"L’amygdale régule…",o:["Le glucose sanguin","L’anxiété, la peur, la mémoire émotive et la cognition sociale","Les réflexes auditifs","La myélinisation"],k:1,w:"Elle communique avec les ganglions de base."},
+{c:"c1",q:"Les noyaux cérébraux (ganglions de base) sont au nombre de…",o:["2, un par hémisphère","6, trois par hémisphère","52, répartis sur le cortex","12, six par hémisphère"],k:1,w:"En profondeur au cœur du cerveau : préparation des mouvements volontaires, apprentissage moteur, posture, attention, inhibition."},
+{c:"c1",q:"L’amygdale régule…",o:["Le glucose sanguin, l’appétit et le cycle veille-sommeil","L’anxiété, la peur, la mémoire émotive et la cognition sociale","Les réflexes auditifs et le transfert des infos vers le thalamus","La myélinisation des axones et l’élagage synaptique"],k:1,w:"Elle communique avec les ganglions de base."},
 {c:"c1",q:"Dans la moelle épinière, l’influx sensitif entre par…",o:["Les cornes ventrales","Les cornes dorsales","La capsule interne","Le corps calleux"],k:1,w:"Sensitif = cornes dorsales ; moteur = cornes ventrales."},
 
-{c:"c2",q:"L’aire de Brodmann, c’est…",o:["Une méninge de protection","Une division du cortex en aires selon leur fonction : sensorielles, motrices, associatives","Une couche de la substance blanche","Le sillon qui sépare les hémisphères"],k:1,w:"Le cortex est découpé en aires fonctionnelles — les numéros sont des repères, pas à apprendre."},
+{c:"c2",q:"L’aire de Brodmann, c’est…",o:["Une carte des méninges qui protègent chaque lobe du cortex cérébral","Une division du cortex en aires selon leur fonction : sensorielles, motrices, associatives","Une classification des faisceaux de la substance blanche selon leur trajet dans l’encéphale","Le découpage de la moelle épinière en segments sensitifs et moteurs"],k:1,w:"Le cortex est découpé en aires fonctionnelles — les numéros sont des repères, pas à apprendre."},
 {c:"c2",q:"Quelle information sensorielle NE passe PAS par le thalamus ?",o:["La vision","L’odorat","L’audition","Le goût"],k:1,w:"Les voies ascendantes passent par le thalamus, sauf l’odorat."},
-{c:"c2",q:"L’aire somatosensorielle primaire se situe…",o:["À l’avant du sillon central, lobe frontal","À l’arrière du sillon central, lobe pariétal","Dans le lobe occipital","Dans le lobe temporal"],k:1,w:"Mécanorécepteurs, nocicepteurs, thermorécepteurs."},
-{c:"c2",q:"L’aire visuelle primaire se situe…",o:["Dans la partie supérieure du lobe temporal","À l’extrémité postérieure du lobe occipital","À l’arrière du sillon central","À l’avant du lobe frontal"],k:1,w:"Son numéro (17) est un repère, pas à apprendre par cœur."},
-{c:"c2",q:"L’aire motrice primaire…",o:["Reçoit les influx sensoriels","Gère les contractions volontaires et précises, avec une région proportionnelle à la précision du mouvement","Initie le mouvement sur les signaux internes","Traite la parole"],k:1,w:"Motricité des doigts plus fine → aire plus vaste."},
-{c:"c2",q:"La portion MÉDIALE du cortex prémoteur initie le mouvement…",o:["Sur les signaux externes de l’environnement","Sur les signaux internes (la volonté de se déplacer)","Sur les réflexes spinaux","Sur le feedback du cervelet"],k:1,w:"Latérale = signaux externes ; médiale = signaux internes."},
-{c:"c2",q:"L’aire oculomotrice frontale gère…",o:["La lecture","Les mouvements volontaires des yeux","Les réflexes pupillaires","La reconnaissance des visages"],k:1,w:"Située entre le cortex préfrontal et le cortex prémoteur."},
-{c:"c2",q:"Une aire associative MULTIMODALE…",o:["Traite une seule modalité sensorielle","Intègre des infos de plusieurs modalités : mémoire, jugement, intelligence, langage","Est forcément motrice","Correspond à l’aire V1"],k:1,w:"Unimodale = une seule modalité (couleur, forme, mouvement)."},
-{c:"c2",q:"Les aires visuelles associatives servent à…",o:["Recevoir directement les infos de la rétine","Affiner l’analyse : couleurs, motifs, formes dynamiques, mouvement","Contrôler les mouvements des yeux","Encoder l’audition"],k:1,w:"V1 reçoit, puis le traitement s’affine (couleurs, orientation, forme, mouvement) — les noms V2 à V5 sont des repères."},
-{c:"c2",q:"Le cortex préfrontal est le siège de…",o:["La vision des couleurs","La personnalité, l’intelligence, l’apprentissage, le jugement, la prise de décision","Du traitement phonique des sons","Des réflexes moteurs"],k:1,w:"À l’avant du lobe frontal."},
-{c:"c2",q:"L’aire somatosensorielle ASSOCIATIVE…",o:["Reçoit directement les récepteurs de la peau","Intègre les infos sensorielles de l’environnement aux expériences passées","Contrôle la force musculaire","Gère l’odorat"],k:1,w:"Elle reçoit de l’aire primaire et du thalamus → mémoire et prise de décision."},
-{c:"c2",q:"Le cortex pariétal postérieur…",o:["Ne reçoit que des infos visuelles","Reçoit visuel, auditif, gustatif, olfactif — interprète les phénomènes complexes (parole) et la décision","Est une aire motrice primaire","Se situe dans le lobe temporal"],k:1,w:"C’est un grand intégrateur multimodal du lobe pariétal."},
-{c:"c2",q:"Rôle des aires motrices (en 3 mots du CM) :",o:["Sentir, percevoir, décider","Préparation, déclenchement, exécution","Explorer, tester, stabiliser","Encoder, stocker, rappeler"],k:1,w:"En contrôlant la force et la durée de la contraction musculaire."},
+{c:"c2",q:"L’aire somatosensorielle primaire se situe…",o:["À l’avant du sillon central, dans le lobe frontal du cortex","À l’arrière du sillon central, dans le lobe pariétal","À l’extrémité postérieure du lobe occipital","Dans la partie supérieure du lobe temporal"],k:1,w:"Mécanorécepteurs, nocicepteurs, thermorécepteurs."},
+{c:"c2",q:"L’aire visuelle primaire se situe…",o:["Dans la partie supérieure du lobe temporal","À l’extrémité postérieure du lobe occipital","À l’arrière du sillon central, dans le pariétal","À l’avant du lobe frontal, près du prémoteur"],k:1,w:"Son numéro (17) est un repère, pas à apprendre par cœur."},
+{c:"c2",q:"L’aire motrice primaire…",o:["Elle reçoit les influx des mécanorécepteurs, des nocicepteurs et des thermorécepteurs venus de tout le corps","Elle gère les contractions volontaires et précises — région proportionnelle à la précision du mouvement","Elle initie le mouvement sur les signaux externes venus de l’environnement","Elle prépare la posture et inhibe les actions inadaptées au contexte"],k:1,w:"Motricité des doigts plus fine → aire plus vaste."},
+{c:"c2",q:"La portion MÉDIALE du cortex prémoteur initie le mouvement…",o:["Sur les signaux externes : un événement de l’environnement déclenche le geste","Sur les signaux internes (la volonté de se déplacer)","Sur les réflexes spinaux remontés par les cornes dorsales","Sur le feedback envoyé par le cervelet après l’erreur"],k:1,w:"Latérale = signaux externes ; médiale = signaux internes."},
+{c:"c2",q:"L’aire oculomotrice frontale gère…",o:["La lecture et la reconnaissance des visages","Les mouvements volontaires des yeux","Les réflexes pupillaires automatiques","La coordination tête-yeux involontaire"],k:1,w:"Située entre le cortex préfrontal et le cortex prémoteur."},
+{c:"c2",q:"Une aire associative MULTIMODALE…",o:["Elle traite une seule modalité sensorielle : couleur, forme ou mouvement","Elle intègre des infos de plusieurs modalités : mémoire, jugement, intelligence, langage","Elle reçoit directement les récepteurs sensoriels, sans passer par le thalamus ni par les aires primaires","Elle déclenche et exécute les mouvements en contrôlant force et durée"],k:1,w:"Unimodale = une seule modalité (couleur, forme, mouvement)."},
+{c:"c2",q:"Les aires visuelles associatives servent à…",o:["Recevoir directement les informations venues de la rétine","Affiner l’analyse : couleurs, motifs, formes dynamiques, mouvement","Contrôler les mouvements volontaires et réflexes des yeux","Encoder l’audition, la vue et l’odorat dans la partie supérieure du lobe temporal"],k:1,w:"V1 reçoit, puis le traitement s’affine (couleurs, orientation, forme, mouvement) — les noms V2 à V5 sont des repères."},
+{c:"c2",q:"Le cortex préfrontal est le siège de…",o:["Du traitement phonique des sons et de la compréhension de la parole","De la personnalité, l’intelligence, l’apprentissage, le jugement, la décision","De la vision des couleurs et de la reconnaissance des formes et des visages complexes","Des réflexes moteurs et de la régulation automatique de la posture"],k:1,w:"À l’avant du lobe frontal."},
+{c:"c2",q:"L’aire somatosensorielle ASSOCIATIVE…",o:["Elle reçoit directement les récepteurs de la peau, sans aucun premier traitement sensoriel","Elle intègre les infos sensorielles de l’environnement aux expériences passées","Elle contrôle la force et la durée de la contraction musculaire","Elle gère l’odorat, seule modalité qui court-circuite le thalamus"],k:1,w:"Elle reçoit de l’aire primaire et du thalamus → mémoire et prise de décision."},
+{c:"c2",q:"Le cortex pariétal postérieur…",o:["Il ne reçoit que des informations visuelles, qu’il transmet aux aires associatives pour une analyse plus fine","Il reçoit visuel, auditif, gustatif, olfactif — interprète les phénomènes complexes (parole) et la décision","Il est une aire motrice primaire chargée des contractions précises","Il se situe dans le lobe temporal et encode la mémoire émotive"],k:1,w:"C’est un grand intégrateur multimodal du lobe pariétal."},
+{c:"c2",q:"Rôle des aires motrices (en 3 mots du CM) :",o:["Sentir, percevoir, décider","Préparation, déclenchement, exécution","Explorer, tester, stabiliser","Anticipation, coordination, automatisation"],k:1,w:"En contrôlant la force et la durée de la contraction musculaire."},
 
-{c:"c3",q:"Un neurotransmetteur, c’est…",o:["Une hormone produite par l’hypophyse","Une molécule chimique produite par un neurone pour transmettre un message à travers une synapse","Un neurone spécialisé","Une protéine de la myéline"],k:1,w:"Messager chimique : communication entre neurones + contrôle des fonctions vitales."},
-{c:"c3",q:"La dopamine, c’est…",o:["Le bien-être : humeur et anxiété","La récompense : plaisir, envie, motivation","Le stress : énergie","L’amour : relation sociale"],k:1,w:"Sérotonine = bien-être, ocytocine = amour, cortisol = stress."},
+{c:"c3",q:"Un neurotransmetteur, c’est…",o:["Une hormone produite par l’hypophyse et diffusée par voie sanguine pour réguler les grandes fonctions","Une molécule chimique produite par un neurone pour transmettre un message à travers une synapse","Un neurone spécialisé qui connecte directement le cerveau aux muscles","Une protéine de la gaine de myéline qui accélère la conduction de l’influx"],k:1,w:"Messager chimique : communication entre neurones + contrôle des fonctions vitales."},
+{c:"c3",q:"La dopamine, c’est…",o:["Le bien-être : régulation de l’humeur et de l’anxiété","La récompense : plaisir, envie, motivation","Le stress : énergie et régulation du sucre","L’amour : plaisir de la relation sociale"],k:1,w:"Sérotonine = bien-être, ocytocine = amour, cortisol = stress."},
 {c:"c3",q:"La sérotonine régule…",o:["Le taux de sucre","L’humeur et l’anxiété","La contraction musculaire","Le sommeil paradoxal uniquement"],k:1,w:"Mot-clé : bien-être."},
-{c:"c3",q:"Le cortisol…",o:["Calme et euphorise","Donne de l’énergie et régule le taux de sucre (stress)","Gère le plaisir social","Transmet l’influx moteur"],k:1,w:"L’endorphine = relaxation, calme et euphorie."},
-{c:"c3",q:"L’ocytocine est liée à…",o:["La peur","Le plaisir au cours d’une relation sociale","La faim","La vigilance"],k:1,w:"Mot-clé : amour / bien-être social."},
+{c:"c3",q:"Le cortisol…",o:["Il calme et euphorise, comme après un effort long","Il donne de l’énergie et régule le taux de sucre (stress)","Il gère le plaisir et le bien-être ressentis au cours d’une relation sociale","Il transmet l’influx moteur jusqu’aux muscles"],k:1,w:"L’endorphine = relaxation, calme et euphorie."},
+{c:"c3",q:"L’ocytocine est liée à…",o:["La peur et la mémoire émotive des mauvais moments","Le plaisir au cours d’une relation sociale","La faim et le déclenchement de l’appétit","La vigilance et le niveau d’énergie disponible"],k:1,w:"Mot-clé : amour / bien-être social."},
 
-{c:"c4",q:"L’apprentissage, c’est…",o:["Le fait de grandir et de se développer","L’ensemble des processus de mémorisation qui élaborent ou modifient les schémas comportementaux via environnement et expérience","La myélinisation des axones","Une transformation uniquement physiologique"],k:1,w:"Le développement = grandir, croître. Les deux interagissent pendant l’enfance."},
+{c:"c4",q:"L’apprentissage, c’est…",o:["Le fait de grandir, de croître et de se développer au fil de la maturation du SN","L’ensemble des processus de mémorisation qui modifient les schémas comportementaux via environnement et expérience","La myélinisation progressive des axones, qui accélère la transmission de l’influx","Une transformation uniquement physiologique, programmée génétiquement dès la naissance, indépendante de l’expérience"],k:1,w:"Le développement = grandir, croître. Les deux interagissent pendant l’enfance."},
 {c:"c4",q:"La construction biologique du cerveau suit l’ordre…",o:["Myélinisation → migration → neurogénèse → connexion","Neurogénèse → migration → connexion → myélinisation","Connexion → neurogénèse → élagage → migration","Migration → neurogénèse → myélinisation → connexion"],k:1,w:"Et côté concept : construction → maturation → expérience → plasticité → apprentissage."},
-{c:"c4",q:"À 8 semaines de développement embryonnaire…",o:["La marche est acquise","Le premier cortex cérébral est mis en place","La myélinisation est terminée","L’élagage commence"],k:1,w:"3 sem. : feuillet embryonnaire → tube à cellules souches ; 6 sem. : naissance du futur cortex."},
+{c:"c4",q:"À 8 semaines de développement embryonnaire…",o:["La marche et l’équilibre sont acquis par le fœtus","Le premier cortex cérébral est mis en place","La myélinisation des voies primaires est terminée","L’élagage synaptique commence à trier les connexions"],k:1,w:"3 sem. : feuillet embryonnaire → tube à cellules souches ; 6 sem. : naissance du futur cortex."},
 {c:"c4",q:"Les neurones excitateurs représentent…",o:["20 % des neurones corticaux","80 % des neurones corticaux","50 %","100 %"],k:1,w:"Excitateurs 80 % (transmettre, propager) ; inhibiteurs 20 % (réduire, inhiber). Gressens, 2021."},
-{c:"c4",q:"Le développement cérébral « s’achève » vers 2-3 ans avec…",o:["La lecture","L’acquisition de la marche et de l’équilibre","La parole parfaite","La maturité du préfrontal"],k:1,w:"L’architecture est en place vers 2 ans ; la maturation des réseaux continue ensuite."},
+{c:"c4",q:"Le développement cérébral « s’achève » vers 2-3 ans avec…",o:["La lecture et les premières phrases complètes","L’acquisition de la marche et de l’équilibre","La parole parfaitement articulée","La maturité complète du cortex préfrontal"],k:1,w:"L’architecture est en place vers 2 ans ; la maturation des réseaux continue ensuite."},
 {c:"c4",q:"« Développement = construction + … »",o:["addition","sélection","répétition","maturation"],k:1,w:"Surproduction de connexions, puis sélection progressive → c’est l’apprentissage (Knudsen, 2004)."},
-{c:"c4",q:"Le SN crée « trop » de connexions pour…",o:["Compenser les pertes dues à l’âge","Explorer, tester, stabiliser, spécialiser","Accélérer la myélinisation","Éviter les maladies"],k:1,w:"Les 4 verbes du CM, à ressortir tels quels."},
-{c:"c4",q:"La règle de Hebb (1949) dit :",o:["« Use it or lose it »","« Des neurones qui s’excitent ensemble se lient entre eux »","« Le mouvement est la source d’information »","« L’erreur est une information »"],k:1,w:"L’action répétée modifie les réseaux qui y participent. « Use it or lose it » = l’élagage."},
-{c:"c4",q:"La myélinisation à la naissance concerne…",o:["Les régions associatives","Les voies sensorielles et motrices primaires","Le cortex préfrontal","L’hippocampe"],k:1,w:"Puis : système sensoriel avant moteur, régions associatives en dernier."},
-{c:"c4",q:"La matière grise diminue à l’adolescence parce que…",o:["Les neurones meurent massivement","L’élagage synaptique remodèle les connexions","La myéline disparaît","Le cerveau rétrécit globalement"],k:1,w:"Pic de volume dans l’enfance (zones sensorielles puis préfrontal), puis élagage."},
-{c:"c4",q:"La matière blanche atteint sa maturité…",o:["À la naissance","Vers la trentaine","À 2-3 ans","À l’adolescence"],k:1,w:"Les axones se myélinisent du stade fœtal à l’âge adulte : maturation « tardive »."},
-{c:"c4",q:"La protéine Reeline…",o:["Déclenche l’élagage","Guide les neurones en migration et favorise les synapses ; son défaut cause la pachygyrie","Produit la dopamine","Ferme les fenêtres d’opportunité"],k:1,w:"Rice & Curran 2021. Apprentissage et mémoire au niveau de l’hippocampe, effet protecteur chez l’adulte."},
+{c:"c4",q:"Le SN crée « trop » de connexions pour…",o:["Compenser les pertes neuronales dues au vieillissement","Explorer, tester, stabiliser, spécialiser","Accélérer la myélinisation des voies motrices","Éviter les maladies neurodégénératives plus tard"],k:1,w:"Les 4 verbes du CM, à ressortir tels quels."},
+{c:"c4",q:"La règle de Hebb (1949) dit :",o:["« Use it or lose it » : ce qui ne sert pas disparaît","« Des neurones qui s’excitent ensemble se lient entre eux »","« Le mouvement n’est pas que l’action, il est la source d’information »","« L’erreur est une information qui aide le SN à corriger »"],k:1,w:"L’action répétée modifie les réseaux qui y participent. « Use it or lose it » = l’élagage."},
+{c:"c4",q:"La myélinisation à la naissance concerne…",o:["Les régions associatives du cortex préfrontal","Les voies sensorielles et motrices primaires","Le cortex préfrontal et l’hippocampe","Les faisceaux interhémisphériques du corps calleux"],k:1,w:"Puis : système sensoriel avant moteur, régions associatives en dernier."},
+{c:"c4",q:"La matière grise diminue à l’adolescence parce que…",o:["Les neurones meurent massivement sous l’effet des hormones","L’élagage synaptique remodèle et spécialise les connexions","La myéline disparaît progressivement des axones corticaux","Le cerveau rétrécit globalement en perdant de l’eau"],k:1,w:"Pic de volume dans l’enfance (zones sensorielles puis préfrontal), puis élagage."},
+{c:"c4",q:"La matière blanche atteint sa maturité…",o:["À la naissance","Vers la trentaine","À 2-3 ans","À l’adolescence, après l’élagage"],k:1,w:"Les axones se myélinisent du stade fœtal à l’âge adulte : maturation « tardive »."},
+{c:"c4",q:"La protéine Reeline…",o:["Elle déclenche l’élagage synaptique à l’adolescence pour spécialiser les réseaux sensoriels et moteurs","Elle guide les neurones en migration et favorise les synapses ; son défaut cause la pachygyrie","Elle produit la dopamine dans les mécanismes de récompense du mésencéphale","Elle referme les fenêtres d’opportunité à la fin des périodes sensibles"],k:1,w:"Rice & Curran 2021. Apprentissage et mémoire au niveau de l’hippocampe, effet protecteur chez l’adulte."},
 {c:"c4",q:"La plasticité, c’est…",o:["Une transformation liée au développement physiologique","La capacité du système nerveux à se modifier","Une modification durable liée à l’expérience","La croissance des axones"],k:1,w:"Maturation = physiologique ; apprentissage = durable + lié à l’expérience."},
-{c:"c4",q:"Une meilleure performance chez l’enfant signifie…",o:["Toujours un meilleur apprentissage","Pas forcément un meilleur apprentissage : le SN mûrit, il pratique, ou les deux","Toujours une simple maturation","Une plasticité plus faible"],k:1,w:"Le piège classique du CM."},
-{c:"c4",q:"La période CRITIQUE, c’est quand…",o:["L’expérience est particulièrement efficace","L’expérience est nécessaire pendant cette période","Le SN n’est plus plastique","La myélinisation s’arrête"],k:1,w:"Sensible = particulièrement efficace. Critique = nécessaire, dur à rattraper après."},
-{c:"c4",q:"Quand la « fenêtre d’opportunité » se ferme…",o:["Le SN n’est plus plastique du tout","Le SN reste plastique mais les modifications sont plus difficiles ou moins importantes","Plus aucun apprentissage n’est possible","La matière grise augmente"],k:1,w:"Ou elles demandent d’autres conditions d’apprentissage."},
-{c:"c4",q:"Après une lésion précoce, le jeune cerveau…",o:["Récupère toujours mieux qu’un adulte","Peut réorganiser ses réseaux, mais n’a pas de récupération accrue — ça dépend","Ne récupère jamais","Remplace les neurones perdus"],k:1,w:"Ça dépend : localisation, étendue, âge, réseaux impliqués."},
-{c:"c4",q:"Le feedback du mouvement va en priorité…",o:["Dans le cortex préfrontal","Dans le cervelet, qui compare l’attendu et le produit","Dans l’hypothalamus","Dans l’aire visuelle primaire"],k:1,w:"Il ajuste coordination, précision, timing. Plus développé chez les experts."},
-{c:"c4",q:"Le « casier des possibles », c’est…",o:["Le thalamus qui trie les sens","Les ganglions de base qui sélectionnent l’action la plus adaptée et inhibent les autres","Le corps calleux","La mémoire de travail"],k:1,w:"Sélection, initiation, contrôle de l’action, apprentissage procédural, automatisation."},
-{c:"c4",q:"Automatiser un mouvement, c’est…",o:["Le rendre inconscient","Réduire le contrôle attentionnel explicite et libérer des ressources","Le rendre plus lent mais plus sûr","Court-circuiter le cervelet"],k:1,w:"Automatisé ≠ inconscient."},
-{c:"c4",q:"Une amélioration motrice améliore…",o:["Uniquement la force","Coordination, anticipation, et réduction des degrés de liberté inutiles","Uniquement la vitesse de réaction","La taille du cerveau"],k:1,w:"Anticipation = meilleure utilisation des infos sensorielles + sélection plus rapide des réponses."},
-{c:"c4",q:"En matière de prise de risque…",o:["L’adolescent est le plus risqueur","L’enfant (5-8 ans) fait des choix plus risqués ; pas de différence adultes/ados","L’adulte prend plus de risques","Tout le monde est égal"],k:1,w:"Harbaugh 2002 ; Paulsen 2012."},
-{c:"c4",q:"Le cortex préfrontal atteint sa maturité…",o:["À 2-3 ans","Après l’adolescence (14-18 ans)","À 7 ans","À 30 ans"],k:1,w:"Hippocampe et amygdale : 12-15 ans. La blanche, elle, finit vers la trentaine."}
+{c:"c4",q:"Une meilleure performance chez l’enfant signifie…",o:["Toujours un meilleur apprentissage, puisque le comportement s’est amélioré","Pas forcément un meilleur apprentissage : le SN mûrit, il pratique, ou les deux","Toujours une simple maturation du système nerveux, sans aucun rôle de la pratique ni de l’expérience","Une plasticité devenue plus faible, le réseau étant déjà câblé"],k:1,w:"Le piège classique du CM."},
+{c:"c4",q:"La période CRITIQUE, c’est quand…",o:["L’expérience est particulièrement efficace à cette période","L’expérience est nécessaire pendant cette période","Le SN n’est plus plastique du tout après cette période","La myélinisation s’arrête définitivement à cette période"],k:1,w:"Sensible = particulièrement efficace. Critique = nécessaire, dur à rattraper après."},
+{c:"c4",q:"Quand la « fenêtre d’opportunité » se ferme…",o:["Le SN n’est plus plastique du tout, plus rien ne se modifie","Le SN reste plastique mais les modifications sont plus difficiles ou moins importantes","Plus aucun apprentissage n’est possible, sauf à passer par une rééducation intensive et précoce","La matière grise augmente pour compenser la fermeture"],k:1,w:"Ou elles demandent d’autres conditions d’apprentissage."},
+{c:"c4",q:"Après une lésion précoce, le jeune cerveau…",o:["Récupère toujours mieux qu’un adulte, quelle que soit la lésion","Peut réorganiser ses réseaux, mais n’a pas de récupération accrue — ça dépend","Ne récupère jamais : les réseaux détruits sont perdus, quel que soit l’âge de la lésion","Remplace les neurones perdus par une neurogénèse massive"],k:1,w:"Ça dépend : localisation, étendue, âge, réseaux impliqués."},
+{c:"c4",q:"Le feedback du mouvement va en priorité…",o:["Dans le cortex préfrontal, qui décide de la correction à apporter","Dans le cervelet, qui compare l’attendu et le produit","Dans l’hypothalamus, qui régule l’énergie du mouvement","Dans l’aire visuelle primaire, qui revoit le geste au ralenti"],k:1,w:"Il ajuste coordination, précision, timing. Plus développé chez les experts."},
+{c:"c4",q:"Le « casier des possibles », c’est…",o:["Le thalamus, qui trie les informations sensorielles avant le cortex","Les ganglions de base qui sélectionnent l’action la plus adaptée et inhibent les autres","Le corps calleux, qui distribue les options motrices possibles entre les deux hémisphères avant le geste","La mémoire de travail, qui garde les possibilités en attente"],k:1,w:"Sélection, initiation, contrôle de l’action, apprentissage procédural, automatisation."},
+{c:"c4",q:"Automatiser un mouvement, c’est…",o:["Rendre le mouvement totalement inconscient et incontrôlable","Réduire le contrôle attentionnel explicite et libérer des ressources","Le rendre plus lent, mais beaucoup plus sûr et précis","Court-circuiter le cervelet et son feedback pour gagner du temps de réaction"],k:1,w:"Automatisé ≠ inconscient."},
+{c:"c4",q:"Une amélioration motrice améliore…",o:["Uniquement la force et la vitesse d’exécution du geste","Coordination, anticipation, et réduction des degrés de liberté inutiles","Uniquement la vitesse de réaction aux signaux externes de l’environnement","La taille du cerveau et le nombre total de neurones"],k:1,w:"Anticipation = meilleure utilisation des infos sensorielles + sélection plus rapide des réponses."},
+{c:"c4",q:"En matière de prise de risque…",o:["L’adolescent est le plus risqueur, poussé par ses hormones","L’enfant (5-8 ans) fait des choix plus risqués ; pas de différence adultes/ados","L’adulte prend plus de risques, car il se sait plus expérimenté et mieux entraîné","Tout le monde est égal : l’aversion ne dépend pas de l’âge"],k:1,w:"Harbaugh 2002 ; Paulsen 2012."},
+{c:"c4",q:"Le cortex préfrontal atteint sa maturité…",o:["À 2-3 ans, avec la marche","Après l’adolescence (14-18 ans)","À 7 ans, avec la mimésis","Vers 30 ans, avec la fin de la myélinisation"],k:1,w:"Hippocampe et amygdale : 12-15 ans. La blanche, elle, finit vers la trentaine."}
+];
+
+/* variantes d’énoncés pour le mode difficile — même ordre que QCM, même réponse */
+var QVAR=[
+/* c1 */
+["Intégrer les infos, contrôler la motricité et les fonctions cognitives : quelles structures forment l’équipe du SNC ?","Au contrôle : « donnez la composition du système nerveux central ». Tu coches :"],
+["Fiche d’identité physique du cerveau — la bonne combinaison :","Poids, teneur en eau, liquide protecteur : quelle description colle au cerveau ?"],
+["Un scalpel part du crâne et descend vers le cortex : il traverse les méninges dans quel ordre ?","Récite les 4 méninges en partant de celle qui adhère à l’os :"],
+["Soirée arrosée : à quoi sert la membrane subarachnoïdienne que l’alcool met à l’épreuve ?","Quel est le rôle de la membrane subarachnoïdienne ?"],
+["Les deux hémisphères échangent leurs infos : par quelle structure ?","On sectionne la liaison entre hémisphère droit et gauche : on a coupé…"],
+["Tu reconnais une chanson et une odeur en même temps : quel est le rôle du lobe qui gère ça ?","Quel est le job du lobe temporal ?"],
+["La partie « reptilienne » du cerveau antérieur s’occupe de quoi, exactement ?","Que contrôle l’hypothalamus ?"],
+["Quel est le rôle du rhombencéphale ?","Dans le tronc cérébral, le rhombencéphale pilote les fonctions vitales automatiques, c’est-à-dire…"],
+["Sillon ou fissure : comment s’appelle la rainure PROFONDE ?","Les replis (gyri) sont séparés par des rainures : les profondes, ce sont…"],
+["Qui fabrique la gaine de myéline et les nœuds de Ranvier ?","Sans cette cellule gliale, pas de myéline : laquelle ?"],
+["Fiche métier : l’astrocyte. Sa mission ?","Que fait l’astrocyte ?"],
+["« Composition et rôle de la substance grise » : tu coches…","Carte d’identité de la substance grise :"],
+["Le faisceau de projection, il transporte quoi, et dans quel sens ?","Le faisceau de projection, c’est quoi ?"],
+["Les ganglions de base : combien, et répartis comment ?","Compte les noyaux cérébraux (et leur répartition par hémisphère) :"],
+["Que régule l’amygdale ?","Tu sursautes devant un film d’horreur et tu t’en souviens des années : la structure en jeu régule…"],
+["Tu te brûles la main : l’info douloureuse entre dans la moelle par où ?","Sensitif : quelle porte d’entrée dans la moelle épinière ?"],
+/* c2 */
+["Pourquoi découpe-t-on le cortex en aires ?","Les aires de Brodmann, c’est quel genre de découpage ?"],
+["Un parfum te frappe : lequel des sens saute l’escale du thalamus ?","Quelle modalité sensorielle ne fait pas escale au thalamus ?"],
+["On te touche l’épaule : la première aire corticale qui traite l’info se situe où ?","Donne la localisation de l’aire somatosensorielle primaire :"],
+["Un coup à l’arrière du crâne trouble la vision : logique, car l’aire visuelle primaire se situe…","Où loge l’aire visuelle primaire ?"],
+["Pourquoi les doigts occupent-ils une zone motrice énorme ?","Que fait l’aire motrice primaire ?"],
+["Tu décides de te lever, sans aucun déclencheur extérieur : la portion médiale du prémoteur initie sur…","La portion médiale du cortex prémoteur s’appuie sur quels signaux ?"],
+["Le rôle de l’aire oculomotrice frontale, c’est…","Quel est le rôle de l’aire oculomotrice frontale ?"],
+["Comprendre une conversation en croisant gestes, sons et souvenirs : quelle sorte d’aire associative bosse ?","Une aire associative multimodale, ça fait quoi ?"],
+["Après V1, que devient l’info visuelle ?","À quoi servent les aires visuelles associatives ?"],
+["Lésion du préfrontal → personnalité changée. Logique, car il est le siège de…","Que gère le cortex préfrontal ?"],
+["Reconnaître une clé au fond de la poche grâce à ton vécu : que fait l’aire somatosensorielle associative pour y arriver ?","Que fait l’aire somatosensorielle associative ?"],
+["Que fait le cortex pariétal postérieur ?","Suivre une conversation à table tout en mangeant : quel rôle joue le cortex pariétal postérieur ?"],
+["Quel trio de mots résume le rôle des aires motrices ?","Du projet au geste : les 3 étapes gérées par les aires motrices ?"],
+/* c3 */
+["Donne la définition exacte d’un neurotransmetteur :","C’est quoi, un neurotransmetteur ?"],
+["Victoire en ranked, tu relances direct une game : la dopamine a parlé. Son registre exact ?","La dopamine, c’est quoi comme registre ?"],
+["Le neurotransmetteur du bien-être : que régule la sérotonine ?","Quel est le rôle de la sérotonine ?"],
+["Boule au ventre avant le contrôle : que fait le cortisol, concrètement ?","Le rôle exact du cortisol :"],
+["Moment câlin : l’ocytocine est associée à…","Quel est le registre de l’ocytocine ?"],
+/* c4 */
+["Après 200 services au tennis, ton geste a changé pour de bon : c’est quoi, l’apprentissage, au juste ?","Récite la définition de l’apprentissage :"],
+["Du neurone produit au neurone myélinisé : l’ordre biologique de construction ?","Remets la construction biologique du cerveau dans l’ordre :"],
+["Étape des 8 semaines de développement embryonnaire : il se passe quoi ?","À 8 semaines, le fœtus franchit quelle étape cérébrale ?"],
+["Excitateurs vs inhibiteurs : quelle répartition dans le cortex ?","Quelle part des neurones corticaux transmettent et propagent le signal ?"],
+["Qu’est-ce qui marque la « fin » de la construction vers 2-3 ans ?","Vers 2-3 ans, le développement cérébral s’achève avec quelle acquisition ?"],
+["Complète la formule du CM : développement = construction + …","Pourquoi se développer, c’est aussi trier ? Développement = construction + …"],
+["Pourquoi le SN surproduit-il des connexions ?","Les 4 verbes qui justifient le « trop » de connexions :"],
+["Tu répètes ton geste et il se câble tout seul : quelle règle est à l’œuvre — et que dit-elle ?","Énonce la règle de Hebb (1949) :"],
+["À la naissance, la myéline est déjà posée où ?","Premières voies myélinisées du gradient de maturation :"],
+["Moins de matière grise à 16 ans qu’à 8 ans : pourquoi c’est normal ?","Qu’arrive-t-il à la matière grise à l’adolescence ?"],
+["La myélinisation se termine vers quel âge ?","Quand la matière blanche atteint-elle sa maturité ?"],
+["Quel est le rôle de la protéine Reeline dans le développement ?","Que fait la protéine Reeline ?"],
+["Entre maturation et apprentissage, c’est quoi exactement, la plasticité ?","Définis la plasticité :"],
+["Il progresse d’une semaine à l’autre : maturation ou apprentissage ?","Que prouve une meilleure performance chez l’enfant ?"],
+["Rater l’expérience pendant cette période se rattrape très mal : qu’est-ce qui définit la période critique ?","Période critique : c’est quand l’expérience est…"],
+["À 40 ans, apprendre le piano : que reste-t-il quand la fenêtre d’opportunité s’est fermée ?","Fenêtre fermée : le SN devient quoi ?"],
+["« Les enfants récupèrent toujours mieux après une lésion » : vrai ou plus subtil ?","Lésion précoce : quelles sont les vraies capacités du jeune cerveau ?"],
+["Où va le feedback du mouvement en priorité ?","Ton smash rate de 10 cm et tu corriges au coup suivant : le feedback est parti où en priorité ?"],
+["Passe, tir ou dribble : une seule action sort, les autres restent au placard. Qui a tranché ?","Le « casier des possibles » du CM désigne quoi ?"],
+["Conduire en discutant sans y penser : qu’a changé l’automatisation ?","Automatiser un geste, ça veut dire quoi exactement ?"],
+["Progresser en motricité, c’est gagner sur quels plans ?","Qu’apporte une amélioration motrice ?"],
+["Entre un enfant de 6 ans, un ado et un adulte : qui fait les choix les plus risqués ?","Prise de risque selon l’âge : que disent les études ?"],
+["Pourquoi un ado peut-il décider n’importe quoi ? Parce que le préfrontal mûrit…","La maturité du cortex préfrontal arrive quand ?"]
 ];
 
 var STRUCTS=[
@@ -1111,6 +1190,10 @@ function qChip(st){
 function qHome(){
   QON=false;
   var h='<p style="color:var(--muted);margin-bottom:18px">Choisis une partie du cours. Le statut se base sur ta dernière réponse à chaque question.</p>';
+  h+='<div class="card'+(S.hard?' hero-card':'')+'" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:space-between'+(S.hard?';border-color:rgba(255,77,109,.45)':'')+'">'+
+     '<div><h3 style="margin:0 0 4px'+(S.hard?';color:var(--art)':'')+'">Mode '+(S.hard?'difficile':'normal')+'</h3>'+
+     '<span class="mono">'+(S.hard?'les énoncés changent, la réponse reste — zéro indice de chapitre':'les énoncés du cours, chapitre affiché')+'</span></div>'+
+     '<button class="btn'+(S.hard?'':' pri')+'" id="qhard">'+(S.hard?'Repasser en normal':'Passer en difficile')+'</button></div>';
   for(var i=0;i<CHAPS.length;i++){
     var c=CHAPS[i],st=qStats(c.id);
     h+='<div class="card tilt reveal in"><div class="glare"></div>'+
@@ -1123,10 +1206,25 @@ function qHome(){
   var g=qStats("all");
   h+='<div class="fnav" style="justify-content:flex-start;margin-top:4px"><button class="btn" data-qch="all">Tout mélanger · '+g.t+' questions</button></div>';
   $("qzone").innerHTML=h;
+  $("qzone").classList.toggle("hardrun",!!S.hard);
+  $("qhard").onclick=function(){
+    S.hard=!S.hard;save();
+    if(S.hard)hardFx(qHome);else qHome();
+  };
   $("qzone").onclick=function(e){
     var b=e.target.closest("[data-qch]");if(!b)return;
     startQ(b.getAttribute("data-qch"));
   };
+}
+function hardFx(cb){
+  if(RM){cb();return}
+  var d=document.createElement("div");d.id="hardfx";
+  d.innerHTML='<div><div class="t">Mode<br>difficile</div>'+
+    '<div class="mono" style="margin-top:16px;color:var(--ink)">les énoncés changent · la réponse reste la même</div>'+
+    '<span class="dotp" style="display:block;width:10px;height:10px;border-radius:50%;background:var(--art);box-shadow:0 0 16px 4px rgba(255,77,109,.7)"></span></div>';
+  document.body.appendChild(d);
+  setTimeout(cb,520);
+  setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d)},1520);
 }
 function startQ(ch){
   QON=true;QCH=ch||"all";QQ=[];QI=0;QOK=0;
@@ -1152,12 +1250,14 @@ function drawQ(){
     return;
   }
   var q=QCM[QQ[QI]];
+  var phr=q.q;
+  if(S.hard&&typeof QVAR!=="undefined"&&QVAR.length===QCM.length&&QVAR[QQ[QI]]&&QVAR[QQ[QI]].length)phr=QVAR[QQ[QI]][(Math.random()*QVAR[QQ[QI]].length)|0];
   var L=["A","B","C","D"],ord=[0,1,2,3];
   for(var z=3;z>0;z--){var r=(Math.random()*(z+1))|0,t=ord[z];ord[z]=ord[r];ord[r]=t}
   var h='<div class="fmeter"><span class="mono">'+(QI+1)+' / '+QQ.length+'</span><div class="track"><div class="fill" style="width:'+Math.round(QI/QQ.length*100)+'%"></div></div><span class="mono">'+QOK+' ✓</span></div>';
-  h+='<div class="card hero-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="mono">'+chapName(q.c)+'</span>'+
+  h+='<div class="card hero-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center">'+(S.hard?'<span class="chip src">mode difficile</span>':'<span class="mono">'+chapName(q.c)+'</span>')+''+
      '<button class="btn" id="qquit" style="padding:8px 16px">parties</button></div>'+
-     '<h3 style="margin:12px 0 16px;text-transform:none;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:700;font-size:19px;line-height:1.4">'+q.q+'</h3><div id="qopts">';
+     '<h3 style="margin:12px 0 16px;text-transform:none;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:700;font-size:19px;line-height:1.4">'+phr+'</h3><div id="qopts">';
   for(var i=0;i<4;i++)h+='<button class="opt" data-i="'+ord[i]+'"><span class="k">'+L[i]+'</span><span>'+q.o[ord[i]]+'</span></button>';
   h+='</div><div id="qwhy"></div></div>';
   zone.innerHTML=h;
