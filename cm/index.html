@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Contrôle moteur — le flux</title>
+<meta name="description" content="Réviser le contrôle moteur (connaissance du cerveau) — L2 APA STAPS. Flashcards, QCM, structures, restitution.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..125,100..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070B16; --abyss:#04070F;
+  --surface:#0F1729; --surface-2:#172139;
+  --glass:rgba(15,23,41,.72); --glass-hi:rgba(22,32,56,.78);
+  --ink:#E7ECF6; --muted:#8B97B3;
+  --line:rgba(139,160,214,.15); --line-strong:rgba(139,160,214,.30);
+  --art:#FF4D6D; --ven:#5B8CFF; --hl:#F7D774; --ok:#43D39E; --warn:#FF9F5A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
+body{
+  background:
+    radial-gradient(640px 420px at 88% -4%, rgba(255,77,109,.075), transparent 70%),
+    radial-gradient(760px 520px at -6% 104%, rgba(91,140,255,.085), transparent 70%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Atkinson Hyperlegible",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:rgba(247,215,116,.28)}
+h1,h2,h3,.hfont{
+  font-family:"Anybody",sans-serif;
+  font-weight:830; font-stretch:122%;
+  text-transform:uppercase; line-height:.84;
+  letter-spacing:.005em;
+}
+.mono{
+  font-family:"Martian Mono",monospace;
+  font-size:10px; text-transform:uppercase;
+  letter-spacing:.14em; color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+p{max-width:68ch}
+a{color:var(--ven)}
+em{color:var(--hl);font-style:normal;font-weight:700}
+kbd{font-family:"Martian Mono",monospace;font-size:10px;border:1px solid var(--line-strong);border-radius:5px;padding:1px 5px}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:94vh;background:var(--abyss);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+#gl,.glfall{position:absolute;inset:0;width:100%;height:100%}
+.glfall{background:radial-gradient(60% 55% at 50% 42%, rgba(91,140,255,.16), transparent 70%),radial-gradient(34% 30% at 62% 36%, rgba(255,77,109,.12), transparent 70%),var(--abyss);display:none}
+.hero .inner{position:relative;z-index:2;padding:clamp(18px,4vw,56px);padding-bottom:clamp(16px,2.6vw,34px)}
+.kicker{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.kicker .dotp{width:9px;height:9px;border-radius:50%;background:var(--art);box-shadow:0 0 14px 3px rgba(255,77,109,.65);animation:heart 1.05s infinite}
+@keyframes heart{0%{transform:scale(1)}12%{transform:scale(1.45)}24%{transform:scale(1)}38%{transform:scale(1.28)}52%,100%{transform:scale(1)}}
+.hero h1{
+  font-size:clamp(46px,10.5vw,148px);
+  margin:0 0 14px -3px;
+  background:linear-gradient(104deg,var(--ink) 55%,#AFC4FF 78%,var(--art) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:rise .9s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(46px) skewY(2.2deg)}to{opacity:1;transform:none}}
+.hero .sub{color:var(--muted);font-size:17px;max-width:54ch;animation:fadeup .7s .18s both}
+@keyframes fadeup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.casc{animation:fadeup .7s both}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+.btn{
+  font-family:"Martian Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:999px;padding:14px 26px;cursor:pointer;border:1px solid var(--line-strong);
+  background:rgba(22,32,56,.5);color:var(--ink);backdrop-filter:blur(10px);
+  transition:transform .18s,box-shadow .18s,background .18s;
+}
+.btn:hover{transform:translateY(-2px);background:var(--glass-hi)}
+.btn.pri{
+  background:linear-gradient(135deg,#FF5E7B,#E42C50 70%);border:none;color:#fff;
+  box-shadow:0 10px 34px rgba(255,77,109,.38),0 2px 8px rgba(255,77,109,.3);
+}
+.btn.pri:hover{box-shadow:0 14px 44px rgba(255,77,109,.5)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:760px}
+.tile{
+  background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);
+  border-radius:14px;padding:14px 16px;
+}
+.tile b{display:block;font-family:"Anybody",sans-serif;font-weight:830;font-stretch:118%;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.tile span{display:block;margin-top:5px}
+.tile.red b{color:var(--art)} .tile.blue b{color:var(--ven)}
+
+/* bandeau valeurs en direct */
+.liveband{
+  position:relative;z-index:2;margin:0 clamp(18px,4vw,56px) clamp(18px,3vw,40px);
+  background:var(--glass-hi);backdrop-filter:blur(18px);
+  border:1px solid var(--line-strong);border-radius:24px;
+  padding:16px 22px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  animation:fadeup .7s .45s both;
+}
+.lswitch{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.lswitch .track{width:52px;height:28px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line-strong);position:relative;transition:background .3s}
+.lswitch .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--ven);box-shadow:0 0 12px rgba(91,140,255,.7);transition:transform .35s cubic-bezier(.2,.8,.2,1),background .35s}
+.lswitch.on .knob{transform:translateX(24px);background:var(--art);box-shadow:0 0 12px rgba(255,77,109,.7)}
+.lvals{display:flex;gap:26px;flex-wrap:wrap;flex:1}
+.lval b{display:block;font-family:"Anybody",sans-serif;font-weight:820;font-stretch:118%;font-size:21px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lval span{white-space:nowrap}
+
+/* ---------- TABS ---------- */
+.tabbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(7,11,22,.86);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.tabbar .row{display:flex;gap:4px;position:relative;padding:10px clamp(14px,4vw,56px) 12px;overflow-x:auto;scrollbar-width:none}
+.tabbar .row::-webkit-scrollbar{display:none}
+.tabb{
+  font-family:"Martian Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);background:none;border:none;border-radius:999px;
+  padding:10px 18px;cursor:pointer;position:relative;z-index:2;white-space:nowrap;
+  transition:color .25s;
+}
+.tabb.on{color:var(--ink)}
+#tabglide{
+  position:absolute;top:10px;height:36px;border-radius:999px;z-index:1;
+  background:var(--surface-2);border:1px solid var(--line-strong);
+  transition:transform .32s cubic-bezier(.2,.8,.2,1),width .32s cubic-bezier(.2,.8,.2,1);
+  left:0;will-change:transform,width;
+}
+#scrollbar{height:2px;background:linear-gradient(90deg,var(--art),var(--ven));width:0;transition:width .1s linear}
+
+/* ---------- PANELS / CARDS ---------- */
+main{padding:clamp(18px,4vw,56px);max-width:1180px;margin:0 auto}
+.panel{display:none}
+.panel.on{display:block}
+.card{
+  background:var(--glass);backdrop-filter:blur(13px);
+  border:1px solid var(--line);border-radius:16px;
+  padding:clamp(16px,2.6vw,26px);margin-bottom:16px;
+  perspective:900px;
+}
+.card.hero-card{border-radius:24px;background:var(--glass-hi);border-color:var(--line-strong);box-shadow:0 26px 70px rgba(0,0,0,.5)}
+.reveal{opacity:0;transform:perspective(900px) rotateX(12deg) translateY(26px);transform-origin:top center}
+.reveal.in{opacity:1;transform:none;animation:unfold .65s cubic-bezier(.2,.8,.2,1)}
+@keyframes unfold{from{opacity:0;transform:perspective(900px) rotateX(12deg) translateY(26px)}to{opacity:1;transform:none}}
+.tilt{transition:transform .22s ease,box-shadow .22s;position:relative;overflow:hidden}
+.tilt .glare{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(360px at var(--mx,50%) var(--my,50%),rgba(175,196,255,.1),transparent 65%)}
+.tilt:hover .glare{opacity:1}
+h2{font-size:clamp(26px,4.4vw,44px);margin:34px 0 18px}
+h3{font-size:clamp(17px,2.4vw,22px);margin-bottom:12px;font-stretch:118%}
+.sect-k{margin-bottom:6px;display:block}
+ul{padding-left:20px}
+li{margin:5px 0;max-width:72ch}
+li::marker{color:var(--art)}
+
+/* puces d'état */
+.chip{
+  display:inline-block;font-family:"Martian Mono",monospace;font-size:9.5px;
+  letter-spacing:.12em;text-transform:uppercase;border-radius:999px;
+  padding:4px 11px;border:1px solid;
+}
+.chip.src{color:var(--art);border-color:rgba(255,77,109,.4);background:rgba(255,77,109,.09)}
+.chip.plus{color:var(--ven);border-color:rgba(91,140,255,.4);background:rgba(91,140,255,.09)}
+.chip.ok{color:var(--ok);border-color:rgba(67,211,158,.4);background:rgba(67,211,158,.09)}
+.chip.rev{color:var(--warn);border-color:rgba(255,159,90,.4);background:rgba(255,159,90,.09)}
+
+/* tableaux */
+.tblwrap{border:1px solid var(--line-strong);border-radius:14px;overflow:auto;margin:14px 0;max-width:100%}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th{font-family:"Martian Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);text-align:left;padding:11px 14px;border-bottom:1px solid var(--line-strong);background:rgba(23,33,57,.55)}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .18s}
+tbody tr:hover{background:rgba(91,140,255,.07)}
+td.v{font-family:"Martian Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* flashcards */
+.fwrap{max-width:680px;margin:0 auto}
+.fcard{
+  min-height:300px;cursor:pointer;border-radius:24px;
+  background:var(--glass-hi);backdrop-filter:blur(18px);
+  border:1px solid var(--line-strong);
+  box-shadow:0 26px 70px rgba(0,0,0,.5);
+  padding:clamp(20px,4vw,38px);
+  display:flex;flex-direction:column;justify-content:center;gap:14px;
+  transition:transform .18s;
+}
+.fcard:active{transform:scale(.985)}
+.fcard .q{font-family:"Anybody",sans-serif;font-weight:820;font-stretch:118%;font-size:clamp(19px,3.2vw,27px);line-height:1.02;text-transform:uppercase}
+.fcard .a{display:none;border-top:1px solid var(--line);padding-top:16px;font-size:16px}
+.fcard.flip .a{display:block;animation:fadeup .35s both}
+.fcard.flip .hint{display:none}
+.fnav{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center}
+.fmeter{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.track{flex:1;height:4px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.track .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--art),var(--ven));width:0;transition:width .4s}
+.chips-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.fchip{cursor:pointer;background:none}
+.fchip.sel{color:var(--ink);border-color:var(--ink)}
+
+/* QCM */
+.qwrap{max-width:720px;margin:0 auto}
+.opt{
+  display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;cursor:pointer;
+  background:rgba(22,32,56,.45);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin:8px 0;color:var(--ink);
+  font-family:"Atkinson Hyperlegible",sans-serif;font-size:15.5px;line-height:1.45;
+  transition:border-color .18s,background .18s,transform .18s;
+}
+.opt:hover{border-color:var(--line-strong);background:var(--glass-hi)}
+.opt .k{font-family:"Martian Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);border:1px solid var(--line-strong);border-radius:7px;padding:3px 8px;flex-shrink:0;margin-top:1px}
+.opt.good{border-color:var(--ok);background:rgba(67,211,158,.12);animation:pulseok .6s}
+.opt.bad{border-color:var(--art);background:rgba(255,77,109,.1);animation:shake .45s}
+@keyframes pulseok{0%{box-shadow:0 0 0 0 rgba(67,211,158,.55)}100%{box-shadow:0 0 0 18px rgba(67,211,158,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}18%{transform:translateX(-8px)}36%{transform:translateX(7px)}54%{transform:translateX(-5px)}72%{transform:translateX(4px)}88%{transform:translateX(-2px)}}
+.why{border-left:2px solid var(--ven);padding:10px 14px;margin-top:12px;color:var(--muted);font-size:14.5px;background:rgba(91,140,255,.06);border-radius:0 10px 10px 0}
+
+/* listes (restitution) */
+textarea{
+  width:100%;min-height:110px;background:var(--surface);border:1px solid var(--line-strong);
+  border-radius:14px;color:var(--ink);padding:14px;font-family:"Atkinson Hyperlegible",sans-serif;
+  font-size:15.5px;resize:vertical;
+}
+textarea:focus{outline:none;border-color:var(--ven);box-shadow:0 0 0 3px rgba(91,140,255,.15)}
+.liok{color:var(--ok)} .liko{color:var(--warn)}
+
+/* structures */
+.search{
+  width:100%;background:var(--surface);border:1px solid var(--line-strong);border-radius:999px;
+  color:var(--ink);padding:13px 22px;font-family:"Atkinson Hyperlegible",sans-serif;font-size:15.5px;margin-bottom:16px;
+}
+.search:focus{outline:none;border-color:var(--art);box-shadow:0 0 0 3px rgba(255,77,109,.14)}
+
+/* SVG schémas */
+.schem{width:100%;height:auto;display:block;margin:10px 0}
+.schem text{font-family:"Martian Mono",monospace;font-size:9px;letter-spacing:.08em;fill:var(--muted);text-transform:uppercase}
+.schem .big{font-size:11px;fill:var(--ink)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* footer ECG */
+footer{border-top:1px solid var(--line);padding:26px clamp(18px,4vw,56px);display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.ecg{flex:1;min-width:220px;height:46px}
+.ecg path{stroke:var(--art);stroke-width:1.6;fill:none;filter:drop-shadow(0 0 5px rgba(255,77,109,.55));stroke-dasharray:640 640;animation:ecgrun 3.4s linear infinite}
+@keyframes ecgrun{from{stroke-dashoffset:1280}to{stroke-dashoffset:0}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+@media (max-width:640px){
+  body{font-size:15.5px}
+  .hero{min-height:88vh}
+  .liveband{margin:0 14px 18px;gap:14px}
+  .lvals{gap:16px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <canvas id="gl"></canvas>
+  <div class="glfall" id="glfall"></div>
+  <div class="inner">
+    <div class="kicker casc" style="animation-delay:.06s">
+      <span class="dotp"></span>
+      <span class="mono">L2 APA · STAPS · CM 1 — Connaissance du cerveau</span>
+    </div>
+    <h1>Contrôle<br>moteur</h1>
+    <p class="sub">Structures, aires corticales, neurotransmetteurs, développement &amp; plasticité. Tout le cours, prêt à être pompé dans ta substance grise.</p>
+    <div class="btnrow">
+      <button class="btn pri casc" style="animation-delay:.24s" data-go="flash">Lancer les flashcards</button>
+      <button class="btn casc" style="animation-delay:.30s" data-go="qcm">Faire le QCM</button>
+    </div>
+    <div class="tiles">
+      <div class="tile casc" style="animation-delay:.36s"><b id="t-fl">0</b><span class="mono">flashcards</span></div>
+      <div class="tile casc red" style="animation-delay:.42s"><b id="t-qc">0</b><span class="mono">QCM</span></div>
+      <div class="tile casc blue" style="animation-delay:.48s"><b id="t-st">0</b><span class="mono">structures</span></div>
+      <div class="tile casc" style="animation-delay:.54s"><b id="t-ok">0%</b><span class="mono">maîtrise</span></div>
+    </div>
+  </div>
+  <div class="liveband">
+    <div class="lswitch" id="lsw">
+      <div class="track"><div class="knob"></div></div>
+      <span class="mono" id="lswlab">Le cerveau · structure</span>
+    </div>
+    <div class="lvals" id="lvals"></div>
+  </div>
+</section>
+
+<nav class="tabbar">
+  <div class="row" id="tabrow">
+    <div id="tabglide"></div>
+    <button class="tabb on" data-t="cours">Cours</button>
+    <button class="tabb" data-t="flash">Flashcards</button>
+    <button class="tabb" data-t="qcm">QCM</button>
+    <button class="tabb" data-t="struct">Structures</button>
+    <button class="tabb" data-t="listes">Restitution</button>
+  </div>
+  <div id="scrollbar"></div>
+</nav>
+
+<main>
+
+<!-- ============ COURS ============ -->
+<section class="panel on" id="p-cours">
+
+  <h2>1 · La structure du cerveau</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Pourquoi chercher à comprendre le cerveau ?</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>regard</th><th>définition</th></tr></thead>
+      <tbody>
+        <tr><td class="v">philosophie</td><td>Un organe qui <em>perçoit, pense, agit</em> et donne un <em>sens à l’existence</em> — le centre de la conscience.</td></tr>
+        <tr><td class="v">sociologie</td><td>Le <em>chef d’orchestre</em> de l’organisme, qui s’auto-gère : responsable des <em>comportements</em> et des <em>interactions</em>.</td></tr>
+        <tr><td class="v">neurosciences</td><td>Enjeu majeur : son <em>développement</em>, sa fonction <em>normale et pathologique</em>, ses <em>facultés d’adaptation</em>.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><em>Mécanisme</em> : comprendre la genèse des facultés intellectuelles, des émotions et des comportements moteurs.</li>
+      <li><em>Pathologie</em> : maladies neurologiques (Parkinson, Alzheimer, sclérose en plaques, épilepsie) et psychiatriques (schizophrénie, autisme, dépression).</li>
+      <li>Mythe des « 10 % » : faux — on l’utilise souvent à <em>100 %</em>, des parties sont juste « en pause ». Capacité d’attention : ~<em>6 secondes</em>.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Le SNC et la protection du cerveau</h3>
+    <ul>
+      <li><em>SNC</em> = encéphale (<em>cerveau, cervelet, tronc cérébral</em>) + <em>moelle épinière</em> → intégration des informations, contrôle de la motricité, fonctions cognitives.</li>
+      <li>Composition : <em>1,3 kg</em>, <em>75 % d’eau</em>, baigne dans le <em>liquide céphalo-rachidien</em> (réduction des chocs).</li>
+      <li>Le cerveau <em>ne ressent pas la douleur</em> : le mal de crâne = diminution de l’apport sanguin vers l’encéphale.</li>
+    </ul>
+    <div class="tblwrap"><table>
+      <thead><tr><th>méninge</th><th>rôle</th></tr></thead>
+      <tbody>
+        <tr><td class="v">dure-mère</td><td>Couche <em>dure et fibreuse</em> qui adhère à l’os.</td></tr>
+        <tr><td class="v">arachnoïde</td><td><em>Collagène</em> en réseau fibreux.</td></tr>
+        <tr><td class="v">subarachnoïdienne</td><td>Protège de l’<em>accumulation de substances neurotoxiques</em> ; mouvements.</td></tr>
+        <tr><td class="v">pie-mère</td><td><em>Connexion</em> directe avec le cerveau.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Hémisphères, lobes &amp; étages</h3>
+    <svg class="schem" viewBox="0 0 720 330" role="img" aria-label="Vue latérale du cerveau : lobes et aires">
+      <defs>
+        <linearGradient id="gfr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4D6D" stop-opacity=".34"/><stop offset="1" stop-color="#FF4D6D" stop-opacity=".12"/></linearGradient>
+        <linearGradient id="gpa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B8CFF" stop-opacity=".34"/><stop offset="1" stop-color="#5B8CFF" stop-opacity=".12"/></linearGradient>
+        <linearGradient id="goc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7D774" stop-opacity=".3"/><stop offset="1" stop-color="#F7D774" stop-opacity=".1"/></linearGradient>
+        <linearGradient id="gte" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#43D39E" stop-opacity=".3"/><stop offset="1" stop-color="#43D39E" stop-opacity=".1"/></linearGradient>
+      </defs>
+      <!-- lobe frontal -->
+      <path d="M95,175 C85,120 125,60 205,48 C260,40 310,52 330,70 L330,160 C290,150 230,160 200,185 C165,210 130,205 95,175 Z" fill="url(#gfr)" stroke="#FF4D6D" stroke-width="1.4"/>
+      <!-- lobe pariétal -->
+      <path d="M340,66 C400,48 470,55 510,85 C535,105 545,130 540,150 L430,185 C400,170 365,165 340,165 Z" fill="url(#gpa)" stroke="#5B8CFF" stroke-width="1.4"/>
+      <!-- lobe occipital -->
+      <path d="M548,155 C575,165 590,190 585,215 C580,240 555,255 525,250 L495,215 C515,195 535,172 548,155 Z" fill="url(#goc)" stroke="#F7D774" stroke-width="1.4"/>
+      <!-- lobe temporal -->
+      <path d="M205,195 C250,170 330,172 395,185 C450,196 480,205 487,218 C490,245 440,268 370,268 C290,268 225,240 205,195 Z" fill="url(#gte)" stroke="#43D39E" stroke-width="1.4"/>
+      <!-- cervelet -->
+      <ellipse cx="545" cy="277" rx="58" ry="33" fill="rgba(91,140,255,.12)" stroke="#8B97B3" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <!-- tronc -->
+      <path d="M455,262 C462,280 460,300 450,318 L420,318 C425,298 428,278 430,262 Z" fill="rgba(255,77,109,.12)" stroke="#8B97B3" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <!-- sillon central -->
+      <path d="M332,62 C338,95 336,130 332,168" fill="none" stroke="#E7ECF6" stroke-width="1.6" stroke-dasharray="6 4"/>
+      <text x="306" y="42" class="big">sillon central</text>
+      <!-- étiquettes -->
+      <text x="140" y="100" class="big" fill="#FF4D6D">FRONTAL</text>
+      <text x="140" y="114">aires 4 · 6 · 8 · 9-12</text>
+      <text x="408" y="92" class="big" fill="#5B8CFF">PARIÉTAL</text>
+      <text x="408" y="106">aires 1-2-3 · 5-7 · 43</text>
+      <text x="520" y="208" class="big" fill="#F7D774">OCCIPITAL</text>
+      <text x="536" y="222">17 · 18-19</text>
+      <text x="282" y="238" class="big" fill="#43D39E">TEMPORAL</text>
+      <text x="282" y="252">aires 41 · 22-42 · 28</text>
+      <text x="510" y="284" class="big">CERVELET</text>
+      <text x="376" y="300" class="big">TRONC</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:rgba(255,77,109,.5)"></i><span class="mono">frontal — raisonnement · langage · motricité volontaire</span></span>
+      <span><i style="background:rgba(91,140,255,.5)"></i><span class="mono">pariétal — corps · espace · attention</span></span>
+      <span><i style="background:rgba(247,215,116,.5)"></i><span class="mono">occipital — vision · formes · couleurs</span></span>
+      <span><i style="background:rgba(67,211,158,.5)"></i><span class="mono">temporal — encodage audition · vue · odorat</span></span>
+    </div>
+    <ul style="margin-top:14px">
+      <li>2 hémisphères rattachés par le <em>corps calleux</em> ; ils travaillent <em>en même temps</em>, avec des aires plus dominantes selon les moments.</li>
+      <li><em>Cerveau antérieur</em> — ganglions de base (coordination du mouvement + récompense), <em>thalamus</em> (coordinateur des infos sensorielles), <em>hypothalamus</em> (appétit, défense, reproduction, veille-sommeil — partie « reptilienne »).</li>
+      <li><em>Mésencéphale</em> : réflexes visuels et auditifs, transfert vers le thalamus, récompense &amp; humeur.</li>
+      <li><em>Rhombencéphale</em> : rythme respiratoire, activité cardiaque, glucose sanguin.</li>
+      <li><em>Cervelet</em> : contrôle des mouvements et des processus cognitifs qui demandent une coordination.</li>
+      <li>Développement du cortex : des replis (<em>gyri</em>) séparés par des rainures — peu profondes = <em>sillons</em>, profondes = <em>fissures</em>.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Substance grise vs substance blanche</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th></th><th>grise</th><th>blanche</th></tr></thead>
+      <tbody>
+        <tr><td class="v">composition</td><td><em>Corps cellulaires</em>, dendrites, axones non myélinisés, cellules gliales</td><td>Axones <em>myélinisés</em> → couleur blanchâtre</td></tr>
+        <tr><td class="v">rôle</td><td><em>Traitement et intégration</em> de l’information</td><td><em>Transport de l’influx</em>, communication entre régions (« le câblage »)</td></tr>
+        <tr><td class="v">localisation</td><td>Surface de l’encéphale · profondeur de la moelle</td><td>Profondeur de l’encéphale · surface de la moelle</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Les 5 faisceaux : <em>association longue</em> (même région), <em>courte</em> (en U, régions adjacentes), <em>voisine</em> (même lobe), <em>interhémisphérique</em> (corps calleux), <em>projection</em> (moteur descendant / sensitif ascendant).</li>
+      <li><em>Noyau cérébral / ganglions de base</em> : 6 (3 par hémisphère), en profondeur → préparation des mouvements volontaires, apprentissage moteur, posture, attention, inhibition, conscience. Communique avec <em>thalamus</em>, <em>cervelet</em> (boucles cortico-sous-corticales), <em>amygdale</em> (peur, mémoire émotive), cortex (capsule interne).</li>
+      <li><em>Substance noire</em> : mouvement + fonctions de récompense.</li>
+      <li>Moelle épinière : influx <em>sensitifs</em> par les <em>cornes dorsales</em>, <em>moteurs</em> par les <em>cornes ventrales</em>.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Neurones &amp; cellules gliales</h3>
+    <ul>
+      <li><em>Neurone</em> : cellule nerveuse (~<em>100 milliards</em>). <em>Gaine de myéline</em> : protection le long des axones + propagation de l’influx.</li>
+    </ul>
+    <div class="tblwrap"><table>
+      <thead><tr><th>cellule gliale</th><th>fonction</th></tr></thead>
+      <tbody>
+        <tr><td class="v">oligodendrocyte</td><td>Origine des <em>gaines de myéline</em>, génère les <em>nœuds de Ranvier</em></td></tr>
+        <tr><td class="v">astrocyte</td><td><em>Synthétise les neurotransmetteurs</em>, limite leur dispersion dans la fente synaptique</td></tr>
+        <tr><td class="v">épendymocyte</td><td><em>Délimite les cavités</em> du SNC</td></tr>
+        <tr><td class="v">microglie</td><td><em>Élimine les déchets</em> (phagocyte)</td></tr>
+      </tbody>
+    </table></div>
+    <p class="mono">elles soutiennent, protègent, nourrissent — aucun influx nerveux transmis</p>
+  </div>
+
+  <h2>2 · Les aires corticales</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Les 52 aires de Brodmann — le tableau à connaître</h3>
+    <p>Les fonctions du cerveau sont régies par le <em>cortex cérébral</em> (substance grise en surface). Brodmann le divise en <em>52 aires</em> : sensorielles, motrices, associatives.</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>n°</th><th>aire</th><th>localisation</th><th>fonction</th></tr></thead>
+      <tbody>
+        <tr><td class="v">1·2·3</td><td>Somatosensorielle primaire</td><td>Arrière du sillon central (pariétal)</td><td>Mécano-, noci-, thermorécepteurs</td></tr>
+        <tr><td class="v">17</td><td>Visuelle primaire</td><td>Extrémité postérieure de l’occipital</td><td>Récepteurs visuels (couleur, forme)</td></tr>
+        <tr><td class="v">41</td><td>Auditive primaire</td><td>Partie supérieure du temporal</td><td>Parole, intensité, hauteur, tempo</td></tr>
+        <tr><td class="v">43</td><td>Gustative primaire</td><td>Sous l’aire somato (pariétal)</td><td>Infos gustatives (langue, larynx)</td></tr>
+        <tr><td class="v">28</td><td>Olfactive primaire</td><td>À l’intérieur (temporal)</td><td>Odorat — ne passe pas par le thalamus</td></tr>
+        <tr><td class="v">4</td><td>Motrice primaire</td><td>Frontal, avant du sillon central</td><td>Contractions volontaires et précises</td></tr>
+        <tr><td class="v">6</td><td>Cortex prémoteur</td><td>Adjacent à l’aire 4</td><td>Latéral = signaux externes · médial = internes</td></tr>
+        <tr><td class="v">8</td><td>Oculomotrice frontale</td><td>Entre préfrontal et prémoteur</td><td>Mouvements volontaires des yeux</td></tr>
+        <tr><td class="v">18·19</td><td>Visuelles associatives</td><td>Occipital</td><td>V2→V5 : couleurs, motifs, forme, mouvement</td></tr>
+        <tr><td class="v">22·42</td><td>Auditives associatives</td><td>Temporal</td><td>Traitement phonique des sons</td></tr>
+        <tr><td class="v">5·7</td><td>Somato associative</td><td>Arrière de l’aire primaire</td><td>Intègre le présent aux expériences passées</td></tr>
+        <tr><td class="v">9-12</td><td>Cortex préfrontal</td><td>Avant du frontal</td><td>Personnalité, intelligence, décision, humeur</td></tr>
+        <tr><td class="v">5·7·39·40</td><td>Pariétal postérieur</td><td>Pariétal</td><td>Phénomènes complexes (parole), décision</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Aires <em>sensorielles</em> : voies ascendantes → <em>thalamus</em> (sauf odorat) → aire primaire (« porte d’entrée », premier traitement) → secondaire (traitement plus fin).</li>
+      <li>Aires <em>motrices</em> : préparation, déclenchement, exécution — contrôlent <em>force et durée</em> de la contraction. Aire 4 : région <em>proportionnelle à la précision</em> du mouvement (doigts = vaste).</li>
+      <li>Associatives <em>unimodales</em> (une modalité) vs <em>multimodales</em> (mémoire, jugement, intelligence, langage).</li>
+      <li>Circuit visuel : V1 → <em>V2</em> (couleurs, motifs, orientation) → <em>V3</em> forme dynamique · <em>V4</em> couleur-forme · <em>V5</em> mouvement.</li>
+    </ul>
+  </div>
+
+  <h2>3 · Les neurotransmetteurs</h2>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Les messagers chimiques</h3>
+    <p><em>Définition</em> : molécule chimique produite par un neurone pour <em>transmettre un message à une autre cellule</em> à travers une <em>synapse</em>. <em>Rôle</em> : messager chimique — communication entre neurones + contrôle des fonctions vitales (pensée, sommeil, émotions).</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>molécule</th><th>mot-clé</th><th>effet</th></tr></thead>
+      <tbody>
+        <tr><td class="v">dopamine</td><td>récompense</td><td>Gère le <em>plaisir</em>, l’<em>envie</em>, la <em>motivation</em></td></tr>
+        <tr><td class="v">sérotonine</td><td>bien-être</td><td>Régule l’<em>humeur</em> et l’<em>anxiété</em></td></tr>
+        <tr><td class="v">ocytocine</td><td>amour</td><td>Plaisir au cours d’une <em>relation sociale</em></td></tr>
+        <tr><td class="v">endorphine</td><td>relaxation</td><td><em>Calme</em> et <em>euphorie</em></td></tr>
+        <tr><td class="v">cortisol</td><td>stress</td><td>Donne de l’<em>énergie</em>, régule le <em>taux de sucre</em></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <h2>4 · Développement &amp; plasticité</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Comment devient-on capable de contrôler son corps ?</h3>
+    <ul>
+      <li><em>Apprentissage</em> : ensemble des processus de <em>mémorisation</em> qui élaborent ou modifient les <em>schémas comportementaux</em>, à travers environnement et expérience.</li>
+      <li><em>Développement</em> : fait de grandir, croître, se développer. Pendant l’enfance, derrière chaque apprentissage, <em>le SN est en plein développement</em>.</li>
+      <li>Vue conceptuelle : <em>construction → maturation → expérience → plasticité → apprentissage</em>. Le cerveau n’est <em>pas fini à la naissance</em>.</li>
+      <li>Côté biologie : <em>neurogénèse → migration → connexion → myélinisation</em>.</li>
+    </ul>
+    <div class="tblwrap"><table>
+      <thead><tr><th>étape</th><th>ce qui se passe</th></tr></thead>
+      <tbody>
+        <tr><td class="v">1 · neurogénèse</td><td><em>3 sem.</em> feuillet embryonnaire → tube à cellules souches · <em>6 sem.</em> futur cortex · <em>8 sem.</em> premier cortex. Substance grise 5 mm, <em>6 couches</em> (anciens en profond, récents en surface).</td></tr>
+        <tr><td class="v">2 · migration</td><td>Neurones <em>excitateurs (80 %)</em> : transmettre, propager · <em>inhibiteurs (20 %)</em> : réduire, inhiber (Gressens, 2021).</td></tr>
+        <tr><td class="v">3 · différenciation</td><td>Neurones différents selon <em>positionnement, localisation, environnement</em> — propriétés spécifiques.</td></tr>
+        <tr><td class="v">4 · croissance</td><td>Axones &amp; dendrites : <em>réception-intégration (dendrites)</em>, <em>transmission (axone)</em>.</td></tr>
+        <tr><td class="v">5 · synaptogénèse</td><td><em>Surproduction + remodelage continu</em> (Knudsen 2004). Développement = <em>construction + sélection</em>. Trop de connexions pour : explorer, tester, stabiliser, spécialiser.</td></tr>
+        <tr><td class="v">6 · élagage</td><td>« <em>Use it or lose it</em> » (Gilmore 2018). Règle de <em>Hebb</em> (1949) : « des neurones qui s’excitent ensemble se lient entre eux ».</td></tr>
+        <tr><td class="v">7 · myélinisation</td><td>Gaine les axones, <em>augmente l’efficacité de conduction</em>. À la naissance : voies sensorielles &amp; motrices primaires ; sensoriel avant moteur, puis associatif.</td></tr>
+        <tr><td class="v">8 · spécialisation</td><td>Étapes <em>en superposition</em>. Le SNC doit : produire, positionner, différencier, connecter, sélectionner, optimiser.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><em>Reeline</em> (Rice &amp; Curran, 2021) : guide la migration, favorise les synapses, apprentissage &amp; mémoire (<em>hippocampe</em>), effet protecteur adulte. Défaut → <em>pachygyrie</em> (« cerveau lisse »).</li>
+      <li><em>Matière grise</em> : pic enfance (zones sensorielles puis préfrontal), <em>élagage à l’adolescence</em> → diminution. <em>Matière blanche</em> : myélinisation du fœtus à l’adulte, maturation tardive ~<em>30 ans</em>.</li>
+      <li>Développement cérébral s’achève vers <em>2-3 ans</em> → marche &amp; équilibre ; la maturation des réseaux continue ensuite plus lentement.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Maturation · plasticité · apprentissage</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>concept</th><th>définition</th></tr></thead>
+      <tbody>
+        <tr><td class="v">maturation</td><td>Transformation progressive liée au <em>développement physiologique</em></td></tr>
+        <tr><td class="v">plasticité</td><td>Capacité du SN à <em>se modifier</em></td></tr>
+        <tr><td class="v">apprentissage</td><td>Modification <em>relativement durable</em> d’une capacité <em>liée à l’expérience</em></td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Un enfant progresse parce que son SN <em>mûrit</em>, parce qu’il <em>pratique</em>, ou les deux → <em>meilleure perf ≠ meilleur apprentissage</em>.</li>
+      <li><em>Période critique</em> : expérience <em>nécessaire</em> pendant la période. <em>Période sensible</em> : expérience <em>particulièrement efficace</em>.</li>
+      <li><em>Fenêtre d’opportunité</em> : pendant la fenêtre, construction facilitée ; fermée, le SN <em>reste plastique</em> mais les modifications sont plus difficiles.</li>
+      <li>Lésion précoce : <em>réorganisation possible</em>, MAIS ça dépend (localisation, étendue, âge, réseaux). Capacités de réorganisation ≠ <em>récupération accrue</em>. « Plusieurs chemins pour une action » : un comportement similaire n’utilise pas les mêmes réseaux.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>La boucle perception-action</h3>
+    <svg class="schem" viewBox="0 0 720 240" role="img" aria-label="Boucle perception-action">
+      <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8B97B3"/></marker></defs>
+      <g fill="none" stroke="#8B97B3" stroke-width="1.3">
+        <path d="M118,70 L212,70" marker-end="url(#arr)"/>
+        <path d="M318,70 L402,70" marker-end="url(#arr)"/>
+        <path d="M498,70 L582,70" marker-end="url(#arr)"/>
+        <path d="M636,92 C664,130 630,172 560,178" marker-end="url(#arr)"/>
+        <path d="M448,178 L330,178" marker-end="url(#arr)"/>
+        <path d="M226,178 C120,178 60,140 62,94" marker-end="url(#arr)"/>
+      </g>
+      <g>
+        <rect x="18" y="48" width="100" height="44" rx="12" fill="rgba(91,140,255,.14)" stroke="#5B8CFF"/>
+        <text x="68" y="74" text-anchor="middle" class="big">PERCEPTION</text>
+        <rect x="214" y="48" width="104" height="44" rx="12" fill="rgba(23,33,57,.9)" stroke="#8B97B3"/>
+        <text x="266" y="74" text-anchor="middle" class="big">INTÉGRATION</text>
+        <rect x="404" y="48" width="94" height="44" rx="12" fill="rgba(23,33,57,.9)" stroke="#8B97B3"/>
+        <text x="451" y="74" text-anchor="middle" class="big">DÉCISION</text>
+        <rect x="584" y="48" width="84" height="44" rx="12" fill="rgba(255,77,109,.16)" stroke="#FF4D6D"/>
+        <text x="626" y="74" text-anchor="middle" class="big">ACTION</text>
+        <rect x="450" y="156" width="110" height="44" rx="12" fill="rgba(23,33,57,.9)" stroke="#8B97B3"/>
+        <text x="505" y="175" text-anchor="middle">CONSÉQUENCES</text>
+        <text x="505" y="189" text-anchor="middle">SENSORIELLES</text>
+        <rect x="228" y="156" width="100" height="44" rx="12" fill="rgba(67,211,158,.14)" stroke="#43D39E"/>
+        <text x="278" y="182" text-anchor="middle" class="big">ADAPTATION</text>
+      </g>
+    </svg>
+    <div class="legend">
+      <span><i style="background:rgba(91,140,255,.5)"></i><span class="mono">entrée sensorielle</span></span>
+      <span><i style="background:rgba(255,77,109,.5)"></i><span class="mono">sortie motrice</span></span>
+      <span><i style="background:rgba(67,211,158,.5)"></i><span class="mono">le SN se modifie</span></span>
+    </div>
+    <ul style="margin-top:14px">
+      <li>Le mouvement n’est pas que « l’action » : il est aussi <em>la source d’information</em>. <em>Bouger, c’est apprendre</em> — l’activité motrice produit des infos sensorielles (proprio, vision, vestibulaire, tactile, kinesthésique).</li>
+      <li><em>Cervelet</em> : le feedback y va <em>en priorité</em> — il <em>compare l’attendu et le produit</em>. Ajuste coordination, précision, <em>timing</em>, adaptation. Plus développé chez les <em>experts</em>. <em>L’erreur est une information</em> : commande → mouvement → résultat → erreur → adaptation.</li>
+      <li><em>Ganglions de base</em> : <em>sélection</em> de l’action (« casier des possibles » — sélectionne la plus adaptée, inhibe les autres), initiation, contrôle, <em>apprentissage procédural</em>, automatisation.</li>
+      <li><em>Automatiser ≠ inconscient</em> : moins de contrôle attentionnel explicite, ressources libérées. Une amélioration motrice améliore : <em>coordination</em>, <em>anticipation</em> (meilleure utilisation des infos, sélection plus rapide), <em>réduction des degrés de liberté inutiles</em>.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <span class="chip plus">Complément · études</span>
+    <h3 style="margin-top:12px">Risque &amp; maturation de la décision</h3>
+    <ul>
+      <li>L’enfant (<em>5-8 ans</em>) fait des choix <em>plus risqués</em> que ados et adultes (Harbaugh 2002) ; <em>aucune différence</em> d’aversion entre adultes et ados (Paulsen 2012).</li>
+      <li>Traitement du risque : <em>insula antérieure</em> &amp; <em>cortex pariétal supérieur</em>, activation <em>croissante avec l’âge</em> (Mohr 2010).</li>
+      <li>Valeur des options : l’enfant recrute davantage <em>préfrontal ventromédian, orbitofrontal &amp; striatum</em> (Kable &amp; Glimcher 2007). Lien aux expériences : <em>hippocampe, amygdale, cingulaire antérieur</em> (Platt 2002).</li>
+      <li>Maturité : préfrontal <em>après l’adolescence (14-18 ans)</em> ; hippocampe &amp; amygdale <em>12-15 ans</em>. Enfant prudent = <em>faible activation</em> du ventromédian, de l’hippocampe et de l’amygdale.</li>
+    </ul>
+  </div>
+
+</section>
+
+<!-- ============ FLASHCARDS ============ -->
+<section class="panel" id="p-flash">
+  <h2>Flashcards</h2>
+  <div class="chips-row" id="fchips"></div>
+  <div class="fwrap">
+    <div class="fmeter"><span class="mono" id="fcount">0 / 0</span><div class="track"><div class="fill" id="ffill"></div></div><span class="mono" id="fscore"></span></div>
+    <div class="fcard tilt" id="fcard"><div class="glare"></div></div>
+    <div class="fnav">
+      <button class="btn" id="fprev">← Préc.</button>
+      <button class="btn pri" id="fflip">Retourner</button>
+      <button class="btn" id="fnext">Suiv. →</button>
+    </div>
+    <div class="fnav" id="fmarks" style="display:none">
+      <button class="btn" id="fok" style="border-color:rgba(67,211,158,.5);color:var(--ok)">Je savais</button>
+      <button class="btn" id="fko" style="border-color:rgba(255,159,90,.5);color:var(--warn)">À revoir</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QCM ============ -->
+<section class="panel" id="p-qcm">
+  <h2>QCM</h2>
+  <div class="qwrap" id="qzone"></div>
+</section>
+
+<!-- ============ STRUCTURES ============ -->
+<section class="panel" id="p-struct">
+  <h2>Structures</h2>
+  <input class="search" id="ssearch" placeholder="Chercher une structure, une aire, un rôle…">
+  <div class="tblwrap"><table id="stbl">
+    <thead><tr><th>structure</th><th>localisation</th><th>n° / repère</th><th>rôle</th></tr></thead>
+    <tbody id="sbody"></tbody>
+  </table></div>
+</section>
+
+<!-- ============ RESTITUTION ============ -->
+<section class="panel" id="p-listes">
+  <h2>Restitution</h2>
+  <p style="color:var(--muted);margin-bottom:18px">Écris la liste de mémoire, vérifie, passe à la suivante. C’est l’exercice qui paie le plus cher au contrôle.</p>
+  <div id="lzone"></div>
+</section>
+
+</main>
+
+<footer>
+  <span class="mono">Contrôle moteur · L2 APA · CM 1</span>
+  <svg class="ecg" viewBox="0 0 640 46" preserveAspectRatio="none">
+    <path d="M0,26 L70,26 L86,26 L94,10 L102,40 L110,20 L118,26 L200,26 L216,26 L224,8 L232,42 L240,18 L248,26 L330,26 L346,26 L354,10 L362,40 L370,20 L378,26 L460,26 L476,26 L484,8 L492,42 L500,18 L508,26 L590,26 L640,26"/>
+  </svg>
+  <span class="mono" id="footnote">100 milliards de neurones · 52 aires · 1 contrôle</span>
+</footer>
+<script>
+/* ================= DONNÉES ================= */
+var CHAPS=[
+ {id:"c1",t:"Structure"},
+ {id:"c2",t:"Aires"},
+ {id:"c3",t:"Neurotransmetteurs"},
+ {id:"c4",t:"Développement"}
+];
+
+var QCM=[
+{c:"c1",q:"Le Système Nerveux Central regroupe…",o:["Le cerveau et les nerfs périphériques","L’encéphale (cerveau, cervelet, tronc cérébral) et la moelle épinière","Uniquement le cortex cérébral","Le cerveau et les ganglions de base uniquement"],k:1,w:"SNC = encéphale + moelle épinière → intégration des infos, motricité, fonctions cognitives."},
+{c:"c1",q:"La composition du cerveau, c’est…",o:["2 kg dont 60 % d’eau","1,3 kg dont 75 % d’eau, baignant dans le liquide céphalo-rachidien","900 g dont 90 % d’eau","1,3 kg dont 50 % de graisse"],k:1,w:"Le LCR assure la réduction des chocs."},
+{c:"c1",q:"L’ordre des méninges, de l’os vers le cerveau :",o:["Pie-mère, arachnoïde, subarachnoïdienne, dure-mère","Dure-mère, arachnoïde, membrane subarachnoïdienne, pie-mère","Arachnoïde, dure-mère, pie-mère, subarachnoïdienne","Dure-mère, pie-mère, arachnoïde, subarachnoïdienne"],k:1,w:"La dure-mère adhère à l’os ; la pie-mère est en connexion avec le cerveau."},
+{c:"c1",q:"La membrane subarachnoïdienne sert à…",o:["Produire le liquide céphalo-rachidien","Protéger de l’accumulation de substances neurotoxiques","Générer les gaines de myéline","Transmettre l’influx nerveux"],k:1,w:"Repère du CM : l’alcool est nocif — plus on boit, plus le risque neuro monte."},
+{c:"c1",q:"Les deux hémisphères sont rattachés par…",o:["Le thalamus","Le corps calleux","Le sillon central","La capsule interne"],k:1,w:"Et ils travaillent en même temps, avec des aires plus dominantes à certains moments."},
+{c:"c1",q:"Le lobe temporal est le lieu de…",o:["La coordination motrice volontaire","L’encodage des informations : audition, vue et odorat","La conscience du corps et de l’espace","La reconnaissance des formes"],k:1,w:"Frontal = raisonnement/motricité, pariétal = corps/espace, occipital = vision."},
+{c:"c1",q:"L’hypothalamus contrôle…",o:["Les réflexes visuels et auditifs","L’appétit, la défense, la reproduction et le cycle veille-sommeil","Le rythme respiratoire et cardiaque","La coordination des infos sensorielles"],k:1,w:"C’est la partie dite « reptilienne », assez automatique."},
+{c:"c1",q:"Le rhombencéphale contrôle…",o:["Les mouvements volontaires des yeux","Le rythme respiratoire, l’activité cardiaque et le glucose sanguin","L’humeur et la récompense","La posture"],k:1,w:"Le mésencéphale, lui : réflexes visuels/auditifs, transfert vers le thalamus, récompense."},
+{c:"c1",q:"Les rainures PROFONDES du cortex s’appellent…",o:["Des sillons","Des fissures","Des gyri","Des nœuds de Ranvier"],k:1,w:"Peu profondes = sillons ; les replis = gyri."},
+{c:"c1",q:"Quelle cellule gliale génère les gaines de myéline ?",o:["L’astrocyte","L’oligodendrocyte","La microglie","L’épendymocyte"],k:1,w:"Il génère aussi les nœuds de Ranvier."},
+{c:"c1",q:"L’astrocyte…",o:["Élimine les déchets","Synthétise les neurotransmetteurs et limite leur dispersion dans la fente synaptique","Délimite les cavités du SNC","Transmet l’influx nerveux"],k:1,w:"La microglie = phagocyte ; l’épendymocyte délimite les cavités. Aucune gliale ne transmet d’influx."},
+{c:"c1",q:"La substance grise, c’est…",o:["Des axones myélinisés qui transportent l’influx","Corps cellulaires, dendrites, axones non myélinisés : traitement et intégration de l’info","Le câblage entre les régions du SN","Uniquement le cervelet"],k:1,w:"En surface de l’encéphale, en profondeur de la moelle. L’inverse de la blanche."},
+{c:"c1",q:"Le faisceau de projection, c’est…",o:["La communication entre les deux hémisphères","Moteur (descendant) et sensitif (ascendant)","Un faisceau en U entre régions adjacentes","Un faisceau qui reste dans la même région"],k:1,w:"Interhémisphérique = entre hémisphères ; courte = en U ; longue = même région ; voisine = même lobe."},
+{c:"c1",q:"Les noyaux cérébraux (ganglions de base) sont au nombre de…",o:["2, un par hémisphère","6, trois par hémisphère","52","12"],k:1,w:"En profondeur au cœur du cerveau : préparation des mouvements volontaires, apprentissage moteur, posture, attention, inhibition."},
+{c:"c1",q:"L’amygdale régule…",o:["Le glucose sanguin","L’anxiété, la peur, la mémoire émotive et la cognition sociale","Les réflexes auditifs","La myélinisation"],k:1,w:"Elle communique avec les ganglions de base."},
+{c:"c1",q:"Dans la moelle épinière, l’influx sensitif entre par…",o:["Les cornes ventrales","Les cornes dorsales","La capsule interne","Le corps calleux"],k:1,w:"Sensitif = cornes dorsales ; moteur = cornes ventrales."},
+
+{c:"c2",q:"L’aire de Brodmann divise le cortex en…",o:["12 aires","52 aires selon leur fonction","100 aires","6 couches"],k:1,w:"Sensorielles, motrices et associatives."},
+{c:"c2",q:"Quelle information sensorielle NE passe PAS par le thalamus ?",o:["La vision","L’odorat","L’audition","Le goût"],k:1,w:"Les voies ascendantes passent par le thalamus, sauf l’odorat (aire 28)."},
+{c:"c2",q:"L’aire somatosensorielle primaire (1, 2, 3) se situe…",o:["À l’avant du sillon central, lobe frontal","À l’arrière du sillon central, lobe pariétal","Dans le lobe occipital","Dans le lobe temporal"],k:1,w:"Mécanorécepteurs, nocicepteurs, thermorécepteurs."},
+{c:"c2",q:"L’aire 17, c’est…",o:["L’aire auditive primaire","L’aire visuelle primaire, extrémité postérieure de l’occipital","L’aire gustative primaire","Le cortex prémoteur"],k:1,w:"Auditive = 41, gustative = 43, olfactive = 28, motrice = 4."},
+{c:"c2",q:"L’aire motrice primaire (aire 4)…",o:["Reçoit les influx sensoriels","Gère les contractions volontaires et précises, avec une région proportionnelle à la précision du mouvement","Initie le mouvement sur les signaux internes","Traite la parole"],k:1,w:"Motricité des doigts plus fine → aire plus vaste."},
+{c:"c2",q:"La portion MÉDIALE du cortex prémoteur (aire 6) initie le mouvement…",o:["Sur les signaux externes de l’environnement","Sur les signaux internes (la volonté de se déplacer)","Sur les réflexes spinaux","Sur le feedback du cervelet"],k:1,w:"Latérale = signaux externes ; médiale = signaux internes."},
+{c:"c2",q:"L’aire 8 (oculomotrice frontale) gère…",o:["La lecture","Les mouvements volontaires des yeux","Les réflexes pupillaires","La reconnaissance des visages"],k:1,w:"Située entre le cortex préfrontal et le cortex prémoteur."},
+{c:"c2",q:"Une aire associative MULTIMODALE…",o:["Traite une seule modalité sensorielle","Intègre des infos de plusieurs modalités : mémoire, jugement, intelligence, langage","Est forcément motrice","Correspond à l’aire V1"],k:1,w:"Unimodale = une seule modalité (couleur, forme, mouvement)."},
+{c:"c2",q:"Dans le circuit visuel associatif, V5 analyse…",o:["La couleur","Le mouvement","Les visages","Les contrastes"],k:1,w:"V2 : couleurs/motifs/orientation → V3 forme dynamique, V4 couleur et forme, V5 mouvement."},
+{c:"c2",q:"Le cortex préfrontal (aires 9-12) est le siège de…",o:["La vision des couleurs","La personnalité, l’intelligence, l’apprentissage, le jugement, la prise de décision","Du traitement phonique des sons","Des réflexes moteurs"],k:1,w:"À l’avant du lobe frontal."},
+{c:"c2",q:"L’aire somatosensorielle ASSOCIATIVE (5 et 7)…",o:["Reçoit directement les récepteurs de la peau","Intègre les infos sensorielles de l’environnement aux expériences passées","Contrôle la force musculaire","Gère l’odorat"],k:1,w:"Elle reçoit de l’aire primaire et du thalamus → mémoire et prise de décision."},
+{c:"c2",q:"Le cortex pariétal postérieur (5, 7, 39, 40)…",o:["Ne reçoit que des infos visuelles","Reçoit visuel, auditif, gustatif, olfactif — interprète les phénomènes complexes (parole) et la décision","Est une aire motrice primaire","Se situe dans le lobe temporal"],k:1,w:"C’est un grand intégrateur multimodal du lobe pariétal."},
+{c:"c2",q:"Rôle des aires motrices (en 3 mots du CM) :",o:["Sentir, percevoir, décider","Préparation, déclenchement, exécution","Explorer, tester, stabiliser","Encoder, stocker, rappeler"],k:1,w:"En contrôlant la force et la durée de la contraction musculaire."},
+
+{c:"c3",q:"Un neurotransmetteur, c’est…",o:["Une hormone produite par l’hypophyse","Une molécule chimique produite par un neurone pour transmettre un message à travers une synapse","Un neurone spécialisé","Une protéine de la myéline"],k:1,w:"Messager chimique : communication entre neurones + contrôle des fonctions vitales."},
+{c:"c3",q:"La dopamine, c’est…",o:["Le bien-être : humeur et anxiété","La récompense : plaisir, envie, motivation","Le stress : énergie","L’amour : relation sociale"],k:1,w:"Sérotonine = bien-être, ocytocine = amour, cortisol = stress."},
+{c:"c3",q:"La sérotonine régule…",o:["Le taux de sucre","L’humeur et l’anxiété","La contraction musculaire","Le sommeil paradoxal uniquement"],k:1,w:"Mot-clé : bien-être."},
+{c:"c3",q:"Le cortisol…",o:["Calme et euphorise","Donne de l’énergie et régule le taux de sucre (stress)","Gère le plaisir social","Transmet l’influx moteur"],k:1,w:"L’endorphine = relaxation, calme et euphorie."},
+{c:"c3",q:"L’ocytocine est liée à…",o:["La peur","Le plaisir au cours d’une relation sociale","La faim","La vigilance"],k:1,w:"Mot-clé : amour / bien-être social."},
+
+{c:"c4",q:"L’apprentissage, c’est…",o:["Le fait de grandir et de se développer","L’ensemble des processus de mémorisation qui élaborent ou modifient les schémas comportementaux via environnement et expérience","La myélinisation des axones","Une transformation uniquement physiologique"],k:1,w:"Le développement = grandir, croître. Les deux interagissent pendant l’enfance."},
+{c:"c4",q:"La construction biologique du cerveau suit l’ordre…",o:["Myélinisation → migration → neurogénèse → connexion","Neurogénèse → migration → connexion → myélinisation","Connexion → neurogénèse → élagage → migration","Migration → neurogénèse → myélinisation → connexion"],k:1,w:"Et côté concept : construction → maturation → expérience → plasticité → apprentissage."},
+{c:"c4",q:"À 8 semaines de développement embryonnaire…",o:["La marche est acquise","Le premier cortex cérébral est mis en place","La myélinisation est terminée","L’élagage commence"],k:1,w:"3 sem. : feuillet embryonnaire → tube à cellules souches ; 6 sem. : naissance du futur cortex."},
+{c:"c4",q:"Les neurones excitateurs représentent…",o:["20 % des neurones corticaux","80 % des neurones corticaux","50 %","100 %"],k:1,w:"Excitateurs 80 % (transmettre, propager) ; inhibiteurs 20 % (réduire, inhiber). Gressens, 2021."},
+{c:"c4",q:"Le développement cérébral « s’achève » vers 2-3 ans avec…",o:["La lecture","L’acquisition de la marche et de l’équilibre","La parole parfaite","La maturité du préfrontal"],k:1,w:"L’architecture est en place vers 2 ans ; la maturation des réseaux continue ensuite."},
+{c:"c4",q:"« Développement = construction + … »",o:["addition","sélection","répétition","maturation"],k:1,w:"Surproduction de connexions, puis sélection progressive → c’est l’apprentissage (Knudsen, 2004)."},
+{c:"c4",q:"Le SN crée « trop » de connexions pour…",o:["Compenser les pertes dues à l’âge","Explorer, tester, stabiliser, spécialiser","Accélérer la myélinisation","Éviter les maladies"],k:1,w:"Les 4 verbes du CM, à ressortir tels quels."},
+{c:"c4",q:"La règle de Hebb (1949) dit :",o:["« Use it or lose it »","« Des neurones qui s’excitent ensemble se lient entre eux »","« Le mouvement est la source d’information »","« L’erreur est une information »"],k:1,w:"L’action répétée modifie les réseaux qui y participent. « Use it or lose it » = l’élagage."},
+{c:"c4",q:"La myélinisation à la naissance concerne…",o:["Les régions associatives","Les voies sensorielles et motrices primaires","Le cortex préfrontal","L’hippocampe"],k:1,w:"Puis : système sensoriel avant moteur, régions associatives en dernier."},
+{c:"c4",q:"La matière grise diminue à l’adolescence parce que…",o:["Les neurones meurent massivement","L’élagage synaptique remodèle les connexions","La myéline disparaît","Le cerveau rétrécit globalement"],k:1,w:"Pic de volume dans l’enfance (zones sensorielles puis préfrontal), puis élagage."},
+{c:"c4",q:"La matière blanche atteint sa maturité…",o:["À la naissance","Vers la trentaine","À 2-3 ans","À l’adolescence"],k:1,w:"Les axones se myélinisent du stade fœtal à l’âge adulte : maturation « tardive »."},
+{c:"c4",q:"La protéine Reeline…",o:["Déclenche l’élagage","Guide les neurones en migration et favorise les synapses ; son défaut cause la pachygyrie","Produit la dopamine","Ferme les fenêtres d’opportunité"],k:1,w:"Rice & Curran 2021. Apprentissage et mémoire au niveau de l’hippocampe, effet protecteur chez l’adulte."},
+{c:"c4",q:"La plasticité, c’est…",o:["Une transformation liée au développement physiologique","La capacité du système nerveux à se modifier","Une modification durable liée à l’expérience","La croissance des axones"],k:1,w:"Maturation = physiologique ; apprentissage = durable + lié à l’expérience."},
+{c:"c4",q:"Une meilleure performance chez l’enfant signifie…",o:["Toujours un meilleur apprentissage","Pas forcément un meilleur apprentissage : le SN mûrit, il pratique, ou les deux","Toujours une simple maturation","Une plasticité plus faible"],k:1,w:"Le piège classique du CM."},
+{c:"c4",q:"La période CRITIQUE, c’est quand…",o:["L’expérience est particulièrement efficace","L’expérience est nécessaire pendant cette période","Le SN n’est plus plastique","La myélinisation s’arrête"],k:1,w:"Sensible = particulièrement efficace. Critique = nécessaire, dur à rattraper après."},
+{c:"c4",q:"Quand la « fenêtre d’opportunité » se ferme…",o:["Le SN n’est plus plastique du tout","Le SN reste plastique mais les modifications sont plus difficiles ou moins importantes","Plus aucun apprentissage n’est possible","La matière grise augmente"],k:1,w:"Ou elles demandent d’autres conditions d’apprentissage."},
+{c:"c4",q:"Après une lésion précoce, le jeune cerveau…",o:["Récupère toujours mieux qu’un adulte","Peut réorganiser ses réseaux, mais n’a pas de récupération accrue — ça dépend","Ne récupère jamais","Remplace les neurones perdus"],k:1,w:"Ça dépend : localisation, étendue, âge, réseaux impliqués."},
+{c:"c4",q:"Le feedback du mouvement va en priorité…",o:["Dans le cortex préfrontal","Dans le cervelet, qui compare l’attendu et le produit","Dans l’hypothalamus","Dans l’aire 17"],k:1,w:"Il ajuste coordination, précision, timing. Plus développé chez les experts."},
+{c:"c4",q:"Le « casier des possibles », c’est…",o:["Le thalamus qui trie les sens","Les ganglions de base qui sélectionnent l’action la plus adaptée et inhibent les autres","Le corps calleux","La mémoire de travail"],k:1,w:"Sélection, initiation, contrôle de l’action, apprentissage procédural, automatisation."},
+{c:"c4",q:"Automatiser un mouvement, c’est…",o:["Le rendre inconscient","Réduire le contrôle attentionnel explicite et libérer des ressources","Le rendre plus lent mais plus sûr","Court-circuiter le cervelet"],k:1,w:"Automatisé ≠ inconscient."},
+{c:"c4",q:"Une amélioration motrice améliore…",o:["Uniquement la force","Coordination, anticipation, et réduction des degrés de liberté inutiles","Uniquement la vitesse de réaction","La taille du cerveau"],k:1,w:"Anticipation = meilleure utilisation des infos sensorielles + sélection plus rapide des réponses."},
+{c:"c4",q:"En matière de prise de risque…",o:["L’adolescent est le plus risqueur","L’enfant (5-8 ans) fait des choix plus risqués ; pas de différence adultes/ados","L’adulte prend plus de risques","Tout le monde est égal"],k:1,w:"Harbaugh 2002 ; Paulsen 2012."},
+{c:"c4",q:"Le cortex préfrontal atteint sa maturité…",o:["À 2-3 ans","Après l’adolescence (14-18 ans)","À 7 ans","À 30 ans"],k:1,w:"Hippocampe et amygdale : 12-15 ans. La blanche, elle, finit vers la trentaine."}
+];
+
+var STRUCTS=[
+{n:"Dure-mère",l:"Méninge externe",a:"—",r:"Couche dure et fibreuse qui adhère à l’os"},
+{n:"Arachnoïde",l:"Méninge",a:"—",r:"Collagène en réseau fibreux"},
+{n:"Membrane subarachnoïdienne",l:"Méninge",a:"—",r:"Protection contre les substances neurotoxiques ; mouvements"},
+{n:"Pie-mère",l:"Méninge interne",a:"—",r:"Connexion directe avec le cerveau"},
+{n:"Corps calleux",l:"Entre les 2 hémisphères",a:"—",r:"Rattache les deux hémisphères"},
+{n:"Lobe frontal",l:"Avant du cortex",a:"cortex moteur",r:"Raisonnement, planification, langage, coordination motrice volontaire"},
+{n:"Lobe pariétal",l:"Haut-arrière du cortex",a:"—",r:"Conscience du corps et de l’espace, processus sensoriels, attention"},
+{n:"Lobe occipital",l:"Arrière du cortex",a:"—",r:"Intégration visuelle, reconnaissance des formes et couleurs"},
+{n:"Lobe temporal",l:"Côté du cortex",a:"—",r:"Encodage des informations : audition, vue, odorat"},
+{n:"Ganglions de base",l:"Profondeur, 6 (3/hémisphère)",a:"noyaux gris",r:"Préparation des mouvements volontaires, apprentissage moteur, posture, attention, inhibition, sélection de l’action"},
+{n:"Thalamus",l:"Cerveau antérieur",a:"—",r:"Coordinateur des informations sensorielles (douleur, température, pression)"},
+{n:"Hypothalamus",l:"Cerveau antérieur",a:"reptilien",r:"Appétit, défense, reproduction, cycle veille-sommeil"},
+{n:"Mésencéphale",l:"Tronc cérébral",a:"—",r:"Réflexes visuels et auditifs, transfert vers le thalamus, récompense, humeur"},
+{n:"Rhombencéphale",l:"Tronc cérébral",a:"—",r:"Rythme respiratoire, activité cardiaque, glucose sanguin"},
+{n:"Cervelet",l:"Arrière, sous l’occipital",a:"—",r:"Contrôle des mouvements et coordination ; compare attendu/produit, timing, apprentissage moteur"},
+{n:"Amygdale",l:"Profondeur du temporal",a:"—",r:"Anxiété, peur, mémoire émotive, cognition sociale"},
+{n:"Substance noire",l:"Mésencéphale",a:"—",r:"Mouvement et fonctions de récompense"},
+{n:"Hippocampe",l:"Profondeur du temporal",a:"—",r:"Apprentissage et mémoire (Reeline) ; lien choix-expériences"},
+{n:"Aire somatosensorielle primaire",l:"Arrière du sillon central (pariétal)",a:"1 · 2 · 3",r:"Mécanorécepteurs, nocicepteurs, thermorécepteurs"},
+{n:"Aire visuelle primaire",l:"Extrémité postérieure de l’occipital",a:"17",r:"Récepteurs visuels : couleur, forme"},
+{n:"Aires visuelles associatives",l:"Occipital",a:"18 · 19",r:"V2 couleurs/motifs/orientation → V3 forme dynamique, V4 couleur-forme, V5 mouvement"},
+{n:"Aire auditive primaire",l:"Partie supérieure du temporal",a:"41",r:"Parole, intensité, hauteur du son, tempo"},
+{n:"Cortex auditif associatif",l:"Temporal",a:"22 · 42",r:"Traitement phonique des sons"},
+{n:"Aire gustative primaire",l:"Sous l’aire somato (pariétal)",a:"43",r:"Informations gustatives (langue, larynx)"},
+{n:"Aire olfactive primaire",l:"À l’intérieur (temporal)",a:"28",r:"Odorat — seule modalité sans passage par le thalamus"},
+{n:"Aire motrice primaire",l:"Frontal, avant du sillon central",a:"4",r:"Contractions volontaires et précises ; région proportionnelle à la précision"},
+{n:"Cortex prémoteur",l:"Frontal, adjacent à l’aire 4",a:"6",r:"Latéral : initiation sur signaux externes · médial : signaux internes"},
+{n:"Aire oculomotrice frontale",l:"Entre préfrontal et prémoteur",a:"8",r:"Mouvements volontaires des yeux"},
+{n:"Aire somatosensorielle associative",l:"Arrière de l’aire primaire",a:"5 · 7",r:"Intègre les infos sensorielles aux expériences passées (mémoire, décision)"},
+{n:"Cortex préfrontal",l:"Avant du lobe frontal",a:"9 · 10 · 11 · 12",r:"Personnalité, intelligence, apprentissage, jugement, conscience, décision, humeur"},
+{n:"Cortex pariétal postérieur",l:"Lobe pariétal",a:"5 · 7 · 39 · 40",r:"Reçoit visuel/auditif/gustatif/olfactif ; phénomènes complexes (parole), décision"},
+{n:"Oligodendrocyte",l:"Cellule gliale",a:"—",r:"Origine des gaines de myéline, nœuds de Ranvier"},
+{n:"Astrocyte",l:"Cellule gliale",a:"—",r:"Synthétise les neurotransmetteurs, limite leur dispersion synaptique"},
+{n:"Épendymocyte",l:"Cellule gliale",a:"—",r:"Délimite les cavités du SNC"},
+{n:"Microglie",l:"Cellule gliale",a:"—",r:"Élimine les déchets (phagocyte)"},
+{n:"Reeline",l:"Protéine",a:"—",r:"Guide la migration neuronale, favorise les synapses, protège l’adulte ; défaut → pachygyrie"}
+];
+
+var LISTES=[
+{q:"Les 4 méninges, dans l’ordre (os → cerveau)",n:4,it:[
+ {k:"dure",l:"Dure-mère — dure et fibreuse, adhère à l’os"},
+ {k:"arachno",l:"Arachnoïde — collagène en réseau fibreux"},
+ {k:"subarachno|sub-arachno|sub arachno",l:"Membrane subarachnoïdienne — anti-neurotoxiques"},
+ {k:"pie",l:"Pie-mère — connexion avec le cerveau"}]},
+{q:"Les 4 lobes et leur fonction",n:4,it:[
+ {k:"frontal",l:"Frontal — raisonnement, langage, motricité volontaire"},
+ {k:"parietal",l:"Pariétal — corps, espace, sensoriel, attention"},
+ {k:"occipital",l:"Occipital — vision, formes, couleurs"},
+ {k:"temporal",l:"Temporal — encodage audition, vue, odorat"}]},
+{q:"Les 3 structures du cerveau antérieur",n:3,it:[
+ {k:"ganglion",l:"Ganglions de base — coordination du mvt + récompense"},
+ {k:"thalamus",l:"Thalamus — coordinateur des infos sensorielles"},
+ {k:"hypothalamus",l:"Hypothalamus — appétit, défense, reproduction, veille-sommeil"}]},
+{q:"Les 5 neurotransmetteurs du CM, avec leur mot-clé",n:5,it:[
+ {k:"dopamine",l:"Dopamine — récompense (plaisir, envie, motivation)"},
+ {k:"serotonine",l:"Sérotonine — bien-être (humeur, anxiété)"},
+ {k:"ocytocine",l:"Ocytocine — amour (relation sociale)"},
+ {k:"endorphine",l:"Endorphine — relaxation (calme, euphorie)"},
+ {k:"cortisol",l:"Cortisol — stress (énergie, taux de sucre)"}]},
+{q:"Les 4 cellules gliales et leur rôle",n:4,it:[
+ {k:"oligodendrocyte",l:"Oligodendrocyte — gaines de myéline, nœuds de Ranvier"},
+ {k:"astrocyte",l:"Astrocyte — synthèse des neurotransmetteurs"},
+ {k:"ependymocyte",l:"Épendymocyte — délimite les cavités du SNC"},
+ {k:"microglie",l:"Microglie — élimine les déchets (phagocyte)"}]},
+{q:"Les 5 faisceaux de la substance blanche",n:5,it:[
+ {k:"longue",l:"Association longue — même région"},
+ {k:"courte",l:"Association courte — en U, régions adjacentes"},
+ {k:"voisine",l:"Association voisine — même lobe"},
+ {k:"interhemispherique|inter-hemispherique|inter hemispherique",l:"Interhémisphérique — entre les 2 hémisphères"},
+ {k:"projection",l:"Projection — moteur descendant / sensitif ascendant"}]},
+{q:"Les 8 étapes de la construction du cerveau",n:8,it:[
+ {k:"neurogenese",l:"Neurogénèse"},
+ {k:"migration",l:"Migration neuronale"},
+ {k:"differenciation",l:"Différenciation"},
+ {k:"croissance|axonale|dendritique",l:"Croissance axonale et dendritique"},
+ {k:"synaptogenese",l:"Synaptogénèse"},
+ {k:"elagage|remodelage",l:"Élagage et remodelage"},
+ {k:"myelinisation",l:"Myélinisation"},
+ {k:"specialisation",l:"Spécialisation fonctionnelle"}]},
+{q:"Pourquoi le SN crée « trop » de connexions (4 verbes)",n:4,it:[
+ {k:"explorer",l:"Explorer"},{k:"tester",l:"Tester"},
+ {k:"stabiliser",l:"Stabiliser"},{k:"specialiser",l:"Spécialiser"}]},
+{q:"La boucle perception-action (6 maillons)",n:6,it:[
+ {k:"perception",l:"Perception"},
+ {k:"integration",l:"Intégration"},
+ {k:"decision",l:"Décision"},
+ {k:"action",l:"Action"},
+ {k:"consequence|sensorielle",l:"Conséquences sensorielles"},
+ {k:"adaptation",l:"Adaptation"}]},
+{q:"Les aires primaires et leurs numéros (6 attendues)",n:6,it:[
+ {k:"somato|1,2|1, 2|1 2",l:"Somatosensorielle — 1, 2, 3"},
+ {k:"visuelle|17",l:"Visuelle — 17"},
+ {k:"auditive|41",l:"Auditive — 41"},
+ {k:"gustative|43",l:"Gustative — 43"},
+ {k:"olfactive|28",l:"Olfactive — 28"},
+ {k:"motrice|4",l:"Motrice — 4"}]},
+{q:"Maturation / plasticité / apprentissage — les 3 définitions",n:3,it:[
+ {k:"maturation|physiologique",l:"Maturation — transformation liée au développement physiologique"},
+ {k:"plasticite|modifier",l:"Plasticité — capacité du SN à se modifier"},
+ {k:"apprentissage|durable|experience",l:"Apprentissage — modification durable liée à l’expérience"}]},
+{q:"Chronologie embryonnaire : 3 dates clés",n:3,it:[
+ {k:"3|feuillet",l:"3 semaines — feuillet embryonnaire → tube à cellules souches"},
+ {k:"6|futur",l:"6 semaines — naissance du futur cortex"},
+ {k:"8|premier",l:"8 semaines — premier cortex cérébral en place"}]}
+];
+
+/* état livebande : structure ↔ développement */
+var LIVE=[
+ {lab:"Le cerveau · structure",vals:[["1,3","kg"],["75","% d’eau"],["100","mds neurones"],["52","aires"],["6","méninges→couches"]]},
+ {lab:"Le cerveau · développement",vals:[["3","sem. feuillet"],["8","sem. cortex"],["2-3","ans marche"],["80/20","excit./inhib."],["30","ans myéline"]]}
+];
+</script>
+<script>
+var FLASH = [
+{c:"c1",q:"Pourquoi chercher à comprendre le cerveau — la définition en PHILOSOPHIE",a:"Un organe <em>qui perçoit, qui pense, qui agit</em> et qui <em>donne un sens à l’existence</em> de la personne. C’est le <em>centre de la conscience</em> chez les philosophes."},
+{c:"c1",q:"La définition du cerveau en SOCIOLOGIE",a:"Le « <em>chef d’orchestre</em> » de l’organisme, qui <em>s’auto-gère</em>, responsable des <em>comportements</em> et des <em>interactions</em> (codes sociaux, vestimentaires…)."},
+{c:"c1",q:"La définition du cerveau en NEUROSCIENCES",a:"Un <em>enjeu majeur</em> sur la compréhension de son <em>développement</em>, de sa <em>fonction normale et pathologique</em> et de ses <em>facultés d’adaptation</em>. Le cerveau se développe <em>toute la vie</em>."},
+{c:"c1",q:"Mécanisme vs pathologie : les deux raisons d’étudier le cerveau",a:"<em>Mécanisme</em> : comprendre la genèse des <em>facultés intellectuelles</em>, des <em>émotions</em> et des <em>comportements moteurs</em>.<br><em>Pathologie</em> : comprendre les maladies <em>neurologiques</em> (Parkinson, Alzheimer, sclérose en plaques, épilepsie) et <em>psychiatriques</em> (schizophrénie, autisme, dépression)."},
+{c:"c1",q:"Le mythe « on n’utilise que 10 % de son cerveau »",a:"Faux : on l’utilise souvent à <em>100 %</em>, certaines parties sont juste mises « <em>en pause</em> ». À retenir aussi : capacité d’attention d’environ <em>6 secondes</em> (d’où les vidéos à saccades)."},
+{c:"c1",q:"Que regroupe le Système Nerveux Central ?",a:"L’<em>encéphale</em> (<em>cerveau, cervelet et tronc cérébral</em>) et la <em>moelle épinière</em>. Ils permettent l’<em>intégration des informations</em>, le contrôle de la <em>motricité</em> et les <em>fonctions cognitives</em>. Le cerveau est la <em>tour de contrôle</em> de nos gestes."},
+{c:"c1",q:"Composition physique du cerveau",a:"<em>1,3 kg</em> (<em>75 % d’eau</em>), il baigne dans le <em>liquide céphalo-rachidien</em> qui assure la <em>réduction des chocs</em>."},
+{c:"c1",q:"Le cerveau ressent-il la douleur ?",a:"<em>Non</em>, il ne ressent pas de douleur. Le « mal de crâne » vient d’une <em>diminution de l’apport sanguin</em> vers l’encéphale."},
+{c:"c1",q:"Les 4 méninges, dans l’ordre",a:"1. <em>Dure-mère</em> — 2. <em>Arachnoïde</em> — 3. <em>Membrane subarachnoïdienne</em> — 4. <em>Pie-mère</em>. Ce sont les <em>membranes de protection</em> de l’encéphale."},
+{c:"c1",q:"La dure-mère",a:"Couche <em>dure et fibreuse</em> qui <em>adhère à l’os</em>. La plus externe des méninges."},
+{c:"c1",q:"L’arachnoïde",a:"Du <em>collagène</em> organisé en <em>réseau fibreux</em>."},
+{c:"c1",q:"La membrane subarachnoïdienne",a:"Protection contre l’<em>accumulation de substances neurotoxiques</em> et rôle dans les <em>mouvements</em>. (Repère du CM : l’alcool est nocif — plus on boit, plus le risque neuro augmente.)"},
+{c:"c1",q:"La pie-mère",a:"La méninge en <em>connexion directe avec le cerveau</em>. La plus interne."},
+{c:"c1",q:"Les 2 hémisphères — comment sont-ils reliés ?",a:"Par le <em>corps calleux</em>, la structure qui <em>rattache les deux hémisphères</em>. Le cerveau travaille <em>des deux côtés en même temps</em>, avec des aires plus <em>dominantes</em> que d’autres à certains moments."},
+{c:"c1",q:"Le lobe FRONTAL",a:"Lieu du <em>raisonnement</em> (résolution de problème, pensée, <em>planification</em>), des fonctions du <em>langage</em> et de la <em>coordination motrice volontaire</em> (cortex moteur)."},
+{c:"c1",q:"Le lobe PARIÉTAL",a:"<em>Conscience du corps</em> et de l’<em>espace environnant</em>, <em>processus sensoriels</em>, <em>attention</em> et langage."},
+{c:"c1",q:"Le lobe OCCIPITAL",a:"<em>Intégration des messages nerveux visuels</em> et <em>reconnaissance des formes</em> et des couleurs. (On voit tout à l’envers, le cerveau remet à l’endroit.)"},
+{c:"c1",q:"Le lobe TEMPORAL",a:"<em>Encodage des informations</em> : <em>audition</em>, vue et <em>odorat</em>."},
+{c:"c1",q:"Le cerveau antérieur : ses 3 structures",a:"Le <em>noyau cérébral</em> aide à la <em>coordination du mouvement</em> et au <em>comportement à la récompense</em>. Trois structures : <em>ganglions de base</em>, <em>thalamus</em>, <em>hypothalamus</em>."},
+{c:"c1",q:"Les ganglions de base (vue d’ensemble)",a:"<em>Coordination du mouvement</em> et <em>comportement de la récompense</em>."},
+{c:"c1",q:"Le thalamus",a:"Le <em>coordinateur des informations sensorielles</em> : il reçoit la majorité des <em>influx sensitifs</em> (douleur, température, pression) avant de les redistribuer au cortex."},
+{c:"c1",q:"L’hypothalamus",a:"Contrôle de l’<em>appétit</em>, des comportements de <em>défense</em> et de <em>reproduction</em>, et du <em>cycle veille-sommeil</em>. Partie dite « <em>reptilienne</em> », assez automatique."},
+{c:"c1",q:"Le mésencéphale",a:"<em>Réflexes visuels et auditifs</em> et <em>transfert des informations vers le thalamus</em>. Rôle aussi dans les <em>mécanismes de récompense</em> et l’humeur."},
+{c:"c1",q:"Le rhombencéphale",a:"Contrôle le <em>rythme respiratoire</em>, l’<em>activité cardiaque</em> et le <em>glucose sanguin</em>."},
+{c:"c1",q:"Le cervelet (présentation générale)",a:"<em>Contrôle des mouvements</em> et des <em>processus cognitifs qui nécessitent une coordination</em>. (Enfant malléable, âgé plus difficile — cause : le nombre de <em>connexions neuronales et synapses</em>.)"},
+{c:"c1",q:"Gyri, sillons, fissures",a:"Le développement du cortex crée des « <em>replis</em> » (les <em>gyri</em>) séparés par des rainures : <em>peu profondes = sillons</em>, <em>profondes = fissures</em>. Plus le cerveau est « ridé », mieux c’est."},
+{c:"c1",q:"Le neurone et la gaine de myéline",a:"Le neurone est la <em>cellule nerveuse</em> (environ <em>100 milliards</em>). La <em>gaine de myéline</em> est une gaine de <em>protection le long des axones</em> qui permet la <em>propagation de l’influx nerveux</em>."},
+{c:"c1",q:"Les 4 cellules gliales (microgliales)",a:"<em>Oligodendrocyte</em>, <em>astrocyte</em>, <em>épendymocyte</em>, <em>microglie</em>. Elles <em>soutiennent, protègent et nourrissent</em> les neurones et ne transmettent <em>aucun influx nerveux</em>."},
+{c:"c1",q:"L’oligodendrocyte",a:"À l’<em>origine des gaines de myéline</em> et génère les <em>nœuds de Ranvier</em>."},
+{c:"c1",q:"L’astrocyte",a:"<em>Synthétise les neurotransmetteurs</em> et <em>limite leur dispersion dans la fente synaptique</em>."},
+{c:"c1",q:"L’épendymocyte",a:"<em>Délimite les cavités du SNC</em>."},
+{c:"c1",q:"La microglie",a:"<em>Élimine les déchets</em> : c’est le <em>phagocyte</em> du système nerveux."},
+{c:"c1",q:"Substance BLANCHE : composition, rôle, localisation",a:"<em>Composition</em> : axones <em>myélinisés</em> (recouverts de myéline) → couleur blanchâtre.<br><em>Rôle</em> : <em>transport de l’influx nerveux</em> et <em>communication entre les régions</em> du SN (« le câblage »).<br><em>Localisation</em> : en <em>profondeur</em> dans l’encéphale, en <em>surface</em> de la moelle épinière."},
+{c:"c1",q:"Les 5 faisceaux (regroupements d’axones)",a:"1. <em>Association longue</em> : reste dans la même région (ex : aire motrice).<br>2. <em>Association courte</em> : en « U », entre <em>régions adjacentes</em>.<br>3. <em>Association voisine</em> : entre les régions d’un <em>même lobe</em>.<br>4. <em>Interhémisphérique</em> : entre les <em>2 hémisphères</em> (par le corps calleux).<br>5. <em>Projection</em> : <em>moteur (descendant)</em> et <em>sensitif (ascendant)</em>."},
+{c:"c1",q:"Substance GRISE : composition, rôle, localisation",a:"<em>Composition</em> : <em>corps cellulaires</em> des neurones, <em>dendrites</em>, axones <em>non myélinisés</em> et cellules gliales.<br><em>Rôle</em> : <em>traitement et intégration de l’information</em> (réflexion, création de l’info).<br><em>Localisation</em> : en <em>surface</em> de l’encéphale (cortex), en <em>profondeur</em> de la moelle épinière. (L’inverse de la blanche.)"},
+{c:"c1",q:"Le noyau cérébral (ganglions de base) : nombre et fonctions",a:"En profondeur au cœur du cerveau, au nombre de <em>6 (3 par hémisphère)</em>. Contribue à la <em>préparation des mouvements volontaires</em>, à l’<em>apprentissage moteur</em>, à la <em>régulation de la posture</em>, à l’<em>attention</em>, à l’<em>inhibition des actions</em> et à la conscience."},
+{c:"c1",q:"Avec quoi communiquent les ganglions de base ?",a:"Avec le <em>thalamus</em> (influx sensitifs + fonctions motrices), le <em>cervelet</em> et les noyaux gris centraux (<em>boucles de contrôle cortico-sous-corticales</em>), le cortex (axones par la <em>capsule interne</em>), et l’<em>amygdale</em> (anxiété, peur, <em>mémoire émotive</em>, cognition sociale)."},
+{c:"c1",q:"La substance « noire »",a:"Elle permet le <em>mouvement</em> et les <em>fonctions de récompense</em>."},
+{c:"c1",q:"Moelle épinière : par où entrent et sortent les influx ?",a:"Les nerfs <em>sensitifs</em> entrent par les <em>cornes dorsales</em>, les nerfs <em>moteurs</em> sortent par les <em>cornes ventrales</em>."},
+
+{c:"c2",q:"L’aire de Brodmann",a:"Division du cortex en <em>52 aires</em> selon leur fonction : <em>sensorielles, motrices et associatives</em>."},
+{c:"c2",q:"Qui régit les fonctions du cerveau ?",a:"Le <em>cortex cérébral</em> : la <em>substance grise en surface</em> de l’encéphale."},
+{c:"c2",q:"Aires sensorielles : rôle et transmission",a:"<em>Rôle</em> : reçoivent les <em>influx nerveux sensoriels</em> des récepteurs du corps → <em>sensation et perception</em>.<br><em>Transmission</em> : l’information traverse les <em>voies ascendantes</em>, passe par le <em>thalamus</em> (<em>sauf l’odorat</em>), puis rejoint les aires sensorielles <em>primaires</em>."},
+{c:"c2",q:"Aire sensorielle primaire vs secondaire",a:"<em>Primaire</em> : « <em>porte d’entrée</em> » de l’information sensorielle dans le cerveau → <em>premier traitement</em>.<br><em>Secondaire</em> : traitement <em>plus fin</em> des informations."},
+{c:"c2",q:"Aire somatosensorielle primaire : numéro, localisation, récepteurs",a:"Aires <em>1, 2 et 3</em> — à l’<em>arrière du sillon central</em>, dans le <em>lobe pariétal</em> de chaque hémisphère → <em>mécanorécepteurs, nocicepteurs et thermorécepteurs</em>."},
+{c:"c2",q:"Aire visuelle primaire",a:"Aire <em>17</em> — <em>extrémité postérieure du lobe occipital</em> → récepteurs visuels (<em>couleur, forme</em>…)."},
+{c:"c2",q:"Aire auditive primaire",a:"Aire <em>41</em> — <em>partie supérieure du lobe temporal</em> → récepteurs auditifs (<em>parole, intensité, hauteur</em> du son, tempo)."},
+{c:"c2",q:"Aire gustative primaire",a:"Aire <em>43</em> — <em>en dessous de l’aire somatosensorielle</em>, dans le lobe pariétal → informations gustatives (<em>langue, larynx</em>)."},
+{c:"c2",q:"Aire olfactive primaire",a:"Aire <em>28</em> — située <em>à l’intérieur</em> (face interne du lobe temporal). La seule modalité qui <em>ne passe pas par le thalamus</em>."},
+{c:"c2",q:"Aires motrices : rôle et localisation",a:"<em>Rôle</em> : <em>préparation, déclenchement et exécution</em> des mouvements en contrôlant la <em>force</em> et la <em>durée</em> de la contraction musculaire.<br><em>Localisation</em> : partie <em>antérieure (frontale)</em> du cortex."},
+{c:"c2",q:"Aire motrice primaire",a:"Aire <em>4</em> — lobe frontal, <em>à l’avant du sillon central</em> → <em>contractions volontaires et précises</em>. La région est <em>proportionnelle à la précision</em> du mouvement (doigts = aire plus vaste)."},
+{c:"c2",q:"Cortex prémoteur : les deux portions",a:"Aire <em>6</em>, adjacente à l’aire motrice primaire.<br><em>Portion latérale</em> : initiation du mouvement sur les <em>signaux externes</em> (événements de l’environnement).<br><em>Portion médiale</em> : initiation sur les <em>signaux internes</em> (volonté de se déplacer)."},
+{c:"c2",q:"Aire oculomotrice frontale",a:"Aire <em>8</em> — dans le lobe frontal, <em>entre le cortex préfrontal et le cortex prémoteur</em> → <em>mouvements volontaires des yeux</em>."},
+{c:"c2",q:"Aires associatives : unimodale vs multimodale",a:"<em>Unimodale</em> : intégration de différentes informations liées à <em>une même modalité</em> sensorielle (couleur, forme, mouvement).<br><em>Multimodale</em> : intégration d’informations venant de <em>plusieurs modalités</em>, plus complexe (<em>mémoire, jugement, intelligence, langage</em>)."},
+{c:"c2",q:"Aires visuelles associatives : le circuit V2→V5",a:"Aires <em>18 et 19</em>, lobe occipital. <em>V2</em> reçoit les infos de <em>V1</em> (couleurs, motifs, orientation), puis <em>V3</em> (<em>forme dynamique</em>), <em>V4</em> (<em>couleur et forme</em>), <em>V5</em> (<em>mouvement</em>) pour une analyse plus fine."},
+{c:"c2",q:"Cortex auditif associatif",a:"Aires <em>22 et 42</em>, plusieurs sous-divisions. L’aire auditive primaire reçoit l’info et la transmet à l’aire associative, impliquée dans le <em>traitement phonique des sons</em>."},
+{c:"c2",q:"Aire somatosensorielle associative",a:"Aires <em>5 et 7</em> — à l’<em>arrière de l’aire somatosensorielle primaire</em>. Reçoit les infos de l’aire primaire et du <em>thalamus</em>, et <em>intègre les infos sensorielles de l’environnement aux expériences passées</em> (mémoire, prise de décision)."},
+{c:"c2",q:"Cortex préfrontal",a:"Aires <em>9, 10, 11 et 12</em> — à l’<em>avant du lobe frontal</em> → siège de la <em>personnalité</em>, de l’<em>intelligence</em>, de l’<em>apprentissage</em>, du <em>jugement</em>, de la conscience, de la <em>prise de décision</em>, de l’humeur."},
+{c:"c2",q:"Cortex pariétal postérieur",a:"Aires <em>5, 7, 39 et 40</em> — dans le <em>lobe pariétal</em> → reçoit les infos des aires <em>visuelles, auditives, gustatives et olfactives</em>, interprète et réagit aux <em>phénomènes complexes</em> (parole) et à la <em>prise de décision</em>."},
+
+{c:"c3",q:"Définition d’un neurotransmetteur",a:"<em>Molécule chimique produite par un neurone</em> pour <em>transmettre un message à une autre cellule</em> à travers une <em>synapse</em>."},
+{c:"c3",q:"Rôle des neurotransmetteurs",a:"<em>Messager chimique</em> permettant aux neurones de <em>communiquer</em> et de <em>contrôler les fonctions vitales</em> (pensée, sommeil, émotions…)."},
+{c:"c3",q:"La dopamine",a:"La <em>récompense</em> → gère le <em>plaisir</em>, l’<em>envie</em> et la <em>motivation</em>."},
+{c:"c3",q:"La sérotonine",a:"Le <em>bien-être</em> → régule l’<em>humeur</em> et l’<em>anxiété</em>."},
+{c:"c3",q:"L’ocytocine",a:"L’<em>amour</em> → <em>plaisir au cours d’une relation sociale</em> (bien-être social)."},
+{c:"c3",q:"L’endorphine",a:"<em>Relaxation et euphorie</em> → <em>calme</em> et euphorie."},
+{c:"c3",q:"Le cortisol",a:"Le <em>stress</em> → <em>donne de l’énergie</em> et <em>régule le taux de sucre</em>."},
+
+{c:"c4",q:"Définition de l’APPRENTISSAGE",a:"L’ensemble des <em>processus de mémorisation</em> mis en œuvre pour <em>élaborer ou modifier les schémas comportementaux</em> spécifiques, à travers son <em>environnement</em> et son <em>expérience</em>."},
+{c:"c4",q:"Définition du DÉVELOPPEMENT",a:"Le fait de <em>grandir, de croître, de se développer</em>. Pendant l’enfance, derrière chaque apprentissage, le <em>système nerveux est en plein développement</em>."},
+{c:"c4",q:"Les étapes de la « construction » du cerveau (vue conceptuelle)",a:"<em>Construction → maturation → expérience → plasticité → apprentissage</em>. Le cerveau <em>n’est pas fini à la naissance</em> : le SN a construit des capacités motrices et est capable d’en construire."},
+{c:"c4",q:"La construction du cerveau côté biologie (4 processus)",a:"<em>Neurogénèse → migration → connexion → myélinisation</em>. Et l’expérience modifie le cerveau : <em>plasticité → « période sensible » → spécialisation</em>."},
+{c:"c4",q:"Chronologie de la neurogénèse",a:"Débute <em>précocement et massivement</em> pendant la période <em>embryonnaire et fœtale</em>.<br><em>3 semaines</em> : création d’un <em>feuillet embryonnaire</em> (peau + SN), qui se transforme en <em>tube</em> où prolifèrent les <em>cellules souches</em>.<br><em>6 semaines</em> : naissance du futur cortex cérébral.<br><em>8 semaines</em> : <em>premier cortex cérébral</em> en place."},
+{c:"c4",q:"La cellule souche",a:"Cellule de base <em>non spécialisée</em> qui peut se <em>diviser en cellules spécialisées</em>."},
+{c:"c4",q:"Structure du cortex cérébral (construction)",a:"Substance grise de <em>5 mm d’épaisseur</em>, composée de millions de neurones et cellules gliales en <em>6 couches</em> : des neurones les plus <em>anciens (couche profonde)</em> aux plus <em>récents (couche superficielle)</em>."},
+{c:"c4",q:"Neurones excitateurs vs inhibiteurs (migration)",a:"<em>Excitateurs (80 %</em> des neurones corticaux) : <em>transmettre et propager</em> un signal nerveux.<br><em>Inhibiteurs (20 %)</em> : <em>réduire ou inhiber</em> l’activité des neurones. (Gressens, 2021)"},
+{c:"c4",q:"Maturation, câblage et synaptogénèse : les 3 temps",a:"1. <em>Croissance et câblage primitif</em> : les neurones grandissent et développent leurs prolongements (<em>axones et arborisations</em>).<br>2. <em>Synaptogénèse</em> : formation des contacts <em>électriques et chimiques</em> (synapses).<br>3. Le développement cérébral s’achève vers <em>2-3 ans</em> → acquisition de la <em>marche</em> et de l’<em>équilibre</em>."},
+{c:"c4",q:"La différenciation des neurones",a:"Les neurones deviennent <em>différents selon leur positionnement, localisation et environnement développemental</em> : ils développent des propriétés spécifiques (<em>neurotransmetteurs, dendrites, axones, connexions</em>). Les connexions se construisent par la <em>réception-intégration (dendrites)</em> et la <em>transmission (axone)</em>."},
+{c:"c4",q:"Synaptogénèse : surproduction et sélection",a:"Période de <em>surproduction</em> et de <em>remodelage en continu</em> (Knudsen, 2004). Les connexions sont <em>produites avant d’être progressivement sélectionnées</em> : <em>Développement = construction + sélection</em>."},
+{c:"c4",q:"Pourquoi le SN crée-t-il « trop » de connexions ?",a:"Pour <em>explorer</em>, <em>tester</em>, <em>stabiliser</em>, <em>spécialiser</em>. La <em>sélection progressive</em> des configurations de réseaux de neurones → c’est l’<em>apprentissage</em>."},
+{c:"c4",q:"L’élagage synaptique",a:"« <em>Use it or lose it</em> » : des connexions se <em>renforcent</em>, d’autres <em>s’affaiblissent ou disparaissent</em>. Élagage = <em>remodelage ou spécialisation</em> (Gilmore et al., 2018)."},
+{c:"c4",q:"La règle de Hebb",a:"« <em>Des neurones qui s’excitent ensemble se lient entre eux</em> » (Hebb, 1949). Une <em>action répétée</em> modifie progressivement les <em>réseaux qui participent à cette action</em>."},
+{c:"c4",q:"De quoi résulte le développement cérébral ?",a:"D’<em>interactions complexes</em> : <em>génétique & maturation</em> ET <em>activité & expérience</em> (Stiles & Jernigan, 2010 ; Knudsen, 2004). Les régions sensorielles et motrices sont <em>malléables</em> pendant le développement <em>fœtal et postnatal précoce</em>."},
+{c:"c4",q:"La myélinisation",a:"<em>Gaine les axones</em> et <em>augmente l’efficacité de transmission</em> de la substance blanche. Deux régions peuvent être connectées, mais la transmission dépend de la <em>propriété des axones</em> : la myéline augmente l’<em>efficacité de la conduction</em>."},
+{c:"c4",q:"Le gradient général de maturation (myéline)",a:"1. Myélinisation <em>à la naissance</em> dans les voies <em>sensorielles et motrices primaires</em>.<br>2. Progression postnatale : le système <em>sensoriel avant le moteur</em>, puis les <em>régions associatives</em>."},
+{c:"c4",q:"Développement de la MATIÈRE GRISE",a:"Composée des <em>corps cellulaires, dendrites et synapses</em>. Pendant l’enfance (synaptogénèse) : le volume <em>augmente rapidement</em>, pic sur les <em>zones sensorielles puis le cortex préfrontal</em>. À maturité : <em>élagage synaptique à l’adolescence</em> → <em>diminution</em> de la matière grise."},
+{c:"c4",q:"Développement de la MATIÈRE BLANCHE",a:"Constituée d’<em>axones entourés de myéline</em>. Les axones se recouvrent de myéline <em>du stade fœtal à l’âge adulte</em> : maturation « <em>tardive</em> », vers la <em>trentaine</em>."},
+{c:"c4",q:"La protéine REELINE",a:"Rôle dans le <em>développement du SNC</em> et la <em>plasticité cérébrale</em> (Rice & Curran, 2021) : elle <em>guide les neurones en migration</em> vers les couches du cortex, <em>favorise la formation de synapses</em>, participe à l’<em>apprentissage et à la mémoire</em> (au niveau de l’<em>hippocampe</em>), et a un <em>effet protecteur chez l’adulte</em> contre le déclin. Si défaut : <em>malformation corticale</em> (ex : <em>pachygyrie</em>, « cerveau lisse »)."},
+{c:"c4",q:"Maturation / plasticité / apprentissage : les 3 définitions",a:"<em>Maturation</em> : transformation progressive liée au <em>développement physiologique</em>.<br><em>Plasticité</em> : capacité du système nerveux à <em>se modifier</em>.<br><em>Apprentissage</em> : modification <em>relativement durable</em> d’une capacité <em>liée à l’expérience</em>.<br>Les 3 <em>interagissent</em> dans le développement de l’enfant."},
+{c:"c4",q:"Pourquoi une meilleure perf ≠ un meilleur apprentissage ?",a:"Un enfant peut devenir meilleur parce que son <em>SN mûrit</em>, OU parce qu’il <em>pratique</em>, OU <em>les deux</em>. → Une <em>meilleure performance ne signifie pas forcément un meilleur apprentissage</em>."},
+{c:"c4",q:"Période CRITIQUE vs période SENSIBLE",a:"<em>Critique</em> : l’expérience est <em>nécessaire</em> pendant cette période (sinon très difficile à rattraper).<br><em>Sensible</em> : l’expérience est <em>particulièrement efficace</em> à cette période.<br>Plasticité importante → expérience → <em>modification des circuits neuronaux facilitée</em>."},
+{c:"c4",q:"La métaphore de la « fenêtre d’opportunité »",a:"Durant une période, <em>facilitation de la construction des réseaux de neurones</em>. Quand la fenêtre « se ferme », le SN <em>reste plastique</em> mais les modifications sont <em>plus difficiles, moins importantes</em>, ou demandent <em>d’autres conditions d’apprentissage</em>."},
+{c:"c4",q:"La boucle perception-action",a:"<em>Perception → intégration → décision → action → conséquences sensorielles → nouvelle perception → adaptation</em>. Elle fournit les informations <em>sensori-motrices</em> nécessaires à l’adaptation du SN : le mouvement n’est pas que « l’action », il est aussi <em>la source d’information</em>."},
+{c:"c4",q:"« Bouger, c’est aussi apprendre »",a:"L’activité motrice <em>produit des informations sensorielles</em> (<em>proprioceptives, visuelles, vestibulaires, tactiles, kinesthésiques</em>…). <em>Action → information → adaptation</em> : le mouvement est une <em>expérience sensorielle riche</em>."},
+{c:"c4",q:"L’enfant récupère-t-il mieux après une lésion ?",a:"« Le cerveau de l’enfant récupère mieux » : après une <em>lésion précoce</em>, une <em>réorganisation des réseaux</em> est possible. MAIS <em>ça dépend</em> (localisation, étendue, âge, réseaux impliqués). Le jeune cerveau a des capacités de <em>réorganisation</em> mais <em>pas de récupération accrue</em>."},
+{c:"c4",q:"« Plusieurs chemins pour une action »",a:"Une action est réalisée par <em>plusieurs régions, voies et stratégies selon les individus</em> : un <em>comportement moteur similaire</em> n’utilise <em>pas les mêmes réseaux</em>. La construction des réseaux diffère selon l’<em>apprentissage, la maturation, l’expérience et l’environnement</em>."},
+{c:"c4",q:"Le cervelet dans l’apprentissage moteur",a:"Il <em>ajuste</em> la <em>coordination, la précision, le timing, l’adaptation</em> du mouvement et l’<em>apprentissage moteur</em>. Le <em>feedback va en priorité dans le cervelet</em> : il <em>compare ce qui est attendu et ce qui est effectivement produit</em>. Il est plus développé chez les personnes <em>avec plus d’expertise</em>."},
+{c:"c4",q:"« L’erreur est une information »",a:"L’erreur <em>aide le SN à modifier la réponse</em> (feedback). Les conséquences sensorielles permettent de <em>comparer et ajuster</em> : <em>commande → mouvement → résultat → erreur → adaptation</em> → …"},
+{c:"c4",q:"Les ganglions de base dans l’action",a:"Participent à la <em>sélection de l’action</em>, à l’<em>initiation et au contrôle</em> de l’action, à l’<em>apprentissage procédural</em> et à l’<em>automatisation</em>. Image du CM : le « <em>casier des possibles</em> » — ils sélectionnent l’action <em>la plus adaptée au contexte</em> et <em>inhibent les autres</em>, en relation avec le cortex."},
+{c:"c4",q:"L’automatisation d’un mouvement",a:"Automatiser ne signifie <em>pas que le mouvement devient inconscient</em> : il nécessite <em>moins de contrôle attentionnel explicite</em> et <em>libère des ressources</em> pour traiter d’autres informations."},
+{c:"c4",q:"La continuité de la maturation (après 2 ans)",a:"L’<em>architecture structurelle et fonctionnelle</em> est en place vers <em>2 ans</em> ; la maturation des réseaux et de la <em>substance blanche se poursuit</em> à un rythme plus lent. Le développement <em>n’est pas linéaire</em>."},
+{c:"c4",q:"Qu’améliore une amélioration motrice ?",a:"La <em>coordination</em> ; l’<em>anticipation</em> (meilleure <em>utilisation des informations sensorielles</em>, <em>sélection plus rapide</em> des réponses adéquates) ; la <em>réduction des degrés de liberté inutiles</em>."},
+{c:"c4",q:"Prise de risque : enfant vs adolescent vs adulte",a:"L’enfant (<em>5-8 ans</em>) fait des <em>choix plus risqués</em> que les adolescents et adultes (Harbaugh et al., 2002). <em>Aucune différence d’aversion</em> entre adultes et adolescents (Paulsen et al., 2012)."},
+{c:"c4",q:"La maturation du réseau de décision",a:"<em>Traitement du risque</em> : insula antérieure & cortex pariétal supérieur, <em>activation croissante avec l’âge</em> (Mohr et al., 2010).<br><em>Évaluation de la valeur des options</em> : l’enfant recrute davantage le <em>cortex préfrontal ventromédian, orbitofrontal & striatum</em> (Kable & Glimcher, 2007).<br><em>Lien choix-expériences (mémoire)</em> : hippocampe, amygdale, cortex cingulaire antérieur (Platt, 2002)."},
+{c:"c4",q:"Dates de maturité du réseau de décision",a:"<em>Cortex préfrontal</em> : après l’adolescence (<em>14-18 ans</em>). <em>Hippocampe et amygdale</em> : <em>12-15 ans</em>. L’enfant <em>prudent</em> a une <em>faible activation</em> du cortex préfrontal ventromédian, de l’hippocampe et de l’amygdale."}
+];
+</script>
+<script>
+/* ================= OUTILS ================= */
+function $(id){return document.getElementById(id)}
+function norm(s){return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ")}
+var RM=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var KEY="cm_da_v1";
+var S;try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){S={}}
+if(!S.fl)S.fl={};if(!S.qbest)S.qbest=0;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* FLASH est défini dans le bloc données (partagé) */
+function mastery(){
+  var ok=0;for(var i=0;i<FLASH.length;i++)if(S.fl[i]===1)ok++;
+  return FLASH.length?Math.round(100*ok/FLASH.length):0;
+}
+
+/* ================= COMPTEURS HERO ================= */
+function countTo(el,target,suffix,dur){
+  if(RM){el.textContent=target+(suffix||"");return}
+  var t0=null;
+  function step(ts){
+    if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/(dur||900));p=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*p)+(suffix||"");
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+countTo($("t-fl"),FLASH.length);
+countTo($("t-qc"),QCM.length);
+countTo($("t-st"),STRUCTS.length);
+countTo($("t-ok"),mastery(),"%");
+
+/* ================= LIVEBAND ================= */
+var LST=0;
+function drawLive(anim){
+  var st=LIVE[LST];$("lswlab").textContent=st.lab;
+  var h="";
+  for(var i=0;i<st.vals.length;i++)h+='<div class="lval"><b data-v="'+st.vals[i][0]+'">'+st.vals[i][0]+'</b><span class="mono">'+st.vals[i][1]+'</span></div>';
+  $("lvals").innerHTML=h;
+  if(anim&&!RM){
+    var bs=$("lvals").querySelectorAll("b");
+    for(var j=0;j<bs.length;j++)(function(b,d){
+      b.style.opacity=0;b.style.transform="translateY(8px)";
+      setTimeout(function(){b.style.transition="opacity .35s,transform .35s";b.style.opacity=1;b.style.transform="none"},60*d);
+    })(bs[j],j);
+  }
+}
+drawLive(false);
+$("lsw").onclick=function(){LST=1-LST;this.classList.toggle("on",LST===1);drawLive(true)};
+
+/* ================= TABS ================= */
+var TABS=["cours","flash","qcm","struct","listes"];
+function glide(){
+  var on=document.querySelector(".tabb.on");if(!on)return;
+  var g=$("tabglide");
+  g.style.width=on.offsetWidth+"px";
+  g.style.transform="translateX("+on.offsetLeft+"px)";
+}
+function goTab(t,scroll){
+  var bs=document.querySelectorAll(".tabb");
+  for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i].getAttribute("data-t")===t);
+  for(var j=0;j<TABS.length;j++){var p=$("p-"+TABS[j]);if(p)p.classList.toggle("on",TABS[j]===t)}
+  glide();
+  if(t==="flash")drawF();
+  if(t==="qcm"&&!QON)startQ();
+  revealScan();
+  if(scroll)window.scrollTo({top:document.querySelector(".tabbar").offsetTop-1,behavior:RM?"auto":"smooth"});
+}
+$("tabrow").onclick=function(e){
+  var b=e.target.closest(".tabb");if(!b)return;goTab(b.getAttribute("data-t"),false);
+};
+document.querySelectorAll("[data-go]").forEach(function(b){
+  b.onclick=function(){goTab(b.getAttribute("data-go"),true)};
+});
+addEventListener("resize",glide);
+addEventListener("load",glide);
+setTimeout(glide,250);
+
+/* barre de progression du scroll */
+addEventListener("scroll",function(){
+  var h=document.documentElement,max=h.scrollHeight-innerHeight;
+  $("scrollbar").style.width=(max>0?(h.scrollTop/max*100):0)+"%";
+},{passive:true});
+
+/* ================= REVEAL + TILT ================= */
+var IO=("IntersectionObserver" in window)?new IntersectionObserver(function(es){
+  for(var i=0;i<es.length;i++)if(es[i].isIntersecting){es[i].target.classList.add("in");IO.unobserve(es[i].target)}
+},{threshold:.08}):null;
+function revealScan(){
+  var els=document.querySelectorAll(".panel.on .reveal:not(.in)");
+  for(var i=0;i<els.length;i++){if(IO&&!RM)IO.observe(els[i]);else els[i].classList.add("in")}
+}
+revealScan();
+
+var FINE=window.matchMedia&&matchMedia("(pointer:fine)").matches;
+if(FINE&&!RM){
+  document.addEventListener("pointermove",function(e){
+    var c=e.target.closest(".tilt");if(!c)return;
+    var r=c.getBoundingClientRect();
+    var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+    c.style.setProperty("--mx",(px*100)+"%");c.style.setProperty("--my",(py*100)+"%");
+    c.style.transform="perspective(900px) rotateX("+((py-.5)*-6.5)+"deg) rotateY("+((px-.5)*6.5)+"deg)";
+  });
+  document.addEventListener("pointerout",function(e){
+    var c=e.target.closest(".tilt");if(c)c.style.transform="";
+  });
+}
+
+/* ================= FLASHCARDS ================= */
+var FSEL="all",FDECK=[],FI=0,FLIP=false;
+function buildChips(){
+  var h='<button class="chip plus fchip'+(FSEL==="all"?" sel":"")+'" data-c="all">Tout</button>';
+  for(var i=0;i<CHAPS.length;i++)h+='<button class="chip plus fchip'+(FSEL===CHAPS[i].id?" sel":"")+'" data-c="'+CHAPS[i].id+'">'+CHAPS[i].t+'</button>';
+  h+='<button class="chip rev fchip'+(FSEL==="rev"?" sel":"")+'" data-c="rev">À revoir</button>';
+  $("fchips").innerHTML=h;
+  $("fchips").onclick=function(e){
+    var b=e.target.closest(".fchip");if(!b)return;
+    FSEL=b.getAttribute("data-c");buildDeck();drawF();buildChips();
+  };
+}
+function buildDeck(){
+  FDECK=[];
+  for(var i=0;i<FLASH.length;i++){
+    if(FSEL==="all"||FLASH[i].c===FSEL||(FSEL==="rev"&&S.fl[i]===0))FDECK.push(i);
+  }
+  FI=0;FLIP=false;
+}
+function drawF(){
+  if(!FDECK.length)buildDeck();
+  var card=$("fcard");
+  if(!FDECK.length){card.innerHTML='<div class="glare"></div><div class="q">Rien à revoir ici.</div><p class="mono">change de filtre</p>';$("fcount").textContent="0 / 0";return}
+  var gi=FDECK[FI],f=FLASH[gi];
+  var st=S.fl[gi]===1?'<span class="chip ok">acquis</span>':S.fl[gi]===0?'<span class="chip rev">à revoir</span>':"";
+  card.innerHTML='<div class="glare"></div><span class="mono">'+chapName(f.c)+'</span>'+
+    '<div class="q">'+f.q+'</div>'+
+    '<p class="mono hint">clique pour retourner · '+(st?"":"non vue")+'</p>'+st+
+    '<div class="a">'+f.a+'</div>';
+  card.classList.toggle("flip",FLIP);
+  $("fcount").textContent=(FI+1)+" / "+FDECK.length;
+  $("ffill").style.width=Math.round((FI+1)/FDECK.length*100)+"%";
+  $("fscore").textContent=mastery()+"% acquis";
+  $("fmarks").style.display=FLIP?"flex":"none";
+}
+function chapName(id){for(var i=0;i<CHAPS.length;i++)if(CHAPS[i].id===id)return CHAPS[i].t;return""}
+function fmove(d){FI=(FI+d+FDECK.length)%FDECK.length;FLIP=false;drawF()}
+$("fcard").onclick=function(){FLIP=!FLIP;drawF()};
+$("fflip").onclick=function(){FLIP=!FLIP;drawF()};
+$("fprev").onclick=function(){fmove(-1)};
+$("fnext").onclick=function(){fmove(1)};
+$("fok").onclick=function(){S.fl[FDECK[FI]]=1;save();countTo($("t-ok"),mastery(),"%",400);fmove(1)};
+$("fko").onclick=function(){S.fl[FDECK[FI]]=0;save();fmove(1)};
+document.addEventListener("keydown",function(e){
+  if(!$("p-flash").classList.contains("on"))return;
+  if(e.key==="ArrowLeft")fmove(-1);
+  else if(e.key==="ArrowRight")fmove(1);
+  else if(e.key===" "){e.preventDefault();FLIP=!FLIP;drawF()}
+});
+buildChips();buildDeck();
+
+/* ================= QCM ================= */
+var QON=false,QQ=[],QI=0,QOK=0;
+function startQ(){
+  QON=true;QQ=[];QI=0;QOK=0;
+  for(var i=0;i<QCM.length;i++)QQ.push(i);
+  for(var z=QQ.length-1;z>0;z--){var r=(Math.random()*(z+1))|0,t=QQ[z];QQ[z]=QQ[r];QQ[r]=t}
+  drawQ();
+}
+function drawQ(){
+  var zone=$("qzone");
+  if(QI>=QQ.length){
+    var pc=Math.round(100*QOK/QQ.length);
+    if(pc>S.qbest){S.qbest=pc;save()}
+    zone.innerHTML='<div class="card hero-card reveal in" style="text-align:center">'+
+      '<div class="hfont" style="font-size:64px;color:'+(pc>=80?"var(--ok)":pc>=60?"var(--hl)":"var(--art)")+'">'+pc+'%</div>'+
+      '<p style="margin:10px auto 20px">'+QOK+' / '+QQ.length+' — '+(pc>=80?"Solide. Les réseaux sont câblés.":pc>=60?"Correct, mais l’élagage n’est pas fini.":"Repasse par les flashcards : use it or lose it.")+'</p>'+
+      '<span class="mono">record : '+S.qbest+'%</span><br><br>'+
+      '<button class="btn pri" id="qre">Refaire un tour</button></div>';
+    $("qre").onclick=startQ;return;
+  }
+  var q=QCM[QQ[QI]];
+  var L=["A","B","C","D"],ord=[0,1,2,3];
+  for(var z=3;z>0;z--){var r=(Math.random()*(z+1))|0,t=ord[z];ord[z]=ord[r];ord[r]=t}
+  var h='<div class="fmeter"><span class="mono">'+(QI+1)+' / '+QQ.length+'</span><div class="track"><div class="fill" style="width:'+Math.round(QI/QQ.length*100)+'%"></div></div><span class="mono">'+QOK+' ✓</span></div>';
+  h+='<div class="card hero-card"><span class="mono">'+chapName(q.c)+'</span>'+
+     '<h3 style="margin:12px 0 16px;text-transform:none;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:700;font-size:19px;line-height:1.4">'+q.q+'</h3><div id="qopts">';
+  for(var i=0;i<4;i++)h+='<button class="opt" data-i="'+ord[i]+'"><span class="k">'+L[i]+'</span><span>'+q.o[ord[i]]+'</span></button>';
+  h+='</div><div id="qwhy"></div></div>';
+  zone.innerHTML=h;
+  var opts=zone.querySelectorAll(".opt"),done=false;
+  for(var j=0;j<opts.length;j++)opts[j].onclick=function(){
+    if(done)return;done=true;
+    var pick=+this.getAttribute("data-i");
+    if(pick===q.k){this.classList.add("good");QOK++}
+    else{
+      this.classList.add("bad");
+      for(var m=0;m<opts.length;m++)if(+opts[m].getAttribute("data-i")===q.k)opts[m].classList.add("good");
+    }
+    $("qwhy").innerHTML='<div class="why">'+q.w+'</div><div style="margin-top:14px;text-align:right"><button class="btn pri" id="qnext">Suivant →</button></div>';
+    $("qnext").onclick=function(){QI++;drawQ()};
+    try{$("qnext").focus({preventScroll:true})}catch(e){}
+  };
+}
+
+/* ================= STRUCTURES ================= */
+(function(){
+  var h="";
+  for(var i=0;i<STRUCTS.length;i++){
+    var s=STRUCTS[i];
+    h+='<tr><td><b>'+s.n+'</b></td><td>'+s.l+'</td><td class="v">'+s.a+'</td><td>'+s.r+'</td></tr>';
+  }
+  $("sbody").innerHTML=h;
+  $("ssearch").oninput=function(){
+    var v=norm(this.value.trim()),rows=$("sbody").children;
+    for(var i=0;i<rows.length;i++){
+      var s=STRUCTS[i];
+      rows[i].style.display=(!v||norm(s.n+" "+s.l+" "+s.a+" "+s.r).indexOf(v)>=0)?"":"none";
+    }
+  };
+})();
+
+/* ================= RESTITUTION ================= */
+(function(){
+  var h="";
+  for(var i=0;i<LISTES.length;i++){
+    var L2=LISTES[i];
+    h+='<div class="card tilt reveal"><div class="glare"></div>'+
+       '<span class="mono">'+L2.n+' éléments attendus</span>'+
+       '<h3 style="margin-top:8px">'+L2.q+'</h3>'+
+       '<textarea id="lta'+i+'" placeholder="Écris de mémoire, un élément par ligne ou séparés par des virgules…"></textarea>'+
+       '<div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+
+       '<button class="btn pri" data-l="'+i+'">Vérifier</button><span class="mono" id="lres'+i+'"></span></div>'+
+       '<div id="lout'+i+'" style="margin-top:10px"></div></div>';
+  }
+  $("lzone").innerHTML=h;
+  $("lzone").onclick=function(e){
+    var b=e.target.closest("[data-l]");if(!b)return;
+    var i=+b.getAttribute("data-l"),L2=LISTES[i];
+    var v=norm($("lta"+i).value);
+    var got=0,out="";
+    for(var j=0;j<L2.it.length;j++){
+      var ks=L2.it[j].k.split("|"),hit=false;
+      for(var m=0;m<ks.length;m++)if(ks[m]&&v.indexOf(norm(ks[m]))>=0){hit=true;break}
+      if(hit)got++;
+      out+='<div class="'+(hit?"liok":"liko")+'">'+(hit?"✓ ":"✗ ")+L2.it[j].l+'</div>';
+    }
+    $("lres"+i).textContent=got+" / "+L2.n;
+    $("lres"+i).style.color=got===L2.n?"var(--ok)":"var(--warn)";
+    var card=b.closest(".card");
+    if(!RM){card.style.animation="none";void card.offsetWidth;card.style.animation=(got===L2.n?"pulseok .6s":"shake .45s")}
+    $("lout"+i).innerHTML=out;
+  };
+})();
+
+/* ================= HERO WEBGL : cerveau en particules ================= */
+(function(){
+  var cv=$("gl"),gl=cv.getContext("webgl",{antialias:false,alpha:true,premultipliedAlpha:false});
+  if(!gl){$("glfall").style.display="block";cv.style.display="none";return}
+
+  var VS="attribute vec3 aT;attribute vec3 aS;attribute float aD;attribute float aH;"+
+  "uniform float uT;uniform vec2 uR;uniform vec2 uM;uniform float uP;uniform float uD;uniform float uS;uniform float uA;uniform vec2 uO;varying float vH;varying float vA;"+
+  "void main(){"+
+  "float p=clamp((uT-aD)/1.9,0.0,1.0);p=1.0-pow(1.0-p,3.0);"+
+  "vec3 pos=mix(aS,aT,p);"+
+  "float beat=1.0+0.016*uP;pos*=beat;"+
+  "float ry=uT*0.12+uM.x*0.55;float rx=-0.12+uM.y*0.3;"+
+  "float cy=cos(ry),sy=sin(ry);pos=vec3(pos.x*cy+pos.z*sy,pos.y,-pos.x*sy+pos.z*cy);"+
+  "float cx=cos(rx),sx=sin(rx);pos=vec3(pos.x,pos.y*cx-pos.z*sx,pos.y*sx+pos.z*cx);"+
+  "float persp=2.6/(2.6+pos.z);"+
+  "vec2 xy=pos.xy*persp;xy.x*=uR.y/uR.x;"+
+  "gl_Position=vec4(xy.x*0.85*uS+uO.x,xy.y*0.85*uS+uO.y,0.0,1.0);"+
+  "gl_PointSize=(1.1+1.5*persp)*uD*(1.0+0.45*step(0.5,aH))*(1.0+0.35*uP*step(0.5,aH));"+
+  "vH=aH;vA=p*(0.5+0.35*persp)*uA;}";
+  var FS="precision mediump float;varying float vH;varying float vA;"+
+  "void main(){vec2 d=gl_PointCoord-0.5;float a=smoothstep(0.5,0.1,length(d))*vA;"+
+  "vec3 cold=vec3(0.42,0.60,1.0);vec3 warm=vec3(1.0,0.34,0.47);"+
+  "vec3 c=mix(cold,warm,step(0.5,vH));gl_FragColor=vec4(c,a);}";
+
+  function sh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o}
+  var pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));
+  gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){$("glfall").style.display="block";cv.style.display="none";return}
+  gl.useProgram(pr);
+
+  /* géométrie : hémisphères + cervelet + tronc */
+  var N=13000,T=new Float32Array(N*3),ST=new Float32Array(N*3),D=new Float32Array(N),H=new Float32Array(N);
+  function rnd(){return Math.random()*2-1}
+  var i3=0;
+  for(var i=0;i<N;i++){
+    var x,y,z,u,v,w,part=Math.random();
+    if(part<0.78){ /* hémisphères */
+      do{u=rnd();v=rnd();w=rnd()}while(u*u+v*v+w*w>1);
+      var l=Math.sqrt(u*u+v*v+w*w)||1;u/=l;v/=l;w/=l;
+      var wr=1+0.05*Math.sin(u*9.0+2.0)*Math.sin(v*8.0)*Math.sin(w*10.0)+0.03*Math.sin(w*17.0);
+      x=u*1.08*wr;y=v*0.78*wr+0.08;z=w*0.88*wr;
+      if(y<-0.28)y=-0.28+(y+0.28)*0.35; /* base aplatie */
+      if(Math.abs(z)<0.05)z=(z<0?-1:1)*(0.05+Math.random()*0.012); /* fente interhémisphérique */
+    }else if(part<0.93){ /* cervelet */
+      do{u=rnd();v=rnd();w=rnd()}while(u*u+v*v+w*w>1);
+      var wr2=1+0.08*Math.sin(v*22.0); /* stries */
+      x=-0.72+u*0.42*wr2;y=-0.42+v*0.26*wr2;z=w*0.5*wr2;
+    }else{ /* tronc cérébral */
+      var ang=Math.random()*6.283,rr=0.09+Math.random()*0.05,hh=Math.random();
+      x=-0.42+Math.cos(ang)*rr-hh*0.12;y=-0.3-hh*0.5;z=Math.sin(ang)*rr;
+    }
+    T[i3]=x;T[i3+1]=y;T[i3+2]=z;
+    ST[i3]=x+rnd()*2.6;ST[i3+1]=y+rnd()*2.6;ST[i3+2]=z+rnd()*2.6-1.2;
+    D[i]=Math.random()*0.9;
+    H[i]=Math.random()<0.13?1:0; /* 13 % artériel rouge */
+    i3+=3;
+  }
+  function buf(data,loc,size){
+    var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);
+    gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
+    var a=gl.getAttribLocation(pr,loc);gl.enableVertexAttribArray(a);
+    gl.vertexAttribPointer(a,size,gl.FLOAT,false,0,0);
+  }
+  buf(T,"aT",3);buf(ST,"aS",3);buf(D,"aD",1);buf(H,"aH",1);
+  var uT=gl.getUniformLocation(pr,"uT"),uR=gl.getUniformLocation(pr,"uR"),
+      uM=gl.getUniformLocation(pr,"uM"),uP=gl.getUniformLocation(pr,"uP"),uD=gl.getUniformLocation(pr,"uD"),uS=gl.getUniformLocation(pr,"uS"),uA=gl.getUniformLocation(pr,"uA"),uO=gl.getUniformLocation(pr,"uO");
+  gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+  gl.clearColor(0,0,0,0);
+
+  var mx=0,my=0,tmx=0,tmy=0,run=true,t0=performance.now();
+  function size(){
+    var d=Math.min(2,devicePixelRatio||1),hero=cv.parentElement;
+    cv.width=hero.clientWidth*d;cv.height=hero.clientHeight*d;
+    gl.viewport(0,0,cv.width,cv.height);
+    var w=hero.clientWidth,hh=hero.clientHeight,po=hh>w;
+    gl.uniform1f(uD,d*(w<640?0.62:1));
+    gl.uniform1f(uS,po?Math.max(0.6,w/hh*1.2):1.0);
+    gl.uniform1f(uA,po?0.5:1.0);
+    gl.uniform2f(uO,po?0.0:0.38,po?0.3:0.16);
+  }
+  size();addEventListener("resize",size);
+  document.querySelector(".hero").addEventListener("pointermove",function(e){
+    var r=this.getBoundingClientRect();
+    tmx=((e.clientX-r.left)/r.width-0.5)*2;tmy=((e.clientY-r.top)/r.height-0.5)*2;
+  });
+  if("IntersectionObserver" in window)new IntersectionObserver(function(es){run=es[0].isIntersecting},{threshold:0}).observe(cv);
+
+  function beat(t){ /* battement cardiaque ~1 Hz, double pic */
+    var p=t%1.05/1.05;
+    return Math.max(0,Math.sin(p*25)*Math.exp(-p*9))+0.5*Math.max(0,Math.sin((p-0.28)*22)*Math.exp(-(p-0.28)*11));
+  }
+  function frame(){
+    requestAnimationFrame(frame);
+    if(!run)return;
+    var t=(performance.now()-t0)/1000;
+    if(RM)t=Math.min(t,2.2); /* assemblage terminé, puis quasi figé */
+    mx+=(tmx-mx)*0.04;my+=(tmy-my)*0.04;
+    gl.uniform1f(uT,t);gl.uniform2f(uR,cv.width,cv.height);
+    gl.uniform2f(uM,mx,my);gl.uniform1f(uP,RM?0:beat(t));
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.POINTS,0,N);
+  }
+  frame();
+})();
+</script>
+</body>
+</html>
