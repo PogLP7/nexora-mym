@@ -996,7 +996,7 @@ function goTab(t,scroll){
   for(var j=0;j<TABS.length;j++){var p=$("p-"+TABS[j]);if(p)p.classList.toggle("on",TABS[j]===t)}
   glide();
   if(t==="flash")drawF();
-  if(t==="qcm"&&!QON)startQ();
+  if(t==="qcm"&&!QON)qHome();
   revealScan();
   if(scroll)window.scrollTo({top:document.querySelector(".tabbar").offsetTop-1,behavior:RM?"auto":"smooth"});
 }
@@ -1092,10 +1092,45 @@ document.addEventListener("keydown",function(e){
 buildChips();buildDeck();
 
 /* ================= QCM ================= */
-var QON=false,QQ=[],QI=0,QOK=0;
-function startQ(){
-  QON=true;QQ=[];QI=0;QOK=0;
-  for(var i=0;i<QCM.length;i++)QQ.push(i);
+var QON=false,QQ=[],QI=0,QOK=0,QCH="all";
+if(!S.qr)S.qr={};
+function qStats(ch){
+  var t=0,seen=0,ok=0;
+  for(var i=0;i<QCM.length;i++){
+    if(ch!=="all"&&QCM[i].c!==ch)continue;
+    t++;if(S.qr[i]!==undefined){seen++;if(S.qr[i])ok++}
+  }
+  return {t:t,seen:seen,ok:ok,rate:seen?Math.round(100*ok/seen):0};
+}
+function qChip(st){
+  if(st.seen===0)return '<span class="chip plus">pas commencé</span>';
+  if(st.rate>=80&&st.seen>=Math.ceil(st.t*0.6))return '<span class="chip ok">acquis</span>';
+  if(st.rate>=60)return '<span class="chip rev">à consolider</span>';
+  return '<span class="chip src">à apprendre</span>';
+}
+function qHome(){
+  QON=false;
+  var h='<p style="color:var(--muted);margin-bottom:18px">Choisis une partie du cours. Le statut se base sur ta dernière réponse à chaque question.</p>';
+  for(var i=0;i<CHAPS.length;i++){
+    var c=CHAPS[i],st=qStats(c.id);
+    h+='<div class="card tilt reveal in"><div class="glare"></div>'+
+       '<div style="display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap">'+
+       '<div><h3 style="margin:0 0 6px">'+(i+1)+' · '+c.t+'</h3>'+
+       '<span class="mono">'+st.t+' questions · '+st.seen+' vues · '+(st.seen?st.rate+'&thinsp;% de réussite':'—')+'</span></div>'+qChip(st)+'</div>'+
+       '<div class="track" style="margin:14px 0"><div class="fill" style="width:'+(st.t?Math.round(st.seen/st.t*100):0)+'%"></div></div>'+
+       '<button class="btn pri" data-qch="'+c.id+'">Réviser cette partie</button></div>';
+  }
+  var g=qStats("all");
+  h+='<div class="fnav" style="justify-content:flex-start;margin-top:4px"><button class="btn" data-qch="all">Tout mélanger · '+g.t+' questions</button></div>';
+  $("qzone").innerHTML=h;
+  $("qzone").onclick=function(e){
+    var b=e.target.closest("[data-qch]");if(!b)return;
+    startQ(b.getAttribute("data-qch"));
+  };
+}
+function startQ(ch){
+  QON=true;QCH=ch||"all";QQ=[];QI=0;QOK=0;
+  for(var i=0;i<QCM.length;i++)if(QCH==="all"||QCM[i].c===QCH)QQ.push(i);
   for(var z=QQ.length-1;z>0;z--){var r=(Math.random()*(z+1))|0,t=QQ[z];QQ[z]=QQ[r];QQ[r]=t}
   drawQ();
 }
@@ -1103,27 +1138,35 @@ function drawQ(){
   var zone=$("qzone");
   if(QI>=QQ.length){
     var pc=Math.round(100*QOK/QQ.length);
-    if(pc>S.qbest){S.qbest=pc;save()}
+    if(QCH==="all"&&pc>S.qbest){S.qbest=pc;save()}
+    var st=qStats(QCH);
     zone.innerHTML='<div class="card hero-card reveal in" style="text-align:center">'+
-      '<div class="hfont" style="font-size:64px;color:'+(pc>=80?"var(--ok)":pc>=60?"var(--hl)":"var(--art)")+'">'+pc+'%</div>'+
-      '<p style="margin:10px auto 20px">'+QOK+' / '+QQ.length+' — '+(pc>=80?"Solide. Les réseaux sont câblés.":pc>=60?"Correct, mais l’élagage n’est pas fini.":"Repasse par les flashcards : use it or lose it.")+'</p>'+
-      '<span class="mono">record : '+S.qbest+'%</span><br><br>'+
-      '<button class="btn pri" id="qre">Refaire un tour</button></div>';
-    $("qre").onclick=startQ;return;
+      '<span class="mono">'+(QCH==="all"?"tout le cours":chapName(QCH))+'</span>'+
+      '<div class="hfont" style="font-size:64px;margin-top:10px;color:'+(pc>=80?"var(--ok)":pc>=60?"var(--hl)":"var(--art)")+'">'+pc+'%</div>'+
+      '<p style="margin:10px auto 8px">'+QOK+' / '+QQ.length+' sur ce tour — '+(pc>=80?"Solide. Les réseaux sont câblés.":pc>=60?"Correct, mais l’élagage n’est pas fini.":"Repasse par les flashcards : use it or lose it.")+'</p>'+
+      '<div style="margin-bottom:18px">'+qChip(st)+'</div>'+
+      '<div class="fnav" style="justify-content:center"><button class="btn pri" id="qre">Refaire</button>'+
+      '<button class="btn" id="qback">← Les parties</button></div></div>';
+    $("qre").onclick=function(){startQ(QCH)};
+    $("qback").onclick=qHome;
+    return;
   }
   var q=QCM[QQ[QI]];
   var L=["A","B","C","D"],ord=[0,1,2,3];
   for(var z=3;z>0;z--){var r=(Math.random()*(z+1))|0,t=ord[z];ord[z]=ord[r];ord[r]=t}
   var h='<div class="fmeter"><span class="mono">'+(QI+1)+' / '+QQ.length+'</span><div class="track"><div class="fill" style="width:'+Math.round(QI/QQ.length*100)+'%"></div></div><span class="mono">'+QOK+' ✓</span></div>';
-  h+='<div class="card hero-card"><span class="mono">'+chapName(q.c)+'</span>'+
+  h+='<div class="card hero-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="mono">'+chapName(q.c)+'</span>'+
+     '<button class="btn" id="qquit" style="padding:8px 16px">parties</button></div>'+
      '<h3 style="margin:12px 0 16px;text-transform:none;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:700;font-size:19px;line-height:1.4">'+q.q+'</h3><div id="qopts">';
   for(var i=0;i<4;i++)h+='<button class="opt" data-i="'+ord[i]+'"><span class="k">'+L[i]+'</span><span>'+q.o[ord[i]]+'</span></button>';
   h+='</div><div id="qwhy"></div></div>';
   zone.innerHTML=h;
+  $("qquit").onclick=qHome;
   var opts=zone.querySelectorAll(".opt"),done=false;
   for(var j=0;j<opts.length;j++)opts[j].onclick=function(){
     if(done)return;done=true;
     var pick=+this.getAttribute("data-i");
+    S.qr[QQ[QI]]=(pick===q.k)?1:0;save();
     if(pick===q.k){this.classList.add("good");QOK++}
     else{
       this.classList.add("bad");
