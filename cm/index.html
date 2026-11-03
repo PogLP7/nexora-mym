@@ -1171,7 +1171,7 @@ document.addEventListener("keydown",function(e){
 buildChips();buildDeck();
 
 /* ================= QCM ================= */
-var QON=false,QQ=[],QI=0,QOK=0,QCH="all";
+var QON=false,QQ=[],QI=0,QOK=0,QCH="all",QBAD=[];
 if(!S.qr)S.qr={};
 function qStats(ch){
   var t=0,seen=0,ok=0;
@@ -1204,12 +1204,19 @@ function qHome(){
        '<button class="btn pri" data-qch="'+c.id+'">Réviser cette partie</button></div>';
   }
   var g=qStats("all");
-  h+='<div class="fnav" style="justify-content:flex-start;margin-top:4px"><button class="btn" data-qch="all">Tout mélanger · '+g.t+' questions</button></div>';
+  var ERR=[];for(var ei=0;ei<QCM.length;ei++)if(S.qr[ei]===0)ERR.push(ei);
+  h+='<div class="fnav" style="justify-content:flex-start;margin-top:4px"><button class="btn" data-qch="all">Tout mélanger · '+g.t+' questions</button>'+
+     (ERR.length?'<button class="btn" id="qerrall" style="border-color:rgba(255,77,109,.5);color:var(--art)">Refaire mes erreurs · '+ERR.length+'</button>':'')+'</div>';
   $("qzone").innerHTML=h;
   $("qzone").classList.toggle("hardrun",!!S.hard);
   $("qhard").onclick=function(){
     S.hard=!S.hard;save();
     if(S.hard)hardFx(qHome);else qHome();
+  };
+  var eb=$("qerrall");
+  if(eb)eb.onclick=function(){
+    var ERR=[];for(var ei=0;ei<QCM.length;ei++)if(S.qr[ei]===0)ERR.push(ei);
+    if(ERR.length)startQ("err",ERR);
   };
   $("qzone").onclick=function(e){
     var b=e.target.closest("[data-qch]");if(!b)return;
@@ -1226,9 +1233,10 @@ function hardFx(cb){
   setTimeout(cb,520);
   setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d)},1520);
 }
-function startQ(ch){
-  QON=true;QCH=ch||"all";QQ=[];QI=0;QOK=0;
-  for(var i=0;i<QCM.length;i++)if(QCH==="all"||QCM[i].c===QCH)QQ.push(i);
+function startQ(ch,list){
+  QON=true;QCH=ch||"all";QQ=[];QI=0;QOK=0;QBAD=[];
+  if(list)QQ=list.slice();
+  else for(var i=0;i<QCM.length;i++)if(QCH==="all"||QCM[i].c===QCH)QQ.push(i);
   for(var z=QQ.length-1;z>0;z--){var r=(Math.random()*(z+1))|0,t=QQ[z];QQ[z]=QQ[r];QQ[r]=t}
   drawQ();
 }
@@ -1237,15 +1245,21 @@ function drawQ(){
   if(QI>=QQ.length){
     var pc=Math.round(100*QOK/QQ.length);
     if(QCH==="all"&&pc>S.qbest){S.qbest=pc;save()}
-    var st=qStats(QCH);
+    var errs=QBAD.slice();
+    var lab=QCH==="err"?"tes erreurs":(QCH==="all"?"tout le cours":chapName(QCH));
+    var msg=QCH==="err"&&!errs.length?"Erreurs corrigées. Hebb a fait son travail : c’est câblé.":(pc>=80?"Solide. Les réseaux sont câblés.":pc>=60?"Correct, mais l’élagage n’est pas fini.":"Repasse par les flashcards : use it or lose it.");
+    var st=QCH==="err"?qStats("all"):qStats(QCH);
     zone.innerHTML='<div class="card hero-card reveal in" style="text-align:center">'+
-      '<span class="mono">'+(QCH==="all"?"tout le cours":chapName(QCH))+'</span>'+
+      '<span class="mono">'+lab+'</span>'+
       '<div class="hfont" style="font-size:64px;margin-top:10px;color:'+(pc>=80?"var(--ok)":pc>=60?"var(--hl)":"var(--art)")+'">'+pc+'%</div>'+
-      '<p style="margin:10px auto 8px">'+QOK+' / '+QQ.length+' sur ce tour — '+(pc>=80?"Solide. Les réseaux sont câblés.":pc>=60?"Correct, mais l’élagage n’est pas fini.":"Repasse par les flashcards : use it or lose it.")+'</p>'+
+      '<p style="margin:10px auto 8px">'+QOK+' / '+QQ.length+' sur ce tour — '+msg+'</p>'+
       '<div style="margin-bottom:18px">'+qChip(st)+'</div>'+
-      '<div class="fnav" style="justify-content:center"><button class="btn pri" id="qre">Refaire</button>'+
+      '<div class="fnav" style="justify-content:center">'+
+      (errs.length?'<button class="btn pri" id="qerr">Refaire mes erreurs · '+errs.length+'</button>':'')+
+      '<button class="btn'+(errs.length?'':' pri')+'" id="qre">Refaire la série</button>'+
       '<button class="btn" id="qback">← Les parties</button></div></div>';
-    $("qre").onclick=function(){startQ(QCH)};
+    if(errs.length)$("qerr").onclick=function(){startQ("err",errs)};
+    $("qre").onclick=function(){startQ(QCH==="err"?"all":QCH)};
     $("qback").onclick=qHome;
     return;
   }
@@ -1269,6 +1283,7 @@ function drawQ(){
     S.qr[QQ[QI]]=(pick===q.k)?1:0;save();
     if(pick===q.k){this.classList.add("good");QOK++}
     else{
+      QBAD.push(QQ[QI]);
       this.classList.add("bad");
       for(var m=0;m<opts.length;m++)if(+opts[m].getAttribute("data-i")===q.k)opts[m].classList.add("good");
     }
