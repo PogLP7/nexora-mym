@@ -261,6 +261,15 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,4vw,56px);displa
 .ecg path{stroke:var(--art);stroke-width:1.6;fill:none;filter:drop-shadow(0 0 5px rgba(255,77,109,.55));stroke-dasharray:640 640;animation:ecgrun 3.4s linear infinite}
 @keyframes ecgrun{from{stroke-dashoffset:1280}to{stroke-dashoffset:0}}
 
+/* adieu */
+#rip{position:fixed;inset:0;z-index:400;background:#04070F;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;transition:opacity 2s}
+#rip .ecgline{width:min(480px,80vw);height:60px}
+#rip .ecgline path{stroke:var(--art);stroke-width:1.6;fill:none;filter:drop-shadow(0 0 6px rgba(255,77,109,.6))}
+#rip .ecgline path.beat{stroke-dasharray:640 640;animation:ecgrun 1.7s linear infinite}
+#rip .riptxt{opacity:0;transition:opacity 1.8s;max-width:56ch;margin-top:30px}
+#rip .riptxt.show{opacity:1}
+#rip h1{font-size:clamp(34px,8vw,84px);margin:10px 0 6px;background:linear-gradient(104deg,var(--ink) 55%,var(--art) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#rip p{color:var(--muted);font-size:15.5px;margin:12px auto 0}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .reveal{opacity:1;transform:none}
@@ -647,6 +656,7 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,4vw,56px);displa
 
 <footer>
   <span class="mono">Contrôle moteur · L2 APA · CM 1</span>
+  <button class="btn" id="byebtn" style="padding:8px 16px;border-color:rgba(255,77,109,.4);color:var(--art)">adieu</button>
   <svg class="ecg" viewBox="0 0 640 46" preserveAspectRatio="none">
     <path d="M0,26 L70,26 L86,26 L94,10 L102,40 L110,20 L118,26 L200,26 L216,26 L224,8 L232,42 L240,18 L248,26 L330,26 L346,26 L354,10 L362,40 L370,20 L378,26 L460,26 L476,26 L484,8 L492,42 L500,18 L508,26 L590,26 L640,26"/>
   </svg>
@@ -1369,6 +1379,28 @@ function drawQ(){
     $("lout"+i).innerHTML=out;
   };
 })();
+
+/* ================= ADIEU ================= */
+$("byebtn").onclick=function(){
+  var d=document.createElement("div");d.id="rip";
+  d.innerHTML='<svg class="ecgline" viewBox="0 0 480 60" preserveAspectRatio="none"><path class="beat" id="rippath" d="M0,30 L120,30 L136,30 L144,12 L152,46 L160,22 L168,30 L300,30 L316,30 L324,10 L332,48 L340,20 L348,30 L480,30"/></svg>'+
+    '<div class="riptxt" id="riptxt"><span class="mono">ici repose</span>'+
+    '<h1>Contrôle<br>moteur</h1>'+
+    '<span class="mono">02.11.2026 — 04.11.2026 · 67 QCM · 109 flashcards · 1 contrôle</span>'+
+    '<p>Le site s’éteint, mais pas ce qu’il t’a appris : c’est <em>élagué</em>, <em>myélinisé</em>, <em>automatisé</em>. Il ne meurt pas — il a juste fini sa <em>synaptogénèse</em>.</p>'+
+    '<p class="mono" style="margin-top:18px">use it or lose it ❤</p>'+
+    '<p style="margin-top:26px"><button class="btn" id="ripback">— rallumer</button></p></div>';
+  document.body.appendChild(d);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){d.style.opacity=1})});
+  setTimeout(function(){
+    var pth=$("rippath");pth.classList.remove("beat");
+    pth.setAttribute("d","M0,30 L480,30");
+  },3200);
+  setTimeout(function(){$("riptxt").classList.add("show");
+    $("ripback").onclick=function(){location.reload()};
+  },3900);
+  try{localStorage.removeItem(KEY)}catch(e){}
+};
 
 /* ================= HERO WEBGL : cerveau en particules ================= */
 (function(){
