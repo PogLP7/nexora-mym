@@ -655,6 +655,7 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,4vw,56px);displa
 <script>
 /* ================= DONNÉES ================= */
 var CHAPS=[
+ {id:"c0",t:"Idée générale"},
  {id:"c1",t:"Structure"},
  {id:"c2",t:"Aires"},
  {id:"c3",t:"Neurotransmetteurs"},
@@ -721,7 +722,17 @@ var QCM=[
 {c:"c4",q:"Automatiser un mouvement, c’est…",o:["Rendre le mouvement totalement inconscient et incontrôlable","Réduire le contrôle attentionnel explicite et libérer des ressources","Le rendre plus lent, mais beaucoup plus sûr et précis","Court-circuiter le cervelet et son feedback pour gagner du temps de réaction"],k:1,w:"Automatisé ≠ inconscient."},
 {c:"c4",q:"Une amélioration motrice améliore…",o:["Uniquement la force et la vitesse d’exécution du geste","Coordination, anticipation, et réduction des degrés de liberté inutiles","Uniquement la vitesse de réaction aux signaux externes de l’environnement","La taille du cerveau et le nombre total de neurones"],k:1,w:"Anticipation = meilleure utilisation des infos sensorielles + sélection plus rapide des réponses."},
 {c:"c4",q:"En matière de prise de risque…",o:["L’adolescent est le plus risqueur, poussé par ses hormones","L’enfant (5-8 ans) fait des choix plus risqués ; pas de différence adultes/ados","L’adulte prend plus de risques, car il se sait plus expérimenté et mieux entraîné","Tout le monde est égal : l’aversion ne dépend pas de l’âge"],k:1,w:"Harbaugh 2002 ; Paulsen 2012."},
-{c:"c4",q:"Le cortex préfrontal atteint sa maturité…",o:["À 2-3 ans, avec la marche","Après l’adolescence (14-18 ans)","À 7 ans, avec la mimésis","Vers 30 ans, avec la fin de la myélinisation"],k:1,w:"Hippocampe et amygdale : 12-15 ans. La blanche, elle, finit vers la trentaine."}
+{c:"c4",q:"Le cortex préfrontal atteint sa maturité…",o:["À 2-3 ans, avec la marche","Après l’adolescence (14-18 ans)","À 7 ans, avec la mimésis","Vers 30 ans, avec la fin de la myélinisation"],k:1,w:"Hippocampe et amygdale : 12-15 ans. La blanche, elle, finit vers la trentaine."},
+{c:"c0",q:"La thèse centrale du cours, c’est…",o:["Le cerveau est entièrement câblé à la naissance, l’expérience ne fait que l’user","On ne naît pas avec le contrôle de son corps : le cerveau se construit et le mouvement le câble","Le contrôle moteur dépend uniquement de la force musculaire acquise à l’entraînement","Le cerveau adulte ne peut plus se modifier après la fermeture des fenêtres d’opportunité"],k:1,w:"La chaîne : pas fini → trop de connexions → sélection par l’usage → via le mouvement → affiné et automatisé."},
+{c:"c0",q:"Développement = construction + …",o:["maturation","sélection","répétition","myélinisation"],k:1,w:"Surproduction puis sélection progressive des configurations de réseaux → c’est l’apprentissage."},
+{c:"c0",q:"Pourquoi le SN construit-il « trop » de connexions ?",o:["Pour compenser la mort neuronale programmée du vieillissement","Pour explorer, tester, stabiliser, spécialiser","Pour accélérer la conduction de l’influx dans les axones","Pour remplir les six couches du cortex en formation"],k:1,w:"Les 4 verbes du CM, à ressortir tels quels."},
+{c:"c0",q:"Qui décide quelles connexions survivent ?",o:["La génétique seule, fixée dès la naissance pour toute la vie","L’usage : ce qui s’active ensemble se lie (Hebb), ce qui ne sert pas s’élague","La Reeline, qui coupe une à une les synapses inutilisées","Le cortex préfrontal, qui supervise et planifie l’élagage"],k:1,w:"Hebb 1949 + « use it or lose it ». Le critère de sélection, c’est l’expérience."},
+{c:"c0",q:"« Bouger, c’est apprendre » parce que…",o:["Le muscle garde la mémoire du geste dans ses fibres","Le mouvement produit des informations sensorielles qui sculptent les réseaux","L’effort physique augmente l’oxygénation du cortex moteur","La répétition fatigue les mauvaises connexions, qui disparaissent"],k:1,w:"Le mouvement n’est pas que l’action : il est la source d’information (proprio, vision, vestibulaire…)."},
+{c:"c0",q:"Dans la boucle PIDACA, que se passe-t-il après l’action ?",o:["Retour immédiat à la perception, sans aucun traitement","Les conséquences sensorielles reviennent, le SN compare et s’adapte","La décision est archivée dans le cortex préfrontal","Le thalamus enregistre le geste dans la mémoire procédurale"],k:1,w:"Perception → intégration → décision → action → conséquences sensorielles → adaptation."},
+{c:"c0",q:"Ganglions de base vs cervelet, en une phrase :",o:["Le cervelet choisit l’action, les ganglions la corrigent et l’initient ensuite","Les ganglions choisissent l’action, le cervelet la corrige","Les deux font exactement la même chose, un par hémisphère","Les ganglions gèrent les réflexes, le cervelet les gestes volontaires"],k:1,w:"Ganglions = casier des possibles (au moment de la décision) ; cervelet = compare attendu/produit (après le geste)."},
+{c:"c0",q:"Si le geste est réussi, le cervelet…",o:["Envoie un signal de récompense directement à l’hypothalamus","N’a rien à corriger : la répétition renforce le circuit (Hebb) et automatise","Archive définitivement le geste dans l’hippocampe","Verrouille le circuit pour empêcher toute modification future"],k:1,w:"Pas de signal « bravo » : absence d’erreur = rien à corriger. La consolidation + la dopamine (envie de rejouer) font le reste."},
+{c:"c0",q:"La morale « perf ≠ apprentissage » signifie…",o:["Un enfant performant est forcément un enfant bien entraîné","Un progrès peut venir de la maturation, de la pratique, ou des deux","La performance baisse toujours pendant une phase d’apprentissage","Seuls les adultes, cerveau mature, peuvent vraiment apprendre"],k:1,w:"La performance visible ne dit pas d’où vient le progrès."},
+{c:"c0",q:"Au final, automatiser un geste, c’est le but parce que…",o:["Le geste devient inconscient, donc infatigable","Ça libère des ressources attentionnelles pour traiter d’autres informations","Ça court-circuite la boucle perception-action, devenue inutile","Ça fige le réseau : plus aucune erreur n’est possible"],k:1,w:"Moins de contrôle attentionnel explicite — mais pas inconscient."}
 ];
 
 /* variantes d’énoncés pour le mode difficile — même ordre que QCM, même réponse */
@@ -786,7 +797,17 @@ var QVAR=[
 ["Conduire en discutant sans y penser : qu’a changé l’automatisation ?","Automatiser un geste, ça veut dire quoi exactement ?"],
 ["Progresser en motricité, c’est gagner sur quels plans ?","Qu’apporte une amélioration motrice ?"],
 ["Entre un enfant de 6 ans, un ado et un adulte : qui fait les choix les plus risqués ?","Prise de risque selon l’âge : que disent les études ?"],
-["Pourquoi un ado peut-il décider n’importe quoi ? Parce que le préfrontal mûrit…","La maturité du cortex préfrontal arrive quand ?"]
+["Pourquoi un ado peut-il décider n’importe quoi ? Parce que le préfrontal mûrit…","La maturité du cortex préfrontal arrive quand ?"],
+["Résume le cours en une phrase :","Pourquoi ce cours s’appelle-t-il « contrôle moteur » ?"],
+["Complète la formule du CM : développement = construction + …","Se développer, c’est construire et… ?"],
+["À quoi sert la surproduction de connexions ?","Le SN fabrique plus de synapses qu’il n’en garde : dans quel but ?"],
+["Entre deux connexions, laquelle survit, et pourquoi ?","Quel est le critère de la sélection synaptique ?"],
+["Pourquoi le mouvement est-il plus qu’une simple sortie motrice ?","Qu’est-ce que le geste apporte au cerveau en retour ?"],
+["Ton tir est parti : que fait le SN juste après ?","Comment se termine la boucle PIDACA ?"],
+["Qui choisit le geste, et qui le corrige ?","Répartis les rôles entre ganglions de base et cervelet :"],
+["Panier marqué, geste parfait : que fait le cervelet ?","Aucune erreur détectée : que devient le circuit du geste ?"],
+["Un enfant nage mieux qu’il y a 6 mois : que peut-on conclure ?","Pourquoi une meilleure performance ne prouve-t-elle rien en soi ?"],
+["Pourquoi le cerveau cherche-t-il à automatiser ?","Conduire en discutant sans effort : quel est le gain de l’automatisation ?"]
 ];
 
 var STRUCTS=[
@@ -1008,7 +1029,13 @@ var FLASH = [
 {c:"c4",q:"Qu’améliore une amélioration motrice ?",a:"La <em>coordination</em> ; l’<em>anticipation</em> (meilleure <em>utilisation des informations sensorielles</em>, <em>sélection plus rapide</em> des réponses adéquates) ; la <em>réduction des degrés de liberté inutiles</em>."},
 {c:"c4",q:"Prise de risque : enfant vs adolescent vs adulte",a:"L’enfant (<em>5-8 ans</em>) fait des <em>choix plus risqués</em> que les adolescents et adultes (Harbaugh et al., 2002). <em>Aucune différence d’aversion</em> entre adultes et adolescents (Paulsen et al., 2012)."},
 {c:"c4",q:"La maturation du réseau de décision",a:"<em>Traitement du risque</em> : insula antérieure & cortex pariétal supérieur, <em>activation croissante avec l’âge</em> (Mohr et al., 2010).<br><em>Évaluation de la valeur des options</em> : l’enfant recrute davantage le <em>cortex préfrontal ventromédian, orbitofrontal & striatum</em> (Kable & Glimcher, 2007).<br><em>Lien choix-expériences (mémoire)</em> : hippocampe, amygdale, cortex cingulaire antérieur (Platt, 2002)."},
-{c:"c4",q:"Dates de maturité du réseau de décision",a:"<em>Cortex préfrontal</em> : après l’adolescence (<em>14-18 ans</em>). <em>Hippocampe et amygdale</em> : <em>12-15 ans</em>. L’enfant <em>prudent</em> a une <em>faible activation</em> du cortex préfrontal ventromédian, de l’hippocampe et de l’amygdale."}
+{c:"c4",q:"Dates de maturité du réseau de décision",a:"<em>Cortex préfrontal</em> : après l’adolescence (<em>14-18 ans</em>). <em>Hippocampe et amygdale</em> : <em>12-15 ans</em>. L’enfant <em>prudent</em> a une <em>faible activation</em> du cortex préfrontal ventromédian, de l’hippocampe et de l’amygdale."},
+{c:"c0",q:"L’idée centrale du cours",a:"On ne naît pas avec le contrôle de son corps : le cerveau <em>se construit</em>, <em>se spécialise</em>, et c’est le <em>mouvement</em> qui le câble."},
+{c:"c0",q:"La chaîne causale en 5 maillons",a:"<em>Pas fini</em> à la naissance → construit <em>trop</em> → <em>sélection par l’usage</em> (Hebb, élagage) → via le <em>mouvement</em> (PIDACA) → <em>affiné et automatisé</em> (ganglions, cervelet)."},
+{c:"c0",q:"PIDACA",a:"<em>Perception → Intégration → Décision → Action → Conséquences sensorielles → Adaptation</em>. La boucle fournit les infos <em>sensori-motrices</em> nécessaires à l’adaptation du SN : bouger, c’est apprendre."},
+{c:"c0",q:"Ganglions vs cervelet — la phrase de secours",a:"Les ganglions de base <em>choisissent</em> l’action (« casier des possibles »), le cervelet la <em>corrige</em> (compare <em>attendu/produit</em>)."},
+{c:"c0",q:"Que devient un geste réussi ?",a:"Rien à corriger : la répétition <em>renforce le circuit</em> (Hebb) → <em>consolidation</em> → <em>automatisation</em>. Et la <em>dopamine</em> donne envie de rejouer le succès."},
+{c:"c0",q:"Les 3 M et le Chantier",a:"La <em>Machine</em> (structures), les <em>Métiers</em> (aires), les <em>Messagers</em> (neurotransmetteurs), le <em>Chantier</em> (développement &amp; plasticité — le cœur du cours)."}
 ];
 </script>
 <script>
