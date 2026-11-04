@@ -1,0 +1,1621 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Psycho du développement — la vie entière</title>
+<meta name="description" content="Réviser la psychologie du développement (CM 1) — L2 APA STAPS. Flashcards, QCM, notions, restitution.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..125,100..900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0714; --abyss:#050310;
+  --surface:#171029; --surface-2:#211839;
+  --glass:rgba(23,16,41,.72); --glass-hi:rgba(32,22,56,.78);
+  --ink:#EFEAF8; --muted:#9A8FB8;
+  --line:rgba(167,139,250,.15); --line-strong:rgba(167,139,250,.30);
+  --art:#FF6BA8; --ven:#9F7AFF; --hl:#F7D774; --ok:#43D39E; --warn:#FF9F5A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
+body{
+  background:
+    radial-gradient(640px 420px at 88% -4%, rgba(255,107,168,.075), transparent 70%),
+    radial-gradient(760px 520px at -6% 104%, rgba(159,122,255,.085), transparent 70%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Atkinson Hyperlegible",system-ui,sans-serif;
+  font-size:16.5px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:rgba(247,215,116,.28)}
+h1,h2,h3,.hfont{
+  font-family:"Anybody",sans-serif;
+  font-weight:830; font-stretch:122%;
+  text-transform:uppercase; line-height:.84;
+  letter-spacing:.005em;
+}
+.mono{
+  font-family:"Martian Mono",monospace;
+  font-size:10px; text-transform:uppercase;
+  letter-spacing:.14em; color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+p{max-width:68ch}
+a{color:var(--ven)}
+em{color:var(--hl);font-style:normal;font-weight:700}
+kbd{font-family:"Martian Mono",monospace;font-size:10px;border:1px solid var(--line-strong);border-radius:5px;padding:1px 5px}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:94vh;background:var(--abyss);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+#gl,.glfall{position:absolute;inset:0;width:100%;height:100%}
+.glfall{background:radial-gradient(60% 55% at 50% 42%, rgba(159,122,255,.16), transparent 70%),radial-gradient(34% 30% at 62% 36%, rgba(255,107,168,.12), transparent 70%),var(--abyss);display:none}
+.hero .inner{position:relative;z-index:2;padding:clamp(18px,4vw,56px);padding-bottom:clamp(16px,2.6vw,34px)}
+.kicker{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.kicker .dotp{width:9px;height:9px;border-radius:50%;background:var(--art);box-shadow:0 0 14px 3px rgba(255,107,168,.65);animation:heart 2.6s ease-in-out infinite}
+@keyframes heart{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.3);opacity:1}}
+.hero h1{
+  font-size:clamp(46px,10.5vw,148px);
+  margin:0 0 14px -3px;
+  background:linear-gradient(104deg,var(--ink) 55%,#C9B7FF 78%,var(--art) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:rise .9s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(46px) skewY(2.2deg)}to{opacity:1;transform:none}}
+.hero .sub{color:var(--muted);font-size:17px;max-width:54ch;animation:fadeup .7s .18s both}
+@keyframes fadeup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.casc{animation:fadeup .7s both}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0}
+.btn{
+  font-family:"Martian Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:999px;padding:14px 26px;cursor:pointer;border:1px solid var(--line-strong);
+  background:rgba(32,22,56,.5);color:var(--ink);backdrop-filter:blur(10px);
+  transition:transform .18s,box-shadow .18s,background .18s;
+}
+.btn:hover{transform:translateY(-2px);background:var(--glass-hi)}
+.btn.pri{
+  background:linear-gradient(135deg,#FF7CB4,#D23A77 70%);border:none;color:#fff;
+  box-shadow:0 10px 34px rgba(255,107,168,.38),0 2px 8px rgba(255,107,168,.3);
+}
+.btn.pri:hover{box-shadow:0 14px 44px rgba(255,107,168,.5)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:760px}
+.tile{
+  background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);
+  border-radius:14px;padding:14px 16px;
+}
+.tile b{display:block;font-family:"Anybody",sans-serif;font-weight:830;font-stretch:118%;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.tile span{display:block;margin-top:5px}
+.tile.red b{color:var(--art)} .tile.blue b{color:var(--ven)}
+
+/* bandeau valeurs en direct */
+.liveband{
+  position:relative;z-index:2;margin:0 clamp(18px,4vw,56px) clamp(18px,3vw,40px);
+  background:var(--glass-hi);backdrop-filter:blur(18px);
+  border:1px solid var(--line-strong);border-radius:24px;
+  padding:16px 22px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  animation:fadeup .7s .45s both;
+}
+.lswitch{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.lswitch .track{width:52px;height:28px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line-strong);position:relative;transition:background .3s}
+.lswitch .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--ven);box-shadow:0 0 12px rgba(159,122,255,.7);transition:transform .35s cubic-bezier(.2,.8,.2,1),background .35s}
+.lswitch.on .knob{transform:translateX(24px);background:var(--art);box-shadow:0 0 12px rgba(255,107,168,.7)}
+.lvals{display:flex;gap:26px;flex-wrap:wrap;flex:1}
+.lval b{display:block;font-family:"Anybody",sans-serif;font-weight:820;font-stretch:118%;font-size:21px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lval span{white-space:nowrap}
+
+/* ---------- TABS ---------- */
+.tabbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,7,20,.86);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.tabbar .row{display:flex;gap:4px;position:relative;padding:10px clamp(14px,4vw,56px) 12px;overflow-x:auto;scrollbar-width:none}
+.tabbar .row::-webkit-scrollbar{display:none}
+.tabb{
+  font-family:"Martian Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);background:none;border:none;border-radius:999px;
+  padding:10px 18px;cursor:pointer;position:relative;z-index:2;white-space:nowrap;
+  transition:color .25s;
+}
+.tabb.on{color:var(--ink)}
+#tabglide{
+  position:absolute;top:10px;height:36px;border-radius:999px;z-index:1;
+  background:var(--surface-2);border:1px solid var(--line-strong);
+  transition:transform .32s cubic-bezier(.2,.8,.2,1),width .32s cubic-bezier(.2,.8,.2,1);
+  left:0;will-change:transform,width;
+}
+#scrollbar{height:2px;background:linear-gradient(90deg,var(--art),var(--ven));width:0;transition:width .1s linear}
+
+/* ---------- PANELS / CARDS ---------- */
+main{padding:clamp(18px,4vw,56px);max-width:1180px;margin:0 auto}
+.panel{display:none}
+.panel.on{display:block}
+.card{
+  background:var(--glass);backdrop-filter:blur(13px);
+  border:1px solid var(--line);border-radius:16px;
+  padding:clamp(16px,2.6vw,26px);margin-bottom:16px;
+  perspective:900px;
+}
+.card.hero-card{border-radius:24px;background:var(--glass-hi);border-color:var(--line-strong);box-shadow:0 26px 70px rgba(0,0,0,.5)}
+.reveal{opacity:0;transform:perspective(900px) rotateX(12deg) translateY(26px);transform-origin:top center}
+.reveal.in{opacity:1;transform:none;animation:unfold .65s cubic-bezier(.2,.8,.2,1)}
+@keyframes unfold{from{opacity:0;transform:perspective(900px) rotateX(12deg) translateY(26px)}to{opacity:1;transform:none}}
+.tilt{transition:transform .22s ease,box-shadow .22s;position:relative;overflow:hidden}
+.tilt .glare{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(360px at var(--mx,50%) var(--my,50%),rgba(175,196,255,.1),transparent 65%)}
+.tilt:hover .glare{opacity:1}
+h2{font-size:clamp(26px,4.4vw,44px);margin:34px 0 18px}
+h3{font-size:clamp(17px,2.4vw,22px);margin-bottom:12px;font-stretch:118%}
+.sect-k{margin-bottom:6px;display:block}
+ul{padding-left:20px}
+li{margin:5px 0;max-width:72ch}
+li::marker{color:var(--art)}
+
+/* puces d'état */
+.chip{
+  display:inline-block;font-family:"Martian Mono",monospace;font-size:9.5px;
+  letter-spacing:.12em;text-transform:uppercase;border-radius:999px;
+  padding:4px 11px;border:1px solid;
+}
+.chip.src{color:var(--art);border-color:rgba(255,107,168,.4);background:rgba(255,107,168,.09)}
+.chip.plus{color:var(--ven);border-color:rgba(159,122,255,.4);background:rgba(159,122,255,.09)}
+.chip.ok{color:var(--ok);border-color:rgba(67,211,158,.4);background:rgba(67,211,158,.09)}
+.chip.rev{color:var(--warn);border-color:rgba(255,159,90,.4);background:rgba(255,159,90,.09)}
+
+/* tableaux */
+.tblwrap{border:1px solid var(--line-strong);border-radius:14px;overflow:auto;margin:14px 0;max-width:100%}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th{font-family:"Martian Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);text-align:left;padding:11px 14px;border-bottom:1px solid var(--line-strong);background:rgba(33,23,57,.55)}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .18s}
+tbody tr:hover{background:rgba(159,122,255,.07)}
+td.v{font-family:"Martian Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* flashcards */
+.fwrap{max-width:680px;margin:0 auto}
+.fcard{
+  min-height:300px;cursor:pointer;border-radius:24px;
+  background:var(--glass-hi);backdrop-filter:blur(18px);
+  border:1px solid var(--line-strong);
+  box-shadow:0 26px 70px rgba(0,0,0,.5);
+  padding:clamp(20px,4vw,38px);
+  display:flex;flex-direction:column;justify-content:center;gap:14px;
+  transition:transform .18s;
+}
+.fcard:active{transform:scale(.985)}
+.fcard .q{font-family:"Anybody",sans-serif;font-weight:820;font-stretch:118%;font-size:clamp(19px,3.2vw,27px);line-height:1.02;text-transform:uppercase}
+.fcard .a{display:none;border-top:1px solid var(--line);padding-top:16px;font-size:16px}
+.fcard.flip .a{display:block;animation:fadeup .35s both}
+.fcard.flip .hint{display:none}
+.fnav{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center}
+.fmeter{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.track{flex:1;height:4px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.track .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--art),var(--ven));width:0;transition:width .4s}
+.chips-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.fchip{cursor:pointer;background:none}
+.fchip.sel{color:var(--ink);border-color:var(--ink)}
+
+/* QCM */
+.qwrap{max-width:720px;margin:0 auto}
+.opt{
+  display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;cursor:pointer;
+  background:rgba(32,22,56,.45);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin:8px 0;color:var(--ink);
+  font-family:"Atkinson Hyperlegible",sans-serif;font-size:15.5px;line-height:1.45;
+  transition:border-color .18s,background .18s,transform .18s;
+}
+.opt:hover{border-color:var(--line-strong);background:var(--glass-hi)}
+.opt .k{font-family:"Martian Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);border:1px solid var(--line-strong);border-radius:7px;padding:3px 8px;flex-shrink:0;margin-top:1px}
+.opt.good{border-color:var(--ok);background:rgba(67,211,158,.12);animation:pulseok .6s}
+.opt.bad{border-color:var(--art);background:rgba(255,107,168,.1);animation:shake .45s}
+@keyframes pulseok{0%{box-shadow:0 0 0 0 rgba(67,211,158,.55)}100%{box-shadow:0 0 0 18px rgba(67,211,158,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}18%{transform:translateX(-8px)}36%{transform:translateX(7px)}54%{transform:translateX(-5px)}72%{transform:translateX(4px)}88%{transform:translateX(-2px)}}
+.why{border-left:2px solid var(--ven);padding:10px 14px;margin-top:12px;color:var(--muted);font-size:14.5px;background:rgba(159,122,255,.06);border-radius:0 10px 10px 0}
+
+/* listes (restitution) */
+textarea{
+  width:100%;min-height:110px;background:var(--surface);border:1px solid var(--line-strong);
+  border-radius:14px;color:var(--ink);padding:14px;font-family:"Atkinson Hyperlegible",sans-serif;
+  font-size:15.5px;resize:vertical;
+}
+textarea:focus{outline:none;border-color:var(--ven);box-shadow:0 0 0 3px rgba(159,122,255,.15)}
+.liok{color:var(--ok)} .liko{color:var(--warn)}
+
+/* structures */
+.search{
+  width:100%;background:var(--surface);border:1px solid var(--line-strong);border-radius:999px;
+  color:var(--ink);padding:13px 22px;font-family:"Atkinson Hyperlegible",sans-serif;font-size:15.5px;margin-bottom:16px;
+}
+.search:focus{outline:none;border-color:var(--art);box-shadow:0 0 0 3px rgba(255,107,168,.14)}
+
+/* SVG schémas */
+.schem{width:100%;height:auto;display:block;margin:10px 0}
+.schem text{font-family:"Martian Mono",monospace;font-size:9px;letter-spacing:.08em;fill:var(--muted);text-transform:uppercase}
+.schem .big{font-size:11px;fill:var(--ink)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* mode difficile */
+#hardfx{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(62% 62% at 50% 50%, rgba(255,107,168,.18), rgba(4,7,15,.95));
+  backdrop-filter:blur(8px);animation:hfx 1.5s both;pointer-events:none}
+@keyframes hfx{0%{opacity:0}12%{opacity:1}74%{opacity:1}100%{opacity:0}}
+#hardfx .t{font-family:"Anybody",sans-serif;font-weight:830;font-stretch:122%;text-transform:uppercase;line-height:.84;
+  font-size:clamp(44px,10vw,120px);
+  background:linear-gradient(110deg,#fff 30%,var(--art) 75%,#7A1544 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:hslam .7s cubic-bezier(.2,.9,.25,1.2) both;
+  filter:drop-shadow(0 0 28px rgba(255,107,168,.5))}
+@keyframes hslam{0%{transform:scale(1.8) skewX(-7deg);opacity:0;letter-spacing:.12em}55%{transform:scale(.97) skewX(0);opacity:1;letter-spacing:.005em}72%{transform:scale(1.03)}100%{transform:scale(1)}}
+#hardfx .dotp{margin:18px auto 0}
+.hardrun .fill{background:var(--art)}
+/* footer ECG */
+footer{border-top:1px solid var(--line);padding:26px clamp(18px,4vw,56px);display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.ecg{flex:1;min-width:220px;height:46px}
+.ecg path{stroke:var(--art);stroke-width:1.6;fill:none;filter:drop-shadow(0 0 5px rgba(255,107,168,.55));stroke-dasharray:640 640;animation:ecgrun 3.4s linear infinite}
+@keyframes ecgrun{from{stroke-dashoffset:1280}to{stroke-dashoffset:0}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+@media (max-width:640px){
+  body{font-size:15.5px}
+  .hero{min-height:88vh}
+  .liveband{margin:0 14px 18px;gap:14px}
+  .lvals{gap:16px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <canvas id="gl"></canvas>
+  <div class="glfall" id="glfall"></div>
+  <div class="inner">
+    <div class="kicker casc" style="animation-delay:.06s">
+      <span class="dotp"></span>
+      <span class="mono">L2 APA · STAPS · CM 1 — Psychologie du développement</span>
+    </div>
+    <h1 style="font-size:clamp(25px,7.4vw,104px)">Psycho du<br>développement</h1>
+    <p class="sub">De la conception à la fin de vie : âges, méthodes, Piaget, fonctions exécutives, vieillissement — et ce que l’activité physique change à chaque âge.</p>
+    <div class="btnrow">
+      <button class="btn pri casc" style="animation-delay:.24s" data-go="flash">Lancer les flashcards</button>
+      <button class="btn casc" style="animation-delay:.30s" data-go="qcm">Faire le QCM</button>
+    </div>
+    <div class="tiles">
+      <div class="tile casc" style="animation-delay:.36s"><b id="t-fl">0</b><span class="mono">flashcards</span></div>
+      <div class="tile casc red" style="animation-delay:.42s"><b id="t-qc">0</b><span class="mono">QCM</span></div>
+      <div class="tile casc blue" style="animation-delay:.48s"><b id="t-st">0</b><span class="mono">notions</span></div>
+      <div class="tile casc" style="animation-delay:.54s"><b id="t-ok">0%</b><span class="mono">maîtrise</span></div>
+      <div class="tile casc red" style="animation-delay:.60s"><b id="t-j">—</b><span class="mono">contrôle · 5/11</span></div>
+    </div>
+  </div>
+  <div class="liveband">
+    <div class="lswitch" id="lsw">
+      <div class="track"><div class="knob"></div></div>
+      <span class="mono" id="lswlab">Développement · repères</span>
+    </div>
+    <div class="lvals" id="lvals"></div>
+  </div>
+</section>
+
+<nav class="tabbar">
+  <div class="row" id="tabrow">
+    <div id="tabglide"></div>
+    <button class="tabb on" data-t="cours">Cours</button>
+    <button class="tabb" data-t="flash">Flashcards</button>
+    <button class="tabb" data-t="qcm">QCM</button>
+    <button class="tabb" data-t="struct">Notions</button>
+    <button class="tabb" data-t="listes">Restitution</button>
+  </div>
+  <div id="scrollbar"></div>
+</nav>
+
+<main>
+
+<!-- ============ COURS ============ -->
+
+<section class="panel on" id="p-cours">
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Le cours en une carte</span>
+    <h3 style="margin-top:12px">Psychologie du développement — CM 1</h3>
+    <p><em>Objectif de l’UE</em> : mobiliser des connaissances scientifiques pour comprendre les <em>mécanismes psychologiques liés au développement</em> et l’<em>activité physique</em>. Évaluations : <em>contrôle intermédiaire — 1 h, le 5/11</em> + contrôle terminal (1 h).</p>
+    <ul>
+      <li>Plan : <em>introduction</em> (définition, enjeux, méthodes) → AP &amp; développement <em>cognitif</em> → <em>affectif</em> → <em>social</em>. Le CM 1 couvre l’intro et le cognitif.</li>
+      <li>La thèse : le développement est un processus <em>continu sur la vie entière</em> (« lifespan »), et le <em>mouvement</em> l’accompagne à chaque âge — du bébé qui gigote au senior qui échafaude.</li>
+      <li>Le garde-fou : beaucoup d’<em>associations</em> AP-cognition, mais <em>pas de causalité démontrée</em> par les essais randomisés → prudence.</li>
+    </ul>
+  </div>
+
+  <h2>1 · Définition, enjeux &amp; âges de la vie</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Qu’est-ce que la psychologie du développement ?</h3>
+    <p><em>Décrire et expliquer scientifiquement les changements</em> qui se produisent dans l’évolution des comportements <em>tout au long de la vie</em>, depuis la <em>conception</em> jusqu’à la <em>fin de la vie</em>.</p>
+    <ul>
+      <li><em>Décrire</em> les changements normaux ou pathologiques observés aux différents âges (enfance, adolescence, âge adulte, vieillesse).</li>
+      <li><em>Expliquer</em> les mécanismes et <em>identifier les facteurs</em> qui influencent ces changements.</li>
+    </ul>
+    <svg class="schem" viewBox="0 0 720 240" role="img" aria-label="Les âges de la vie en quatre rangées de chevrons">
+      <defs>
+        <linearGradient id="gav1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9F7AFF" stop-opacity=".55"/><stop offset="1" stop-color="#9F7AFF" stop-opacity=".2"/></linearGradient>
+        <linearGradient id="gav2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF6BA8" stop-opacity=".55"/><stop offset="1" stop-color="#FF6BA8" stop-opacity=".2"/></linearGradient>
+        <linearGradient id="gav3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F7D774" stop-opacity=".5"/><stop offset="1" stop-color="#F7D774" stop-opacity=".16"/></linearGradient>
+        <linearGradient id="gav4" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#43D39E" stop-opacity=".5"/><stop offset="1" stop-color="#43D39E" stop-opacity=".16"/></linearGradient>
+      </defs>
+      <g>
+        <path d="M8,14 L130,14 L148,32 L130,50 L8,50 Z" fill="url(#gav1)" stroke="#9F7AFF" stroke-width="1.2"/>
+        <text x="20" y="36" class="big">VIE INTRA-UTÉRO</text>
+        <path d="M158,14 L320,14 L338,32 L320,50 L140,50 L158,32 Z" fill="rgba(159,122,255,.12)" stroke="#9F7AFF" stroke-width="1"/>
+        <text x="172" y="36">germinale · 0-10 j</text>
+        <path d="M348,14 L510,14 L528,32 L510,50 L330,50 L348,32 Z" fill="rgba(159,122,255,.12)" stroke="#9F7AFF" stroke-width="1"/>
+        <text x="362" y="36">embryonnaire · 10 j-2 m</text>
+        <path d="M538,14 L694,14 L712,32 L694,50 L520,50 L538,32 Z" fill="rgba(159,122,255,.12)" stroke="#9F7AFF" stroke-width="1"/>
+        <text x="552" y="36">fœtale · 2 m-naiss.</text>
+      </g>
+      <g>
+        <path d="M8,72 L130,72 L148,90 L130,108 L8,108 Z" fill="url(#gav2)" stroke="#FF6BA8" stroke-width="1.2"/>
+        <text x="20" y="94" class="big">ENFANCE</text>
+        <path d="M158,72 L268,72 L286,90 L268,108 L140,108 L158,90 Z" fill="rgba(255,107,168,.12)" stroke="#FF6BA8" stroke-width="1"/>
+        <text x="170" y="94">né · 0-1 m</text>
+        <path d="M296,72 L406,72 L424,90 L406,108 L278,108 L296,90 Z" fill="rgba(255,107,168,.12)" stroke="#FF6BA8" stroke-width="1"/>
+        <text x="306" y="94">nourrisson · 1 m-2 a</text>
+        <path d="M434,72 L544,72 L562,90 L544,108 L416,108 L434,90 Z" fill="rgba(255,107,168,.12)" stroke="#FF6BA8" stroke-width="1"/>
+        <text x="446" y="94">petite enf. · 2-6</text>
+        <path d="M572,72 L694,72 L712,90 L694,108 L554,108 L572,90 Z" fill="rgba(255,107,168,.12)" stroke="#FF6BA8" stroke-width="1"/>
+        <text x="582" y="94">intermédiaire · 8-10</text>
+      </g>
+      <g>
+        <path d="M8,130 L130,130 L148,148 L130,166 L8,166 Z" fill="url(#gav3)" stroke="#F7D774" stroke-width="1.2"/>
+        <text x="20" y="152" class="big">ADOLESCENCE</text>
+        <path d="M158,130 L300,130 L318,148 L300,166 L140,166 L158,148 Z" fill="rgba(247,215,116,.1)" stroke="#F7D774" stroke-width="1"/>
+        <text x="172" y="152">jeune · 10-13</text>
+        <path d="M328,130 L470,130 L488,148 L470,166 L310,166 L328,148 Z" fill="rgba(247,215,116,.1)" stroke="#F7D774" stroke-width="1"/>
+        <text x="342" y="152">intermédiaire · 14-17</text>
+        <path d="M498,130 L694,130 L712,148 L694,166 L480,166 L498,148 Z" fill="rgba(247,215,116,.1)" stroke="#F7D774" stroke-width="1"/>
+        <text x="512" y="152">tardive · 18-21</text>
+      </g>
+      <g>
+        <path d="M8,188 L130,188 L148,206 L130,224 L8,224 Z" fill="url(#gav4)" stroke="#43D39E" stroke-width="1.2"/>
+        <text x="20" y="210" class="big">ADULTE</text>
+        <path d="M158,188 L300,188 L318,206 L300,224 L140,224 L158,206 Z" fill="rgba(67,211,158,.1)" stroke="#43D39E" stroke-width="1"/>
+        <text x="172" y="210">jeune adulte · 22-39</text>
+        <path d="M328,188 L470,188 L488,206 L470,224 L310,224 L328,206 Z" fill="rgba(67,211,158,.1)" stroke="#43D39E" stroke-width="1"/>
+        <text x="342" y="210">âge mûr · 40-65</text>
+        <path d="M498,188 L694,188 L712,206 L694,224 L480,224 L498,206 Z" fill="rgba(67,211,158,.1)" stroke="#43D39E" stroke-width="1"/>
+        <text x="512" y="210">âge avancé · 65+</text>
+      </g>
+    </svg>
+    <p class="mono" style="margin-top:6px">les 13 périodes, telles quelles dans le tableau du CM — frise reprise de la diapo 10</p>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Une science dépendante de la place sociale des âges</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>époque</th><th>enfance</th><th>âge avancé</th></tr></thead>
+      <tbody>
+        <tr><td class="v">avant</td><td>Pas d’existence propre jusqu’au <em>XVIIIe siècle</em> — une « <em>quantité négligeable</em> »</td><td>La figure du <em>sage</em> dans les sociétés traditionnelles</td></tr>
+        <tr><td class="v">bascule</td><td>Essor des <em>préoccupations éducatives</em> au XIXe (réduction de la <em>mortalité infantile</em>)</td><td>L’<em>inutilité et le déclin</em> à la <em>Révolution industrielle</em></td></tr>
+        <tr><td class="v">aujourd’hui</td><td>Essor d’une <em>psychologie de l’enfance</em> (années <em>1970</em>)</td><td>Un « <em>nouvel âge de la vie</em> » (XXe siècle)</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Maturationniste vs lifespan</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>conception classique (maturationniste)</th><th>conception « vie entière » (lifespan)</th></tr></thead>
+      <tbody>
+        <tr><td>Plein essor durant l’<em>enfance</em> · <em>arrêt</em> à la fin de l’adolescence · <em>stationnaire</em> au début de l’âge adulte · <em>déclin</em> à l’âge mûr puis la vieillesse</td><td>Le développement <em>ne se termine pas</em> à l’âge adulte · il <em>se poursuit toute la vie</em> · s’oppose à la <em>subdivision en tranches d’âge juxtaposées</em>. Depuis <em>30 ans</em>.</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><em>Processus continu</em> : des changements surviennent à tout âge.</li>
+      <li><em>Multidimensionnel</em> : dimensions <em>biologiques, cognitives et socio-affectives</em>.</li>
+      <li><em>Gains et pertes</em> à tout âge — la <em>mémoire de travail</em> décline chez les seniors, mais l’<em>expertise et les connaissances</em> augmentent.</li>
+      <li><em>Plasticité</em> : le cerveau se modifie <em>à n’importe quel âge</em>.</li>
+      <li>Interaction de facteurs <em>normatifs</em> (puberté, école à 3 ans) × <em>histoire de la génération</em> (guerres, crises) × <em>évènements imprévisibles</em> (accidents, maladies).</li>
+      <li>Changements <em>quantitatifs</em> (amplitude) vs <em>qualitatifs</em> (nature ou structure).</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Inné, acquis &amp; évolution — le mouvement nous a faits</h3>
+    <ul>
+      <li>Le développement est au carrefour entre <em>inné</em> et <em>acquis</em>. <em>Phylogénèse</em> = histoire de l’<em>espèce</em> · <em>ontogénèse</em> = histoire de l’<em>individu</em>.</li>
+      <li>L’AP a toujours été au cœur de l’évolution : la <em>bipédie</em> (étape fondamentale), l’<em>extraordinaire endurance humaine</em>, la <em>chasse à l’épuisement</em> — pour les hommes <em>et</em> les femmes.</li>
+      <li>Nous avons évolué pour être actifs car c’était soit <em>nécessaire (survie)</em>, soit <em>gratifiant (fonctions sociales et affectives)</em>.</li>
+      <li>La question du cours : quelles conséquences du <em>(faible) niveau d’AP actuel</em> sur notre développement <em>cognitif, affectif et social</em> ?</li>
+    </ul>
+  </div>
+
+  <h2>2 · Les méthodes</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Trois approches pour étudier le développement</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>approche</th><th>principe</th><th>exemple du CM</th></tr></thead>
+      <tbody>
+        <tr><td class="v">transversale</td><td><em>Comparer des groupes d’âges différents</em> à l’aide d’<em>une seule mesure</em></td><td>Enfants de 3 vs 5 vs 7 ans, même tâche de mathématiques</td></tr>
+        <tr><td class="v">longitudinale</td><td><em>Suivre un groupe</em> au cours de l’avancée en âge avec <em>différentes mesures</em></td><td>Les <em>mêmes enfants</em> à 3, puis 5, puis 7 ans → trajectoires</td></tr>
+        <tr><td class="v">mixte</td><td><em>Suivre des groupes différents</em> au cours du temps avec <em>différentes mesures</em></td><td>Filles vs garçons, mesurés à 3 ans puis à 5 ans</td></tr>
+      </tbody>
+    </table></div>
+    <p class="mono">réflexe contrôle : plusieurs âges + 1 mesure = transversale · 1 groupe + n mesures = longitudinale · n groupes + n mesures = mixte</p>
+  </div>
+
+  <h2>3 · La cognition &amp; ses mesures</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Qu’est-ce que la cognition ?</h3>
+    <p><em>Terme général</em> désignant les <em>processus mentaux</em> intervenant dans l’<em>acquisition des connaissances</em>, le <em>traitement de l’information</em> et le <em>raisonnement</em> (American Psychiatric Association, 2013). Organisation : des capacités <em>globales</em> aux domaines <em>spécifiques</em>.</p>
+    <svg class="schem" viewBox="0 0 720 300" role="img" aria-label="Roue de la cognition : bulle centrale et cinq domaines satellites">
+      <circle cx="360" cy="152" r="86" fill="none" stroke="rgba(159,122,255,.35)" stroke-width="10"/>
+      <circle cx="360" cy="152" r="52" fill="rgba(159,122,255,.2)" stroke="#9F7AFF" stroke-width="1.5"/>
+      <text x="360" y="157" text-anchor="middle" class="big" fill="#EFEAF8">COGNITION</text>
+      <circle cx="360" cy="46" r="38" fill="rgba(255,107,168,.16)" stroke="#FF6BA8" stroke-width="1.3"/>
+      <text x="360" y="50" text-anchor="middle" class="big">LANGAGE</text>
+      <circle cx="565" cy="104" r="42" fill="rgba(255,107,168,.16)" stroke="#FF6BA8" stroke-width="1.3"/>
+      <text x="565" y="100" text-anchor="middle" class="big">FONCTIONS</text>
+      <text x="565" y="114" text-anchor="middle" class="big">EXÉCUTIVES</text>
+      <circle cx="516" cy="238" r="42" fill="rgba(255,107,168,.16)" stroke="#FF6BA8" stroke-width="1.3"/>
+      <text x="516" y="234" text-anchor="middle" class="big">MÉMOIRE &amp;</text>
+      <text x="516" y="248" text-anchor="middle" class="big">APPRENTISSAGE</text>
+      <circle cx="204" cy="238" r="40" fill="rgba(255,107,168,.16)" stroke="#FF6BA8" stroke-width="1.3"/>
+      <text x="204" y="242" text-anchor="middle" class="big">ATTENTION</text>
+      <circle cx="155" cy="104" r="42" fill="rgba(255,107,168,.16)" stroke="#FF6BA8" stroke-width="1.3"/>
+      <text x="155" y="100" text-anchor="middle" class="big">COGNITION</text>
+      <text x="155" y="114" text-anchor="middle" class="big">SOCIALE</text>
+    </svg>
+    <p class="mono" style="margin-top:4px">la roue de la diapo 40 : du global (centre) au spécifique (satellites)</p>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Zoom : les fonctions exécutives — 3 grands processus</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>processus</th><th>définition</th><th>tests associés</th></tr></thead>
+      <tbody>
+        <tr><td class="v">contrôle inhibiteur</td><td><em>Résister aux tentations</em>, ne pas agir de manière <em>impulsive ou prématurée</em>, <em>stopper une action en cours</em></td><td>Go/No-Go · Stroop</td></tr>
+        <tr><td class="v">mémoire de travail</td><td><em>Garder des informations à l’esprit</em> et les <em>exploiter mentalement</em> (liens entre notions, résolution de problème)</td><td>Empan de chiffres</td></tr>
+        <tr><td class="v">flexibilité cognitive</td><td><em>Changer de point de vue ou d’approche</em>, s’adapter à de nouvelles <em>exigences, règles ou priorités</em>, passer d’une tâche à l’autre</td><td>Fluence verbale · Trail Making · Wisconsin</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Mesurer la cognition : 3 familles</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>famille</th><th>type</th><th>à retenir</th></tr></thead>
+      <tbody>
+        <tr><td class="v">questionnaires auto-rapportés</td><td><em>subjectif</em></td><td>Les plus <em>courants et accessibles</em> · cognition <em>telle que perçue</em>, symptômes quotidiens · <em>faible corrélation</em> avec les mesures objectives (ex : <em>PROMIS</em>)</td></tr>
+        <tr><td class="v">tests cognitifs</td><td><em>objectif</em></td><td>Rapides (<em>MoCA, MMSE, Mini-Cog</em>) : dépistage en cas de suspicion, <em>ne diagnostiquent PAS</em> de maladies · approfondis : plusieurs domaines, <em>comparaison aux normes</em> (âge, sexe), présentiel ou en ligne</td></tr>
+        <tr><td class="v">neuro-imagerie</td><td><em>objectif</em></td><td><em>Structure</em> (matières blanche/grise) + <em>fonctions</em> (activité des zones) · <em>IRM, EEG, TEP, fNIRS</em> · peut <em>diagnostiquer</em> (Alzheimer, épilepsie)</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><em>Go/No-Go</em> : appuyer pour le <em>cœur</em> (go = <em>80 %</em>), ne pas appuyer pour le <em>cercle</em> (no-go = <em>20 %</em>). Mesures : <em>fausses alarmes</em> (appui en no-go) + <em>temps de réaction</em> en go.</li>
+      <li><em>Stroop</em> : dire la <em>COULEUR</em> du mot, pas sa signification. « JAUNE » écrit en vert → dire <em>vert</em> (essai <em>incongruent</em>). Mesures : erreurs + TR selon le type d’essai.</li>
+      <li><em>Empan de chiffres</em> : retenir une séquence et la restituer (<em>ordre inverse</em> selon la version) → <em>mémoire de travail</em>.</li>
+    </ul>
+  </div>
+
+  <h2>4 · Piaget &amp; le développement de l’enfant</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">La théorie de Jean Piaget (1896-1980)</h3>
+    <p><em>Père fondateur de l’école genevoise</em>. Le développement cognitif est divisé en <em>stades</em>, avec un <em>passage obligatoire</em> par les quatre : <em>le précédent conditionne le suivant</em>.</p>
+    <svg class="schem" viewBox="0 0 720 210" role="img" aria-label="Frise des quatre stades de Piaget">
+      <line x1="20" y1="150" x2="700" y2="150" stroke="rgba(159,122,255,.4)" stroke-width="2"/>
+      <g>
+        <circle cx="90" cy="150" r="7" fill="#FF6BA8"/>
+        <rect x="24" y="34" width="150" height="86" rx="14" fill="rgba(255,107,168,.13)" stroke="#FF6BA8" stroke-width="1.3"/>
+        <text x="99" y="56" text-anchor="middle" class="big" fill="#FF6BA8">SENSORI-MOTEUR</text>
+        <text x="99" y="74" text-anchor="middle">sens + action</text>
+        <text x="99" y="88" text-anchor="middle">permanence · causalité</text>
+        <text x="99" y="102" text-anchor="middle">soi / environnement</text>
+        <text x="90" y="176" text-anchor="middle" class="big">0-2 ANS</text>
+      </g>
+      <g>
+        <circle cx="266" cy="150" r="7" fill="#F7D774"/>
+        <rect x="196" y="34" width="150" height="86" rx="14" fill="rgba(247,215,116,.1)" stroke="#F7D774" stroke-width="1.3"/>
+        <text x="271" y="56" text-anchor="middle" class="big" fill="#F7D774">PRÉ-OPÉRATOIRE</text>
+        <text x="271" y="74" text-anchor="middle">mots · images · intuition</text>
+        <text x="271" y="88" text-anchor="middle">faire semblant · langage</text>
+        <text x="271" y="102" text-anchor="middle">égocentrisme</text>
+        <text x="266" y="176" text-anchor="middle" class="big">2-6 ANS</text>
+      </g>
+      <g>
+        <circle cx="444" cy="150" r="7" fill="#43D39E"/>
+        <rect x="372" y="34" width="150" height="86" rx="14" fill="rgba(67,211,158,.1)" stroke="#43D39E" stroke-width="1.3"/>
+        <text x="447" y="56" text-anchor="middle" class="big" fill="#43D39E">OPÉR. CONCRÈTES</text>
+        <text x="447" y="74" text-anchor="middle">logique sur le concret</text>
+        <text x="447" y="88" text-anchor="middle">conservation des quantités</text>
+        <text x="447" y="102" text-anchor="middle">transformations math.</text>
+        <text x="444" y="176" text-anchor="middle" class="big">6-11 ANS</text>
+      </g>
+      <g>
+        <circle cx="622" cy="150" r="7" fill="#9F7AFF"/>
+        <rect x="548" y="34" width="150" height="86" rx="14" fill="rgba(159,122,255,.13)" stroke="#9F7AFF" stroke-width="1.3"/>
+        <text x="623" y="56" text-anchor="middle" class="big" fill="#9F7AFF">OPÉR. FORMELLES</text>
+        <text x="623" y="74" text-anchor="middle">raisonnement abstrait</text>
+        <text x="623" y="88" text-anchor="middle">hypothético-déductif</text>
+        <text x="623" y="102" text-anchor="middle">raisonnement moral</text>
+        <text x="622" y="176" text-anchor="middle" class="big">11-16 ANS</text>
+      </g>
+    </svg>
+    <div class="tblwrap"><table>
+      <thead><tr><th>stade</th><th>âges</th><th>ce que fait l’enfant</th><th>étapes majeures</th></tr></thead>
+      <tbody>
+        <tr><td class="v">sensori-moteur</td><td class="v">0-2</td><td>Contacts avec le monde par les <em>sens et l’action</em> : regarder, toucher, porter à sa bouche, saisir</td><td><em>Permanence de l’objet</em> · <em>liens de causalité</em> · <em>différenciation soi/environnement</em></td></tr>
+        <tr><td class="v">pré-opératoire</td><td class="v">2-6</td><td><em>Représentation</em> par mots et images ; <em>intuition</em> plutôt que logique</td><td><em>Faire semblant</em> · <em>égocentrisme</em> (juge selon ses données perceptives) · <em>langage</em></td></tr>
+        <tr><td class="v">opérations concrètes</td><td class="v">6-11</td><td><em>Pensées logiques</em> à partir d’évènements <em>concrets</em>, analogies, arithmétique simple</td><td><em>Conservation des quantités</em> · <em>transformations mathématiques</em></td></tr>
+        <tr><td class="v">opérations formelles</td><td class="v">11-16</td><td><em>Raisonnement abstrait</em>, indépendant du contenu</td><td>Pensée <em>hypothético-déductive</em> · <em>raisonnement moral mature</em></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Passer d’un stade à l’autre : assimilation · accommodation · équilibration</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>mécanisme</th><th>définition</th><th>exemple du CM</th></tr></thead>
+      <tbody>
+        <tr><td class="v">assimilation</td><td><em>Intégrer un objet ou une situation nouvelle</em> à l’ensemble auquel une <em>conduite existante</em> s’applique déjà</td><td>La <em>succion</em> : le sein, puis le pouce, puis un objet — même conduite, objets différents</td></tr>
+        <tr><td class="v">accommodation</td><td><em>Modifier les anciens comportements</em> pour les <em>adapter</em> à la situation ou l’objet nouveau</td><td>Utiliser différemment une <em>fourchette</em> versus une <em>cuillère</em></td></tr>
+        <tr><td class="v">équilibration</td><td><em>Retrouver un équilibre</em> dans une structure <em>déséquilibrée</em> par du nouveau = <em>résolution du conflit</em></td><td>Le moteur du passage de stade</td></tr>
+      </tbody>
+    </table></div>
+    <h3 style="margin-top:16px">Applications APSA — la consigne selon le stade</h3>
+    <ul>
+      <li><em>Sensori-moteur</em> : <em>montrer, guider, faire expérimenter</em>.</li>
+      <li><em>Pré-opératoire</em> : « <em>Va jusqu’au plot. Quand tu arrives au rouge, tourne.</em> »</li>
+      <li><em>Opératoire concret</em> : « <em>Regarde où se trouve le défenseur et choisis le côté où tu peux passer.</em> »</li>
+      <li><em>Opérations formelles</em> : « <em>Comment pourrais-tu anticiper ton déplacement pour éviter le défenseur ?</em> »</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Les deux critiques de Piaget</h3>
+    <ul>
+      <li><em>1 — Social et culturel négligés</em> : <em>Wallon</em> et <em>Vygotski</em> insistent sur le poids des mécanismes <em>sociaux et culturels</em> — l’<em>imitation</em>, l’<em>aide d’autrui</em> — dans le développement cognitif.</li>
+      <li><em>2 — Bébés sous-estimés, méthodes inadaptées</em> : la <em>numérosité</em> — un <em>sens du nombre rudimentaire</em> — existe dès les <em>premiers jours de vie</em>.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Bouger pour penser : le bébé, l’enfant et l’école</h3>
+    <p><em>Recouvrement fort</em> entre développement des fonctions <em>motrices</em> et <em>cognitives</em>. Dès la gestation, les mouvements du nouveau-né — en apparence <em>anarchiques</em> — <em>amorcent les futures habiletés</em> (marcher, attraper) et les sensations associées ; ces habiletés jouent un <em>rôle clé</em> dans le développement cognitif.</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>âge</th><th>action motrice</th><th>développement cognitif</th></tr></thead>
+      <tbody>
+        <tr><td class="v">0-1 mois</td><td><em>Réflexes</em> : succion, attrapé</td><td>Prise de connaissance d’<em>éléments extérieurs</em> de différentes natures</td></tr>
+        <tr><td class="v">1-7 mois</td><td>Actions <em>répétées intentionnellement</em> (secouer un objet)</td><td>Amorce le <em>lien de cause à effet</em></td></tr>
+        <tr><td class="v">7-10 mois</td><td><em>Préhension</em> · <em>déplacement</em></td><td>Élargit le champ des interactions en « <em>autonomie</em> »</td></tr>
+        <tr><td class="v">10-14 mois</td><td><em>Locomotion</em> · interactions élaborées (lancer, déplacer)</td><td><em>Expérimentation active</em> des propriétés des objets, des <em>conséquences d’action</em> et des <em>relations spatiales</em></td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Chez l’enfant et l’adolescent, l’AP joue un <em>rôle clé</em> dans le développement des fonctions cognitives (effet sur la <em>mémoire</em> selon l’âge).</li>
+      <li>Pourtant : ~<em>11 430 heures</em> d’école du CP à la Terminale · ~<em>75 % du temps scolaire assis</em> · soit <em>1 an (nuits incluses) assis à l’école</em>.</li>
+    </ul>
+  </div>
+
+  <h2>5 · L’adulte, le vieillissement &amp; l’AP</h2>
+
+  <div class="card hero-card tilt reveal"><div class="glare"></div>
+    <span class="chip src">Source · CM</span>
+    <h3 style="margin-top:12px">Des trajectoires cognitives différenciées</h3>
+    <ul>
+      <li>Déclin relativement <em>tôt</em> : la <em>vitesse de traitement</em> et certaines composantes de la <em>mémoire de travail</em>.</li>
+      <li>Progression ou maintien <em>tardif</em> : le <em>vocabulaire</em>, les <em>connaissances générales</em> — tout ce qui dépend des connaissances acquises.</li>
+    </ul>
+    <svg class="schem" viewBox="0 0 720 280" role="img" aria-label="Trajectoires cognitives du vieillissement : normal, trouble léger, démence">
+      <defs><marker id="arrp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#9A8FB8"/></marker></defs>
+      <line x1="60" y1="20" x2="60" y2="236" stroke="#9A8FB8" stroke-width="1.2" marker-start="url(#arrp)"/>
+      <line x1="60" y1="236" x2="690" y2="236" stroke="#9A8FB8" stroke-width="1.2" marker-end="url(#arrp)"/>
+      <text x="70" y="26" class="big">FONCTIONNEMENT COGNITIF</text>
+      <text x="640" y="256" class="big">ÂGE</text>
+      <line x1="60" y1="196" x2="690" y2="196" stroke="rgba(247,215,116,.55)" stroke-width="1.2" stroke-dasharray="6 5"/>
+      <text x="66" y="190" fill="#F7D774">seuil de fonctionnalité</text>
+      <path d="M80,60 C300,62 520,74 680,92" fill="none" stroke="#43D39E" stroke-width="2.2"/>
+      <text x="470" y="62" class="big" fill="#43D39E">« HIGH-PERFORMING »</text>
+      <path d="M80,66 C300,76 480,106 680,150" fill="none" stroke="#9F7AFF" stroke-width="2.2"/>
+      <text x="548" y="136" class="big" fill="#9F7AFF">VIEILLISSEMENT USUEL</text>
+      <path d="M80,70 C280,92 420,140 540,196 C570,210 600,222 620,230" fill="none" stroke="#FF9F5A" stroke-width="2.2"/>
+      <text x="400" y="158" class="big" fill="#FF9F5A">TROUBLE COGNITIF LÉGER</text>
+      <path d="M80,74 C240,110 340,170 420,230" fill="none" stroke="#FF6BA8" stroke-width="2.2"/>
+      <text x="196" y="150" class="big" fill="#FF6BA8">DÉMENCE</text>
+      <text x="240" y="252">50</text><text x="390" y="252">60</text><text x="540" y="252">70</text><text x="660" y="252">80</text>
+    </svg>
+    <ul style="margin-top:10px">
+      <li>Continuum : <em>fonctionnement normal</em> → <em>trouble cognitif léger</em> (atteinte <em>minime</em> des activités instrumentales) → <em>démence</em> (terme <em>générique</em> — ex : <em>Alzheimer</em> — atteinte forte de la cognition et des activités quotidiennes).</li>
+      <li><em>50 millions</em> de démences dans le monde en 2025 → <em>150 millions</em> en 2050 ? Environ <em>40 % des cas</em> pourraient être prévenus via <em>12 facteurs de risque modifiables</em>, <em>dont l’AP</em>.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>La théorie de l’échafaudage (Park &amp; Reuter-Lorenz, 2009)</h3>
+    <ul>
+      <li>Le cerveau met en place un <em>échafaudage compensatoire</em> : le <em>recrutement de structures et réseaux neuronaux supplémentaires</em> pour <em>maintenir un niveau élevé de fonctionnement cognitif</em> malgré les altérations liées à l’âge.</li>
+      <li>Les altérations dépendent du <em>vieillissement biologique</em>, des sources d’<em>enrichissement</em> et d’<em>appauvrissement cognitif</em> au cours de la vie.</li>
+      <li>La mise en place de l’échafaudage dépend des <em>comportements de l’individu</em>… <em>dont l’activité physique</em> !</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Ce que disent les études</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>étude</th><th>design</th><th>résultat</th></tr></thead>
+      <tbody>
+        <tr><td class="v">athlètes</td><td>Comparaison athlètes vs non-compétiteurs</td><td>Perfs cognitives <em>légèrement meilleures</em> — surtout <em>haut niveau</em>, sports <em>collectifs et d’endurance</em></td></tr>
+        <tr><td class="v">marche · 120 adultes 55+</td><td><em>1 an</em>, 3 j/sem : <em>marche</em> (10-40 min) vs <em>étirements/tonification</em></td><td>~<em>+2 % vs −2 %</em> ; bénéfice sur une tâche de <em>mémorisation spatiale</em></td></tr>
+        <tr><td class="v">39 000 Européens 50+</td><td>AP composite sur <em>14 ans</em> (7 vagues), <em>3 tests cognitifs</em></td><td><em>Trajectoires d’AP</em> ↔ <em>trajectoires cognitives</em></td></tr>
+        <tr><td class="v">APOE ε4 · 200 Alzheimer légers</td><td><em>16 semaines</em>, 3 j/sem d’<em>aérobie</em> modérée-élevée vs soins habituels</td><td>Les <em>porteurs ε4</em> du groupe exercice <em>profitent davantage</em> (score maintenu + meilleur ressenti)</td></tr>
+        <tr><td class="v">pollution · 36 000 âgés</td><td>AP par accéléromètre × <em>exposition aux polluants</em>, 283 démences</td><td>AP protectrice <em>seulement</em> dans le <em>quartile le moins pollué</em></td></tr>
+        <tr><td class="v">extérieur · 30 jeunes adultes</td><td>Marche <em>2 km intérieur vs extérieur</em> ; tâche <em>oddball</em> + <em>P300</em> (EEG)</td><td>Plein air : <em>meilleure attention</em> + activité cérébrale <em>plus intense</em></td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li><em>La remise en question</em> : les <em>essais randomisés</em> ne permettent pas d’établir un lien <em>causal</em> AP → cognition (sans l’exclure) → <em>prudence</em> pour la population en bonne santé.</li>
+      <li><em>4 familles</em> pour expliquer l’hétérogénéité : caractéristiques de l’<em>AP pratiquée</em> (<em>FITT</em> : fréquence, intensité, temps, type + <em>volume, progressivité</em> — pas de consensus sur l’AP « idéale »), des <em>personnes</em> (âge, genre, génétique — <em>APOE ε4</em>), <em>environnementales</em> (pollution, intérieur/extérieur), <em>domaines cognitifs ciblés</em>.</li>
+    </ul>
+  </div>
+
+  <div class="card tilt reveal"><div class="glare"></div>
+    <h3>Bidirectionnel, double tâche &amp; sédentarité</h3>
+    <ul>
+      <li><em>Relations bidirectionnelles</em> : en vieillissant, les <em>fonctions cognitives</em> jouent un rôle critique dans le <em>maintien de l’AP</em> — des ressources pour lutter contre la <em>loi du moindre effort</em>.</li>
+      <li><em>Double tâche</em> : effectuer <em>simultanément</em> une activité <em>motrice</em> (marcher, équilibre) et un exercice <em>cognitif</em> (calculs, mémoire). « <em>Thinking while moving</em> »… et pourquoi pas <em>réfléchir en bougeant</em> ?</li>
+      <li><em>Sédentarité</em> (50 000 âgés, accéléromètre, modèles de <em>Cox</em>, suivi ~7 ans) : relation <em>NON linéaire</em> — le risque de démence décolle au-delà d’environ <em>10 h/jour</em>, <em>même après ajustement sur l’AP</em>.</li>
+      <li>Remplacer <em>15 min/jour</em> de sédentarité par 15 min d’<em>AP modérée à vigoureuse</em> : <em>−7 %</em> de risque de démence.</li>
+      <li><em>Passif vs actif</em> : seuls les comportements sédentaires <em>cognitivement inactifs</em> sont associés au risque — Netflix ≠ mots croisés.</li>
+    </ul>
+  </div>
+
+</section>
+
+<!-- ============ FLASHCARDS ============ -->
+<section class="panel" id="p-flash">
+  <h2>Flashcards</h2>
+  <div class="chips-row" id="fchips"></div>
+  <div class="fwrap">
+    <div class="fmeter"><span class="mono" id="fcount">0 / 0</span><div class="track"><div class="fill" id="ffill"></div></div><span class="mono" id="fscore"></span></div>
+    <div class="fcard tilt" id="fcard"><div class="glare"></div></div>
+    <div class="fnav">
+      <button class="btn" id="fprev">← Préc.</button>
+      <button class="btn pri" id="fflip">Retourner</button>
+      <button class="btn" id="fnext">Suiv. →</button>
+    </div>
+    <div class="fnav" id="fmarks" style="display:none">
+      <button class="btn" id="fok" style="border-color:rgba(67,211,158,.5);color:var(--ok)">Je savais</button>
+      <button class="btn" id="fko" style="border-color:rgba(255,159,90,.5);color:var(--warn)">À revoir</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QCM ============ -->
+<section class="panel" id="p-qcm">
+  <h2>QCM</h2>
+  <div class="qwrap" id="qzone"></div>
+</section>
+
+<!-- ============ STRUCTURES ============ -->
+<section class="panel" id="p-struct">
+  <h2>Notions &amp; auteurs</h2>
+  <input class="search" id="ssearch" placeholder="Chercher une notion, un auteur, une définition…">
+  <div class="tblwrap"><table id="stbl">
+    <thead><tr><th>notion</th><th>catégorie</th><th>repère</th><th>définition</th></tr></thead>
+    <tbody id="sbody"></tbody>
+  </table></div>
+</section>
+
+<!-- ============ RESTITUTION ============ -->
+<section class="panel" id="p-listes">
+  <h2>Restitution</h2>
+  <p style="color:var(--muted);margin-bottom:18px">Écris la liste de mémoire, vérifie, passe à la suivante. C’est l’exercice qui paie le plus cher au contrôle.</p>
+  <div id="lzone"></div>
+</section>
+
+</main>
+
+<footer>
+  <span class="mono">Psychologie du développement · L2 APA · CM 1</span>
+  <svg class="ecg" viewBox="0 0 640 46" preserveAspectRatio="none">
+    <path d="M0,26 L70,26 L86,26 L94,10 L102,40 L110,20 L118,26 L200,26 L216,26 L224,8 L232,42 L240,18 L248,26 L330,26 L346,26 L354,10 L362,40 L370,20 L378,26 L460,26 L476,26 L484,8 L492,42 L500,18 L508,26 L590,26 L640,26"/>
+  </svg>
+  <span class="mono" id="footnote">4 stades · 3 fonctions exécutives · 1 contrôle — le 5/11</span>
+</footer>
+<script>
+/* ================= DONNÉES ================= */
+var CHAPS=[
+ {id:"c0",t:"Vue d’ensemble"},
+ {id:"c1",t:"Intro & enjeux"},
+ {id:"c2",t:"Méthodes"},
+ {id:"c3",t:"Cognition & mesures"},
+ {id:"c4",t:"Piaget & l’enfant"},
+ {id:"c5",t:"Adulte & vieillissement"}
+];
+
+var QCM=[
+{c:"c1",q:"La psychologie du développement, c’est…",o:["La science qui diagnostique et soigne les troubles mentaux de l’enfant, de la naissance à l’adolescence","Décrire et expliquer scientifiquement les changements des comportements tout au long de la vie, de la conception à la fin de la vie","L’étude comparée du comportement humain et animal pour retracer l’évolution des espèces au fil des générations","La discipline qui mesure l’intelligence des enfants afin de prédire leur réussite scolaire et professionnelle"],k:1,w:"Deux objectifs : décrire les changements normaux ou pathologiques aux différents âges, et expliquer les mécanismes + identifier les facteurs qui les influencent."},
+{c:"c1",q:"Les deux objectifs de la psychologie du développement :",o:["Prévenir les pathologies du vieillissement et rééduquer les fonctions cognitives altérées par les maladies","Décrire les changements normaux ou pathologiques aux différents âges, et expliquer les mécanismes et facteurs qui les influencent","Classer les individus par tranches d’âge et établir des normes de performance pour chaque période de la vie","Observer les comportements en laboratoire et les reproduire en conditions réelles pour valider les théories"],k:1,w:"Décrire (enfance, adolescence, âge adulte, vieillesse) + expliquer (mécanismes, facteurs)."},
+{c:"c1",q:"La période fœtale couvre…",o:["De la fécondation à 10 jours","De 2 mois à la naissance","De 10 jours à 2 mois","De la naissance à 1 mois"],k:1,w:"Germinale = fécondation-10 jours ; embryonnaire = 10 jours-2 mois ; fœtale = 2 mois-naissance."},
+{c:"c1",q:"Le nourrisson, c’est la période…",o:["De 0 à 1 mois","De 1 mois à 2 ans","De 2 à 6 ans","De 8 à 10 ans"],k:1,w:"Nouveau-né 0-1 mois · nourrisson 1 mois-2 ans · petite enfance 2-6 ans · enfance intermédiaire 8-10 ans."},
+{c:"c1",q:"L’adolescence tardive, selon le découpage du CM :",o:["14-17 ans","18-21 ans","10-13 ans","22-39 ans"],k:1,w:"Jeune adolescence 10-13 · intermédiaire 14-17 · tardive 18-21. Ensuite : jeune adulte 22-39."},
+{c:"c1",q:"L’âge mûr correspond à…",o:["Plus de 65 ans","40-65 ans","22-39 ans","50-75 ans"],k:1,w:"Jeune adulte 22-39 · âge mûr 40-65 · âge avancé 65+."},
+{c:"c1",q:"Jusqu’au XVIIIe siècle, l’enfance…",o:["Était au centre des préoccupations éducatives des familles et de l’État","N’avait pas d’existence propre : une « quantité négligeable »","Était étudiée scientifiquement par les premiers psychologues de l’enfant","Était considérée comme l’âge le plus important de la vie pour la formation morale"],k:1,w:"Essor progressif des préoccupations éducatives au XIXe (baisse de la mortalité infantile), puis essor d’une psychologie de l’enfance dans les années 1970."},
+{c:"c1",q:"La psychologie de l’enfance prend son essor…",o:["Au XVIIIe siècle, avec les philosophes des Lumières","Dans les années 1970","Au XIXe siècle, avec la réduction de la mortalité infantile","Dans les années 2000, avec la neuro-imagerie"],k:1,w:"Le XIXe voit l’essor des préoccupations éducatives ; la discipline scientifique, elle, décolle dans les années 1970."},
+{c:"c1",q:"La personne âgée à la Révolution industrielle était vue comme…",o:["La figure du sage qui transmet l’expérience aux générations suivantes","Une figure d’inutilité et de déclin","Un nouvel âge de la vie à accompagner et valoriser socialement","Le pilier économique de la famille élargie"],k:1,w:"Sage dans les sociétés traditionnelles → inutilité/déclin à la Révolution industrielle → « nouvel âge de la vie » au XXe siècle."},
+{c:"c1",q:"La conception classique (maturationniste) du développement :",o:["Le développement se poursuit tout au long de la vie, avec des changements à tout âge et dans tous les domaines","Essor pendant l’enfance, arrêt à la fin de l’adolescence, stationnaire au début de l’âge adulte, déclin à l’âge mûr","Le développement dépend uniquement de l’environnement social et culturel dans lequel grandit l’enfant","Chaque individu suit une trajectoire unique, imprévisible et indépendante de son âge chronologique"],k:1,w:"C’est à cette vision en tranches juxtaposées que s’oppose la conception « lifespan » (vie entière), dominante depuis 30 ans."},
+{c:"c1",q:"La conception « lifespan » affirme que…",o:["Le développement s’achève avec l’accession à l’âge adulte, une fois la maturation terminée","Le développement ne se termine pas à l’âge adulte : il se poursuit tout au long de la vie","Le développement est strictement déterminé par la génétique, l’expérience ne jouant qu’à la marge","Chaque tranche d’âge doit être étudiée séparément, avec ses méthodes et ses normes propres"],k:1,w:"Elle s’oppose à la subdivision en tranches d’âge juxtaposées : processus continu, des changements surviennent à tout âge."},
+{c:"c1",q:"« À tout âge, certains domaines progressent tandis que d’autres régressent. » L’exemple du CM :",o:["La vitesse de course diminue chez les seniors, mais leur endurance fondamentale continue de progresser","La mémoire de travail peut décliner chez les seniors, mais l’expertise et les connaissances augmentent","La vision baisse avec l’âge, mais l’audition se maintient intacte jusqu’à un âge très avancé","L’attention décline dès 40 ans, mais la créativité atteint son pic vers 70 ans"],k:1,w:"C’est le principe des gains et des pertes simultanés, caractéristique de la conception lifespan."},
+{c:"c1",q:"Un changement QUALITATIF, c’est…",o:["Une augmentation ou une diminution dans l’amplitude d’un phénomène","Un changement dans la nature ou la structure d’un phénomène","Un changement mesurable uniquement par des tests standardisés","Une amélioration durable d’une capacité liée à l’expérience"],k:1,w:"Quantitatif = amplitude (augmentation/diminution) ; qualitatif = nature ou structure."},
+{c:"c1",q:"Le développement résulte de l’interaction entre…",o:["L’hérédité génétique, le hasard des mutations et la sélection naturelle au sein de chaque génération","Des facteurs normatifs, des facteurs liés à l’histoire de la génération et des évènements de vie imprévisibles","Les apprentissages scolaires, les loisirs et la qualité du sommeil pendant toute l’enfance","La maturation cérébrale, l’alimentation et le niveau socio-économique des parents"],k:1,w:"Normatifs (puberté, entrée à l’école à 3 ans) × histoire de la génération (guerres, crises) × imprévisibles (accidents, maladies)."},
+{c:"c1",q:"Phylogénèse vs ontogénèse :",o:["La phylogénèse est l’histoire de l’individu, l’ontogénèse celle de l’espèce","La phylogénèse est l’histoire de l’espèce au cours de son évolution, l’ontogénèse celle du développement de l’individu au cours de sa vie","Les deux termes désignent l’évolution de l’espèce, à des échelles de temps différentes","La phylogénèse décrit le développement prénatal, l’ontogénèse le développement postnatal"],k:1,w:"Et l’activité physique a toujours été au cœur de l’évolution humaine (bipédie, endurance, chasse à l’épuisement)."},
+{c:"c1",q:"Nous avons évolué pour être actifs physiquement parce que c’était…",o:["Imposé par le climat : seuls les plus actifs survivaient aux glaciations successives","Soit nécessaire (fonction de survie), soit gratifiant (fonctions sociales et affectives)","Le seul moyen de développer le langage et la transmission culturelle entre générations","Une conséquence directe de la bipédie, qui rendait la position assise impossible"],k:1,w:"D’où la question du cours : quelles conséquences du (faible) niveau d’AP actuel sur notre développement cognitif, affectif et social ?"},
+
+{c:"c2",q:"L’approche TRANSVERSALE consiste à…",o:["Suivre un même groupe d’individus au cours de l’avancée en âge, avec différentes mesures","Comparer des groupes d’âges différents à l’aide d’une seule mesure","Suivre des groupes différents au cours du temps, avec plusieurs mesures","Croiser les résultats de plusieurs études publiées sur des âges différents"],k:1,w:"Exemple : comparer les scores d’enfants de 3, 5 et 7 ans sur une même tâche de mathématiques."},
+{c:"c2",q:"L’approche LONGITUDINALE consiste à…",o:["Comparer des groupes d’âges différents avec une seule mesure","Suivre un groupe au cours de l’avancée en âge avec différentes mesures","Comparer filles et garçons à un âge donné sur une même tâche","Mesurer un même individu plusieurs fois dans la même journée"],k:1,w:"Exemple : les mêmes enfants testés à 3 ans, puis 5 ans, puis 7 ans → trajectoires."},
+{c:"c2",q:"L’approche MIXTE consiste à…",o:["Combiner questionnaires subjectifs et tests objectifs dans une même étude","Suivre des groupes différents au cours de l’avancée en âge avec différentes mesures","Comparer les résultats d’une approche transversale à ceux d’une approche longitudinale","Alterner les mesures en laboratoire et les mesures en conditions de vie réelle"],k:1,w:"Exemple : trajectoires des capacités d’abstraction selon le sexe — filles ET garçons suivis de 3 à 5 ans."},
+{c:"c2",q:"On teste les mêmes enfants à 3 ans, puis à 5 ans, puis à 7 ans. C’est…",o:["Une approche transversale","Une approche longitudinale","Une approche mixte","Une approche expérimentale randomisée"],k:1,w:"Un seul groupe, suivi avec plusieurs mesures → longitudinal."},
+{c:"c2",q:"On suit des filles ET des garçons, chacun mesurés à 3 ans puis à 5 ans. C’est…",o:["Une approche longitudinale","Une approche mixte","Une approche transversale","Une étude cas-témoins"],k:1,w:"Plusieurs groupes + plusieurs mesures dans le temps → mixte."},
+
+{c:"c3",q:"La cognition, c’est…",o:["La capacité du cerveau à produire des émotions et à les réguler selon le contexte social","Le terme général désignant les processus mentaux d’acquisition des connaissances, de traitement de l’information et de raisonnement","L’ensemble des réflexes et automatismes acquis par la répétition au cours de la vie","La faculté de mémoriser des informations et de les restituer fidèlement à long terme"],k:1,w:"Définition de l’American Psychiatric Association (2013). Organisation : des capacités globales vers des domaines spécifiques."},
+{c:"c3",q:"Les 5 domaines cognitifs cités dans le CM :",o:["Perception, motricité, émotion, motivation, conscience","Langage, cognition sociale, fonctions exécutives, attention, mémoire et apprentissage","Raisonnement, calcul, lecture, écriture, orientation spatiale","Intelligence fluide, intelligence cristallisée, créativité, intuition, logique"],k:1,w:"Des capacités cognitives globales aux domaines plus spécifiques."},
+{c:"c3",q:"Les 3 grands processus des fonctions exécutives :",o:["Attention sélective, attention soutenue, attention divisée","Contrôle inhibiteur, mémoire de travail, flexibilité cognitive","Planification, organisation, anticipation des conséquences","Encodage, stockage, récupération des informations en mémoire"],k:1,w:"Le trio à ressortir tel quel au contrôle."},
+{c:"c3",q:"Le contrôle inhibiteur, c’est…",o:["Garder des informations à l’esprit et les exploiter mentalement pour résoudre un problème","Résister aux tentations, ne pas agir de manière impulsive, stopper une action en cours","Changer de point de vue face à un problème et s’adapter à de nouvelles règles","Supprimer les souvenirs parasites qui gênent l’apprentissage de nouvelles notions"],k:1,w:"Mesuré par les tâches de Go/No-Go et de Stroop."},
+{c:"c3",q:"La mémoire de travail, c’est…",o:["Stocker définitivement les connaissances acquises au fil des apprentissages scolaires","Garder des informations à l’esprit et les exploiter mentalement (faire des liens, résoudre un problème)","La mémoire des gestes professionnels automatisés par des années de pratique","Retenir les visages et les noms des personnes rencontrées récemment"],k:1,w:"Mesurée par exemple par l’empan de chiffres (restituer une séquence, parfois en ordre inverse)."},
+{c:"c3",q:"La flexibilité cognitive, c’est…",o:["Résister à une tentation immédiate pour obtenir une récompense plus tard","Changer de point de vue ou d’approche, s’adapter avec souplesse à de nouvelles exigences ou règles","Mémoriser plusieurs consignes en parallèle et les restituer dans l’ordre demandé","Traiter plusieurs sources d’informations sensorielles en même temps sans erreur"],k:1,w:"Par exemple en passant d’une tâche à l’autre. Mesurée par fluence verbale, Trail Making Test, test de Wisconsin."},
+{c:"c3",q:"Les questionnaires auto-rapportés (ex : PROMIS)…",o:["Sont la mesure la plus fiable de la cognition car l’individu se connaît mieux que quiconque","Évaluent la cognition telle qu’elle est perçue, avec une faible corrélation avec les mesures objectives","Permettent de diagnostiquer précocement les démences avant l’apparition des symptômes","Ne sont utilisés qu’en recherche, jamais en pratique clinique courante"],k:1,w:"Méthode la plus courante et accessible ; évalue les symptômes quotidiens — qui peuvent apparaître et disparaître."},
+{c:"c3",q:"MoCA, MMSE et Mini-Cog sont…",o:["Des questionnaires auto-rapportés sur les symptômes cognitifs du quotidien","Des tests cognitifs rapides de dépistage, qui ne permettent PAS de diagnostiquer des maladies","Des techniques de neuro-imagerie qui mesurent l’activité de zones cérébrales précises","Des tests approfondis explorant chaque domaine cognitif avec des normes d’âge"],k:1,w:"Réalisés en cas de suspicion de déficience cognitive ; le diagnostic, lui, passe par d’autres outils (dont la neuro-imagerie)."},
+{c:"c3",q:"Dans une tâche de Go/No-Go, une « fausse alarme » c’est…",o:["Ne pas appuyer alors qu’un essai « go » est affiché à l’écran","Appuyer lors d’un essai « no-go »","Appuyer trop lentement lors d’un essai « go »","Confondre les deux formes affichées et appuyer deux fois de suite"],k:1,w:"Go = 80 % des essais (cœur), no-go = 20 % (cercle). Mesures : taux de fausses alarmes + temps de réaction en go. Ça mesure le contrôle inhibiteur."},
+{c:"c3",q:"Dans un Stroop, l’essai INCONGRUENT c’est…",o:["Le mot « BLEU » écrit en bleu : il faut dire bleu","Le mot « JAUNE » écrit en vert : il faut dire vert","Un mot sans rapport avec une couleur, écrit en noir","Deux mots de couleurs affichés en même temps à l’écran"],k:1,w:"On doit dire la COULEUR du mot, pas ce qu’il signifie — mesures : taux d’erreur et temps de réaction selon le type d’essai. Contrôle inhibiteur."},
+{c:"c3",q:"L’empan de chiffres (retenir une séquence et la restituer) mesure…",o:["La flexibilité cognitive","La mémoire de travail","Le contrôle inhibiteur","L’attention soutenue"],k:1,w:"Parfois en ordre inverse selon la version. Mesure : nombre maximal de réponses correctes."},
+{c:"c3",q:"Fluence verbale, Trail Making Test et test de Wisconsin mesurent…",o:["Le contrôle inhibiteur","La flexibilité cognitive","La mémoire de travail","La cognition sociale"],k:1,w:"Ce sont les tâches de raisonnement / logique citées pour la flexibilité."},
+{c:"c3",q:"La neuro-imagerie (IRM, EEG, TEP, fNIRS)…",o:["Mesure uniquement l’activité électrique du cerveau pendant les tâches cognitives","Mesure la structure (matières blanche et grise) et les fonctions cérébrales, et peut servir au diagnostic (Alzheimer, épilepsie)","Est une mesure subjective car elle dépend de l’interprétation du radiologue","Remplace désormais les tests cognitifs dans l’évaluation courante des patients"],k:1,w:"C’est une mesure objective, comme les tests cognitifs — contrairement aux questionnaires."},
+
+{c:"c4",q:"Jean Piaget, c’est…",o:["1856-1939, le fondateur de la psychanalyse de l’enfant","1896-1980, le père fondateur de l’école genevoise","1849-1936, le découvreur du conditionnement classique chez l’animal","1902-1994, le théoricien des stades psychosociaux du développement"],k:1,w:"Sa théorie : le développement cognitif est divisé en stades, à passage obligatoire — le précédent conditionne le suivant."},
+{c:"c4",q:"Les 4 stades de Piaget, dans l’ordre :",o:["Pré-opératoire → sensori-moteur → opérations concrètes → opérations formelles","Sensori-moteur → pré-opératoire → opérations concrètes → opérations formelles","Sensori-moteur → opérations concrètes → pré-opératoire → opérations formelles","Opérations concrètes → opérations formelles → sensori-moteur → pré-opératoire"],k:1,w:"0-2 ans · 2-6 ans · 6-11 ans · 11-16 ans. Passage obligatoire par les quatre."},
+{c:"c4",q:"Le stade sensori-moteur (0-2 ans), c’est…",o:["La représentation des choses avec des mots et des images, en se fiant à l’intuition","Le contact avec le monde par les sens et l’action : regarder, toucher, porter à sa bouche, saisir","Les premières pensées logiques appliquées à des évènements concrets du quotidien","La capacité à raisonner sur des propositions abstraites et hypothétiques"],k:1,w:"Étapes majeures : permanence de l’objet, liens de causalité, différenciation entre soi et son environnement."},
+{c:"c4",q:"La permanence de l’objet se construit au stade…",o:["Pré-opératoire","Sensori-moteur","Des opérations concrètes","Des opérations formelles"],k:1,w:"Avec les liens de causalité et la différenciation soi/environnement."},
+{c:"c4",q:"Le stade pré-opératoire (2-6 ans) se caractérise par…",o:["La conservation des quantités et les premières transformations mathématiques","La représentation par mots et images, l’intuition plutôt que la logique : faire semblant, égocentrisme, langage","Le raisonnement hypothético-déductif et le raisonnement moral mature","La coordination des sens et de l’action pour explorer les objets du quotidien"],k:1,w:"L’enfant se représente les choses, mais recourt à l’intuition plutôt qu’au raisonnement logique."},
+{c:"c4",q:"L’égocentrisme, chez Piaget, signifie que l’enfant…",o:["Refuse de partager ses jouets et cherche à attirer l’attention de l’adulte","Juge en fonction de ses données perceptives","Se croit meilleur que les autres dans toutes les activités qu’il entreprend","Ne développe pas de langage tant qu’on ne lui parle pas directement"],k:1,w:"C’est une étape majeure du stade pré-opératoire — pas un trait de caractère."},
+{c:"c4",q:"Le stade des opérations concrètes (6-11 ans) apporte…",o:["Le raisonnement abstrait, indépendant du contenu auquel il s’applique","Des pensées logiques à partir d’évènements concrets : conservation des quantités, transformations mathématiques","La capacité à faire semblant et le développement accéléré du langage","La construction de la permanence de l’objet et des liens de causalité"],k:1,w:"Compréhension d’analogies concrètes, opérations arithmétiques simples."},
+{c:"c4",q:"Le stade des opérations formelles (11-16 ans) permet…",o:["Les premières opérations arithmétiques simples appliquées à des objets réels","Un raisonnement abstrait, hypothético-déductif, et un raisonnement moral mature","La différenciation progressive entre soi et son environnement immédiat","La représentation des choses avec des mots, des images et le jeu symbolique"],k:1,w:"Le raisonnement ne dépend plus du contenu : propositions dont on analyse les conséquences avant de savoir si elles sont vraies."},
+{c:"c4",q:"L’ASSIMILATION, c’est…",o:["Modifier les anciens comportements afin de les adapter à la nouvelle situation ou au nouvel objet","Intégrer un objet ou une situation nouvelle à l’ensemble auquel une conduite existante s’applique déjà","Retrouver un équilibre dans une structure déséquilibrée par un évènement nouveau","Imiter la conduite d’autrui pour acquérir un nouveau comportement plus adapté"],k:1,w:"Exemple du CM : la succion du sein, puis du pouce, puis d’un objet — la même conduite appliquée à des objets différents."},
+{c:"c4",q:"L’ACCOMMODATION, c’est…",o:["Intégrer un objet nouveau à une conduite déjà existante sans la modifier","Modifier les anciens comportements afin de les adapter à la nouvelle situation ou au nouvel objet","Répéter une conduite jusqu’à l’automatiser complètement","Abandonner une conduite devenue inefficace au profit d’une conduite innée"],k:1,w:"Exemple : apprendre à utiliser différemment une fourchette versus une cuillère."},
+{c:"c4",q:"Assimilation et accommodation permettent de…",o:["Mémoriser durablement les apprentissages scolaires du stade concret","Retrouver un équilibre dans une structure déséquilibrée par un évènement ou un objet nouveau : la résolution du conflit","Sauter un stade de développement quand l’environnement est suffisamment stimulant","Compenser le déclin cognitif en recrutant des réseaux neuronaux supplémentaires"],k:1,w:"C’est le mécanisme de passage d’un stade cognitif à l’autre (équilibration)."},
+{c:"c4",q:"« Va jusqu’au plot. Quand tu arrives au rouge, tourne. » Cette consigne APSA vise le stade…",o:["Sensori-moteur","Pré-opératoire","Des opérations concrètes","Des opérations formelles"],k:1,w:"Sensori-moteur : montrer, guider, faire expérimenter · opératoire concret : « regarde le défenseur et choisis le côté » · formelles : « comment anticiper ton déplacement ? »."},
+{c:"c4",q:"« Comment pourrais-tu anticiper ton déplacement pour éviter le défenseur ? » vise le stade…",o:["Des opérations concrètes","Des opérations formelles","Pré-opératoire","Sensori-moteur"],k:1,w:"On demande un raisonnement hypothétique et abstrait → opérations formelles."},
+{c:"c4",q:"Les deux grandes critiques faites à Piaget :",o:["Une théorie trop sociale et une surestimation du rôle du langage dans la pensée","Faible prise en compte des aspects sociaux et culturels, et minimisation des capacités cognitives des bébés avec des méthodes inadaptées","L’absence de stades clairement définis et le refus de toute expérimentation contrôlée","Une théorie limitée à l’adolescence et inapplicable aux apprentissages moteurs"],k:1,w:"Wallon et Vygotski insistent sur les mécanismes sociaux et culturels (imitation, aide d’autrui) ; et la numérosité existe dès les premiers jours de vie."},
+{c:"c4",q:"La numérosité, citée contre Piaget, c’est…",o:["La capacité à compter jusqu’à dix acquise au stade pré-opératoire","Un sens du nombre rudimentaire présent dès les premiers jours de vie","L’apprentissage des transformations mathématiques au stade concret","La préférence des bébés pour les quantités importantes de nourriture"],k:1,w:"Preuve que Piaget minimisait les capacités cognitives des bébés, avec des méthodes inadaptées."},
+{c:"c4",q:"Entre 10 et 14 mois, locomotion et interactions élaborées avec les objets (lancer, déplacer) permettent…",o:["La prise de connaissance d’éléments extérieurs de différentes natures","L’expérimentation active des propriétés des objets, des conséquences d’action et des relations spatiales","D’amorcer le lien de cause à effet par des actions répétées intentionnellement","D’élargir le champ des interactions en « autonomie »"],k:1,w:"0-1 mois : réflexes → prise de connaissance · 1-7 mois : actions répétées → cause-effet · 7-10 mois : préhension/déplacement → autonomie · 10-14 mois : locomotion → expérimentation active."},
+{c:"c4",q:"Chez le nouveau-né, les mouvements qui « semblent anarchiques »…",o:["Sont des réflexes sans aucune fonction, qui disparaissent sans laisser de trace","Amorcent le développement des futures habiletés (marcher, attraper) et des sensations associées","Révèlent un retard moteur qu’il faut corriger par une stimulation précoce","Ne commencent qu’après la naissance, une fois les voies motrices myélinisées"],k:1,w:"Dès la gestation et les premières heures de vie. Ces habiletés jouent ensuite un rôle clé dans le développement cognitif."},
+{c:"c4",q:"Le temps scolaire, du CP à la Terminale :",o:["Environ 8 000 heures, dont la moitié passée assis","Environ 11 430 heures, dont ~75 % passées assis — soit 1 an (nuits incluses) assis à l’école","Environ 15 000 heures, dont un tiers consacré à l’activité physique","Environ 11 430 heures, dont 90 % passées assis — soit 2 ans assis à l’école"],k:1,w:"Alors que chez l’enfant et l’adolescent, l’AP joue un rôle clé dans le développement des fonctions cognitives."},
+
+{c:"c5",q:"Au cours de l’âge adulte, déclinent relativement tôt…",o:["Le vocabulaire et les connaissances générales accumulées au fil de la vie","La vitesse de traitement et certaines composantes de la mémoire de travail","La capacité à lire et la reconnaissance des visages familiers","Toutes les fonctions cognitives, de manière uniforme et simultanée"],k:1,w:"À l’inverse, les capacités dépendantes des connaissances acquises (vocabulaire, connaissances générales) progressent ou se maintiennent plus tard."},
+{c:"c5",q:"Le trouble cognitif léger, c’est…",o:["Un synonyme de démence débutante, qui évolue toujours vers la maladie d’Alzheimer","Des troubles cognitifs avec une atteinte minime des activités instrumentales de la vie quotidienne","Un déclin cognitif normal qui touche tous les individus après 65 ans","Une plainte subjective sans aucune traduction aux tests cognitifs objectifs"],k:1,w:"Sur le continuum : fonctionnement normal → trouble cognitif léger → démence."},
+{c:"c5",q:"La démence, c’est…",o:["Une maladie unique, caractérisée par la perte progressive de la mémoire épisodique","Un terme générique désignant plusieurs maladies qui affectent fortement les fonctions cognitives et les activités quotidiennes","Le stade terminal du vieillissement cognitif normal, inévitable à très long terme","Un trouble psychiatrique aigu, réversible avec un traitement médicamenteux adapté"],k:1,w:"Exemple : la maladie d’Alzheimer."},
+{c:"c5",q:"Les cas de démence dans le monde :",o:["10 millions en 2025, 30 millions attendus en 2050","50 millions en 2025, 150 millions possibles en 2050","100 millions en 2025, 200 millions attendus en 2050","50 millions en 2025, en baisse grâce à la prévention"],k:1,w:"Et environ 40 % des cas pourraient être prévenus en agissant sur 12 facteurs de risque modifiables — dont l’activité physique."},
+{c:"c5",q:"La part des démences qui pourraient être prévenues :",o:["Environ 10 %, en agissant sur 5 facteurs de risque modifiables","Environ 40 %, en agissant sur 12 facteurs de risque modifiables","Environ 75 %, en agissant sur 20 facteurs de risque modifiables","Environ 40 %, mais uniquement par des traitements médicamenteux précoces"],k:1,w:"Dont l’activité physique."},
+{c:"c5",q:"La théorie de l’échafaudage du vieillissement cognitif (Park & Reuter-Lorenz, 2009) :",o:["Le cerveau âgé réduit volontairement son activité pour économiser ses ressources métaboliques","Le cerveau recrute des structures et réseaux supplémentaires pour maintenir le fonctionnement malgré les altérations liées à l’âge","Les fonctions cognitives s’empilent au cours de la vie comme un échafaudage, les plus récentes s’effondrant en premier","Le déclin cognitif est programmé génétiquement et aucun comportement ne peut le compenser"],k:1,w:"Un échafaudage compensatoire, dont la mise en place dépend des comportements de l’individu — dont l’AP."},
+{c:"c5",q:"Les altérations cérébrales liées à l’âge sont fonction…",o:["Du seul vieillissement biologique, identique pour tous les individus","Du vieillissement biologique et des sources d’enrichissement et d’appauvrissement cognitif au cours de la vie","Du niveau d’éducation atteint avant 25 ans, qui fixe la réserve cognitive une fois pour toutes","Des gènes uniquement : l’environnement ne modifie pas la structure du cerveau"],k:1,w:"C’est dans ce cadre que l’échafaudage compensatoire se construit."},
+{c:"c5",q:"Les athlètes, côté cognition :",o:["Aucune différence avec les non-sportifs une fois l’âge pris en compte","Des performances légèrement meilleures, surtout chez les pratiquants de haut niveau, en sports collectifs et d’endurance","Des performances nettement supérieures dans tous les domaines cognitifs, quel que soit le sport","De meilleures performances uniquement dans les sports individuels, qui exigent plus de concentration"],k:1,w:"En comparaison aux personnes ne faisant pas de sport en compétition (vs. sports individuels)."},
+{c:"c5",q:"L’étude d’intervention « marche » chez 120 adultes de plus de 55 ans :",o:["6 mois de musculation intensive contre un groupe sans activité : +10 % de volume cérébral","1 an, 3 jours/semaine : marche encadrée (10 à 40 min) vs étirements/tonification — environ +2 % vs −2 % (mémorisation spatiale)","2 ans de yoga contre un groupe de marche : aucune différence entre les deux conditions","1 an de marche quotidienne obligatoire : −2 % pour le groupe marche, fatigué par l’intervention"],k:1,w:"Deux conditions expérimentales ; le bénéfice apparaît notamment sur une tâche de mémorisation spatiale."},
+{c:"c5",q:"L’étude sur 39 000 personnes âgées européennes (50+) :",o:["Un essai randomisé de 16 semaines comparant exercice aérobie et soins habituels","Une mesure composite de l’AP sur 14 ans (jusqu’à 7 vagues), reliée aux scores de trois tests cognitifs","Une étude d’imagerie comparant le volume cérébral des sportifs et des sédentaires","Un suivi par accéléromètre du temps sédentaire et des cas de démence hospitaliers"],k:1,w:"Trajectoires de l’activité physique au fil du temps ↔ trajectoires cognitives."},
+{c:"c5",q:"La remise en question récente des liens AP-cognition dit que…",o:["L’activité physique n’a définitivement aucun effet sur les fonctions cognitives","Les essais randomisés actuels ne permettent pas d’établir un lien de causalité — sans l’exclure — d’où une grande prudence recommandée","Seules les personnes malades bénéficient de l’activité physique sur le plan cognitif","Les effets sont si évidents qu’il n’est plus nécessaire de mener des essais contrôlés"],k:1,w:"« Jusqu’à ce que des preuves plus solides soient accumulées… » — pour la population en bonne santé."},
+{c:"c5",q:"Les 4 familles d’explication de l’hétérogénéité des résultats AP-cognition :",o:["L’âge, le sexe, le niveau d’éducation et le statut socio-économique des participants","Caractéristiques de l’AP pratiquée, des personnes, de l’environnement, et domaines cognitifs ciblés","La durée des études, la taille des échantillons, les pays et les financements","Le type de test cognitif, l’heure de passation, la motivation et la fatigue"],k:1,w:"Le cadre à ressortir pour expliquer pourquoi les études ne concordent pas."},
+{c:"c5",q:"Les caractéristiques de l’AP pratiquée se décrivent par…",o:["Le plaisir, l’effort perçu, la météo et le lieu de pratique","Fréquence, intensité, temps, type — plus volume et progressivité","Le nombre de pas quotidiens et la dépense énergétique totale uniquement","Le niveau de compétition, le classement et les années de pratique"],k:1,w:"Le FITT (+ V et P). Et toutes les revues ne s’accordent pas sur l’AP « idéale » pour la cognition."},
+{c:"c5",q:"L’allèle APOE ε4…",o:["Protège contre la démence et amplifie les bénéfices cognitifs du sommeil","Est un facteur de risque de démence — et ses porteurs tirent davantage profit de l’intervention d’exercice (étude sur 200 Alzheimer légers)","Empêche toute réponse cérébrale à l’exercice physique chez ses porteurs","N’a d’effet sur la cognition qu’en interaction avec la pollution atmosphérique"],k:1,w:"16 semaines, 3 j/sem d’aérobie modérée à élevée vs soins habituels : les porteurs ε4 du groupe exercice maintiennent leur score et rapportent de meilleurs résultats."},
+{c:"c5",q:"L’étude AP × pollution (36 000 personnes âgées, 283 cas de démence) montre que…",o:["La pollution renforce les bénéfices de l’AP en obligeant le cerveau à compenser davantage","L’AP est associée à une diminution du risque de démence seulement chez les participants les moins exposés à la pollution","L’AP protège de la démence quel que soit le niveau d’exposition aux particules fines","La pollution n’a aucun effet mesurable sur le lien entre AP et démence"],k:1,w:"Quartile le plus bas de pollution : association protectrice. Tertile le plus pollué : plus d’association significative."},
+{c:"c5",q:"Marche de 2 km en extérieur vs en intérieur (30 jeunes adultes) :",o:["Aucune différence : seule compte la distance parcourue par les participants","Meilleures performances d’attention et P300 plus ample (EEG) après la marche en plein air","Meilleures performances en intérieur, l’extérieur étant trop riche en distractions","Les deux conditions améliorent la mémoire mais dégradent l’attention"],k:1,w:"Tâche visuelle de type oddball + amplitude de la P300 (réponse neuronale liée à l’attention et à la mémoire de travail)."},
+{c:"c5",q:"« Des relations bidirectionnelles à envisager » signifie que…",o:["L’AP améliore la cognition le matin, mais la dégrade le soir","Les fonctions cognitives jouent aussi un rôle critique dans le MAINTIEN de l’activité physique en vieillissant","Le cerveau gauche et le cerveau droit bénéficient différemment de l’exercice","Les effets de l’AP s’inversent après 80 ans et deviennent délétères"],k:1,w:"Des ressources nécessaires pour lutter contre la loi du moindre effort."},
+{c:"c5",q:"L’entraînement en double tâche, c’est…",o:["Alterner une semaine d’entraînement physique et une semaine d’entraînement cérébral","Effectuer simultanément une activité motrice (marcher, équilibre) et un exercice cognitif (calcul, mémoire)","Faire travailler deux groupes musculaires opposés dans la même séance","S’entraîner en binôme pour stimuler la cognition sociale pendant l’effort"],k:1,w:"Une intervention innovante mêlant activité motrice et activité cognitive — « thinking while moving », et pourquoi pas réfléchir en bougeant."},
+{c:"c5",q:"Le lien temps sédentaire → démence (50 000 personnes âgées) :",o:["Linéaire : chaque heure assise augmente le risque de la même quantité","Non linéaire : le risque augmente significativement au-delà d’environ 10 heures par jour — même après ajustement sur l’AP","Inexistant une fois l’activité physique prise en compte dans les modèles","Significatif seulement chez les personnes ne pratiquant aucune activité physique"],k:1,w:"Accéléromètre, suivi ~7 ans, modèles de risques proportionnels de Cox (association dose-réponse)."},
+{c:"c5",q:"Remplacer 15 minutes par jour de temps sédentaire par 15 minutes d’AP modérée à vigoureuse…",o:["Réduit de 25 % les risques de démence","Réduit de 7 % les risques de démence","Ne change rien si le temps assis total dépasse 10 heures","Réduit de 7 % les risques, mais uniquement chez les porteurs d’APOE ε4"],k:1,w:"L’argument « dose minimale » à ressortir."},
+{c:"c5",q:"Comportements sédentaires passifs vs actifs :",o:["Tous les comportements sédentaires sont associés au même risque de démence","Seuls les comportements sédentaires cognitivement INACTIFS sont associés au risque de démence chez les personnes âgées","Les comportements mentalement actifs assis augmentent le risque par surcharge cognitive","La distinction disparaît après ajustement sur l’activité physique"],k:1,w:"Et les résultats restent identiques après ajustement sur l’AP : regarder la TV ≠ lire ou jouer aux échecs."},
+
+{c:"c0",q:"L’objectif de l’UE, tel qu’annoncé :",o:["Apprendre à concevoir des séances d’entraînement adaptées à chaque tranche d’âge","Mobiliser des connaissances scientifiques pour comprendre les mécanismes psychologiques liés au développement et l’activité physique","Maîtriser les outils de diagnostic des troubles du développement de l’enfant","Préparer aux métiers de la rééducation cognitive de la personne âgée"],k:1,w:"5 × 2 h de CM + 5 × 2 h de TD. Évaluations : contrôle intermédiaire (1 h, le 5/11) + contrôle terminal (1 h)."},
+{c:"c0",q:"Le plan du cours, dans l’ordre :",o:["Méthodes → cognition → émotion → personnalité","Introduction (définition, enjeux, méthodes) → AP & développement cognitif → AP & développement affectif → AP & développement social","Enfance → adolescence → âge adulte → vieillesse","Cerveau → cognition → motricité → performance"],k:1,w:"Le CM 1 couvre l’introduction et le développement cognitif."},
+{c:"c0",q:"La thèse générale du cours :",o:["Le développement s’arrête à l’âge adulte, et l’activité physique ne fait que ralentir le déclin","Le développement est un processus continu sur la vie entière, et l’activité physique y est associée à chaque âge — du bébé qui bouge à l’échafaudage du senior","Le développement est déterminé par les gènes, l’activité physique n’ayant qu’un rôle marginal","Seule l’enfance compte : ce qui n’est pas construit avant 6 ans est perdu à jamais"],k:1,w:"Lifespan + le fil rouge AP : mouvements du bébé → cognition, école assise, athlètes, vieillissement, sédentarité."},
+{c:"c0",q:"Pourquoi le cours finit-il sur un appel à la prudence ?",o:["Parce que l’activité physique s’est révélée dangereuse pour la cognition des seniors","Parce que les associations AP-cognition sont nombreuses mais que la causalité n’est pas établie par les essais randomisés","Parce que les études sont trop anciennes pour être encore valables aujourd’hui","Parce que les effets ne concernent que les porteurs de l’allèle APOE ε4"],k:1,w:"D’où l’intérêt des 4 familles de modérateurs : AP, personnes, environnement, domaines ciblés."},
+{c:"c0",q:"Le fil rouge « activité physique » traverse le cours parce que…",o:["Le diplôme STAPS l’exige, même quand la psychologie n’a rien à en dire","Nous avons évolué pour être actifs (survie + fonctions sociales et affectives) — la question est ce que son déclin actuel change au développement","L’activité physique est le seul facteur modifiable connu du développement cognitif","Les psychologues du développement sont historiquement issus des sciences du sport"],k:1,w:"Bipédie, endurance, chasse à l’épuisement : le mouvement est au cœur de la phylogénèse. Et aujourd’hui : 1 an assis à l’école, 10 h/j de sédentarité chez les aînés."}
+];
+
+/* variantes d’énoncés pour le mode difficile — même ordre que QCM, même réponse */
+var QVAR=[
+/* c1 */
+["Au contrôle : « définissez la psychologie du développement ». Tu coches :","Décrire et expliquer les changements des comportements : de quand à quand, et comment ?"],
+["Récite les deux objectifs de la discipline :","Décrire… et expliquer… : complète le programme officiel de la psychologie du développement."],
+["Une échographie à 5 mois de grossesse observe un bébé dans quelle période de la vie intra-utérine ?","Donne les bornes de la période fœtale :"],
+["Un bébé de 14 mois, c’est quoi dans le découpage des âges ?","Quelles sont les bornes de la période du nourrisson ?"],
+["À 19 ans, on est dans quelle sous-période de l’adolescence ?","Donne les bornes de l’adolescence tardive :"],
+["Ton père a 52 ans : quelle période de la vie adulte ?","Les bornes de l’âge mûr, c’est…"],
+["« Quantité négligeable » : de qui parlait-on ainsi, et jusqu’à quand ?","Quel statut avait l’enfance avant le XVIIIe siècle ?"],
+["La discipline qui étudie l’enfant naît scientifiquement à quelle époque ?","Date l’essor de la psychologie de l’enfance :"],
+["Usines, machines, rendement : quel regard la Révolution industrielle porte-t-elle sur les vieux ?","Comment la place sociale de la personne âgée a-t-elle changé à la Révolution industrielle ?"],
+["Essor, arrêt, plateau, déclin : quelle conception du développement décrit cette courbe ?","Décris la conception maturationniste (classique) du développement :"],
+["« On apprend à tout âge » : quelle conception scientifique se cache derrière ce dicton ?","Que postule la conception de « vie entière » ?"],
+["Ton grand-père oublie des courses mais bat tout le monde aux mots croisés : quel principe lifespan illustre-t-il ?","Donne l’exemple du CM pour « gains et pertes à tout âge » :"],
+["Un enfant passe du babillage aux phrases : la STRUCTURE de son langage change. C’est quel type de changement ?","Définis le changement qualitatif :"],
+["Puberté, guerre, accident : trois exemples… de quelles familles de facteurs ?","Quels sont les trois types de facteurs dont l’interaction produit le développement ?"],
+["L’histoire de l’espèce et l’histoire de l’individu : quels termes, et qui est qui ?","Distingue phylogénèse et ontogénèse :"],
+["Courir après le gibier ou danser ensemble : pourquoi l’évolution nous a-t-elle faits actifs ?","Pour quelles deux raisons avons-nous évolué pour être physiquement actifs ?"],
+/* c2 */
+["Comparer des enfants de 3, 5 et 7 ans le même jour, une seule mesure : quelle approche ?","Définis l’approche transversale :"],
+["Suivre la même cohorte pendant dix ans, mesure après mesure : quelle approche ?","Définis l’approche longitudinale :"],
+["Suivre filles ET garçons dans le temps pour comparer leurs trajectoires : quelle approche ?","Définis l’approche mixte :"],
+["Mesure 1 à 3 ans, mesure 2 à 5 ans, mesure 3 à 7 ans — toujours les mêmes enfants. C’est…","Un seul groupe, plusieurs mesures au fil de l’âge : quelle méthode ?"],
+["Deux groupes (filles/garçons), deux mesures espacées de deux ans : quelle méthode ?","Plusieurs groupes suivis au cours de l’avancée en âge : c’est quelle approche ?"],
+/* c3 */
+["Au contrôle : « définissez la cognition (APA, 2013) ». Tu coches :","Acquisition, traitement, raisonnement : de quoi parle cette définition ?"],
+["Cite les 5 domaines qui organisent la cognition :","Du global au spécifique : quels sont les domaines cognitifs du schéma du CM ?"],
+["Le trio des fonctions exécutives, c’est…","Cite les 3 grands processus des fonctions exécutives :"],
+["Tu t’empêches de regarder ton téléphone qui vibre pendant la révision : quelle fonction exécutive bosse ?","Définis le contrôle inhibiteur :"],
+["Calculer 17 × 6 de tête en gardant les retenues : quelle fonction exécutive ?","Définis la mémoire de travail :"],
+["L’arbitre change une règle en plein match et tu t’adaptes : quelle fonction exécutive ?","Définis la flexibilité cognitive :"],
+["« Docteur, j’ai des trous de mémoire » : que vaut cette plainte comme mesure de la cognition ?","Caractérise les questionnaires auto-rapportés comme mesure de la cognition :"],
+["Le médecin fait passer un MoCA en 10 minutes : qu’est-ce que ce test permet — et ne permet pas ?","MoCA, MMSE, Mini-Cog : quelle famille d’outils, pour quel usage ?"],
+["Le cercle apparaît, le participant appuie quand même : comment s’appelle cette erreur ?","Dans le Go/No-Go, que mesure-t-on exactement comme erreur ?"],
+["Le mot « JAUNE » s’affiche en encre verte : décris cet essai de Stroop.","Dans un Stroop, qu’est-ce qu’un essai incongruent ?"],
+["Retenir 8-3-5-9-1 et le répéter à l’envers : ce test mesure quoi ?","L’empan de chiffres évalue quelle fonction ?"],
+["Citer un max d’animaux en 60 secondes, relier des chiffres et des lettres, trier des cartes selon une règle qui change : ces trois tâches mesurent…","Fluence verbale, Trail Making, Wisconsin : quelle fonction visent-ils ?"],
+["IRM, EEG, TEP, fNIRS : que mesurent ces outils, et à quoi peuvent-ils servir ?","Caractérise la neuro-imagerie comme mesure de la cognition :"],
+/* c4 */
+["Qui est le « père fondateur de l’école genevoise » ?","Fiche d’identité de Jean Piaget :"],
+["Récite les 4 stades de Piaget avec leurs âges, dans l’ordre :","Du bébé à l’ado : remets les stades piagétiens dans l’ordre."],
+["Un bébé de 14 mois explore le monde en portant tout à sa bouche : décris son stade.","Caractérise le stade de l’intelligence sensori-motrice :"],
+["Le jouet caché sous la couverture « n’existe plus » pour le bébé… jusqu’à quelle acquisition, de quel stade ?","La permanence de l’objet appartient à quel stade ?"],
+["Une enfant de 4 ans fait parler ses peluches et croit que tout le monde voit ce qu’elle voit : quel stade ?","Caractérise le stade pré-opératoire :"],
+["« Il juge en fonction de ses données perceptives » : de quelle notion piagétienne parle-t-on ?","Définis l’égocentrisme au sens de Piaget :"],
+["À 8 ans, il comprend que la boule de pâte aplatie contient autant de pâte : quel stade, quelle acquisition ?","Caractérise le stade des opérations concrètes :"],
+["À 13 ans, elle raisonne sur des hypothèses qu’elle sait peut-être fausses : quel stade ?","Caractérise le stade des opérations formelles :"],
+["Du sein au pouce puis au doudou : la même succion pour tout. Quel mécanisme piagétien ?","Définis l’assimilation :"],
+["La fourchette ne se tient pas comme la cuillère : il modifie son geste. Quel mécanisme ?","Définis l’accommodation :"],
+["Un objet nouveau déséquilibre les conduites de l’enfant, puis l’équilibre revient : à quoi servent assimilation et accommodation ?","Quel est le rôle conjoint de l’assimilation et de l’accommodation ?"],
+["En séance APA, tu dis : « Va jusqu’au plot. Quand tu arrives au rouge, tourne. » Tu parles à quel stade ?","À quel stade s’adresse une consigne concrète et séquentielle du type « va jusqu’au plot » ?"],
+["Tu demandes à un jeune d’anticiper le déplacement du défenseur : il doit être à quel stade pour te suivre ?","Une consigne qui exige un raisonnement hypothétique vise quel stade ?"],
+["Wallon, Vygotski et les bébés plus malins que prévu : résume les reproches faits à Piaget.","Quelles sont les deux grandes critiques de la théorie de Piaget ?"],
+["Des bébés de quelques jours distinguent déjà des quantités : comment s’appelle cette capacité anti-Piaget ?","Définis la numérosité :"],
+["Il marche, il lance, il déplace tout ce qu’il attrape : que gagne le bébé de 10-14 mois côté cognition ?","Entre 10 et 14 mois, à quoi servent locomotion et interactions élaborées ?"],
+["Les gigotements « dans tous les sens » du nouveau-né servent-ils à quelque chose ?","Quel rôle jouent les mouvements apparemment anarchiques du nouveau-né ?"],
+["Du CP à la Terminale : combien d’heures d’école, et combien passées assis ?","Donne les chiffres du temps scolaire assis :"],
+/* c5 */
+["À 70 ans, il trouve ses mots mieux que jamais mais traite l’info plus lentement : quelles fonctions déclinent tôt ?","Quelles capacités cognitives déclinent relativement tôt à l’âge adulte ?"],
+["Entre le vieillissement normal et la démence, il y a une étape : laquelle, définie comment ?","Définis le trouble cognitif léger :"],
+["Alzheimer est UN exemple de… quoi, exactement ?","Définis la démence :"],
+["Combien de démences dans le monde aujourd’hui, et demain ?","Donne les chiffres mondiaux de la démence (2025 → 2050) :"],
+["Quelle part des démences est évitable, et en jouant sur quoi ?","40 % de quoi, via combien de facteurs ?"],
+["Le cerveau âgé monte des renforts pour tenir le niveau : quelle théorie, de qui ?","Énonce la théorie de l’échafaudage du vieillissement cognitif :"],
+["Enrichissement, appauvrissement, vieillissement biologique : de quoi ces trois éléments sont-ils les déterminants ?","De quoi dépendent les altérations cérébrales liées à l’âge ?"],
+["Les sportifs de compétition pensent-ils mieux ? Nuance exigée.","Que disent les données sur la cognition des athlètes ?"],
+["120 seniors, deux groupes, un an : raconte l’étude « marche » et son résultat.","Décris l’intervention marche vs étirements chez les 55+ :"],
+["39 000 Européens, 14 ans de suivi : quel est le design de cette étude ?","Décris l’étude SHARE sur AP et cognition :"],
+["Pourquoi les scientifiques freinent-ils sur « le sport rend intelligent » ?","Que conclut la remise en question récente des liens AP-cognition ?"],
+["Les études se contredisent sur AP et cognition : cite les 4 familles d’explications.","Quel cadre explique l’hétérogénéité des résultats AP-cognition ?"],
+["F, I, T, T : développe l’acronyme qui décrit une activité physique.","Par quoi décrit-on les caractéristiques de l’AP pratiquée ?"],
+["Porteur d’APOE ε4 et programme d’exercice : bonne ou mauvaise pioche ?","Que montre l’étude exercice × APOE ε4 chez 200 Alzheimer légers ?"],
+["Courir dans une ville polluée protège-t-il encore de la démence ?","Que montre l’étude AP × pollution (36 000 personnes âgées) ?"],
+["2 km sur tapis ou 2 km en forêt : quelle différence pour le cerveau ?","Que montre la comparaison marche intérieure vs extérieure ?"],
+["La loi du moindre effort gagne souvent chez les aînés : quel rôle la cognition joue-t-elle là-dedans ?","Que signifie « des relations bidirectionnelles » entre AP et cognition ?"],
+["Compter à rebours en marchant sur une poutre : comment s’appelle ce type d’entraînement ?","Définis l’entraînement en double tâche :"],
+["Au-delà de combien d’heures assises par jour le risque de démence décolle-t-il ?","Décris la relation temps sédentaire → démence (forme, seuil, ajustement) :"],
+["Troquer un quart d’heure de canapé contre un quart d’heure de marche rapide : quel gain ?","Que gagne-t-on à remplacer 15 min de sédentarité par 15 min d’AP modérée à vigoureuse ?"],
+["Netflix ou mots croisés : assis pour assis, est-ce pareil pour le cerveau ?","Quels comportements sédentaires sont associés au risque de démence ?"],
+/* c0 */
+["Que promet exactement cette UE « Organisation des conditions de pratique » ?","Récite l’objectif officiel de l’UE :"],
+["CM 1, CM 2… : dans quel ordre le cours déroule-t-il ses parties ?","Donne le plan du cours :"],
+["Résume le cours en une phrase :","Quelle est la thèse générale qui relie lifespan et activité physique ?"],
+["« Le sport rend intelligent » : pourquoi le prof refuse-t-il de signer cette phrase ?","Pourquoi le cours se conclut-il sur la prudence ?"],
+["Pourquoi un cours de psycho parle-t-il autant de sport ?","Justifie le fil rouge « activité physique » du cours :"]
+];
+
+var STRUCTS=[
+{n:"Psychologie du développement",l:"Discipline",a:"conception → fin de vie",r:"Décrire et expliquer scientifiquement les changements des comportements tout au long de la vie"},
+{n:"Conception maturationniste",l:"Conception classique",a:"—",r:"Essor dans l’enfance, arrêt fin adolescence, stationnaire au début de l’âge adulte, déclin ensuite"},
+{n:"Conception lifespan (vie entière)",l:"Conception moderne",a:"depuis ~30 ans",r:"Le développement se poursuit toute la vie ; s’oppose aux tranches d’âge juxtaposées"},
+{n:"Changement quantitatif",l:"Type de changement",a:"—",r:"Augmentation ou diminution dans l’amplitude d’un phénomène"},
+{n:"Changement qualitatif",l:"Type de changement",a:"—",r:"Changement dans la nature ou la structure d’un phénomène"},
+{n:"Facteurs normatifs",l:"Facteur de développement",a:"puberté · école à 3 ans",r:"Évènements attendus, liés à l’âge, partagés par la plupart des individus"},
+{n:"Facteurs d’histoire de la génération",l:"Facteur de développement",a:"guerres · crises",r:"Évènements historiques qui marquent une génération entière"},
+{n:"Évènements de vie imprévisibles",l:"Facteur de développement",a:"accidents · maladies",r:"Évènements individuels non normatifs qui infléchissent la trajectoire"},
+{n:"Plasticité",l:"Caractéristique lifespan",a:"—",r:"Le cerveau conserve la capacité de se modifier à n’importe quel âge"},
+{n:"Gains et pertes",l:"Caractéristique lifespan",a:"MdT ↓ · expertise ↑",r:"À tout âge, certains domaines progressent tandis que d’autres régressent"},
+{n:"Phylogénèse",l:"Évolution",a:"espèce",r:"Histoire de l’espèce au cours de son évolution"},
+{n:"Ontogénèse",l:"Évolution",a:"individu",r:"Histoire du développement de l’individu au cours de sa vie"},
+{n:"Bipédie",l:"Évolution & AP",a:"—",r:"Étape fondamentale de l’évolution humaine, le mouvement au cœur de la phylogénèse"},
+{n:"Chasse à l’épuisement",l:"Évolution & AP",a:"hommes ET femmes",r:"Illustration de l’extraordinaire endurance humaine développée par l’évolution"},
+{n:"Approche transversale",l:"Méthode",a:"1 mesure",r:"Comparer des groupes d’âges différents à l’aide d’une seule mesure"},
+{n:"Approche longitudinale",l:"Méthode",a:"1 groupe · n mesures",r:"Suivre un groupe au cours de l’avancée en âge avec différentes mesures"},
+{n:"Approche mixte",l:"Méthode",a:"n groupes · n mesures",r:"Suivre des groupes différents au cours de l’avancée en âge avec différentes mesures"},
+{n:"Cognition",l:"Définition (APA 2013)",a:"—",r:"Processus mentaux : acquisition des connaissances, traitement de l’information, raisonnement"},
+{n:"Langage",l:"Domaine cognitif",a:"—",r:"Un des 5 domaines, avec cognition sociale, fonctions exécutives, attention, mémoire"},
+{n:"Cognition sociale",l:"Domaine cognitif",a:"—",r:"Traitement des informations liées aux autres et aux interactions"},
+{n:"Attention",l:"Domaine cognitif",a:"—",r:"Sélection et maintien du traitement d’une information"},
+{n:"Mémoire et apprentissage",l:"Domaine cognitif",a:"—",r:"Encodage, stockage et récupération des connaissances"},
+{n:"Fonctions exécutives",l:"Domaine cognitif",a:"3 processus",r:"Contrôle inhibiteur, mémoire de travail, flexibilité cognitive"},
+{n:"Contrôle inhibiteur",l:"Fonction exécutive",a:"Go/No-Go · Stroop",r:"Résister aux tentations, ne pas agir impulsivement, stopper une action en cours"},
+{n:"Mémoire de travail",l:"Fonction exécutive",a:"empan de chiffres",r:"Garder des informations à l’esprit et les exploiter mentalement"},
+{n:"Flexibilité cognitive",l:"Fonction exécutive",a:"fluence · Trail · Wisconsin",r:"Changer de point de vue, s’adapter à de nouvelles exigences, règles ou priorités"},
+{n:"Questionnaires auto-rapportés",l:"Mesure subjective",a:"PROMIS",r:"Cognition telle que perçue ; symptômes quotidiens ; faible corrélation avec les mesures objectives"},
+{n:"MoCA · MMSE · Mini-Cog",l:"Tests cognitifs rapides",a:"dépistage",r:"Évaluation rapide en cas de suspicion ; ne diagnostiquent PAS de maladies"},
+{n:"Go/No-Go",l:"Test cognitif",a:"go 80 % · no-go 20 %",r:"Contrôle inhibiteur : taux de fausses alarmes + temps de réaction en essai go"},
+{n:"Stroop",l:"Test cognitif",a:"congruent / incongruent",r:"Dire la COULEUR du mot, pas sa signification ; erreurs et TR selon le type d’essai"},
+{n:"Empan de chiffres",l:"Test cognitif",a:"ordre inverse",r:"Retenir une séquence de chiffres et la restituer : mémoire de travail"},
+{n:"Trail Making Test · Wisconsin · fluence",l:"Tests cognitifs",a:"—",r:"Tâches de raisonnement / logique mesurant la flexibilité cognitive"},
+{n:"Neuro-imagerie",l:"Mesure objective",a:"IRM · EEG · TEP · fNIRS",r:"Structure (matières blanche/grise) et fonctions cérébrales ; peut diagnostiquer (Alzheimer, épilepsie)"},
+{n:"Jean Piaget",l:"Auteur",a:"1896-1980",r:"Père fondateur de l’école genevoise ; développement cognitif en 4 stades à passage obligatoire"},
+{n:"Stade sensori-moteur",l:"Stade Piaget",a:"0-2 ans",r:"Contact par les sens et l’action ; permanence de l’objet, causalité, différenciation soi/environnement"},
+{n:"Permanence de l’objet",l:"Acquisition",a:"sensori-moteur",r:"Comprendre qu’un objet continue d’exister quand il sort du champ perceptif"},
+{n:"Stade pré-opératoire",l:"Stade Piaget",a:"2-6 ans",r:"Mots et images, intuition plutôt que logique ; faire semblant, égocentrisme, langage"},
+{n:"Égocentrisme",l:"Notion Piaget",a:"pré-opératoire",r:"L’enfant juge en fonction de ses données perceptives"},
+{n:"Stade des opérations concrètes",l:"Stade Piaget",a:"6-11 ans",r:"Logique sur évènements concrets ; conservation des quantités, transformations mathématiques"},
+{n:"Stade des opérations formelles",l:"Stade Piaget",a:"11-16 ans",r:"Raisonnement abstrait hypothético-déductif, raisonnement moral mature"},
+{n:"Assimilation",l:"Mécanisme Piaget",a:"succion sein→pouce→objet",r:"Intégrer un objet ou une situation nouvelle à une conduite déjà existante"},
+{n:"Accommodation",l:"Mécanisme Piaget",a:"fourchette vs cuillère",r:"Modifier les anciens comportements pour les adapter à la nouvelle situation"},
+{n:"Équilibration",l:"Mécanisme Piaget",a:"—",r:"Retrouver l’équilibre d’une structure déséquilibrée par du nouveau : résolution du conflit"},
+{n:"Wallon & Vygotski",l:"Auteurs (critique)",a:"—",r:"Insistent sur le poids des mécanismes sociaux et culturels : imitation, aide d’autrui"},
+{n:"Numérosité",l:"Notion (critique)",a:"premiers jours de vie",r:"Sens du nombre rudimentaire présent dès la naissance — contre la sous-estimation des bébés par Piaget"},
+{n:"Trouble cognitif léger",l:"Vieillissement",a:"—",r:"Troubles cognitifs avec atteinte minime des activités instrumentales de la vie quotidienne"},
+{n:"Démence",l:"Vieillissement",a:"50 M (2025) · 150 M (2050 ?)",r:"Terme générique : maladies affectant fortement les fonctions cognitives et les activités quotidiennes (ex : Alzheimer)"},
+{n:"12 facteurs de risque modifiables",l:"Prévention",a:"~40 % des cas",r:"Agir dessus pourrait prévenir environ 40 % des démences — dont l’activité physique"},
+{n:"Échafaudage compensatoire",l:"Théorie",a:"Park & Reuter-Lorenz 2009",r:"Recrutement de structures et réseaux supplémentaires pour maintenir le fonctionnement cognitif malgré l’âge"},
+{n:"APOE ε4",l:"Génétique",a:"facteur de risque",r:"Allèle de risque de démence ; ses porteurs profitent davantage de l’intervention d’exercice"},
+{n:"FITT (+ V · P)",l:"Caractéristiques de l’AP",a:"—",r:"Fréquence, intensité, temps, type — plus volume et progressivité"},
+{n:"P300",l:"Neuro-imagerie (EEG)",a:"tâche oddball",r:"Réponse neuronale liée à un évènement, associée à l’attention et à la mémoire de travail"},
+{n:"Entraînement en double tâche",l:"Intervention",a:"thinking while moving",r:"Effectuer simultanément une activité motrice (marche, équilibre) et un exercice cognitif (calcul, mémoire)"},
+{n:"Modèles de Cox",l:"Statistiques",a:"risques proportionnels",r:"Modélisent une association de type « dose-réponse » (ex : sédentarité → démence)"},
+{n:"Seuil des 10 h/jour",l:"Sédentarité",a:"relation non linéaire",r:"Le risque de démence augmente significativement au-delà d’environ 10 h de sédentarité par jour"},
+{n:"Sédentarité passive vs active",l:"Sédentarité",a:"—",r:"Seuls les comportements sédentaires cognitivement inactifs sont associés au risque de démence"}
+];
+
+var LISTES=[
+{q:"Les 4 grands âges de la vie",n:4,it:[
+ {k:"utero|intra",l:"Vie intra-utéro (germinale · embryonnaire · fœtale)"},
+ {k:"enfance",l:"Enfance (nouveau-né · nourrisson · petite enfance · enfance intermédiaire)"},
+ {k:"adolescence",l:"Adolescence (jeune · intermédiaire · tardive)"},
+ {k:"adulte",l:"Adulte (jeune adulte · âge mûr · âge avancé)"}]},
+{q:"Les 3 périodes de la vie intra-utérine, dans l’ordre",n:3,it:[
+ {k:"germinale",l:"Période germinale — fécondation → 10 jours"},
+ {k:"embryonnaire",l:"Période embryonnaire — 10 jours → 2 mois"},
+ {k:"foetale|fetale",l:"Période fœtale — 2 mois → naissance"}]},
+{q:"Les caractéristiques de la conception lifespan",n:5,it:[
+ {k:"continu",l:"Processus continu — des changements à tout âge"},
+ {k:"multidimensionnel|biologique",l:"Multidimensionnel — biologique, cognitif, socio-affectif"},
+ {k:"gain|perte|regresse",l:"Gains ET pertes à tout âge"},
+ {k:"plasticite",l:"Plasticité — le cerveau se modifie à tout âge"},
+ {k:"interaction|normatif|imprevisible",l:"Interaction de facteurs — normatifs × génération × imprévisibles"}]},
+{q:"Les 3 types de facteurs dont l’interaction produit le développement",n:3,it:[
+ {k:"normatif|puberte|ecole",l:"Facteurs normatifs (puberté, entrée à l’école à 3 ans)"},
+ {k:"generation|histoire|guerre|crise",l:"Facteurs liés à l’histoire de la génération (guerres, crises)"},
+ {k:"imprevisible|accident|maladie",l:"Évènements de vie imprévisibles (accidents, maladies)"}]},
+{q:"Les 3 méthodes de la psychologie du développement",n:3,it:[
+ {k:"transversale",l:"Transversale — groupes d’âges différents, une seule mesure"},
+ {k:"longitudinale",l:"Longitudinale — un groupe suivi avec différentes mesures"},
+ {k:"mixte",l:"Mixte — plusieurs groupes suivis avec différentes mesures"}]},
+{q:"Les 5 domaines de la cognition",n:5,it:[
+ {k:"langage",l:"Langage"},
+ {k:"sociale",l:"Cognition sociale"},
+ {k:"executive",l:"Fonctions exécutives"},
+ {k:"attention",l:"Attention"},
+ {k:"memoire",l:"Mémoire et apprentissage"}]},
+{q:"Les 3 fonctions exécutives",n:3,it:[
+ {k:"inhibiteur|inhibition",l:"Contrôle inhibiteur — résister, ne pas agir impulsivement, stopper"},
+ {k:"travail",l:"Mémoire de travail — garder et exploiter des informations"},
+ {k:"flexibilite",l:"Flexibilité cognitive — changer de point de vue, s’adapter"}]},
+{q:"Les 3 familles de mesures de la cognition",n:3,it:[
+ {k:"questionnaire|auto",l:"Questionnaires auto-rapportés (subjectif)"},
+ {k:"test",l:"Tests cognitifs (objectif)"},
+ {k:"imagerie|irm|eeg",l:"Neuro-imagerie (objectif)"}]},
+{q:"Les 4 stades de Piaget, dans l’ordre, avec leurs âges",n:4,it:[
+ {k:"sensori",l:"Sensori-moteur — 0-2 ans"},
+ {k:"pre-operatoire|preoperatoire|pre operatoire",l:"Pré-opératoire — 2-6 ans"},
+ {k:"concrete",l:"Opérations concrètes — 6-11 ans"},
+ {k:"formelle",l:"Opérations formelles — 11-16 ans"}]},
+{q:"Les 3 étapes majeures du stade sensori-moteur",n:3,it:[
+ {k:"permanence",l:"Permanence de l’objet"},
+ {k:"causalite|cause",l:"Liens de causalité"},
+ {k:"differenciation|soi",l:"Différenciation entre soi et son environnement"}]},
+{q:"Le passage d’un stade à l’autre : les 3 notions",n:3,it:[
+ {k:"assimilation",l:"Assimilation — intégrer du nouveau à une conduite existante"},
+ {k:"accommodation|accomodation",l:"Accommodation — modifier ses conduites pour s’adapter"},
+ {k:"equilibre|equilibration|conflit",l:"Équilibration — retrouver l’équilibre, résoudre le conflit"}]},
+{q:"Les jalons action motrice → cognition chez le bébé (0-14 mois)",n:5,it:[
+ {k:"reflexe|succion",l:"0-1 mois : réflexes (succion, attrapé) → connaissance d’éléments extérieurs"},
+ {k:"repetee|intentionnel|secouer",l:"1-7 mois : actions répétées intentionnellement → lien de cause à effet"},
+ {k:"prehension",l:"7-10 mois : préhension → interactions en « autonomie »"},
+ {k:"deplacement",l:"7-10 mois : déplacement → élargir le champ des interactions"},
+ {k:"locomotion|lancer",l:"10-14 mois : locomotion + interactions élaborées → expérimentation active"}]},
+{q:"Les 4 familles d’explication de l’hétérogénéité AP-cognition",n:4,it:[
+ {k:"ap pratiquee|caracteristiques de l ap|fitt|intensite",l:"Caractéristiques de l’AP pratiquée (FITT + volume, progressivité)"},
+ {k:"personne|age|genetique|apoe",l:"Caractéristiques des personnes (âge, genre, génétique — APOE ε4)"},
+ {k:"environnement|pollution|exterieur",l:"Caractéristiques environnementales (pollution, intérieur/extérieur)"},
+ {k:"domaine|cible",l:"Domaines cognitifs ciblés"}]},
+{q:"FITT + V·P : les 6 caractéristiques d’une activité physique",n:6,it:[
+ {k:"frequence",l:"Fréquence"},
+ {k:"intensite",l:"Intensité"},
+ {k:"temps|duree",l:"Temps"},
+ {k:"type",l:"Type"},
+ {k:"volume",l:"Volume"},
+ {k:"progressivite|progression",l:"Progressivité"}]},
+{q:"Les chiffres de la sédentarité à ressortir",n:4,it:[
+ {k:"10",l:"Seuil : risque de démence au-delà de ~10 h/jour (relation non linéaire)"},
+ {k:"15",l:"Substitution : 15 min de sédentarité → 15 min d’AP modérée-vigoureuse"},
+ {k:"7",l:"Gain : −7 % de risque de démence"},
+ {k:"passif|inactif|actif",l:"Seuls les comportements sédentaires cognitivement inactifs sont à risque"}]}
+];
+
+/* état livebande : repères ↔ chiffres AP */
+var LIVE=[
+ {lab:"Développement · repères",vals:[["4","stades Piaget"],["3","fonctions exécutives"],["13","périodes de vie"],["3","méthodes"],["5","domaines cognitifs"]]},
+ {lab:"AP & cognition · chiffres",vals:[["50 M","démences en 2025"],["40 %","évitables · 12 facteurs"],["10","h/j — seuil sédentarité"],["-7 %","démence / 15 min d’AP"],["1","an assis à l’école"]]}
+];
+</script>
+<script>
+var FLASH = [
+{c:"c0",q:"L’objectif de l’UE",a:"<em>Mobiliser des connaissances scientifiques</em> pour comprendre les <em>mécanismes psychologiques liés au développement</em> et l’<em>activité physique</em>. Format : 5 × 2 h de CM + 5 × 2 h de TD. Évaluations : <em>contrôle intermédiaire (1 h, le 5/11)</em> + contrôle terminal (1 h)."},
+{c:"c0",q:"Le plan du cours",a:"1. <em>Introduction</em> : définition, enjeux et <em>méthodes</em>.<br>2. AP et développement <em>cognitif</em>.<br>3. AP et développement <em>affectif</em>.<br>4. AP et développement <em>social</em>.<br>Le CM 1 couvre l’introduction et le développement cognitif."},
+{c:"c0",q:"La thèse générale du cours",a:"Le développement est un processus <em>continu sur la vie entière</em> (lifespan), fait de <em>gains et de pertes</em> — et l’<em>activité physique</em> y est associée à <em>chaque âge</em> : des mouvements du bébé qui câblent la cognition à l’<em>échafaudage compensatoire</em> du senior."},
+{c:"c0",q:"Pourquoi le cours finit-il sur la prudence ?",a:"Les <em>associations</em> AP-cognition sont nombreuses, mais les <em>essais randomisés</em> ne permettent pas d’établir un <em>lien de causalité</em> — sans l’exclure. D’où la <em>plus grande prudence</em> recommandée pour la population en bonne santé."},
+{c:"c0",q:"L’activité physique dans l’évolution humaine",a:"Le mouvement est au cœur de la <em>phylogénèse</em> : la <em>bipédie</em> (étape fondamentale), l’<em>extraordinaire endurance humaine</em>, la <em>chasse à l’épuisement</em> (hommes ET femmes). Nous avons évolué pour être actifs car c’était <em>nécessaire (survie)</em> ou <em>gratifiant (fonctions sociales et affectives)</em>."},
+
+{c:"c1",q:"Définition de la psychologie du développement",a:"<em>Décrire et expliquer scientifiquement les changements</em> qui se produisent dans l’évolution des comportements <em>tout au long de la vie</em>, depuis la <em>conception</em> jusqu’à la <em>fin de la vie</em>."},
+{c:"c1",q:"Les 2 objectifs de la discipline",a:"1. <em>Décrire</em> les changements <em>normaux ou pathologiques</em> observés aux différents âges (enfance, adolescence, âge adulte, vieillesse).<br>2. <em>Expliquer les mécanismes</em> et <em>identifier les facteurs</em> qui influencent ces changements."},
+{c:"c1",q:"Les 4 grands âges de la vie",a:"<em>Vie intra-utéro</em> → <em>enfance</em> → <em>adolescence</em> → <em>adulte</em>. Chacun se subdivise en sous-périodes (13 au total dans le tableau du CM)."},
+{c:"c1",q:"Les 3 périodes de la vie intra-utérine",a:"<em>Germinale</em> : fécondation → 10 jours.<br><em>Embryonnaire</em> : 10 jours → 2 mois.<br><em>Fœtale</em> : 2 mois → naissance."},
+{c:"c1",q:"Les périodes de l’enfance",a:"<em>Nouveau-né</em> : 0-1 mois.<br><em>Nourrisson</em> : 1 mois-2 ans.<br><em>Petite enfance</em> : 2-6 ans.<br><em>Enfance intermédiaire</em> : 8-10 ans."},
+{c:"c1",q:"Les périodes de l’adolescence",a:"<em>Jeune adolescence</em> : 10-13 ans.<br><em>Adolescence intermédiaire</em> : 14-17 ans.<br><em>Adolescence tardive</em> : 18-21 ans."},
+{c:"c1",q:"Les périodes de l’âge adulte",a:"<em>Jeune adulte</em> : 22-39 ans.<br><em>Âge mûr</em> : 40-65 ans.<br><em>Âge avancé</em> : plus de 65 ans."},
+{c:"c1",q:"La place sociale de l’ENFANCE dans l’histoire",a:"Pas d’existence propre jusqu’au <em>XVIIIe siècle</em> — une « <em>quantité négligeable</em> ». Essor des <em>préoccupations éducatives</em> au <em>XIXe</em> (réduction de la mortalité infantile). Essor d’une <em>psychologie de l’enfance</em> dans les <em>années 1970</em>."},
+{c:"c1",q:"La place sociale de l’ÂGE AVANCÉ dans l’histoire",a:"La figure du <em>sage</em> dans les sociétés traditionnelles → l’<em>inutilité et le déclin</em> à la <em>Révolution industrielle</em> → un « <em>nouvel âge de la vie</em> » au <em>XXe siècle</em>. La psychologie du développement dépend de la <em>place sociale</em> des enfants et des aînés."},
+{c:"c1",q:"La conception CLASSIQUE (maturationniste)",a:"Le développement est en <em>plein essor durant l’enfance</em>, <em>s’arrête à la fin de l’adolescence</em>, reste <em>stationnaire</em> au début de l’âge adulte, puis <em>décline</em> à l’âge mûr et au cours de la vieillesse."},
+{c:"c1",q:"La conception « LIFESPAN » (vie entière)",a:"Depuis <em>30 ans</em> : le développement <em>ne se termine pas</em> avec l’âge adulte, il <em>se poursuit tout au long de la vie</em>. Cette conception <em>s’oppose à la subdivision en tranches d’âge juxtaposées</em>."},
+{c:"c1",q:"Lifespan : continu et multidimensionnel",a:"Le développement est un <em>processus continu</em> : des changements surviennent <em>à tout âge</em>. Il est <em>multidimensionnel</em> : il croise des dimensions <em>biologiques, cognitives et socio-affectives</em>."},
+{c:"c1",q:"Lifespan : gains et pertes",a:"À tout âge, certains domaines <em>progressent (gains)</em> tandis que d’autres <em>régressent (pertes)</em>. Exemple : la <em>mémoire de travail</em> peut décliner chez les seniors, mais l’<em>expertise et les connaissances</em> augmentent."},
+{c:"c1",q:"La plasticité (au sens lifespan)",a:"Le cerveau <em>conserve la capacité de se modifier à n’importe quel âge</em>."},
+{c:"c1",q:"Changements quantitatifs vs qualitatifs",a:"<em>Quantitatifs</em> : augmentation ou diminution dans l’<em>amplitude</em> d’un phénomène.<br><em>Qualitatifs</em> : changement dans la <em>nature ou la structure</em> d’un phénomène."},
+{c:"c1",q:"Les 3 types de facteurs en interaction",a:"1. Facteurs <em>normatifs</em> (ex : la puberté, l’entrée à l’école à 3 ans).<br>2. Facteurs liés à l’<em>histoire de la génération</em> (ex : guerres, crises).<br>3. <em>Évènements de vie imprévisibles</em> (ex : accidents, maladies)."},
+{c:"c1",q:"Le développement, au carrefour de quelles influences ?",a:"Entre <em>inné</em> et <em>acquis</em> : le développement résulte de l’<em>interaction complexe</em> entre la biologie et l’expérience."},
+{c:"c1",q:"Phylogénèse vs ontogénèse",a:"<em>Phylogénèse</em> : histoire de l’<em>espèce</em> au cours de son évolution.<br><em>Ontogénèse</em> : histoire du développement de l’<em>individu</em> au cours de sa vie."},
+{c:"c1",q:"Pourquoi avons-nous évolué pour être actifs ?",a:"L’AP était soit <em>nécessaire (fonction de survie)</em> — bipédie, endurance, <em>chasse à l’épuisement</em> (pour les hommes ET les femmes) — soit <em>gratifiante (fonctions sociales et affectives)</em>. Question du CM : quelles conséquences du <em>faible niveau d’AP actuel</em> sur notre développement <em>cognitif, affectif et social</em> ?"},
+
+{c:"c2",q:"L’approche TRANSVERSALE",a:"<em>Comparer des groupes d’âges différents</em> à l’aide d’<em>une seule mesure</em>. Exemple : l’effet de l’âge sur les capacités d’abstraction — comparaison des scores d’enfants de <em>3, 5 et 7 ans</em> sur une même tâche de mathématiques."},
+{c:"c2",q:"L’approche LONGITUDINALE",a:"<em>Suivre un groupe</em> au cours de l’avancée en âge <em>avec différentes mesures</em>. Exemple : les <em>mêmes enfants</em> testés à 3 ans, puis 5 ans, puis 7 ans → <em>trajectoires</em> des scores."},
+{c:"c2",q:"L’approche MIXTE",a:"<em>Suivre des groupes différents</em> au cours de l’avancée en âge <em>avec différentes mesures</em>. Exemple : trajectoires des capacités d’abstraction <em>en fonction du sexe</em> — filles et garçons mesurés à 3 ans puis à 5 ans."},
+{c:"c2",q:"Reconnaître la méthode en une phrase",a:"Plusieurs âges, une seule mesure → <em>transversale</em>.<br>Un seul groupe, plusieurs mesures → <em>longitudinale</em>.<br>Plusieurs groupes, plusieurs mesures → <em>mixte</em>."},
+
+{c:"c3",q:"Définition de la COGNITION",a:"Terme général désignant les <em>processus mentaux</em> intervenant dans l’<em>acquisition des connaissances</em>, le <em>traitement de l’information</em> et le <em>raisonnement</em> (American Psychiatric Association, 2013)."},
+{c:"c3",q:"Comment la cognition est-elle organisée ?",a:"Des <em>capacités cognitives globales</em> aux <em>domaines cognitifs plus spécifiques</em> : <em>langage</em>, <em>cognition sociale</em>, <em>fonctions exécutives</em>, <em>attention</em>, <em>mémoire et apprentissage</em>."},
+{c:"c3",q:"Les 3 grands processus des fonctions exécutives",a:"1. <em>Contrôle inhibiteur</em>.<br>2. <em>Mémoire de travail</em>.<br>3. <em>Flexibilité cognitive</em>."},
+{c:"c3",q:"Le contrôle inhibiteur",a:"<em>Résister aux tentations</em>, ne pas agir de manière <em>impulsive ou prématurée</em>, <em>stopper une action en cours</em>. Mesuré par les tâches de <em>Go/No-Go</em> et de <em>Stroop</em>."},
+{c:"c3",q:"La mémoire de travail",a:"<em>Garder des informations à l’esprit</em> et les <em>exploiter mentalement</em> : établir des liens entre notions, utiliser ces informations pour <em>résoudre un problème</em>. Mesurée par l’<em>empan de chiffres</em>."},
+{c:"c3",q:"La flexibilité cognitive",a:"<em>Changer de point de vue ou d’approche</em> face à un problème, <em>s’adapter avec souplesse</em> à de nouvelles exigences, règles ou priorités — par exemple en <em>passant d’une tâche à l’autre</em>."},
+{c:"c3",q:"Les 3 familles de mesures de la cognition",a:"1. <em>Questionnaires auto-rapportés</em> → mesure <em>subjective</em>.<br>2. <em>Tests cognitifs</em> → mesure <em>objective</em>.<br>3. <em>Neuro-imagerie</em> → mesure <em>objective</em>."},
+{c:"c3",q:"Les questionnaires et entretiens",a:"Méthode la plus <em>courante et accessible</em>. Évaluent la cognition <em>telle qu’elle est perçue</em> et les <em>symptômes quotidiens</em> — qui peuvent apparaître et disparaître. <em>Faible corrélation avec les mesures objectives</em>. Exemple : les questionnaires <em>PROMIS</em>."},
+{c:"c3",q:"MoCA, MMSE, Mini-Cog",a:"<em>Tests cognitifs rapides et simples</em>, réalisés en cas de <em>suspicion de déficience cognitive</em>. Ils ne permettent <em>PAS de diagnostiquer des maladies spécifiques</em>."},
+{c:"c3",q:"Les tests cognitifs approfondis",a:"Plus longs, ils explorent <em>plusieurs domaines cognitifs</em> liés à des <em>structures et circuits cérébraux spécifiques</em>. Résultats <em>comparés aux normes</em> (même âge, même sexe…). Réalisation en <em>présentiel ou en ligne</em>."},
+{c:"c3",q:"La tâche de Go/No-Go",a:"Mesure le <em>contrôle inhibiteur</em>. « Appuyez dès qu’un <em>cœur</em> apparaît » (<em>go = 80 %</em> des essais) ; « n’appuyez pas pour un <em>cercle</em> » (<em>no-go = 20 %</em>). Mesures : taux de <em>fausses alarmes</em> (appuyer en no-go) + <em>temps de réaction</em> en essai go."},
+{c:"c3",q:"La tâche de Stroop",a:"Mesure le <em>contrôle inhibiteur</em>. Dire à voix haute la <em>COULEUR</em> du mot, et <em>non ce qu’il signifie</em>. Essai <em>congruent</em> (mot = couleur) vs <em>incongruent</em> (le mot « JAUNE » écrit en vert → dire vert). Mesures : <em>taux d’erreur</em> et <em>temps de réaction</em> selon le type d’essai."},
+{c:"c3",q:"L’empan de chiffres (tâche de comptage)",a:"Mesure la <em>mémoire de travail</em> : <em>retenir une séquence de chiffres</em> et la restituer — dans l’<em>ordre inverse</em> selon la version. Mesure : <em>nombre maximal de réponses correctes</em>."},
+{c:"c3",q:"Les tâches de flexibilité cognitive",a:"Tâches de <em>raisonnement ou de logique</em> : tests de <em>fluence verbale</em>, <em>Trail Making Test</em>, test de <em>Wisconsin</em>."},
+{c:"c3",q:"La neuro-imagerie",a:"Mesure de la <em>structure</em> cérébrale (matières <em>blanche et grise</em>) et des <em>fonctions</em> (activité de certaines zones). Outils : <em>IRM, EEG, TEP, fNIRS</em>. Peut servir à <em>diagnostiquer</em> des maladies (Alzheimer, épilepsie)."},
+
+{c:"c4",q:"Jean Piaget",a:"<em>1896-1980</em>, <em>père fondateur de l’école genevoise</em>. Sa théorie : le développement cognitif est divisé en <em>stades</em>, avec un <em>passage obligatoire</em> par les quatre — <em>le précédent conditionne le suivant</em>."},
+{c:"c4",q:"Les 4 stades de Piaget, avec leurs âges",a:"1. <em>Sensori-moteur</em> : 0-2 ans.<br>2. <em>Pré-opératoire</em> : 2-6 ans.<br>3. <em>Opérations concrètes</em> : 6-11 ans.<br>4. <em>Opérations formelles</em> : 11-16 ans."},
+{c:"c4",q:"Le stade de l’intelligence SENSORI-MOTRICE (0-2 ans)",a:"Contacts avec le monde par l’intermédiaire des <em>sens et de l’action</em> : regarder, toucher, porter à sa bouche, saisir. Étapes majeures : <em>permanence de l’objet</em>, <em>liens de causalité</em>, <em>différenciation entre soi et son environnement</em>."},
+{c:"c4",q:"La permanence de l’objet",a:"Construction <em>progressive</em>, au stade <em>sensori-moteur</em> : comprendre qu’un objet <em>continue d’exister</em> même quand il sort du champ perceptif."},
+{c:"c4",q:"Le stade PRÉ-OPÉRATOIRE (2-6 ans)",a:"<em>Représentation</em> des choses avec des <em>mots ou des images</em> ; recours à l’<em>intuition</em> plutôt qu’au raisonnement logique. Étapes majeures : capacité à <em>faire semblant</em>, <em>égocentrisme</em>, développement du <em>langage</em>."},
+{c:"c4",q:"L’égocentrisme (Piaget)",a:"L’enfant <em>juge en fonction de ses données perceptives</em>. Étape majeure du stade <em>pré-opératoire</em> — rien à voir avec un défaut de caractère."},
+{c:"c4",q:"Le stade des OPÉRATIONS CONCRÈTES (6-11 ans)",a:"<em>Pensées logiques à partir d’évènements concrets</em> : compréhension d’<em>analogies concrètes</em>, <em>opérations arithmétiques simples</em>. Étapes majeures : <em>conservation des quantités</em>, <em>transformations mathématiques</em>."},
+{c:"c4",q:"Le stade des OPÉRATIONS FORMELLES (11-16 ans)",a:"Capacité à développer un <em>raisonnement abstrait</em> — le raisonnement <em>ne dépend plus du contenu</em>. Étapes majeures : logique abstraite via la <em>pensée hypothético-déductive</em>, <em>raisonnement moral mature</em>."},
+{c:"c4",q:"La pensée hypothético-déductive",a:"Raisonner sur des <em>propositions dont on ne sait pas encore si elles sont vraies ou fausses</em>, susceptibles d’être affirmées ou infirmées, et dont on peut <em>analyser les conséquences</em>."},
+{c:"c4",q:"L’ASSIMILATION",a:"<em>Intégrer un objet ou une situation nouvelle</em> à l’ensemble des objets auxquels une <em>conduite existante</em> s’applique déjà. Exemple : la <em>succion</em> du sein, puis du pouce, puis d’un objet — la même conduite appliquée à des objets différents."},
+{c:"c4",q:"L’ACCOMMODATION",a:"<em>Modifier les anciens comportements</em> afin de les <em>adapter</em> à la nouvelle situation ou au nouvel objet. Exemple : apprendre à utiliser différemment une <em>fourchette</em> versus une <em>cuillère</em>."},
+{c:"c4",q:"L’équilibration (assimilation + accommodation)",a:"Permet de <em>retrouver un équilibre</em> dans une structure <em>déséquilibrée</em> par un évènement ou un objet nouveau = <em>résolution du conflit</em>. C’est le mécanisme de <em>passage d’un stade à l’autre</em>."},
+{c:"c4",q:"Les consignes APSA selon le stade",a:"<em>Sensori-moteur</em> : montrer, guider, <em>faire expérimenter</em>.<br><em>Pré-opératoire</em> : « <em>Va jusqu’au plot. Quand tu arrives au rouge, tourne.</em> »<br><em>Opératoire concret</em> : « Regarde où se trouve le défenseur et <em>choisis</em> le côté. »<br><em>Formelles</em> : « Comment pourrais-tu <em>anticiper</em> ton déplacement ? »"},
+{c:"c4",q:"Critique n°1 de Piaget",a:"Une <em>faible prise en compte des aspects sociaux et culturels</em>. <em>Wallon</em> et <em>Vygotski</em> insistent davantage sur le poids des mécanismes sociaux et culturels — comme l’<em>imitation</em> et l’<em>aide d’autrui</em> — dans le développement cognitif."},
+{c:"c4",q:"Critique n°2 de Piaget",a:"Une <em>minimisation des capacités cognitives des bébés</em> et des <em>méthodes inadaptées</em>. Exemple : la <em>numérosité</em> — un <em>sens du nombre rudimentaire</em> existe dès les <em>premiers jours de vie</em> !"},
+{c:"c4",q:"Motricité et cognition chez le bébé",a:"<em>Recouvrement fort</em> entre développement des fonctions <em>motrices</em> et <em>cognitives</em>. Dès la gestation et les premières heures de vie, les mouvements du nouveau-né — pourtant <em>en apparence anarchiques</em> — <em>amorcent les futures habiletés</em> (marcher, attraper) et les sensations associées."},
+{c:"c4",q:"Les jalons action motrice → cognition (0-14 mois)",a:"<em>0-1 mois</em> : réflexes (succion, attrapé) → prise de connaissance d’<em>éléments extérieurs</em>.<br><em>1-7 mois</em> : actions <em>répétées intentionnellement</em> (secouer) → <em>lien de cause à effet</em>.<br><em>7-10 mois</em> : <em>préhension, déplacement</em> → interactions en « <em>autonomie</em> ».<br><em>10-14 mois</em> : <em>locomotion</em> + interactions élaborées (lancer, déplacer) → <em>expérimentation active</em> des propriétés, des conséquences d’action et des relations spatiales."},
+{c:"c4",q:"L’école et le temps assis",a:"Chez l’enfant et l’adolescent, l’AP joue un <em>rôle clé</em> dans le développement des fonctions cognitives. Pourtant : ~<em>11 430 heures</em> à l’école du CP à la Terminale, ~<em>75 % du temps scolaire assis</em> — soit <em>1 an (nuits incluses) assis à l’école</em>."},
+
+{c:"c5",q:"Les trajectoires cognitives à l’âge adulte",a:"Elles ne sont <em>pas uniformes</em>. Déclinent tôt : la <em>vitesse de traitement</em> et certaines composantes de la <em>mémoire de travail</em>. Progressent ou se maintiennent tard : le <em>vocabulaire</em> et les <em>connaissances générales</em>."},
+{c:"c5",q:"Le continuum du vieillissement cognitif",a:"<em>Fonctionnement cognitif normal</em> → <em>trouble cognitif léger</em> → <em>démence</em>. Les trajectoires diffèrent <em>selon les individus</em>."},
+{c:"c5",q:"Le trouble cognitif léger",a:"Troubles cognitifs accompagnés d’une <em>atteinte minime des activités instrumentales</em> de la vie quotidienne."},
+{c:"c5",q:"La démence",a:"<em>Terme générique</em> désignant <em>plusieurs maladies</em> qui affectent <em>fortement</em> les fonctions cognitives et la capacité à accomplir les <em>activités quotidiennes</em>. Exemple : la <em>maladie d’Alzheimer</em>."},
+{c:"c5",q:"Les chiffres mondiaux de la démence",a:"<em>50 millions</em> de cas à travers le monde en <em>2025</em> — <em>150 millions</em> possibles en <em>2050</em> ?"},
+{c:"c5",q:"La prévention de la démence",a:"Environ <em>40 % des cas</em> pourraient être prévenus en agissant sur <em>12 facteurs de risque modifiables</em> — <em>dont l’activité physique</em> !"},
+{c:"c5",q:"La théorie de l’échafaudage du vieillissement cognitif",a:"<em>Park & Reuter-Lorenz, 2009</em>. Le cerveau met en place un <em>échafaudage compensatoire</em> — le <em>recrutement de structures et réseaux neuronaux supplémentaires</em> — pour <em>maintenir un niveau élevé de fonctionnement cognitif</em> malgré les altérations structurelles et fonctionnelles liées à l’âge."},
+{c:"c5",q:"De quoi dépendent les altérations cérébrales liées à l’âge ?",a:"Du <em>vieillissement biologique</em>, des sources d’<em>enrichissement cognitif</em> et des sources d’<em>appauvrissement cognitif</em> au cours de la vie."},
+{c:"c5",q:"De quoi dépend la mise en place de l’échafaudage ?",a:"Des <em>comportements mis en place par l’individu</em>… <em>dont l’activité physique</em> !"},
+{c:"c5",q:"Les athlètes et la cognition",a:"Les athlètes présentent des performances cognitives <em>légèrement meilleures</em> que les personnes ne faisant pas de sport en compétition — notamment les pratiquant·e·s de <em>haut niveau</em>, en <em>sports collectifs et d’endurance</em> (vs. sports individuels)."},
+{c:"c5",q:"L’étude d’intervention « marche » (120 adultes 55+)",a:"<em>1 an</em>, <em>3 jours/semaine</em>, deux conditions : <em>marche encadrée</em> (10 à 40 min) vs <em>étirements/tonification</em> (équilibre, yoga…). Résultat : environ <em>+2 % vs −2 %</em>, avec un bénéfice sur une tâche de <em>mémorisation spatiale</em>."},
+{c:"c5",q:"L’étude sur 39 000 Européens (50+)",a:"Mesure <em>composite de l’AP sur 14 ans</em> (jusqu’à <em>7 vagues</em> de mesure) ; résultats à <em>trois tests cognitifs</em>. On relie les <em>trajectoires d’activité physique</em> aux <em>trajectoires cognitives</em>."},
+{c:"c5",q:"La remise en question récente des liens AP-cognition",a:"« Les données actuelles issues des <em>essais cliniques randomisés</em> ne permettent pas d’établir un <em>lien de causalité</em> entre AP régulière et amélioration des fonctions cognitives, <em>même si elles ne l’excluent pas</em>. » → <em>prudence</em> sur les affirmations, pour la population <em>en bonne santé</em>."},
+{c:"c5",q:"Les 4 familles d’explication de l’hétérogénéité",a:"1. Caractéristiques de l’<em>AP pratiquée</em>.<br>2. Caractéristiques des <em>personnes</em>.<br>3. Caractéristiques <em>environnementales</em>.<br>4. <em>Domaines cognitifs ciblés</em>."},
+{c:"c5",q:"Les caractéristiques de l’AP pratiquée (FITT)",a:"<em>Fréquence, intensité, temps, type</em> — plus <em>volume</em> et <em>progressivité</em>. Et toutes les revues <em>ne s’accordent pas</em> sur l’activité physique « <em>idéale</em> » pour agir sur les fonctions cognitives."},
+{c:"c5",q:"L’étude exercice × APOE ε4",a:"L’allèle <em>APOE ε4</em> est un <em>facteur de risque de démence</em>. Étude : <em>200 personnes</em> avec Alzheimer léger, <em>16 semaines</em>, 3 j/sem d’<em>aérobie modérée à élevée</em> vs soins habituels. Les <em>porteurs ε4 du groupe exercice</em> en profitent davantage : ils <em>maintiennent leur score</em> et rapportent de <em>meilleurs résultats</em>."},
+{c:"c5",q:"L’étude AP × pollution",a:"<em>36 000 personnes âgées</em> (283 cas de démence), AP mesurée par <em>accéléromètre</em>, exposition aux <em>polluants</em> (particules fines). L’AP est associée à une <em>diminution du risque de démence</em> seulement dans le <em>quartile le moins pollué</em> — <em>plus d’association significative</em> dans le tertile le plus pollué !"},
+{c:"c5",q:"L’étude marche extérieure vs intérieure",a:"<em>30 jeunes adultes</em>, marche de <em>2 km en intérieur vs en extérieur</em>. Mesures : temps de réaction à une tâche visuelle « <em>oddball</em> » + amplitude de la <em>P300</em> (EEG — attention et mémoire de travail). En <em>plein air</em> : <em>meilleures performances d’attention</em> et <em>activité cérébrale plus intense</em> dans les zones de l’attention."},
+{c:"c5",q:"Des relations BIDIRECTIONNELLES",a:"Lors de l’avancée en âge, les <em>fonctions cognitives</em> jouent un rôle critique dans le <em>maintien de l’activité physique</em> — des ressources nécessaires pour lutter contre la <em>loi du moindre effort</em>."},
+{c:"c5",q:"L’entraînement en double tâche",a:"Effectuer <em>simultanément</em> une <em>activité motrice</em> (marcher, garder l’équilibre) et un <em>exercice cognitif</em> (calculs, mémoire). Et aussi : « <em>thinking while moving</em> » — bouger en réfléchissant… et pourquoi pas <em>réfléchir en bougeant</em> ?"},
+{c:"c5",q:"L’étude sédentarité → démence (50 000 âgés)",a:"Âge moyen 67 ans, <em>414 cas</em> de démence, temps sédentaire par <em>accéléromètre</em>, suivi ~<em>7 ans</em>, <em>modèles de Cox</em> (association <em>dose-réponse</em>). Relation <em>NON linéaire</em> : le risque augmente significativement <em>au-delà d’environ 10 heures par jour</em> — résultats identiques <em>après ajustement sur l’AP</em>."},
+{c:"c5",q:"La substitution 15 minutes",a:"Remplacer <em>15 minutes par jour</em> de temps sédentaire par 15 minutes d’<em>AP modérée à vigoureuse</em> réduit de <em>7 %</em> les risques de démence."},
+{c:"c5",q:"Sédentarité passive vs active",a:"<em>Seuls les comportements sédentaires cognitivement INACTIFS</em> (mentalement passifs) sont associés au risque de démence chez les personnes âgées. Résultats identiques après <em>ajustement sur l’AP</em>."}
+];
+</script>
+<script>
+/* ================= OUTILS ================= */
+function $(id){return document.getElementById(id)}
+function norm(s){return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ")}
+var RM=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var KEY="psy_dev_v1";
+var S;try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){S={}}
+if(!S.fl)S.fl={};if(!S.qbest)S.qbest=0;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* FLASH est défini dans le bloc données (partagé) */
+function mastery(){
+  var ok=0;for(var i=0;i<FLASH.length;i++)if(S.fl[i]===1)ok++;
+  return FLASH.length?Math.round(100*ok/FLASH.length):0;
+}
+
+/* ================= COMPTEURS HERO ================= */
+function countTo(el,target,suffix,dur){
+  if(RM){el.textContent=target+(suffix||"");return}
+  var t0=null;
+  function step(ts){
+    if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/(dur||900));p=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*p)+(suffix||"");
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+countTo($("t-fl"),FLASH.length);
+countTo($("t-qc"),QCM.length);
+countTo($("t-st"),STRUCTS.length);
+countTo($("t-ok"),mastery(),"%");
+(function(){var el=$("t-j");if(!el)return;var d=Math.ceil((new Date(2026,10,5).getTime()-Date.now())/86400000);el.textContent=d>1?("J-"+d):(d===1?"J-1":(d===0?"JOUR J":"fait"));})();
+
+/* ================= LIVEBAND ================= */
+var LST=0;
+function drawLive(anim){
+  var st=LIVE[LST];$("lswlab").textContent=st.lab;
+  var h="";
+  for(var i=0;i<st.vals.length;i++)h+='<div class="lval"><b data-v="'+st.vals[i][0]+'">'+st.vals[i][0]+'</b><span class="mono">'+st.vals[i][1]+'</span></div>';
+  $("lvals").innerHTML=h;
+  if(anim&&!RM){
+    var bs=$("lvals").querySelectorAll("b");
+    for(var j=0;j<bs.length;j++)(function(b,d){
+      b.style.opacity=0;b.style.transform="translateY(8px)";
+      setTimeout(function(){b.style.transition="opacity .35s,transform .35s";b.style.opacity=1;b.style.transform="none"},60*d);
+    })(bs[j],j);
+  }
+}
+drawLive(false);
+$("lsw").onclick=function(){LST=1-LST;this.classList.toggle("on",LST===1);drawLive(true)};
+
+/* ================= TABS ================= */
+var TABS=["cours","flash","qcm","struct","listes"];
+function glide(){
+  var on=document.querySelector(".tabb.on");if(!on)return;
+  var g=$("tabglide");
+  g.style.width=on.offsetWidth+"px";
+  g.style.transform="translateX("+on.offsetLeft+"px)";
+}
+function goTab(t,scroll){
+  var bs=document.querySelectorAll(".tabb");
+  for(var i=0;i<bs.length;i++)bs[i].classList.toggle("on",bs[i].getAttribute("data-t")===t);
+  for(var j=0;j<TABS.length;j++){var p=$("p-"+TABS[j]);if(p)p.classList.toggle("on",TABS[j]===t)}
+  glide();
+  if(t==="flash")drawF();
+  if(t==="qcm"&&!QON)qHome();
+  revealScan();
+  if(scroll)window.scrollTo({top:document.querySelector(".tabbar").offsetTop-1,behavior:RM?"auto":"smooth"});
+}
+$("tabrow").onclick=function(e){
+  var b=e.target.closest(".tabb");if(!b)return;goTab(b.getAttribute("data-t"),false);
+};
+document.querySelectorAll("[data-go]").forEach(function(b){
+  b.onclick=function(){goTab(b.getAttribute("data-go"),true)};
+});
+addEventListener("resize",glide);
+addEventListener("load",glide);
+setTimeout(glide,250);
+
+/* barre de progression du scroll */
+addEventListener("scroll",function(){
+  var h=document.documentElement,max=h.scrollHeight-innerHeight;
+  $("scrollbar").style.width=(max>0?(h.scrollTop/max*100):0)+"%";
+},{passive:true});
+
+/* ================= REVEAL + TILT ================= */
+var IO=("IntersectionObserver" in window)?new IntersectionObserver(function(es){
+  for(var i=0;i<es.length;i++)if(es[i].isIntersecting){es[i].target.classList.add("in");IO.unobserve(es[i].target)}
+},{threshold:.08}):null;
+function revealScan(){
+  var els=document.querySelectorAll(".panel.on .reveal:not(.in)");
+  for(var i=0;i<els.length;i++){if(IO&&!RM)IO.observe(els[i]);else els[i].classList.add("in")}
+}
+revealScan();
+
+var FINE=window.matchMedia&&matchMedia("(pointer:fine)").matches;
+if(FINE&&!RM){
+  document.addEventListener("pointermove",function(e){
+    var c=e.target.closest(".tilt");if(!c)return;
+    var r=c.getBoundingClientRect();
+    var px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+    c.style.setProperty("--mx",(px*100)+"%");c.style.setProperty("--my",(py*100)+"%");
+    c.style.transform="perspective(900px) rotateX("+((py-.5)*-6.5)+"deg) rotateY("+((px-.5)*6.5)+"deg)";
+  });
+  document.addEventListener("pointerout",function(e){
+    var c=e.target.closest(".tilt");if(c)c.style.transform="";
+  });
+}
+
+/* ================= FLASHCARDS ================= */
+var FSEL="all",FDECK=[],FI=0,FLIP=false;
+function buildChips(){
+  var h='<button class="chip plus fchip'+(FSEL==="all"?" sel":"")+'" data-c="all">Tout</button>';
+  for(var i=0;i<CHAPS.length;i++)h+='<button class="chip plus fchip'+(FSEL===CHAPS[i].id?" sel":"")+'" data-c="'+CHAPS[i].id+'">'+CHAPS[i].t+'</button>';
+  h+='<button class="chip rev fchip'+(FSEL==="rev"?" sel":"")+'" data-c="rev">À revoir</button>';
+  $("fchips").innerHTML=h;
+  $("fchips").onclick=function(e){
+    var b=e.target.closest(".fchip");if(!b)return;
+    FSEL=b.getAttribute("data-c");buildDeck();drawF();buildChips();
+  };
+}
+function buildDeck(){
+  FDECK=[];
+  for(var i=0;i<FLASH.length;i++){
+    if(FSEL==="all"||FLASH[i].c===FSEL||(FSEL==="rev"&&S.fl[i]===0))FDECK.push(i);
+  }
+  FI=0;FLIP=false;
+}
+function drawF(){
+  if(!FDECK.length)buildDeck();
+  var card=$("fcard");
+  if(!FDECK.length){card.innerHTML='<div class="glare"></div><div class="q">Rien à revoir ici.</div><p class="mono">change de filtre</p>';$("fcount").textContent="0 / 0";return}
+  var gi=FDECK[FI],f=FLASH[gi];
+  var st=S.fl[gi]===1?'<span class="chip ok">acquis</span>':S.fl[gi]===0?'<span class="chip rev">à revoir</span>':"";
+  card.innerHTML='<div class="glare"></div><span class="mono">'+chapName(f.c)+'</span>'+
+    '<div class="q">'+f.q+'</div>'+
+    '<p class="mono hint">clique pour retourner · '+(st?"":"non vue")+'</p>'+st+
+    '<div class="a">'+f.a+'</div>';
+  card.classList.toggle("flip",FLIP);
+  $("fcount").textContent=(FI+1)+" / "+FDECK.length;
+  $("ffill").style.width=Math.round((FI+1)/FDECK.length*100)+"%";
+  $("fscore").textContent=mastery()+"% acquis";
+  $("fmarks").style.display=FLIP?"flex":"none";
+}
+function chapName(id){for(var i=0;i<CHAPS.length;i++)if(CHAPS[i].id===id)return CHAPS[i].t;return""}
+function fmove(d){FI=(FI+d+FDECK.length)%FDECK.length;FLIP=false;drawF()}
+$("fcard").onclick=function(){FLIP=!FLIP;drawF()};
+$("fflip").onclick=function(){FLIP=!FLIP;drawF()};
+$("fprev").onclick=function(){fmove(-1)};
+$("fnext").onclick=function(){fmove(1)};
+$("fok").onclick=function(){S.fl[FDECK[FI]]=1;save();countTo($("t-ok"),mastery(),"%",400);fmove(1)};
+$("fko").onclick=function(){S.fl[FDECK[FI]]=0;save();fmove(1)};
+document.addEventListener("keydown",function(e){
+  if(!$("p-flash").classList.contains("on"))return;
+  if(e.key==="ArrowLeft")fmove(-1);
+  else if(e.key==="ArrowRight")fmove(1);
+  else if(e.key===" "){e.preventDefault();FLIP=!FLIP;drawF()}
+});
+buildChips();buildDeck();
+
+/* ================= QCM ================= */
+var QON=false,QQ=[],QI=0,QOK=0,QCH="all",QBAD=[];
+if(!S.qr)S.qr={};
+function qStats(ch){
+  var t=0,seen=0,ok=0;
+  for(var i=0;i<QCM.length;i++){
+    if(ch!=="all"&&QCM[i].c!==ch)continue;
+    t++;if(S.qr[i]!==undefined){seen++;if(S.qr[i])ok++}
+  }
+  return {t:t,seen:seen,ok:ok,rate:seen?Math.round(100*ok/seen):0};
+}
+function qChip(st){
+  if(st.seen===0)return '<span class="chip plus">pas commencé</span>';
+  if(st.rate>=80&&st.seen>=Math.ceil(st.t*0.6))return '<span class="chip ok">acquis</span>';
+  if(st.rate>=60)return '<span class="chip rev">à consolider</span>';
+  return '<span class="chip src">à apprendre</span>';
+}
+function qHome(){
+  QON=false;
+  var h='<p style="color:var(--muted);margin-bottom:18px">Choisis une partie du cours. Le statut se base sur ta dernière réponse à chaque question.</p>';
+  h+='<div class="card'+(S.hard?' hero-card':'')+'" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:space-between'+(S.hard?';border-color:rgba(255,107,168,.45)':'')+'">'+
+     '<div><h3 style="margin:0 0 4px'+(S.hard?';color:var(--art)':'')+'">Mode '+(S.hard?'difficile':'normal')+'</h3>'+
+     '<span class="mono">'+(S.hard?'les énoncés changent, la réponse reste — zéro indice de chapitre':'les énoncés du cours, chapitre affiché')+'</span></div>'+
+     '<button class="btn'+(S.hard?'':' pri')+'" id="qhard">'+(S.hard?'Repasser en normal':'Passer en difficile')+'</button></div>';
+  for(var i=0;i<CHAPS.length;i++){
+    var c=CHAPS[i],st=qStats(c.id);
+    h+='<div class="card tilt reveal in"><div class="glare"></div>'+
+       '<div style="display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap">'+
+       '<div><h3 style="margin:0 0 6px">'+(i+1)+' · '+c.t+'</h3>'+
+       '<span class="mono">'+st.t+' questions · '+st.seen+' vues · '+(st.seen?st.rate+'&thinsp;% de réussite':'—')+'</span></div>'+qChip(st)+'</div>'+
+       '<div class="track" style="margin:14px 0"><div class="fill" style="width:'+(st.t?Math.round(st.seen/st.t*100):0)+'%"></div></div>'+
+       '<button class="btn pri" data-qch="'+c.id+'">Réviser cette partie</button></div>';
+  }
+  var g=qStats("all");
+  var ERR=[];for(var ei=0;ei<QCM.length;ei++)if(S.qr[ei]===0)ERR.push(ei);
+  h+='<div class="fnav" style="justify-content:flex-start;margin-top:4px"><button class="btn" data-qch="all">Tout mélanger · '+g.t+' questions</button>'+
+     (ERR.length?'<button class="btn" id="qerrall" style="border-color:rgba(255,107,168,.5);color:var(--art)">Refaire mes erreurs · '+ERR.length+'</button>':'')+'</div>';
+  $("qzone").innerHTML=h;
+  $("qzone").classList.toggle("hardrun",!!S.hard);
+  $("qhard").onclick=function(){
+    S.hard=!S.hard;save();
+    if(S.hard)hardFx(qHome);else qHome();
+  };
+  var eb=$("qerrall");
+  if(eb)eb.onclick=function(){
+    var ERR=[];for(var ei=0;ei<QCM.length;ei++)if(S.qr[ei]===0)ERR.push(ei);
+    if(ERR.length)startQ("err",ERR);
+  };
+  $("qzone").onclick=function(e){
+    var b=e.target.closest("[data-qch]");if(!b)return;
+    startQ(b.getAttribute("data-qch"));
+  };
+}
+function hardFx(cb){
+  if(RM){cb();return}
+  var d=document.createElement("div");d.id="hardfx";
+  d.innerHTML='<div><div class="t">Mode<br>difficile</div>'+
+    '<div class="mono" style="margin-top:16px;color:var(--ink)">les énoncés changent · la réponse reste la même</div>'+
+    '<span class="dotp" style="display:block;width:10px;height:10px;border-radius:50%;background:var(--art);box-shadow:0 0 16px 4px rgba(255,107,168,.7)"></span></div>';
+  document.body.appendChild(d);
+  setTimeout(cb,520);
+  setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d)},1520);
+}
+function startQ(ch,list){
+  QON=true;QCH=ch||"all";QQ=[];QI=0;QOK=0;QBAD=[];
+  if(list)QQ=list.slice();
+  else for(var i=0;i<QCM.length;i++)if(QCH==="all"||QCM[i].c===QCH)QQ.push(i);
+  for(var z=QQ.length-1;z>0;z--){var r=(Math.random()*(z+1))|0,t=QQ[z];QQ[z]=QQ[r];QQ[r]=t}
+  drawQ();
+}
+function drawQ(){
+  var zone=$("qzone");
+  if(QI>=QQ.length){
+    var pc=Math.round(100*QOK/QQ.length);
+    if(QCH==="all"&&pc>S.qbest){S.qbest=pc;save()}
+    var errs=QBAD.slice();
+    var lab=QCH==="err"?"tes erreurs":(QCH==="all"?"tout le cours":chapName(QCH));
+    var msg=QCH==="err"&&!errs.length?"Erreurs corrigées. Équilibre rétabli : l’accommodation a fait son travail.":(pc>=80?"Solide. Opérations formelles : validées.":pc>=60?"Correct, mais l’équilibration n’est pas finie.":"Repasse par les flashcards : assimile d’abord, accommode ensuite.");
+    var st=QCH==="err"?qStats("all"):qStats(QCH);
+    zone.innerHTML='<div class="card hero-card reveal in" style="text-align:center">'+
+      '<span class="mono">'+lab+'</span>'+
+      '<div class="hfont" style="font-size:64px;margin-top:10px;color:'+(pc>=80?"var(--ok)":pc>=60?"var(--hl)":"var(--art)")+'">'+pc+'%</div>'+
+      '<p style="margin:10px auto 8px">'+QOK+' / '+QQ.length+' sur ce tour — '+msg+'</p>'+
+      '<div style="margin-bottom:18px">'+qChip(st)+'</div>'+
+      '<div class="fnav" style="justify-content:center">'+
+      (errs.length?'<button class="btn pri" id="qerr">Refaire mes erreurs · '+errs.length+'</button>':'')+
+      '<button class="btn'+(errs.length?'':' pri')+'" id="qre">Refaire la série</button>'+
+      '<button class="btn" id="qback">← Les parties</button></div></div>';
+    if(errs.length)$("qerr").onclick=function(){startQ("err",errs)};
+    $("qre").onclick=function(){startQ(QCH==="err"?"all":QCH)};
+    $("qback").onclick=qHome;
+    return;
+  }
+  var q=QCM[QQ[QI]];
+  var phr=q.q;
+  if(S.hard&&typeof QVAR!=="undefined"&&QVAR.length===QCM.length&&QVAR[QQ[QI]]&&QVAR[QQ[QI]].length)phr=QVAR[QQ[QI]][(Math.random()*QVAR[QQ[QI]].length)|0];
+  var L=["A","B","C","D"],ord=[0,1,2,3];
+  for(var z=3;z>0;z--){var r=(Math.random()*(z+1))|0,t=ord[z];ord[z]=ord[r];ord[r]=t}
+  var h='<div class="fmeter"><span class="mono">'+(QI+1)+' / '+QQ.length+'</span><div class="track"><div class="fill" style="width:'+Math.round(QI/QQ.length*100)+'%"></div></div><span class="mono">'+QOK+' ✓</span></div>';
+  h+='<div class="card hero-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center">'+(S.hard?'<span class="chip src">mode difficile</span>':'<span class="mono">'+chapName(q.c)+'</span>')+''+
+     '<button class="btn" id="qquit" style="padding:8px 16px">parties</button></div>'+
+     '<h3 style="margin:12px 0 16px;text-transform:none;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:700;font-size:19px;line-height:1.4">'+phr+'</h3><div id="qopts">';
+  for(var i=0;i<4;i++)h+='<button class="opt" data-i="'+ord[i]+'"><span class="k">'+L[i]+'</span><span>'+q.o[ord[i]]+'</span></button>';
+  h+='</div><div id="qwhy"></div></div>';
+  zone.innerHTML=h;
+  $("qquit").onclick=qHome;
+  var opts=zone.querySelectorAll(".opt"),done=false;
+  for(var j=0;j<opts.length;j++)opts[j].onclick=function(){
+    if(done)return;done=true;
+    var pick=+this.getAttribute("data-i");
+    S.qr[QQ[QI]]=(pick===q.k)?1:0;save();
+    if(pick===q.k){this.classList.add("good");QOK++}
+    else{
+      QBAD.push(QQ[QI]);
+      this.classList.add("bad");
+      for(var m=0;m<opts.length;m++)if(+opts[m].getAttribute("data-i")===q.k)opts[m].classList.add("good");
+    }
+    $("qwhy").innerHTML='<div class="why">'+q.w+'</div><div style="margin-top:14px;text-align:right"><button class="btn pri" id="qnext">Suivant →</button></div>';
+    $("qnext").onclick=function(){QI++;drawQ()};
+    try{$("qnext").focus({preventScroll:true})}catch(e){}
+  };
+}
+
+/* ================= STRUCTURES ================= */
+(function(){
+  var h="";
+  for(var i=0;i<STRUCTS.length;i++){
+    var s=STRUCTS[i];
+    h+='<tr><td><b>'+s.n+'</b></td><td>'+s.l+'</td><td class="v">'+s.a+'</td><td>'+s.r+'</td></tr>';
+  }
+  $("sbody").innerHTML=h;
+  $("ssearch").oninput=function(){
+    var v=norm(this.value.trim()),rows=$("sbody").children;
+    for(var i=0;i<rows.length;i++){
+      var s=STRUCTS[i];
+      rows[i].style.display=(!v||norm(s.n+" "+s.l+" "+s.a+" "+s.r).indexOf(v)>=0)?"":"none";
+    }
+  };
+})();
+
+/* ================= RESTITUTION ================= */
+(function(){
+  var h="";
+  for(var i=0;i<LISTES.length;i++){
+    var L2=LISTES[i];
+    h+='<div class="card tilt reveal"><div class="glare"></div>'+
+       '<span class="mono">'+L2.n+' éléments attendus</span>'+
+       '<h3 style="margin-top:8px">'+L2.q+'</h3>'+
+       '<textarea id="lta'+i+'" placeholder="Écris de mémoire, un élément par ligne ou séparés par des virgules…"></textarea>'+
+       '<div style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+
+       '<button class="btn pri" data-l="'+i+'">Vérifier</button><span class="mono" id="lres'+i+'"></span></div>'+
+       '<div id="lout'+i+'" style="margin-top:10px"></div></div>';
+  }
+  $("lzone").innerHTML=h;
+  $("lzone").onclick=function(e){
+    var b=e.target.closest("[data-l]");if(!b)return;
+    var i=+b.getAttribute("data-l"),L2=LISTES[i];
+    var v=norm($("lta"+i).value);
+    var got=0,out="";
+    for(var j=0;j<L2.it.length;j++){
+      var ks=L2.it[j].k.split("|"),hit=false;
+      for(var m=0;m<ks.length;m++)if(ks[m]&&v.indexOf(norm(ks[m]))>=0){hit=true;break}
+      if(hit)got++;
+      out+='<div class="'+(hit?"liok":"liko")+'">'+(hit?"✓ ":"✗ ")+L2.it[j].l+'</div>';
+    }
+    $("lres"+i).textContent=got+" / "+L2.n;
+    $("lres"+i).style.color=got===L2.n?"var(--ok)":"var(--warn)";
+    var card=b.closest(".card");
+    if(!RM){card.style.animation="none";void card.offsetWidth;card.style.animation=(got===L2.n?"pulseok .6s":"shake .45s")}
+    $("lout"+i).innerHTML=out;
+  };
+})();
+
+/* ================= HERO WEBGL : tête de verre, galaxie des pensées ================= */
+(function(){
+  var cv=$("gl"),gl=cv.getContext("webgl",{antialias:false,alpha:true,premultipliedAlpha:false});
+  if(!gl){$("glfall").style.display="block";cv.style.display="none";return}
+
+  var VS="attribute vec3 aT;attribute vec3 aS;attribute float aD;attribute float aH;attribute float aG;"+
+  "uniform float uT;uniform vec2 uR;uniform vec2 uM;uniform float uP;uniform float uD;uniform float uS;uniform float uA;uniform vec2 uO;varying float vH;varying float vA;"+
+  "void main(){"+
+  "float p=clamp((uT-aD)/1.9,0.0,1.0);p=1.0-pow(1.0-p,3.0);"+
+  "vec3 pos=mix(aS,aT,p);"+
+  "if(aG>0.5){"+
+  "float ga=uT*0.3;float cg=cos(ga),sg=sin(ga);"+
+  "pos=vec3(pos.x*cg+pos.z*sg,pos.y,-pos.x*sg+pos.z*cg);"+
+  "float ct=cos(-0.62),st=sin(-0.62);"+
+  "pos=vec3(pos.x,pos.y*ct-pos.z*st,pos.y*st+pos.z*ct);"+
+  "pos+=vec3(0.10,0.16,0.0);}"+
+  "pos.x+=0.02*sin(uT*0.5+pos.y*2.2+aD*6.28);pos.y+=0.016*sin(uT*0.42+pos.x*2.6+aD*4.0);pos.z+=0.014*sin(uT*0.36+aD*9.0);"+
+  "float ry=0.42*sin(uT*0.22)+uM.x*0.55;float rx=-0.12+uM.y*0.3;"+
+  "float cy=cos(ry),sy=sin(ry);pos=vec3(pos.x*cy+pos.z*sy,pos.y,-pos.x*sy+pos.z*cy);"+
+  "float cx=cos(rx),sx=sin(rx);pos=vec3(pos.x,pos.y*cx-pos.z*sx,pos.y*sx+pos.z*cx);"+
+  "float persp=2.6/(2.6+pos.z);"+
+  "vec2 xy=pos.xy*persp;xy.x*=uR.y/uR.x;"+
+  "gl_Position=vec4(xy.x*0.85*uS+uO.x,xy.y*0.85*uS+uO.y,0.0,1.0);"+
+  "float tw=1.0+0.28*sin(uT*2.6+aD*43.0);"+
+  "gl_PointSize=(1.1+1.5*persp)*uD*tw*(1.0+0.5*step(0.5,aH));"+
+  "vH=aH;vA=p*(0.5+0.35*persp)*uA;}";
+  var FS="precision mediump float;varying float vH;varying float vA;"+
+  "void main(){vec2 d=gl_PointCoord-0.5;float a=smoothstep(0.5,0.1,length(d))*vA;"+
+  "vec3 cold=vec3(0.62,0.48,1.0);vec3 warm=vec3(1.0,0.42,0.66);"+
+  "vec3 c=mix(cold,warm,step(0.5,vH));gl_FragColor=vec4(c,a);}";
+
+  function sh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o}
+  var pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));
+  gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){$("glfall").style.display="block";cv.style.display="none";return}
+  gl.useProgram(pr);
+
+  /* géométrie : profil de tête en points + galaxie des pensées + poussière */
+  var N=15000,T=new Float32Array(N*3),ST=new Float32Array(N*3),D=new Float32Array(N),H=new Float32Array(N),G=new Float32Array(N);
+  function rnd(){return Math.random()*2-1}
+  function jit(a){return (Math.random()+Math.random()-1)*a}
+  var PROF=[
+    [0.50,-1.06],[0.58,-0.58],[0.65,-0.08],[0.60,0.36],[0.42,0.66],[0.10,0.82],
+    [-0.22,0.74],[-0.44,0.54],[-0.53,0.28],[-0.49,0.10],[-0.62,-0.07],[-0.51,-0.14],
+    [-0.57,-0.26],[-0.50,-0.35],[-0.45,-0.46],[-0.28,-0.57],[-0.02,-0.72],[0.05,-1.06]
+  ];
+  var PW=[],PTOT=0;
+  for(var si=0;si<PROF.length-1;si++){
+    var dx=PROF[si+1][0]-PROF[si][0],dy=PROF[si+1][1]-PROF[si][1];
+    PW[si]=Math.sqrt(dx*dx+dy*dy);PTOT+=PW[si];
+  }
+  var i3=0;
+  for(var i=0;i<N;i++){
+    var x,y,z,part=Math.random();
+    if(part<0.42){ /* le contour du profil, en dalle */
+      var pick=Math.random()*PTOT,k=0,acc=PW[0];
+      while(pick>acc&&k<PW.length-1){k++;acc+=PW[k]}
+      var u=Math.random();
+      x=PROF[k][0]+(PROF[k+1][0]-PROF[k][0])*u+jit(0.05);
+      y=PROF[k][1]+(PROF[k+1][1]-PROF[k][1])*u+jit(0.05);
+      z=jit(0.16);
+      H[i]=Math.random()<0.08?1:0;G[i]=0;
+    }else if(part<0.84){ /* la galaxie des pensées, coordonnées locales du disque */
+      var r=Math.pow(Math.random(),0.6)*0.5;
+      var arm=(Math.random()<0.5?0:3.14159);
+      var th=arm+r*5.6+jit(0.3);
+      x=r*Math.cos(th)+jit(0.012);
+      z=r*Math.sin(th)+jit(0.012);
+      y=jit(0.035)*(1.1-r);
+      H[i]=r<0.12?1:(Math.random()<0.22?1:0);G[i]=1;
+    }else{ /* poussière */
+      var rr=1.2+Math.random()*0.8,aa=Math.random()*6.283;
+      x=rr*Math.cos(aa);z=rr*Math.sin(aa);y=rnd()*1.1;
+      H[i]=Math.random()<0.5?1:0;G[i]=0;
+    }
+    T[i3]=x;T[i3+1]=y;T[i3+2]=z;
+    ST[i3]=x+rnd()*2.6;ST[i3+1]=y+rnd()*2.6;ST[i3+2]=z+rnd()*2.6-1.2;
+    D[i]=Math.random()*0.9;
+    i3+=3;
+  }
+  function buf(data,loc,size){
+    var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);
+    gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
+    var a=gl.getAttribLocation(pr,loc);gl.enableVertexAttribArray(a);
+    gl.vertexAttribPointer(a,size,gl.FLOAT,false,0,0);
+  }
+  buf(T,"aT",3);buf(ST,"aS",3);buf(D,"aD",1);buf(H,"aH",1);buf(G,"aG",1);
+  var uT=gl.getUniformLocation(pr,"uT"),uR=gl.getUniformLocation(pr,"uR"),
+      uM=gl.getUniformLocation(pr,"uM"),uP=gl.getUniformLocation(pr,"uP"),uD=gl.getUniformLocation(pr,"uD"),uS=gl.getUniformLocation(pr,"uS"),uA=gl.getUniformLocation(pr,"uA"),uO=gl.getUniformLocation(pr,"uO");
+  gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+  gl.clearColor(0,0,0,0);
+
+  var mx=0,my=0,tmx=0,tmy=0,run=true,t0=performance.now();
+  function size(){
+    var d=Math.min(2,devicePixelRatio||1),hero=cv.parentElement;
+    cv.width=hero.clientWidth*d;cv.height=hero.clientHeight*d;
+    gl.viewport(0,0,cv.width,cv.height);
+    var w=hero.clientWidth,hh=hero.clientHeight,po=hh>w;
+    gl.uniform1f(uD,d*(w<640?0.62:1));
+    gl.uniform1f(uS,po?Math.max(0.6,w/hh*1.2):1.0);
+    gl.uniform1f(uA,po?0.5:1.0);
+    gl.uniform2f(uO,po?0.0:0.38,po?0.3:0.16);
+  }
+  size();addEventListener("resize",size);
+  document.querySelector(".hero").addEventListener("pointermove",function(e){
+    var r=this.getBoundingClientRect();
+    tmx=((e.clientX-r.left)/r.width-0.5)*2;tmy=((e.clientY-r.top)/r.height-0.5)*2;
+  });
+  if("IntersectionObserver" in window)new IntersectionObserver(function(es){run=es[0].isIntersecting},{threshold:0}).observe(cv);
+
+  function beat(t){ /* battement cardiaque ~1 Hz, double pic */
+    var p=t%1.05/1.05;
+    return Math.max(0,Math.sin(p*25)*Math.exp(-p*9))+0.5*Math.max(0,Math.sin((p-0.28)*22)*Math.exp(-(p-0.28)*11));
+  }
+  function frame(){
+    requestAnimationFrame(frame);
+    if(!run)return;
+    var t=(performance.now()-t0)/1000;
+    if(RM)t=Math.min(t,2.2); /* assemblage terminé, puis quasi figé */
+    mx+=(tmx-mx)*0.04;my+=(tmy-my)*0.04;
+    gl.uniform1f(uT,t);gl.uniform2f(uR,cv.width,cv.height);
+    gl.uniform2f(uM,mx,my);gl.uniform1f(uP,0.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.POINTS,0,N);
+  }
+  frame();
+})();
+</script>
+</body>
+</html>
