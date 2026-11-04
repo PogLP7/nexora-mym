@@ -1421,6 +1421,7 @@ $("byebtn").onclick=function(){
   requestAnimationFrame(function(){requestAnimationFrame(function(){d.style.opacity=1})});
   try{localStorage.removeItem(KEY)}catch(e){}
   function epitaph(){
+    $("ripin").style.opacity=1;
     $("ripin").innerHTML='<svg class="ecgline" viewBox="0 0 480 60" preserveAspectRatio="none"><path class="beat" id="rippath" d="M0,30 L120,30 L136,30 L144,12 L152,46 L160,22 L168,30 L300,30 L316,30 L324,10 L332,48 L340,20 L348,30 L480,30"/></svg>'+
       '<div class="riptxt" id="riptxt"><span class="mono">ici repose</span>'+
       '<h1>Contrôle<br>moteur</h1>'+
@@ -1437,6 +1438,7 @@ $("byebtn").onclick=function(){
     setTimeout(function(){RRUN=false},7000);
   }
   function boom(){
+    var ri0=$("ripin");if(ri0){ri0.style.transition="opacity .25s";ri0.style.opacity=0}
     d.style.animation="ripflash .6s";
     var w=RCV.width,h=RCV.height;
     ripBurst(w/2,h*0.45,340,13);
