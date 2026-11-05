@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>QCM éclair — la fiche</title>
+<style>
+:root{--bg:#0A0714;--ink:#EFEAF8;--muted:#9A8FB8;--line:rgba(167,139,250,.2);--art:#FF6BA8;--ven:#9F7AFF;--hl:#F7D774;--ok:#43D39E;--warn:#FF9F5A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:16px;line-height:1.5;padding:16px 14px 60px;max-width:640px;margin:0 auto}
+h1{font-size:22px;text-transform:uppercase;margin:6px 0 2px}
+.mono{font-family:ui-monospace,monospace;font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted)}
+em{color:var(--hl);font-style:normal;font-weight:700}
+.card{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:rgba(23,16,41,.55)}
+.q{font-weight:700;font-size:16.5px;margin-bottom:10px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;cursor:pointer;background:rgba(32,22,56,.5);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin:7px 0;color:var(--ink);font-family:inherit;font-size:14.5px;line-height:1.4}
+.opt .k{font-family:ui-monospace,monospace;font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px;flex-shrink:0;height:fit-content}
+.opt.good{border-color:var(--ok);background:rgba(67,211,158,.14)}
+.opt.bad{border-color:var(--art);background:rgba(255,107,168,.12);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.why{border-left:2px solid var(--ven);padding:8px 11px;margin-top:10px;color:var(--muted);font-size:13.5px;background:rgba(159,122,255,.07);border-radius:0 9px 9px 0}
+.btn{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:12px 22px;cursor:pointer;border:1px solid var(--line);background:rgba(32,22,56,.6);color:var(--ink);margin:6px 6px 0 0}
+.btn.pri{background:linear-gradient(135deg,#FF7CB4,#D23A77);border:none;color:#fff}
+.meter{display:flex;gap:10px;align-items:center;margin:10px 0}
+.track{flex:1;height:4px;border-radius:99px;background:rgba(32,22,56,.9);overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--art),var(--ven));width:0;transition:width .3s}
+.big{font-size:52px;font-weight:800;text-align:center;margin:10px 0}
+a{color:var(--ven)}
+</style>
+</head>
+<body>
+<span class="mono">Psycho du dev · QCM éclair sur la fiche 1 page</span>
+<h1>Le QCM de la fiche</h1>
+<div class="meter"><span class="mono" id="pos">·</span><div class="track"><div class="fill" id="fill"></div></div><span class="mono" id="sc">0 ✓</span></div>
+<div id="zone"></div>
+<p class="mono" style="margin-top:26px"><a href="https://getsnexora.com/psycho/">l'app complète</a> · <a href="./fiche.html">la fiche</a></p>
+<script>
+var Q=[
+{q:"La psychologie du développement étudie les changements du comportement…",o:["De la naissance à la fin de l'adolescence","De la conception à la fin de la vie","De l'enfance à l'âge adulte","De la naissance à la vieillesse uniquement"],k:1,w:"Décrire ET expliquer, de la conception à la fin de vie."},
+{q:"« Chaque Matin, Grand-Père » = les 4 traits du lifespan, c'est-à-dire…",o:["Croissance, Maturation, Génétique, Performance","Continu, Multidimensionnel, Gains-Pertes, Plasticité","Cognitif, Moteur, Global, Progressif","Conception, Méthodes, Gérontologie, Piaget"],k:1,w:"C·M·G-P·P : continu, multidimensionnel, gains et pertes, plasticité."},
+{q:"L'exemple des gains ET des pertes à tout âge :",o:["Papi court moins vite mais nage mieux qu'avant","Papi oublie la liste de courses mais t'écrase au Scrabble","Papi voit moins bien mais entend parfaitement","Papi perd la mémoire mais gagne en rapidité"],k:1,w:"Mémoire de travail ↓ (perte) mais expertise/connaissances ↑ (gain)."},
+{q:"NGI, les 3 facteurs qui façonnent une vie :",o:["Nature, Génétique, Intelligence","Normatif, Génération, Imprévu","Naissance, Grandir, Involution","Normes, Groupes, Individus"],k:1,w:"Normatif (puberté, école à 3 ans) · Génération (guerre, crise) · Imprévu (accident, maladie)."},
+{q:"La vision « lifespan » s'oppose à la vision classique parce que…",o:["Elle affirme que tout se joue avant 6 ans","Elle dit qu'on se développe toute la vie, pas montée-plateau-déclin","Elle nie l'existence du déclin cognitif chez les personnes âgées","Elle découpe la vie en tranches d'âge plus précises"],k:1,w:"Contre le schéma maturationniste : essor-arrêt-plateau-déclin."},
+{q:"La « PHOTO », c'est quelle méthode ?",o:["Longitudinale","Transversale","Mixte","Expérimentale"],k:1,w:"Des âges différents, UNE seule mesure, le même jour."},
+{q:"Le « FILM », c'est…",o:["Comparer des groupes d'âges différents une seule fois","Suivre les mêmes personnes dans le temps avec plusieurs mesures","Suivre plusieurs groupes différents dans le temps","Filmer les enfants pour coder leurs comportements"],k:1,w:"Longitudinale = mêmes gens, plusieurs mesures → trajectoires."},
+{q:"Filles ET garçons, chacun mesurés à 3 ans puis 5 ans :",o:["Transversale","Mixte (plusieurs films)","Longitudinale","Comparative"],k:1,w:"Plusieurs groupes + plusieurs mesures = mixte."},
+{q:"La cognition, c'est les processus mentaux pour…",o:["Ressentir, exprimer et réguler les émotions","Acquérir des connaissances, traiter l'information, raisonner","Percevoir, bouger et automatiser les gestes","Mémoriser et restituer fidèlement des informations"],k:1,w:"APA 2013 : acquérir · traiter · raisonner."},
+{q:"Les 5 domaines de la cognition :",o:["Perception, émotion, motivation, conscience, volonté","Langage, cognition sociale, fonctions exécutives, attention, mémoire","Lecture, calcul, logique, créativité, orientation","Inhibition, flexibilité, planification, jugement, décision"],k:1,w:"Du global au spécifique — et dedans, la tour de contrôle : les fonctions exécutives."},
+{q:"STOP · GARDE · CHANGE =",o:["Attention, mémoire, langage","Contrôle inhibiteur, mémoire de travail, flexibilité cognitive","Percevoir, décider, agir","Dépistage, diagnostic, suivi"],k:1,w:"Les 3 fonctions exécutives."},
+{q:"Ignorer ton téléphone qui vibre pendant la révision, c'est…",o:["GARDE (mémoire de travail)","STOP (contrôle inhibiteur)","CHANGE (flexibilité)","L'attention sélective"],k:1,w:"Résister, ne pas agir impulsivement, stopper."},
+{q:"Calculer 17 × 6 de tête en retenant la retenue, c'est…",o:["STOP","GARDE (mémoire de travail)","CHANGE","La mémoire à long terme"],k:1,w:"Garder des infos à l'esprit ET les manipuler."},
+{q:"L'arbitre change une règle en plein match et tu t'adaptes :",o:["STOP","CHANGE (flexibilité cognitive)","GARDE","Le contrôle moteur"],k:1,w:"Changer de point de vue, s'adapter aux nouvelles règles."},
+{q:"Demander · Tester · Regarder = les 3 façons de mesurer la cognition. La limite de « demander » :",o:["Trop cher et trop long à faire passer","Subjectif et peu corrélé aux mesures objectives","Interdit chez les personnes âgées","Ne mesure que la mémoire"],k:1,w:"Les questionnaires mesurent la cognition telle que PERÇUE."},
+{q:"MoCA, MMSE, Mini-Cog permettent de…",o:["Diagnostiquer la maladie d'Alzheimer","Dépister une déficience cognitive, PAS de diagnostiquer","Mesurer l'activité cérébrale en direct","Évaluer les symptômes ressentis au quotidien"],k:1,w:"Dépistage ≠ diagnostic. Le diagnostic peut passer par l'imagerie."},
+{q:"Stroop : « JAUNE » écrit en encre verte. Tu dis…",o:["Jaune","Vert","Les deux","Rien, c'est un essai piège à ignorer"],k:1,w:"La COULEUR, jamais le mot. C'est l'essai incongruent — ça teste STOP."},
+{q:"Toucher · Parler · Compter · Rêver, avec les bons âges :",o:["0-3 · 3-7 · 7-12 · 12-18","0-2 · 2-6 · 6-11 · 11-16","0-2 · 2-7 · 7-11 · 11-18","1-3 · 3-6 · 6-10 · 10-16"],k:1,w:"Sensori-moteur 0-2 · pré-opératoire 2-6 · opérations concrètes 6-11 · formelles 11-16."},
+{q:"Le bébé ne cherche plus le jouet caché sous la couverture. Il n'a pas encore acquis…",o:["Le lien de cause à effet","La permanence de l'objet","La conservation des quantités","La différenciation soi/monde"],k:1,w:"Conquête du stade Toucher (0-2) : les choses existent même sans les voir."},
+{q:"L'égocentrisme chez Piaget (étage Parler, 2-6 ans), c'est…",o:["L'enfant refuse de prêter ses jouets aux autres","L'enfant juge selon ses propres perceptions et croit que tout le monde voit comme lui","L'enfant se croit le plus fort partout","L'enfant ne parle que de lui-même"],k:1,w:"Une limite de perception, pas de l'égoïsme."},
+{q:"La boule de pâte aplatie en galette = autant de pâte. Cette acquisition s'appelle…",o:["La permanence de l'objet","La conservation des quantités","L'accommodation","La transformation formelle"],k:1,w:"Étage Compter (6-11) : l'apparence peut mentir, la quantité reste."},
+{q:"« Et si on jouait sans gardien, ça changerait quoi ? » — raisonner là-dessus demande l'étage…",o:["Compter (6-11)","Rêver (11-16)","Parler (2-6)","Toucher (0-2)"],k:1,w:"Pensée hypothético-déductive : raisonner sur des hypothèses abstraites."},
+{q:"Le bébé tète le sein, puis le pouce, puis un objet — même geste sur du nouveau. C'est…",o:["L'accommodation","L'assimilation (je recycle)","L'équilibration","L'imitation"],k:1,w:"Assimilation = intégrer du nouveau à une conduite existante."},
+{q:"La fourchette ne se tient pas comme la cuillère, il change son geste. C'est…",o:["L'assimilation","L'accommodation (je modifie)","La numérosité","La conservation"],k:1,w:"Accommodation = modifier ses anciens comportements pour s'adapter."},
+{q:"Assimilation + accommodation servent à…",o:["Sauter un stade quand l'enfant est précoce","Retrouver l'équilibre cassé par la nouveauté — la « résolution du conflit »","Mémoriser durablement les apprentissages","Compenser le déclin lié à l'âge"],k:1,w:"Le nouveau déséquilibre → recycler ou modifier → équilibre. C'est le moteur du passage d'étage."},
+{q:"« Va jusqu'au plot. Quand tu arrives au rouge, tourne. » Tu parles à quel étage ?",o:["Toucher (0-2)","Parler (2-6)","Compter (6-11)","Rêver (11-16)"],k:1,w:"Consigne simple et concrète = pré-opératoire. Montrer (0-2) · choisir sur du visible (6-11) · « comment anticiper ? » (11-16)."},
+{q:"« Piaget a oublié les potes et sous-estimé les bébés » veut dire…",o:["Il a négligé les émotions et l'attachement maternel","Il a négligé le social/culturel (Wallon, Vygotski) et raté la numérosité des bébés","Il n'a étudié que ses propres enfants, sans groupe social","Il a surestimé le rôle de l'école et des camarades"],k:1,w:"Critique 1 : imitation, aide d'autrui. Critique 2 : sens du nombre dès les premiers jours, méthodes inadaptées."},
+{q:"« Le bébé apprend en bougeant » signifie que…",o:["Le sport rend les bébés plus intelligents que les autres","Chaque conquête motrice ouvre une conquête mentale (cause-effet, autonomie, expérimentation)","Il faut stimuler le bébé par des exercices dirigés","Les bébés qui marchent tôt parlent tôt"],k:1,w:"Réflexes → cause-effet → autonomie → expérimentation active. Et l'école ensuite : 1 an entier assis."},
+{q:"Du CP à la Terminale, le temps passé assis équivaut à…",o:["6 mois, nuits incluses","1 an, nuits incluses","2 ans, nuits incluses","3 mois par année scolaire"],k:1,w:"≈ 11 430 h d'école, ~75 % assis."},
+{q:"En vieillissant…",o:["Toutes les fonctions déclinent au même rythme","La vitesse de traitement baisse tôt, le vocabulaire tient","Le vocabulaire décline en premier","Rien ne décline avant 80 ans"],k:1,w:"Déclin NON uniforme : vitesse/mémoire de travail ↓ tôt, vocabulaire/connaissances tiennent."},
+{q:"L'échelle qui descend :",o:["Normal → démence → trouble cognitif léger","Normal → trouble cognitif léger → démence","Trouble léger → normal → démence","Démence → Alzheimer → trouble léger"],k:1,w:"TCL = gêne minime au quotidien · démence = gêne forte (terme générique, ex. Alzheimer)."},
+{q:"Les chiffres de la démence :",o:["20 M en 2025, 60 M en 2050, 20 % évitables","50 M en 2025, 150 M en 2050 ?, 40 % évitables via 12 facteurs","100 M en 2025, 200 M en 2050, 50 % évitables","50 M en 2025, en baisse, 12 % évitables"],k:1,w:"Et parmi les 12 facteurs modifiables : l'activité physique."},
+{q:"La théorie de l'échafaudage (Park & Reuter-Lorenz) dit que le cerveau vieillissant…",o:["S'économise en désactivant les réseaux inutiles","Recrute des réseaux supplémentaires pour maintenir le niveau malgré l'usure","Remplace les neurones morts par de nouveaux neurones","Transfère ses fonctions vers la moelle épinière"],k:1,w:"Des échafaudages compensatoires — et le sport aide à les monter."},
+{q:"LA phrase à sortir sur sport et cognition :",o:["« Le sport améliore la cognition, c'est prouvé par les essais randomisés »","« Ça va ensemble, mais on n'a pas prouvé que ça cause »","« Le sport n'a aucun effet mesurable sur le cerveau »","« Seuls les sports d'endurance améliorent la mémoire »"],k:1,w:"Associations nombreuses (athlètes, marche +2 % vs −2 %, 39 000 Européens) mais causalité non démontrée → prudence."},
+{q:"« Son Prof Est Dur » = pourquoi les études AP-cognition se contredisent :",o:["Sommeil, Pratique, Entraînement, Durée","Sport pratiqué (FITT), Personne (APOE ε4), Environnement (pollution), Domaine visé","Santé, Poids, Endurance, Dopamine","Stress, Plaisir, Effort, Discipline"],k:1,w:"4 familles de modérateurs. FITT = fréquence, intensité, temps, type."},
+{q:"La règle 10-15-7 :",o:["10 000 pas/jour, 15 min d'étirements, 7 h de sommeil","Plus de 10 h assis/jour = risque ; 15 min remplacées par du sport = −7 % de démence","10 ans d'études, 15 tests, 7 % d'erreurs","10 h de sport/semaine réduit de 15 à 7 % le risque"],k:1,w:"Seuil non linéaire à ~10 h · substitution 15 min · gain −7 %."},
+{q:"« Netflix ≠ mots croisés » veut dire…",o:["Les écrans détruisent la mémoire, les jeux la protègent","Seul le temps assis MENTALEMENT PASSIF est associé au risque de démence","Il faut remplacer les écrans par de la lecture après 65 ans","Le temps assis ne compte pas si on se divertit"],k:1,w:"Comportements sédentaires cognitivement inactifs = à risque ; actifs = non. (Et ça tient même après ajustement sur le sport.)"}
+];
+var KEY="psy_eclair_v1";var S;try{S=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){S={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function $(i){return document.getElementById(i)}
+var ORD=[],I=0,OK=0,BAD=[];
+function sh(a){for(var z=a.length-1;z>0;z--){var r=(Math.random()*(z+1))|0,t=a[z];a[z]=a[r];a[r]=t}return a}
+function start(list){ORD=sh((list||Q.map(function(_,i){return i})).slice());I=0;OK=0;BAD=[];draw()}
+function draw(){
+  var z=$("zone");
+  if(I>=ORD.length){
+    var pc=Math.round(100*OK/ORD.length);
+    if(!S.best||pc>S.best){S.best=pc;save()}
+    z.innerHTML='<div class="card" style="text-align:center"><div class="big" style="color:'+(pc>=80?"var(--ok)":pc>=60?"var(--hl)":"var(--art)")+'">'+pc+'%</div>'+
+      '<p>'+OK+' / '+ORD.length+' — record : '+S.best+'%</p><div style="margin-top:12px">'+
+      (BAD.length?'<button class="btn pri" id="er">Refaire mes erreurs · '+BAD.length+'</button>':'')+
+      '<button class="btn'+(BAD.length?'':' pri')+'" id="re">Tout refaire</button></div></div>';
+    $("re").onclick=function(){start()};
+    var e=$("er");if(e)e.onclick=function(){start(BAD)};
+    $("pos").textContent="fin";$("fill").style.width="100%";
+    return;
+  }
+  var q=Q[ORD[I]],L=["A","B","C","D"],ord=sh([0,1,2,3]);
+  var h='<div class="card"><div class="q">'+q.q+'</div><div id="opts">';
+  for(var i=0;i<4;i++)h+='<button class="opt" data-i="'+ord[i]+'"><span class="k">'+L[i]+'</span><span>'+q.o[ord[i]]+'</span></button>';
+  h+='</div><div id="why"></div></div>';
+  z.innerHTML=h;
+  $("pos").textContent=(I+1)+" / "+ORD.length;
+  $("fill").style.width=Math.round(I/ORD.length*100)+"%";
+  $("sc").textContent=OK+" ✓";
+  var os=z.querySelectorAll(".opt"),done=false;
+  for(var j=0;j<os.length;j++)os[j].onclick=function(){
+    if(done)return;done=true;
+    var p=+this.getAttribute("data-i");
+    if(p===q.k){this.classList.add("good");OK++}
+    else{BAD.push(ORD[I]);this.classList.add("bad");
+      for(var m=0;m<os.length;m++)if(+os[m].getAttribute("data-i")===q.k)os[m].classList.add("good")}
+    $("why").innerHTML='<div class="why">'+q.w+'</div><div style="text-align:right;margin-top:10px"><button class="btn pri" id="nx">Suivant →</button></div>';
+    $("nx").onclick=function(){I++;draw()};
+    try{$("nx").focus({preventScroll:true})}catch(e){}
+  };
+}
+start();
+</script>
+</body>
+</html>
